@@ -1,0 +1,23 @@
+kcp_version: "0.11"
+project: julebrus
+version: "0.1.0"
+updated: "2026-03-15"
+
+units:
+  - id: readme
+    path: README.md
+    intent: "julebrus"
+    scope: global
+    audience: [human, agent]
+    validated: "2026-03-15"
+    hints:
+      token_estimate: 100
+
+  - id: claude
+    path: CLAUDE.md
+    intent: "julebrus"
+    scope: global
+    audience: [human, agent]
+    validated: "2026-03-15"
+    hints:
+      token_estimate: 100
