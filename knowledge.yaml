@@ -1,4 +1,4 @@
-kcp_version: "0.12"
+kcp_version: "0.26"
 project: julebrus
 version: "0.1.0"
 updated: "2026-03-19"
@@ -21,3 +21,17 @@ units:
     validated: "2026-03-15"
     hints:
       token_estimate: 100
+
+signing:
+  scheme: ed25519
+  scope: this-manifest
+  public_key: "MCowBQYDK2VwAyEAuipgusnqU9vjf3p2yPVLD/DmERT6tBbLOqEETdxAhMU="
+  signature: "https://raw.githubusercontent.com/Cantara/julebrus/main/knowledge.yaml.sig"
+
+# Serving Endpoint Binding (KCP SPEC v0.26 §3.12): authoritative manifest URL
+# and authorized MCP representative. Ignored by pre-0.26 verifiers.
+serving:
+  manifest:
+    - https://raw.githubusercontent.com/Cantara/julebrus/main/knowledge.yaml
+  mcp:
+    - https://mcp.cantara.no/mcp
