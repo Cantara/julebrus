@@ -7,10 +7,11 @@ import AdminBeers from '../components/AdminBeers.vue'
 import AdminClaims from '../components/AdminClaims.vue'
 import AdminRaterLinks from '../components/AdminRaterLinks.vue'
 import DumbbellChart from '../components/DumbbellChart.vue'
+import LiftChart from '../components/LiftChart.vue'
 import ClaimHistory from '../components/ClaimHistory.vue'
 import LangToggle from '../components/LangToggle.vue'
 import { t } from '../i18n'
-import type { BadgeView, Beer, HistoricRating, MySeason, Tasting } from '../api/types'
+import type { BadgeView, Beer, HistoricRating, MySeason, Palate, Tasting } from '../api/types'
 import BadgeTree from '../components/BadgeTree.vue'
 import { useMe } from '../stores/me'
 
@@ -21,6 +22,7 @@ const badges = ref<BadgeView[]>([])
 const mine = ref<Tasting[]>([])
 const history = ref<HistoricRating[]>([])
 const mySeasons = ref<MySeason[]>([])
+const palate = ref<Palate | null>(null)
 const beerNames = ref<Record<string, string>>({})
 
 onMounted(async () => {
@@ -30,6 +32,7 @@ onMounted(async () => {
     get<HistoricRating[]>('/api/history/me').catch(() => []),
     get<Beer[]>('/api/beers'),
     get<MySeason[]>('/api/history/me/summary').catch(() => []).then((r) => (mySeasons.value = r)),
+    get<Palate>('/api/stats/palate/me').catch(() => null).then((r) => (palate.value = r)),
   ])
   badges.value = b
   mine.value = t
@@ -83,6 +86,40 @@ const byYear = () => {
         <div><strong>{{ b.earned ? '★' : '☆' }} {{ b.title }}</strong><div class="muted">{{ b.description }}</div></div>
       </div>
     </details>
+  </div>
+
+  <h2>Ganen din</h2>
+  <div class="card">
+    <template v-if="palate && palate.tastings >= 3">
+      <p class="muted" style="margin-top: 0">{{ palate.tastings }} terningkast i år, snitt {{ palate.mean.toFixed(2) }}.</p>
+      <template v-if="palate.likes.length || palate.dislikes.length">
+        <strong class="display">Stikkordene dine</strong>
+        <p class="muted" style="margin: 2px 0 6px">Hvor mye over eller under ditt eget snitt du gir øl med hvert stikkord.</p>
+        <LiftChart :rows="[...palate.likes, ...palate.dislikes]" />
+      </template>
+      <p v-else class="muted">Sett stikkord på smakingene dine, så tegnes fingeravtrykket her.</p>
+
+      <div v-if="palate.twin" class="row" style="margin-top: 10px; padding-top: 10px; border-top: 1px dashed var(--line)">
+        <div>
+          <strong class="display">Smaksvillingen din: {{ palate.twin.displayName }}</strong>
+          <div class="muted">
+            {{ palate.twin.common }} felles øl · likhet {{ palate.twin.similarity.toFixed(2) }}
+            <template v-if="palate.twin.beerName"> · mest enige om {{ palate.twin.beerName }} ({{ palate.twin.yourScore }} og {{ palate.twin.theirScore }})</template>
+          </div>
+        </div>
+      </div>
+      <div v-if="palate.opposite" class="row" style="margin-top: 8px">
+        <div>
+          <strong class="display">Smaksmotsatsen din: {{ palate.opposite.displayName }}</strong>
+          <div class="muted">
+            {{ palate.opposite.common }} felles øl · likhet {{ palate.opposite.similarity.toFixed(2) }}
+            <template v-if="palate.opposite.beerName"> · mest uenige om {{ palate.opposite.beerName }} ({{ palate.opposite.yourScore }} mot {{ palate.opposite.theirScore }})</template>
+          </div>
+        </div>
+      </div>
+      <p v-if="!palate.twin" class="muted" style="margin: 10px 0 0">Tvillingen dukker opp når du og noen andre har {{ palate.minCommon }} øl felles.</p>
+    </template>
+    <p v-else class="muted" style="margin: 0">Etter tre terningkast begynner ganen din å ta form her: stikkordene du liker, og hvem i Cantara du smaker likt med.</p>
   </div>
 
   <h2>Mine smakinger i år</h2>

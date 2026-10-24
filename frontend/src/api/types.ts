@@ -272,3 +272,42 @@ export interface ImportResult {
   created: number
   rows: ImportRow[]
 }
+
+export interface TagLift {
+  tag: string
+  lift: number
+  count: number
+}
+
+export interface PalateMatch {
+  userId: string
+  displayName: string
+  similarity: number
+  common: number
+  beerName?: string
+  yourScore: number
+  theirScore: number
+}
+
+export interface Palate {
+  tastings: number
+  mean: number
+  likes: TagLift[]
+  dislikes: TagLift[]
+  twin?: PalateMatch | null
+  opposite?: PalateMatch | null
+  minCommon: number
+}
+
+export interface PalatePair {
+  a: string
+  b: string
+  similarity: number
+  common: number
+}
+
+export interface PalatePairs {
+  twins: PalatePair[]
+  opposites: PalatePair[]
+  minCommon: number
+}
