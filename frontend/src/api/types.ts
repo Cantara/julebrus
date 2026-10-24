@@ -15,6 +15,8 @@ export interface Me {
   season: { year: number; start: string; end: string; maxTastingsPerDay: number; maxSoloDays: number }
   weight: { weight: number; reason: string }
   admin: boolean
+  consentRequired: boolean
+  consentVersion: string
 }
 
 export interface Beer {
@@ -127,4 +129,45 @@ export interface HistoricRating {
   weight: number
   normalised: number
   notes?: string
+}
+
+export interface ConsentView {
+  version: string
+  accepted: boolean
+  texts: { nb: string; en: string }
+}
+
+export interface PublicConfig {
+  sponsor: { name: string; url?: string } | null
+}
+
+export type ClaimStatus = 'PENDING' | 'APPROVED' | 'REJECTED'
+
+export interface RaterView {
+  raterName: string
+  years: number[]
+  ratingCount: number
+  available: boolean
+  suggested: boolean
+  myClaim: { id: string; status: ClaimStatus } | null
+}
+
+export interface ClaimView {
+  id: string
+  raterName: string
+  status: ClaimStatus
+  createdAt: string
+  decidedAt?: string
+}
+
+export interface AdminClaimView {
+  id: string
+  status: ClaimStatus
+  raterName: string
+  years: number[]
+  ratingCount: number
+  userId: string
+  displayName?: string
+  email?: string
+  createdAt: string
 }

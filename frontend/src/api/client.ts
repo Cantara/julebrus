@@ -39,6 +39,10 @@ export async function api<T>(path: string, init: RequestInit = {}): Promise<T> {
     } catch {
       /* no body */
     }
+    // The server enforces consent on every call; send the person to the consent page.
+    if (res.status === 403 && err.code === 'CONSENT_REQUIRED' && window.location.pathname !== '/consent') {
+      window.location.href = '/consent'
+    }
     throw new ApiFailure(res.status, err.code, err.message)
   }
   if (res.status === 204) return undefined as T
@@ -49,3 +53,4 @@ export async function api<T>(path: string, init: RequestInit = {}): Promise<T> {
 export const get = <T>(path: string) => api<T>(path)
 export const post = <T>(path: string, body?: unknown) =>
   api<T>(path, { method: 'POST', body: body === undefined ? undefined : JSON.stringify(body) })
+export const del = <T>(path: string) => api<T>(path, { method: 'DELETE' })

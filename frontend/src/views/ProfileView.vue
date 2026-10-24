@@ -1,10 +1,16 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue'
-import { get } from '../api/client'
+import { useRouter } from 'vue-router'
+import { get, post } from '../api/client'
+import AdminClaims from '../components/AdminClaims.vue'
+import ClaimHistory from '../components/ClaimHistory.vue'
+import { lang, setLang, t } from '../i18n'
 import type { BadgeView, Beer, HistoricRating, Tasting } from '../api/types'
 import { useMe } from '../stores/me'
 
 const store = useMe()
+const router = useRouter()
+const confirmingWithdraw = ref(false)
 const badges = ref<BadgeView[]>([])
 const mine = ref<Tasting[]>([])
 const history = ref<HistoricRating[]>([])
@@ -22,6 +28,16 @@ onMounted(async () => {
   history.value = h
   beerNames.value = Object.fromEntries(beers.map((x) => [x.id, x.name]))
 })
+
+async function reloadHistory() {
+  history.value = await get<HistoricRating[]>('/api/history/me').catch(() => [])
+}
+
+async function withdrawConsent() {
+  await post('/api/consent/withdraw')
+  await store.refresh()
+  router.push('/consent')
+}
 
 const byYear = () => {
   const m = new Map<number, HistoricRating[]>()
@@ -78,4 +94,24 @@ const byYear = () => {
     </table>
   </div>
   <p v-if="!history.length" class="muted">Ingen historikk koblet til {{ store.me?.email }} ennå.</p>
+
+  <ClaimHistory @changed="reloadHistory" />
+  <AdminClaims v-if="store.me?.admin" />
+
+  <h2>{{ t('withdrawTitle') }}</h2>
+  <div class="card">
+    <p class="muted" style="margin-top: 0">{{ t('withdrawInfo') }}</p>
+    <div class="row" style="justify-content: flex-start">
+      <button class="secondary" :class="{ on: lang === 'nb' }" :disabled="lang === 'nb'" @click="setLang('nb')">NB</button>
+      <button class="secondary" :class="{ on: lang === 'en' }" :disabled="lang === 'en'" @click="setLang('en')">EN</button>
+    </div>
+    <button v-if="!confirmingWithdraw" class="secondary" style="margin-top: 12px" @click="confirmingWithdraw = true">{{ t('withdrawButton') }}</button>
+    <div v-else style="margin-top: 12px">
+      <p class="error">{{ t('withdrawConfirm') }}</p>
+      <div class="row" style="justify-content: flex-start">
+        <button @click="withdrawConsent">{{ t('withdrawYes') }}</button>
+        <button class="secondary" @click="confirmingWithdraw = false">{{ t('cancel') }}</button>
+      </div>
+    </div>
+  </div>
 </template>
