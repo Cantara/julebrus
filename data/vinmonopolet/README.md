@@ -46,5 +46,23 @@ python3 tools/extract_vinmonopolet_blog.py <2014..2020|2022..2025> <saved page.h
 python3 tools/build_vinmonopolet_products.py        # listings.csv and products.csv
 ```
 
+## Votes to products (2026-10-24)
+
+`vote_matches.csv` maps every (year, beer) of the tasting results (`data/results.csv`, 401 entries, 1998-2019) to a Vinmonopolet beer, made by
+`python3 tools/match_votes_to_products.py`. A match is by NAME: the lists of 2014-2020 have no article numbers, so many matches carry a name and no
+single number (`product_article_no` empty, `article_options` lists the numbers seen under that name). `status` says how far to trust it:
+
+| status | meaning |
+| --- | --- |
+| `auto` | the exact name in that year's list (or one product with that name in another year) |
+| `likely` | one clearly best candidate by token overlap or typo-tolerant match (a sample of 22 in the list years was all plausible): skim, don't trust blindly |
+| `review` | several plausible candidates, or a weak one: a person decides (the candidates are listed) |
+| `none` | nothing similar |
+| `not-a-product` | not a Vinmonopolet beer (cured ham, homebrew, a host's own): out of scope |
+
+Years without a list (1998-2012) can only match against other years' beers, so generic brewery names ("Hansa", "Ringnes") mostly stay `review`.
+Human decisions go in `vote_match_overrides.csv` (`year, vote_beer, product_article_no, product_name`; the article number OR the name, or `none`) and win over the
+script on the next run. The app does not use these files yet (planned for v0.7, with an admin review screen).
+
 ## Images (decision 2026-10-24)
 Product photos are not stored here and not hotlinked: the app's images come from its users' own label photos (see DESIGN.md). The lists have no image column.
