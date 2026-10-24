@@ -21,6 +21,11 @@ public class ApiErrorHandler {
                 .body(new ApiError(e.violation().name(), e.getMessage()));
     }
 
+    @ExceptionHandler(ApiException.class)
+    public ResponseEntity<ApiError> api(ApiException e) {
+        return ResponseEntity.status(e.status()).body(new ApiError(e.code(), e.getMessage()));
+    }
+
     @ExceptionHandler(ResponseStatusException.class)
     public ResponseEntity<ApiError> status(ResponseStatusException e) {
         return ResponseEntity.status(e.getStatusCode())

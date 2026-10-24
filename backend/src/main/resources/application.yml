@@ -31,6 +31,13 @@ julebrus:
     allowed-domains: ${JULEBRUS_ALLOWED_DOMAINS:}
     # Comma separated emails that may flag raters and override weights.
     admins: ${JULEBRUS_ADMINS:}
+  sponsor:
+    # Shown as "Sponsored by <name>" in the footer and on the consent screen. Blank name hides it.
+    name: ${JULEBRUS_SPONSOR_NAME:eXOReaction}
+    url: ${JULEBRUS_SPONSOR_URL:https://exoreaction.com}
+  contact:
+    # Named in the consent text as where to ask for deletion. Blank means "contact the organisers".
+    email: ${JULEBRUS_CONTACT_EMAIL:}
 
 management:
   endpoints:
