@@ -180,6 +180,13 @@ history files with:
 python3 tools/to_app_history.py backend/src/main/resources/history
 ```
 
+## Teams
+
+Cantara and Rebel exist from the first migration; everyone picks their teams once, right after
+consent (or "Velg senere"). Admins add and enable more teams under *Admin: lag* on the profile
+page (name, optional sponsor line, optional e-mail domains that pre-select the team at signup).
+"Et annet lag?" on the signup page opens a mail to `JULEBRUS_CONTACT_EMAIL`.
+
 ## MCP server
 
 The tasting data is also available to AI agents over the Model Context Protocol

@@ -201,6 +201,14 @@ function fit(ctx: CanvasRenderingContext2D, text: string, max: number) {
     </div>
     <p v-if="!finale.podium.length" class="muted" style="text-align: center">Ingen terningkast i år. Pallen står tom.</p>
 
+    <div v-if="finale.teamWinners?.length" class="card">
+      <strong>Lagenes egne vinnere</strong>
+      <div v-for="w in finale.teamWinners" :key="w.slug" class="row" style="margin-top: 6px">
+        <span><span class="pill on">{{ w.team }}</span> {{ w.beerName }}<span v-if="w.brewery" class="muted"> · {{ w.brewery }}</span></span>
+        <span class="muted">{{ w.bayesian.toFixed(2) }} · {{ w.ratings }} smakere</span>
+      </div>
+    </div>
+
     <button style="width: 100%; margin: 6px 0 14px" @click="share">Del resultatet</button>
 
     <h2>Duellene</h2>

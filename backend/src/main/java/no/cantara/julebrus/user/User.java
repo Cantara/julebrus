@@ -24,6 +24,10 @@ public class User {
     @Column(name = "created_at", nullable = false)
     private Instant createdAt;
 
+    /** When the team choice was made, "later" included; null means the team page is still due. */
+    @Column(name = "teams_chosen_at")
+    private Instant teamsChosenAt;
+
     protected User() {
     }
 
@@ -39,4 +43,6 @@ public class User {
     public String getDisplayName() { return displayName; }
     public void setDisplayName(String displayName) { this.displayName = displayName; }
     public Instant getCreatedAt() { return createdAt; }
+    public Instant getTeamsChosenAt() { return teamsChosenAt; }
+    public void setTeamsChosenAt(Instant at) { this.teamsChosenAt = at; }
 }

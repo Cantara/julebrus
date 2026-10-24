@@ -92,6 +92,20 @@ and attaches their login email.
    Blind Taster badge; most correct guesses (min. 3 guesses, ties by hit rate) is a
    finale award.
 
+## Teams (decided 24 Oct)
+
+A person plays for one or more teams. Right after consent, once, the app asks "Hvilket lag spiller du
+for?": Cantara and Rebel are seeded, "Et annet lag?" opens a mail to the contact address (other teams
+are enabled by an organiser against a contribution to the tasting; no billing in the app), and "Velg
+senere" answers the question without a team. The e-mail domain suggests a team (cantara.no → Cantara)
+but never decides. The choice is changeable on the profile; admins create, edit and enable teams there.
+
+What a team changes: team pills next to names around the table; a team filter on the ranking (the same
+Bayesian ranking over that team's raters only, with the team's own mean as prior); in the finale each
+team's own number one and the award "Årets lag" (most tastings per member, so a small team can win);
+an MCP tool `team_ranking`. Membership is visible to other tasters like the display name; the consent
+text gets that line at the next version bump.
+
 ## Statistics
 
 - **Beers:** weighted Bayesian average (prior = weighted global mean, prior weight
