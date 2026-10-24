@@ -6,6 +6,10 @@
 # Needs scripts/ and systemd/ from this folder next to it (copied up through the artifacts bucket, see README).
 set -euo pipefail
 [ "$(id -u)" = 0 ] || { echo "run as root (sudo)"; exit 1; }
+# The instance may still be running its first-boot script (packages, directories, settings): wait for it.
+if ! cloud-init status --wait >/dev/null 2>&1; then
+  echo "STOPPED: cloud-init reports an error, so the first-boot setup is incomplete. Read /var/log/cloud-init-output.log (sudo less) and fix or rebuild the box."; exit 1
+fi
 . /etc/julebrus/secrets.conf
 HERE="$(cd "$(dirname "$0")" && pwd)"
 if [ "${1:-}" = tls ]; then
@@ -43,6 +47,10 @@ server {
     proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
     proxy_set_header X-Forwarded-Proto \$scheme;
     proxy_set_header X-Forwarded-Host \$host;
+    # Never trust these from the client: Spring (forward-headers-strategy=framework) would act on them.
+    proxy_set_header X-Forwarded-Port "";
+    proxy_set_header X-Forwarded-Prefix "";
+    proxy_set_header Forwarded "";
     proxy_read_timeout 60s;
   }
 }

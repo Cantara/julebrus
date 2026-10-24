@@ -4,7 +4,10 @@
 # permission to write Actions variables on the repository.
 set -euo pipefail
 PROFILE="${PROFILE:-${AWS_PROFILE:-}}"; [ -n "$PROFILE" ] || { echo "Set PROFILE (or AWS_PROFILE) to the AWS CLI profile to use."; exit 1; }
-REGION="${REGION:-eu-north-1}"; STACK="${STACK:-julebrus}"; REPO="${REPO:-Cantara/julebrus}"
+REGION="${JULEBRUS_REGION:-eu-north-1}"; STACK="${JULEBRUS_STACK:-julebrus}"; REPO="${JULEBRUS_REPO:-Cantara/julebrus}"
+if [[ "$STACK" != julebrus* ]]; then
+  read -r -p "The stack name '$STACK' does not start with 'julebrus'. Type OTHERSTACK to use it anyway: " w </dev/tty; [ "$w" = OTHERSTACK ] || { echo "Cancelled."; exit 1; }
+fi
 out() { aws --profile "$PROFILE" --region "$REGION" cloudformation describe-stacks --stack-name "$STACK" --query "Stacks[0].Outputs[?OutputKey=='$1'].OutputValue" --output text; }
 role="$(out ReleaseUploaderRoleArn)"; bucket="$(out ArtifactsBucketName)"
 echo "Will set on $REPO:  AWS_RELEASE_ROLE_ARN=$role  AWS_ARTIFACTS_BUCKET=$bucket"

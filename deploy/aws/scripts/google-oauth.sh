@@ -7,7 +7,10 @@
 # The app fetches the values at every start: after a change, restart it (julebrus.sh env set ... restarts it too).
 set -euo pipefail
 PROFILE="${PROFILE:-${AWS_PROFILE:-}}"; [ -n "$PROFILE" ] || { echo "Set PROFILE (or AWS_PROFILE) to the AWS CLI profile to use."; exit 1; }
-REGION="${REGION:-eu-north-1}"; NAME="${SECRET_NAME:-julebrus/google-oauth}"
+REGION="${JULEBRUS_REGION:-eu-north-1}"; STACK="${JULEBRUS_STACK:-julebrus}"; NAME="julebrus/google-oauth"
+if [[ "$STACK" != julebrus* ]]; then
+  read -r -p "The stack name '$STACK' does not start with 'julebrus'. Type OTHERSTACK to use it anyway: " w </dev/tty; [ "$w" = OTHERSTACK ] || { echo "Cancelled."; exit 1; }
+fi
 A=(aws --profile "$PROFILE" --region "$REGION")
 exists() {
   local err
@@ -39,7 +42,7 @@ case "${1:-help}" in
         --tags Key=Project,Value=julebrus --secret-string file:///dev/stdin --query Name --output text
     fi
     unset CID CSEC
-    host="$("${A[@]}" cloudformation describe-stacks --stack-name "${STACK:-julebrus}" --query "Stacks[0].Outputs[?OutputKey=='AppHostName'].OutputValue" --output text 2>/dev/null || true)"
+    host="$("${A[@]}" cloudformation describe-stacks --stack-name "$STACK" --query "Stacks[0].Outputs[?OutputKey=='AppHostName'].OutputValue" --output text 2>/dev/null || true)"
     echo "Stored. Redirect URI to register at Google: https://${host:-<AppHostName of the stack>}/login/oauth2/code/google" ;;
   *) sed -n 2,8p "$0"; exit 1 ;;
 esac

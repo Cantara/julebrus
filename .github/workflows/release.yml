@@ -29,7 +29,7 @@ on:
 permissions: {}
 
 concurrency:
-  group: release
+  group: release-${{ github.ref }}
   cancel-in-progress: false
 
 env:

@@ -2,6 +2,7 @@
 # Julebrus box: reach it with AWS SSM Session Manager only (no SSH, no key pair). Run on the operator's laptop.
 # Needs session-manager-plugin and an AWS profile allowed to ssm:StartSession on the instance and to read the stack outputs.
 #   PROFILE=<aws-profile>  (required; or AWS_PROFILE)   JULEBRUS_AWS_DIR=<folder with scripts/ and systemd/>  (default: one up from this script)
+#   JULEBRUS_STACK (default julebrus)  JULEBRUS_REGION (default eu-north-1)
 #
 #   julebrus.sh setup           [mutating, type SETUP] upload scripts/ and systemd/ to the artifacts bucket, run the one-time box setup
 #   julebrus.sh tls EMAIL       [mutating, type TLS] AFTER the DNS A record resolves to the box: get the Let's Encrypt certificate
@@ -9,6 +10,7 @@
 #   julebrus.sh update-log [N]  the updater's own log, the releases on disk and the app's service status
 #   julebrus.sh diag            health with detail and the key lines of the app log (no stack frames)
 #   julebrus.sh update          [mutating, type UPDATE] pull and install the latest release now, then show its log
+#   julebrus.sh retry VERSION   [mutating, type RETRY] forget that VERSION failed, so the updater tries it again
 #   julebrus.sh env keys        which non-secret settings are set (never the values, never the file)
 #   julebrus.sh env set KEY=VALUE   [mutating, type ENV] change JULEBRUS_ALLOWED_DOMAINS, JULEBRUS_ADMINS or
 #                               JULEBRUS_CONTACT_EMAIL, then restart the app and wait for /actuator/health
@@ -16,15 +18,18 @@
 # success line of their own; each ends with a separate remote check that prints its own OK/FAILED line. Read it.
 set -euo pipefail
 PROFILE="${PROFILE:-${AWS_PROFILE:-}}"; [ -n "$PROFILE" ] || { echo "Set PROFILE (or AWS_PROFILE) to the AWS CLI profile to use."; exit 1; }
-REGION="${REGION:-eu-north-1}"; STACK="${STACK:-julebrus}"
+REGION="${JULEBRUS_REGION:-eu-north-1}"; STACK="${JULEBRUS_STACK:-julebrus}"
+if [[ "$STACK" != julebrus* ]]; then
+  read -r -p "The stack name '$STACK' does not start with 'julebrus'. Type OTHERSTACK to use it anyway: " w </dev/tty; [ "$w" = OTHERSTACK ] || { echo "Cancelled."; exit 1; }
+fi
 SRC="${JULEBRUS_AWS_DIR:-$(cd "$(dirname "$0")/.." && pwd)}"
 A=(aws --profile "$PROFILE" --region "$REGION")
 out() { "${A[@]}" cloudformation describe-stacks --stack-name "$STACK" --query "Stacks[0].Outputs[?OutputKey=='$1'].OutputValue" --output text; }
 confirm() { local ans; read -r -p "$1 Type $2 to continue (anything else cancels): " ans </dev/tty; [ "$ans" = "$2" ] || { echo "Cancelled."; exit 0; }; }
 MODE="${1:-help}"
-case "$MODE" in setup|tls|status|update-log|diag|update|env) ;; *) sed -n 2,17p "$0"; exit 1 ;; esac
-ID="$(out InstanceId 2>/dev/null || true)"
-[ -n "$ID" ] && [ "$ID" != None ] || { echo "No stack '$STACK' (or no InstanceId output) in profile '$PROFILE', $REGION: deploy it first (scripts/00-provision.sh)."; exit 1; }
+case "$MODE" in retry|setup|tls|status|update-log|diag|update|env) ;; *) sed -n 2,20p "$0"; exit 1 ;; esac
+ID="$(out InstanceId)" || { echo "Could not read the stack '$STACK' in profile '$PROFILE', $REGION (the aws error is above)."; exit 1; }
+[ -n "$ID" ] && [ "$ID" != None ] || { echo "Stack '$STACK' has no InstanceId output in profile '$PROFILE', $REGION: deploy it first (scripts/00-provision.sh)."; exit 1; }
 S() { "${A[@]}" ssm start-session --target "$ID" "$@"; }
 X() { S --document-name AWS-StartInteractiveCommand --parameters "command=[\"$1\"]"; }   # interactive, so prompts work
 # Every command with quotes or $(...) goes as base64, so no quoting layer can break it.
@@ -48,11 +53,15 @@ case "$MODE" in
     confirm "This asks Let's Encrypt for a certificate for the app's host name (the DNS A record must already point at the box); contact e-mail: $EMAIL." TLS
     XB "sudo bash /root/deploy/scripts/box-setup.sh tls '$EMAIL'"
     echo "--- check"
-    XB 'h=$(. /etc/julebrus/secrets.conf; echo $PUBLIC_HOST); if sudo test -d /etc/letsencrypt/live/$h && grep -q "listen 443" /etc/nginx/conf.d/julebrus.conf; then echo "OK: certificate present for $h and nginx serves 443"; else echo "FAILED: no certificate for $h; read the output above"; fi' ;;
+    XB 'h=$(. /etc/julebrus/secrets.conf; echo $PUBLIC_HOST); c=/etc/nginx/conf.d/julebrus.conf; bad=""; sudo test -d /etc/letsencrypt/live/$h || bad="$bad no-certificate"; grep -q "listen 443" $c || bad="$bad no-443-block"; grep -q Strict-Transport-Security $c || bad="$bad no-HSTS"; systemctl is-enabled certbot-renew.timer >/dev/null 2>&1 || bad="$bad renew-timer-not-enabled"; sudo nginx -t >/dev/null 2>&1 || bad="$bad nginx-config-invalid"; if [ -z "$bad" ]; then echo "OK: certificate for $h, 443 block, HSTS, renewal timer enabled, nginx config valid"; else echo "FAILED:$bad (read the output above)"; fi' ;;
   update)
     confirm "This pulls the release named in latest.json and restarts the app on $ID (rolls back if it does not start or /actuator/health fails)." UPDATE
-    XB 'sudo systemctl start julebrus-update.service; sudo journalctl -u julebrus-update -n 40 --no-pager; echo "--- check"; if [ "$(systemctl show -p Result --value julebrus-update.service)" = success ]; then echo "OK: the update run finished without error; version $(basename "$(readlink /opt/julebrus/current)")"; else echo "FAILED: the update run reported an error (see the log above)"; fi' ;;
-  update-log) XB "sudo journalctl -u julebrus-update -n ${2:-60} --no-pager; echo; echo current: \$(readlink /opt/julebrus/current 2>/dev/null); ls -l /opt/julebrus/releases 2>/dev/null; echo; sudo systemctl status julebrus --no-pager -l | head -20" ;;
+    XB 'sudo systemctl start julebrus-update.service; sudo journalctl -u julebrus-update -n 40 --no-pager; echo "--- check"; want=$(aws s3 cp "s3://$(cat /etc/julebrus/artifacts-bucket)/latest.json" - 2>/dev/null | jq -r .version); have=$(basename "$(readlink /opt/julebrus/current 2>/dev/null)" 2>/dev/null); if [ -n "$want" ] && [ "$want" = "$have" ] && curl -fsS -m 3 http://127.0.0.1:8080/actuator/health >/dev/null; then echo "OK: installed $have = latest.json, and healthy"; else echo "FAILED: installed [${have:-none}], latest.json says [${want:-unreadable}], or the app is not healthy (see the log above)"; fi' ;;
+  retry)
+    V="${2:-}"; [[ "$V" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]] || { echo "usage: $0 retry VERSION (like 1.2.0)"; exit 1; }
+    confirm "This forgets that $V failed on $ID, so the updater (timer, or 'update') tries it again." RETRY
+    XB "sudo rm -f /var/lib/julebrus/failed-$V; if [ -e /var/lib/julebrus/failed-$V ]; then echo 'FAILED: marker still there'; else echo 'OK: marker for $V removed; the next update run (within 5 minutes, or: update) tries it'; fi" ;;
+  update-log) [[ "${2:-60}" =~ ^[0-9]+$ ]] || { echo "usage: $0 update-log [N] (N a number)"; exit 1; }; XB "sudo journalctl -u julebrus-update -n ${2:-60} --no-pager; echo; echo current: \$(readlink /opt/julebrus/current 2>/dev/null); ls -l /opt/julebrus/releases 2>/dev/null; echo; sudo systemctl status julebrus --no-pager -l | head -20" ;;
   diag)    XB 'echo "--- health (with detail):"; curl -s -m 5 -i http://127.0.0.1:8080/actuator/health | head -8; echo; echo "--- key log lines (no stack frames):"; sudo journalctl -u julebrus -n 1500 --no-pager | grep -v -E "java\[[0-9]+\]:[[:space:]]+(at |\.\.\. [0-9]+ )" | grep -i -E "Started Julebrus|Flyway|Migrat|health|oauth|Caused by|ERROR|WARN|Exception|prestart" | cut -c1-260 | tail -40' ;;
   env)
     case "${2:-}" in
@@ -62,8 +71,8 @@ case "$MODE" in
         [[ "$kv" == *=* ]] || { echo "usage: $0 env set KEY=VALUE"; exit 1; }
         case "$k" in JULEBRUS_ALLOWED_DOMAINS|JULEBRUS_ADMINS|JULEBRUS_CONTACT_EMAIL) ;; *) echo "Key not allowed: $k"; exit 1 ;; esac
         [[ "$v" =~ ^[A-Za-z0-9@._,+:/-]*$ ]] || { echo "Value may only contain letters, digits and @ . _ , + : / -"; exit 1; }
-        confirm "This sets $k on $ID and restarts the app (a short outage)." ENV
-        XB "sudo /opt/julebrus/julebrus-env.sh set '$k=$v' && sudo systemctl restart julebrus; for i in \$(seq 1 40); do c=\$(curl -s -o /dev/null -m 3 -w '%{http_code}' http://127.0.0.1:8080/actuator/health); echo \"health \$c\"; [ \"\$c\" = 200 ] && echo 'OK: the app is healthy' && break; [ \"\$i\" = 40 ] && echo 'FAILED: the app is not healthy after the restart'; sleep 5; done" ;;
+        confirm "This sets $k on $ID and restarts the app (a short outage; with no release installed yet it only saves the setting)." ENV
+        XB "sudo /opt/julebrus/julebrus-env.sh apply '$k=$v'" ;;
       *) echo "usage: $0 env keys | env set KEY=VALUE"; exit 1 ;;
     esac ;;
 esac

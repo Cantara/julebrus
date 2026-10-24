@@ -114,7 +114,7 @@ Resources:
       OwnershipControls: { Rules: [{ ObjectOwnership: BucketOwnerEnforced }] }
       LifecycleConfiguration:
         Rules:
-          - { Id: expire-old-releases, Status: Enabled, Prefix: releases/, ExpirationInDays: 180, NoncurrentVersionExpiration: { NoncurrentDays: 30 } }
+          - { Id: expire-old-release-versions, Status: Enabled, Prefix: releases/, NoncurrentVersionExpiration: { NoncurrentDays: 30 } }
           - { Id: expire-old-deploy-versions, Status: Enabled, Prefix: deploy/, NoncurrentVersionExpiration: { NoncurrentDays: 30 } }
           - { Id: expire-old-latest-versions, Status: Enabled, Prefix: latest.json, NoncurrentVersionExpiration: { NoncurrentDays: 30 } }
       Tags: [{ Key: Project, Value: !Ref ProjectName }]
