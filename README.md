@@ -52,11 +52,12 @@ before any API call except the exempt ones works; the server answers 403 `CONSEN
 The exempt paths are `/api/me`, `/api/consent`, `/api/consent/**`, `/api/config` and
 `/api/privacy` (kept in step in `ConsentWebConfig` and `SecurityConfig`). Bump the version to
 ask everyone again. Accepts and withdrawals are kept as an append-only trail in
-`consent_events`; `user_consents` holds the current state. Withdrawing closes the person's
+`consent_events` (erasure on request deletes the person's rows, see below); `user_consents` holds the current state. Withdrawing closes the person's
 access only: it deletes nothing (see the deletion procedure below).
 
-**Privacy policy URL.** The same texts are public at `/privacy` (data from `GET /api/privacy`,
-no login, no consent). Enter `https://xmas.cantara.no/privacy` as the privacy policy link on
+**Privacy policy URL.** The same texts are public at `/privacy`: server-rendered HTML that works
+without JavaScript, both languages on one page, `?lang=en` puts English first (the JSON is at
+`GET /api/privacy`). No login, no consent. Enter `https://xmas.cantara.no/privacy` as the privacy policy link on
 the Google Cloud console OAuth consent screen (APIs & Services, OAuth consent screen, app
 information). `JULEBRUS_CONTACT_EMAIL` is shown there and named in the text; the app logs a
 WARN at startup when it is blank outside the `dev` profile.
@@ -65,61 +66,99 @@ Under *Meg* people can ask to link the historic people (`rater_key`, the canonic
 `history/raters.csv`) that are them to their login. Candidates: `GET /api/history/claim-candidates`.
 People raters.csv already ties to an email are not claimable. An admin approves each claim, can
 revoke an approval (`POST /api/admin/history/claims/{id}/revoke`), and sees everyone who asks for
-the same person together. A rejected claim can be asked for again; at most 5 claims wait at once
-and at most 10 are created or reopened per 24 hours.
+the same person together. A rejected or withdrawn claim can be asked for again; a revoked one cannot (`CLAIM_REVOKED`, only
+an admin deleting the claim row resets it). Withdrawing keeps the row (status `WITHDRAWN`), so it
+still counts: at most 5 claims wait at once (`CLAIM_LIMIT`) and at most 10 are created or reopened
+per 24 hours (`CLAIM_DAILY_LIMIT`). Every step is recorded in `claim_events`; claim rows have an
+optimistic lock, so two admins deciding at once get 409 `CONFLICT`.
 
 ### Deleting a person's data by hand (procedure to review before use)
 
-Deletion requests go to `JULEBRUS_CONTACT_EMAIL` and are done by an organiser. Nothing below has
-been run anywhere. Review it against the current schema, take a backup, run it in a transaction
-and check the row counts before `commit`. Replace the email; run with psql.
+Deletion requests go to `JULEBRUS_CONTACT_EMAIL` and are done by an organiser. It was tested once
+against a throwaway PostgreSQL 16 with seeded data, but never run on a real database. Review it
+against the current schema, take a backup, run it in one transaction and check the row counts
+before `commit`.
+
+Two things to know first. Everything is deleted, including the person's `consent_events` rows:
+that log is append-only for the application, but erasure on request overrides it. And the person's
+earlier-season ratings are found through their *approved claims* and their email, so capture the
+keys **before** the claims are deleted.
+
+**Recipe 1: erase a person who has logged in.** Replace the email; run with psql.
 
 ```sql
 \set email 'person@example.com'
 begin;
 select id as uid from users where lower(email) = lower(:'email') \gset
 
--- Their tastings and duels, in the tables' dependency order.
+-- 1. Capture the historic people (rater_key) linked to this person, BEFORE deleting any claim:
+--    their approved claims, and rows already mapped to their email by raters.csv.
+create temp table erase_keys on commit drop as
+  select approved_key as k from historic_rater_claims where user_id = :'uid' and status = 'APPROVED'
+  union
+  select rater_key from historic_ratings where lower(rater_email) = lower(:'email') and rater_key is not null;
+select * from erase_keys;   -- look at it: these names disappear from the history for everyone
+
+-- 2. Their earlier-season ratings (all spellings of each key, and rows carrying their email).
+delete from historic_ratings
+ where rater_key in (select k from erase_keys) or lower(rater_email) = lower(:'email');
+
+-- 3. Their tastings and duels, in dependency order.
 delete from tasting_tags where tasting_id in (select id from tastings where user_id = :'uid');
 delete from tastings where user_id = :'uid';
 delete from duels where user_id = :'uid';
 delete from session_members where user_id = :'uid';
 
--- Sessions they hosted: sessions.host_id is NOT NULL. A session that nobody else belongs to can go;
--- one with other members must be handed to a member first (update sessions set host_id = ... ),
--- otherwise the delete of users fails on the foreign key. Check before deleting:
---   select s.id, count(m.user_id) from sessions s left join session_members m on m.session_id = s.id
---   where s.host_id = :'uid' group by s.id;
-delete from tasting_tags where tasting_id in (select id from tastings where session_id in
-  (select s.id from sessions s where s.host_id = :'uid'
-     and not exists (select 1 from session_members m where m.session_id = s.id)));
-delete from tastings where session_id in (select s.id from sessions s where s.host_id = :'uid'
-  and not exists (select 1 from session_members m where m.session_id = s.id));
-delete from duels where session_id in (select s.id from sessions s where s.host_id = :'uid'
-  and not exists (select 1 from session_members m where m.session_id = s.id));
-delete from session_beers where session_id in (select s.id from sessions s where s.host_id = :'uid'
-  and not exists (select 1 from session_members m where m.session_id = s.id));
-delete from sessions s where s.host_id = :'uid'
-  and not exists (select 1 from session_members m where m.session_id = s.id);
+-- 4. Sessions they hosted (sessions.host_id is NOT NULL). A session nobody else belongs to can go.
+--    One with other members must be handed to a member first (update sessions set host_id = ...),
+--    or the delete of users fails on the foreign key. Check first:
+--      select s.id, count(m.user_id) from sessions s left join session_members m on m.session_id = s.id
+--      where s.host_id = :'uid' group by s.id;
+create temp table erase_sessions on commit drop as
+  select s.id from sessions s where s.host_id = :'uid'
+   and not exists (select 1 from session_members m where m.session_id = s.id);
+delete from tasting_tags where tasting_id in (select id from tastings where session_id in (select id from erase_sessions));
+delete from tastings where session_id in (select id from erase_sessions);
+delete from duels where session_id in (select id from erase_sessions);
+delete from session_beers where session_id in (select id from erase_sessions);
+delete from sessions where id in (select id from erase_sessions);
 
--- Consent and claims. decided_by points at admins, so clear it rather than delete other people's rows.
-delete from consent_events where user_id = :'uid';
-delete from user_consents where user_id = :'uid';
+-- 5. Claims, and only then the rows that point at them. claim_events names the person as the actor
+--    of their own claims and, for an admin, of other people's decisions; both go.
+delete from claim_events where claim_id in (select id from historic_rater_claims where user_id = :'uid')
+                            or actor_user_id = :'uid';
 delete from historic_rater_claims where user_id = :'uid';
 update historic_rater_claims set decided_by = null where decided_by = :'uid';
 
--- Weights are keyed by email, not by a foreign key.
+-- 6. Consent state and the consent log, weights (keyed by email, no foreign key), then the user.
+delete from consent_events where user_id = :'uid';
+delete from user_consents where user_id = :'uid';
 delete from rater_weights where lower(email) = lower(:'email');
-
--- Their earlier-season ratings: by email, plus the approved key if they had one. Look first:
---   select rater_key, count(*) from historic_ratings where lower(rater_email) = lower(:'email') group by 1;
--- Then delete those rows, and remove the person from history/*.csv and raters.csv in the repo,
--- or a fresh database will import them again (the importer skips seasons that already have ratings).
-delete from historic_ratings where lower(rater_email) = lower(:'email');
-
 delete from users where id = :'uid';
 -- Check the counts, then: commit;   (or rollback;)
 ```
+
+Also remove the person from the source files, or a fresh database imports them again (the importer
+only skips a season that already has ratings): delete their rows from `history/<year>.csv` and
+their lines from `history/raters.csv`.
+
+**Recipe 2: remove a historic name for someone who never logged in.** Find the key first
+(`select rater_key, rater_name, count(*) from historic_ratings where rater_name ilike '%name%' group by 1, 2;`).
+
+```sql
+\set key 'Some Person'
+begin;
+-- Pending or rejected claims for the key, and their history.
+delete from claim_events where claim_id in (select id from historic_rater_claims where rater_key = :'key');
+delete from historic_rater_claims where rater_key = :'key';
+-- The ratings under the key, and rows without a key whose source name is the same.
+delete from historic_ratings where rater_key = :'key' or (rater_key is null and rater_name = :'key');
+-- Check the counts, then: commit;
+```
+
+Then edit the files: remove every `history/<year>.csv` row whose `rater_name` is one of that person's
+spellings, and every line in `history/raters.csv` whose `canonical_name` is the key (and whose `name`
+is one of the spellings). Redeploy; the importer will not bring them back.
 
 ## Historic seasons
 
