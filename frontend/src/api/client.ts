@@ -28,7 +28,8 @@ export async function api<T>(path: string, init: RequestInit = {}): Promise<T> {
   if (dev) headers['X-Dev-User'] = dev
 
   const res = await fetch(path, { credentials: 'same-origin', ...init, headers })
-  if (res.status === 401) {
+  // /privacy is public: nothing on it may send a logged-out visitor to Google.
+  if (res.status === 401 && window.location.pathname !== '/privacy') {
     window.location.href = '/oauth2/authorization/google'
     throw new ApiFailure(401, 'UNAUTHORIZED', 'Logging in')
   }
@@ -38,6 +39,10 @@ export async function api<T>(path: string, init: RequestInit = {}): Promise<T> {
       err = await res.json()
     } catch {
       /* no body */
+    }
+    // The server enforces consent on every call; send the person to the consent page.
+    if (res.status === 403 && err.code === 'CONSENT_REQUIRED' && window.location.pathname !== '/consent') {
+      window.location.href = '/consent'
     }
     throw new ApiFailure(res.status, err.code, err.message)
   }
@@ -49,3 +54,14 @@ export async function api<T>(path: string, init: RequestInit = {}): Promise<T> {
 export const get = <T>(path: string) => api<T>(path)
 export const post = <T>(path: string, body?: unknown) =>
   api<T>(path, { method: 'POST', body: body === undefined ? undefined : JSON.stringify(body) })
+export const del = <T>(path: string) => api<T>(path, { method: 'DELETE' })
+
+/** Ends the session. The server answers with a redirect to "/", so the body is ignored. */
+export async function logout(): Promise<void> {
+  try {
+    await api('/api/logout', { method: 'POST' })
+  } catch {
+    /* the redirect target is HTML, and the dev profile has no logout: either way we leave */
+  }
+  window.location.href = '/'
+}

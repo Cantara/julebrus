@@ -13,8 +13,11 @@ export interface Me {
   displayName: string
   status: Status
   season: { year: number; start: string; end: string; maxTastingsPerDay: number; maxSoloDays: number }
-  weight: { weight: number; reason: string }
+  /** absent until the person has consented */
+  weight: { weight: number; reason: string } | null
   admin: boolean
+  consentRequired: boolean
+  consentVersion: string
 }
 
 export interface Beer {
@@ -148,4 +151,49 @@ export interface Finale {
   podium?: BeerRank[]
   duelPodium?: DuelRank[]
   awards?: Award[]
+}
+
+export interface ConsentView {
+  version: string
+  accepted: boolean
+  texts: { nb: string; en: string }
+}
+
+export interface PublicConfig {
+  sponsor: { name: string; url?: string } | null
+  contactEmail: string | null
+}
+
+export type ClaimStatus = 'PENDING' | 'APPROVED' | 'REJECTED' | 'REVOKED' | 'WITHDRAWN'
+
+export interface ClaimCandidate {
+  raterKey: string
+  years: number[]
+  ratingCount: number
+  available: boolean
+  linkedByEmail: boolean
+  linkedToYou: boolean
+  suggested: boolean
+  myClaim: { id: string; status: ClaimStatus } | null
+}
+
+export interface ClaimView {
+  id: string
+  raterKey: string
+  status: ClaimStatus
+  createdAt: string
+  decidedAt?: string
+}
+
+export interface AdminClaimView {
+  id: string
+  status: ClaimStatus
+  raterKey: string
+  years: number[]
+  ratingCount: number
+  linkedByEmail: boolean
+  userId: string
+  displayName?: string
+  email?: string
+  createdAt: string
 }

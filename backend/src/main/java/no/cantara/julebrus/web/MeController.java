@@ -1,6 +1,7 @@
 package no.cantara.julebrus.web;
 
 import no.cantara.julebrus.config.SeasonProperties;
+import no.cantara.julebrus.consent.ConsentService;
 import no.cantara.julebrus.tasting.TastingService;
 import no.cantara.julebrus.user.CurrentUser;
 import no.cantara.julebrus.user.User;
@@ -22,7 +23,7 @@ public class MeController {
     }
 
     public record Me(UUID id, String email, String displayName, TastingService.Status status, Season season,
-                     Weight weight, boolean admin) {
+                     /** null until the person has consented */ Weight weight, boolean admin, boolean consentRequired, String consentVersion) {
     }
 
     private final CurrentUser currentUser;
@@ -30,22 +31,32 @@ public class MeController {
     private final SeasonProperties season;
     private final RaterWeightService weights;
     private final no.cantara.julebrus.config.AuthProperties auth;
+    private final ConsentService consents;
 
     public MeController(CurrentUser currentUser, TastingService tastings, SeasonProperties season,
-                        RaterWeightService weights, no.cantara.julebrus.config.AuthProperties auth) {
+                        RaterWeightService weights, no.cantara.julebrus.config.AuthProperties auth,
+                        ConsentService consents) {
         this.currentUser = currentUser;
         this.tastings = tastings;
         this.season = season;
         this.weights = weights;
         this.auth = auth;
+        this.consents = consents;
     }
 
     @GetMapping("/api/me")
     public Me me() {
         User u = currentUser.get();
-        RaterWeight w = weights.current(u);
+        boolean consented = consents.hasAccepted(u.getId());
+        // Before consent only the users row exists: no weight is computed or stored, no history is read.
+        Weight weight = null;
+        if (consented) {
+            RaterWeight w = weights.current(u);
+            weight = new Weight(w.weight(), w.getReason());
+        }
         return new Me(u.getId(), u.getEmail(), u.getDisplayName(), tastings.status(u.getId()),
                 new Season(season.year(), season.start(), season.end(), season.maxTastingsPerDay(), season.maxSoloDays()),
-                new Weight(w.weight(), w.getReason()), auth.isAdmin(u.getEmail()));
+                weight, auth.isAdmin(u.getEmail()),
+                !consented, ConsentService.CONSENT_VERSION);
     }
 }

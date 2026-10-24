@@ -27,6 +27,8 @@ class JulebrusApplicationTest {
 
     @Test
     void soloRatingFlowWithRuleEnforcement() throws Exception {
+        ConsentSupport.accept(mvc, null);
+        ConsentSupport.accept(mvc, "nobody@cantara.no");
         mvc.perform(get("/api/me")).andExpect(status().isOk())
                 .andExpect(jsonPath("$.email").value("dev@cantara.no"))
                 .andExpect(jsonPath("$.status.maxPerDay").value(5))
@@ -102,6 +104,7 @@ class JulebrusApplicationTest {
     void groupSessionHidesScoresUntilEveryoneHasRated() throws Exception {
         // Two people who have not tasted anything yet today.
         String host = "ola@cantara.no", guest = "kari@cantara.no";
+        for (String who : new String[]{host, guest, "nosy@cantara.no"}) ConsentSupport.accept(mvc, who);
 
         String beer = mvc.perform(post("/api/beers").header("X-Dev-User", host).contentType(APPLICATION_JSON)
                         .content("{\"name\":\"Gruppeøl\"}")).andReturn().getResponse().getContentAsString()
@@ -145,6 +148,7 @@ class JulebrusApplicationTest {
                 .andExpect(status().isForbidden());
 
         // The bundled history (history/*.csv) is imported at startup: newest season first.
+        ConsentSupport.accept(mvc, null);
         mvc.perform(get("/api/history/seasons")).andExpect(status().isOk())
                 .andExpect(jsonPath("$.length()").value(greaterThanOrEqualTo(12)))
                 .andExpect(jsonPath("$[0].year").value(2019));
