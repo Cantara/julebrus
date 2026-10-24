@@ -255,3 +255,59 @@ export interface MySeason {
   myMean: number
   crowdMean: number
 }
+
+export interface ImportRow {
+  line: number
+  name: string
+  brewery?: string
+  style?: string
+  abv?: number
+  vinmonopoletId?: string
+  action: 'NEW' | 'DUPLICATE' | 'INVALID'
+  reason?: string
+}
+
+export interface ImportResult {
+  dryRun: boolean
+  created: number
+  rows: ImportRow[]
+}
+
+export interface TagLift {
+  tag: string
+  lift: number
+  count: number
+}
+
+export interface PalateMatch {
+  userId: string
+  displayName: string
+  similarity: number
+  common: number
+  beerName?: string
+  yourScore: number
+  theirScore: number
+}
+
+export interface Palate {
+  tastings: number
+  mean: number
+  likes: TagLift[]
+  dislikes: TagLift[]
+  twin?: PalateMatch | null
+  opposite?: PalateMatch | null
+  minCommon: number
+}
+
+export interface PalatePair {
+  a: string
+  b: string
+  similarity: number
+  common: number
+}
+
+export interface PalatePairs {
+  twins: PalatePair[]
+  opposites: PalatePair[]
+  minCommon: number
+}
