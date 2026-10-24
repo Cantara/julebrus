@@ -4,7 +4,8 @@ into data/vinmonopolet/<year>.csv. Standard library only.
 
 Usage: extract_vinmonopolet_xlsx.py YEAR LIST.xlsx [SHEET_NAME]   (default sheet: the first one)
 
-Columns written: year, article_no, name, selection, category, country, organic, abv_percent, volume_l, price_nok.
+Columns written (shared with extract_vinmonopolet_blog.py; unknown = empty): year, article_no, name, brewery, style, category,
+selection, country, region, organic, abv_percent, volume_l, price_nok. 2013's Varegruppe (fermentation type) goes to `category`.
 Only the product facts are kept; the list's own text (ordering instructions, contact details) is dropped.
 """
 import csv
@@ -18,7 +19,8 @@ NS = {"m": "http://schemas.openxmlformats.org/spreadsheetml/2006/main"}
 Q = "{%s}" % NS["m"]
 HEAD = {"Varenr": "article_no", "Artikkel": "name", "Utvalg": "selection", "Varegruppe": "category", "Land": "country",
         "Økologisk": "organic", "Volpst": "abv_percent", "Volum": "volume_l", "Salgspris": "price_nok"}
-OUT = ["year", "article_no", "name", "selection", "category", "country", "organic", "abv_percent", "volume_l", "price_nok"]
+OUT = ["year", "article_no", "name", "brewery", "style", "category", "selection", "country", "region", "organic",
+       "abv_percent", "volume_l", "price_nok"]
 
 
 def read_sheet(path, sheet_name=None):
