@@ -66,6 +66,13 @@ public class ApiErrorHandler {
                 .body(new ApiError(HttpStatus.valueOf(e.getStatusCode().value()).name(), e.getReason()));
     }
 
+    /** Malformed JSON, an unknown enum value, a path id or parameter of the wrong type: 400 with a code, not a bare Spring page. */
+    @ExceptionHandler({org.springframework.http.converter.HttpMessageNotReadableException.class,
+            org.springframework.web.method.annotation.MethodArgumentTypeMismatchException.class})
+    public ResponseEntity<ApiError> unreadable(Exception e) {
+        return ResponseEntity.badRequest().body(new ApiError("VALIDATION", "Invalid request"));
+    }
+
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ApiError> invalid(MethodArgumentNotValidException e) {
         String msg = e.getBindingResult().getFieldErrors().stream()
