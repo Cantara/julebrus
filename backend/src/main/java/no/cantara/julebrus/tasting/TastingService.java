@@ -1,8 +1,11 @@
 package no.cantara.julebrus.tasting;
 
+import no.cantara.julebrus.beer.Beer;
+import no.cantara.julebrus.beer.BeerRepository;
 import no.cantara.julebrus.config.SeasonProperties;
 import no.cantara.julebrus.session.SessionRepository;
 import no.cantara.julebrus.session.TastingSession;
+import no.cantara.julebrus.web.ApiException;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,13 +27,15 @@ public class TastingService {
     }
 
     private final TastingRepository tastings;
+    private final BeerRepository beers;
     private final SessionRepository sessions;
     private final TastingRules rules;
     private final SeasonProperties season;
     private final Clock clock;
 
-    public TastingService(TastingRepository tastings, SessionRepository sessions, SeasonProperties season, Clock clock) {
+    public TastingService(TastingRepository tastings, BeerRepository beers, SessionRepository sessions, SeasonProperties season, Clock clock) {
         this.tastings = tastings;
+        this.beers = beers;
         this.sessions = sessions;
         this.season = season;
         this.rules = new TastingRules(season);
@@ -40,6 +45,11 @@ public class TastingService {
     @Transactional
     public Tasting rate(UUID userId, UUID beerId, UUID sessionId, int score, BigDecimal prediction, String notes,
                         Tasting.Notes structured, Set<String> tags) {
+        Beer beer = beers.findById(beerId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Unknown beer"));
+        if (beer.getStatus() == Beer.Status.REJECTED) {
+            throw new ApiException(HttpStatus.UNPROCESSABLE_ENTITY, "BEER_REJECTED", "That beer was rejected by the organisers");
+        }
         boolean solo = true;
         if (sessionId != null) {
             TastingSession session = sessions.findById(sessionId)

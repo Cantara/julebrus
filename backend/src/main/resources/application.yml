@@ -31,8 +31,9 @@ julebrus:
   auth:
     # Comma separated. Empty means any Google account may log in.
     allowed-domains: ${JULEBRUS_ALLOWED_DOMAINS:}
-    # Comma separated emails that may flag raters and override weights.
-    admins: ${JULEBRUS_ADMINS:totto@exoreaction.com}
+    # Comma separated emails that may flag raters, override weights and decide beers, photos and claims.
+    # Empty means no admins: production must set JULEBRUS_ADMINS (the dev profile sets its own).
+    admins: ${JULEBRUS_ADMINS:}
   sponsor:
     # Shown as "Sponsored by <name>" in the footer and on the consent screen. Blank name hides it.
     name: ${JULEBRUS_SPONSOR_NAME:eXOReaction}

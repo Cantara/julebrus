@@ -84,7 +84,12 @@ public class SessionController {
 
     @PostMapping("/{id}/beers")
     public SessionView addBeer(@PathVariable UUID id, @Valid @RequestBody AddBeerRequest in) {
-        if (!beers.existsById(in.beerId())) throw new org.springframework.web.server.ResponseStatusException(HttpStatus.NOT_FOUND, "Unknown beer");
+        Beer beer = beers.findById(in.beerId())
+                .orElseThrow(() -> new org.springframework.web.server.ResponseStatusException(HttpStatus.NOT_FOUND, "Unknown beer"));
+        // A rejected beer is not part of the tasting, not even for the person who added it. Pending ones stay usable.
+        if (beer.getStatus() == Beer.Status.REJECTED) {
+            throw new no.cantara.julebrus.web.ApiException(HttpStatus.UNPROCESSABLE_ENTITY, "BEER_REJECTED", "That beer was rejected by the organisers");
+        }
         return view(service.addBeer(id, currentUser.get().getId(), in.beerId()));
     }
 

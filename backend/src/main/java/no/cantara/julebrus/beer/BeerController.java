@@ -1,8 +1,12 @@
 package no.cantara.julebrus.beer;
 
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.DecimalMax;
+import jakarta.validation.constraints.DecimalMin;
+import jakarta.validation.constraints.Digits;
 import jakarta.validation.constraints.NotBlank;
-import no.cantara.julebrus.config.AuthProperties;
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
 import no.cantara.julebrus.tasting.TastingRepository;
 import no.cantara.julebrus.user.CurrentUser;
 import no.cantara.julebrus.user.User;
@@ -35,20 +39,28 @@ public class BeerController {
         }
     }
 
-    public record NewBeer(@NotBlank String name, String brewery, String style, BigDecimal abv,
-                          String vinmonopoletId, String imageUrl) {
+    /** Bounds match the columns in V1__init.sql (name/brewery 255, style 100, Polet number 32, image url 1024). */
+    public record NewBeer(@NotBlank @Size(max = 255) @Pattern(regexp = NO_CONTROL, message = "must not contain control characters") String name,
+                          @Size(max = 255) @Pattern(regexp = NO_CONTROL, message = "must not contain control characters") String brewery,
+                          @Size(max = 100) @Pattern(regexp = NO_CONTROL, message = "must not contain control characters") String style,
+                          @DecimalMin("0") @DecimalMax("20") @Digits(integer = 2, fraction = 1) BigDecimal abv,
+                          @Size(max = 32) @Pattern(regexp = NO_CONTROL, message = "must not contain control characters") String vinmonopoletId,
+                          @Size(max = 1024) @Pattern(regexp = "^(https?://\\S*)?$", message = "must be an http(s) link") String imageUrl) {
     }
 
+    /** No Unicode control characters (C0, DEL, C1) and no line or paragraph separators. */
+    static final String NO_CONTROL = "^[^\\p{Cc}\\p{Zl}\\p{Zp}]*$";
+
     private final BeerRepository beers;
+    private final BeerService beerService;
     private final TastingRepository tastings;
     private final CurrentUser currentUser;
-    private final AuthProperties auth;
 
-    public BeerController(BeerRepository beers, TastingRepository tastings, CurrentUser currentUser, AuthProperties auth) {
+    public BeerController(BeerRepository beers, BeerService beerService, TastingRepository tastings, CurrentUser currentUser) {
         this.beers = beers;
+        this.beerService = beerService;
         this.tastings = tastings;
         this.currentUser = currentUser;
-        this.auth = auth;
     }
 
     /** Approved and pending beers for everyone; a rejected beer only for the person who added it. */
@@ -81,13 +93,7 @@ public class BeerController {
     @ResponseStatus(HttpStatus.CREATED)
     public BeerView create(@Valid @RequestBody NewBeer in) {
         User me = currentUser.get();
-        Beer.Status status = auth.isAdmin(me.getEmail()) ? Beer.Status.APPROVED : Beer.Status.PENDING;
-        Beer saved = beers.save(new Beer(in.name().trim(), in.brewery(), in.style(), in.abv(),
-                blankToNull(in.vinmonopoletId()), blankToNull(in.imageUrl()), me.getId(), status));
+        Beer saved = beerService.create(me, in);
         return BeerView.of(saved, 0, me.getId());
-    }
-
-    private static String blankToNull(String s) {
-        return (s == null || s.isBlank()) ? null : s.trim();
     }
 }
