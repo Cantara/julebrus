@@ -11,7 +11,7 @@ Parameters:
   AppHostName:
     Type: String
     Default: xmas.cantara.no
-    Description: Public host name of the app. DNS is not managed by this stack: the A record is created by hand.
+    Description: "Public host name of the app. DNS is not managed by this stack, the A record is created by hand."
   GitHubSubjectPrefix:
     Type: String
     Default: repo:Cantara/julebrus

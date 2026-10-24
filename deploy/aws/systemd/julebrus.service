@@ -1,0 +1,23 @@
+[Unit]
+Description=Julebrus, the Cantara Christmas beer tasting (Spring Boot)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+User=julebrus
+Group=julebrus
+EnvironmentFile=/etc/julebrus/app.env
+EnvironmentFile=-/run/julebrus/secrets.env
+# Build the secrets env as root before each start; nothing secret is stored on disk outside tmpfs.
+ExecStartPre=+/opt/julebrus/julebrus-prestart.sh
+WorkingDirectory=/opt/julebrus/current
+ExecStart=/usr/bin/java -XX:MaxRAMPercentage=60 -jar /opt/julebrus/current/app.jar --server.port=8080 --server.address=127.0.0.1
+Restart=on-failure
+RestartSec=5
+NoNewPrivileges=true
+ProtectSystem=strict
+ProtectHome=true
+PrivateTmp=true
+
+[Install]
+WantedBy=multi-user.target

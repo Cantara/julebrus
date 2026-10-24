@@ -1,0 +1,7 @@
+[Unit]
+Description=Pull and install the latest Julebrus release
+After=network-online.target
+
+[Service]
+Type=oneshot
+ExecStart=/opt/julebrus/julebrus-update.sh
