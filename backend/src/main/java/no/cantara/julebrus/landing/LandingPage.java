@@ -447,6 +447,8 @@ public final class LandingPage {
                         "1997 has only the winner, and for many years nothing was found.")).append("</li>\n")
                 .append("<li>").append(l("Vektene varierte (nye teller 0,5, en gruppeoppføring i 2007 teller 2,5, stemmer uten oppgitt vekt teller 1), og både lag og utvalg skiftet fra år til år. Tallene sier noe om hvert år, men er ikke direkte sammenlignbare mellom årene.",
                         "Weights varied (newcomers count 0.5, a group entry in 2007 counts 2.5, votes without a stated weight count 1), and both the panel and the selection changed every year. The numbers describe each year, but are not directly comparable between years.")).append("</li>\n")
+                .append("<li>").append(l("Noen år ble også fenalår og annen spekemat scoret, og noen ganger vertskapet. Det er med i stemmene, terningen og årssnittet, men ikke i antall øl, årets beste eller ølene som går igjen.",
+                        "Some years the sheets also scored fenalår (cured lamb) and other cured meat, and sometimes the hosts. They count in the votes, the dice and the yearly mean, but not in the number of beers, the best of each year or the beers that come back.")).append("</li>\n")
                 .append("<li>").append(l("Ølnavn står slik de er skrevet hvert år, og er ikke slått sammen.",
                         "Beer names are as written each year, and are not merged.")).append("</li>\n")
                 .append("</ul>\n</aside>\n");
