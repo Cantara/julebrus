@@ -1,0 +1,11 @@
+year,as_written,canonical
+# Corrections to beer names in the earlier seasons. as_written is the name exactly as in history/<year>.csv,
+# canonical the right one. Applied on every startup to the ratings already in the database; the original name
+# is kept (historic_ratings.beer_name_original). Remove a row and the original comes back at the next start.
+# Candidates to look at: data/review/beer-name-candidates.csv (python3 -I tools/suggest_beer_name_fixes.py).
+# Certain: the same name as Vinmonopolet's list of that year, apart from case.
+2014,Hansa Juleale,Hansa JuleAle
+2014,Sagene sterk jul,Sagene Sterk Jul
+2015,Hansa Juleale,Hansa JuleAle
+2019,Ringnes julebokk,Ringnes Julebokk
+2019,Ringnes juleøl,Ringnes Juleøl

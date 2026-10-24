@@ -250,6 +250,22 @@ history files with:
 python3 tools/to_app_history.py backend/src/main/resources/history
 ```
 
+## Fixing a beer name
+
+Some old beer names are misspelled ("Rignes Julebokk"). Fix them in one file, never in the raw data:
+
+1. On a branch, add a line `year,as written,correct name` to `backend/src/main/resources/history/beer_names.csv`
+   (the name exactly as in `data/votes.csv`; quote it if it has a comma). Remove a line to undo a fix.
+2. Open a pull request. The fix takes effect on the next deploy and restart: the app renames the ratings already
+   in its database; nothing is deleted or re-imported.
+3. The original spelling is kept (`historic_ratings.beer_name_original`). `data/` and `history/<year>.csv` stay as
+   written; the landing page numbers use the corrected names.
+
+Candidates: `python3 -I tools/suggest_beer_name_fixes.py` writes a review sheet,
+`data/review/beer-name-candidates.csv` (suggestions only; fill in its `decision` column). After a change run
+`python3 -I tools/to_landing_stats.py backend/src/main/resources/landing/history-stats.json` and
+`cd backend && mvn -B -ntp test -Dtest=BeerNamesTest,LandingStatsTest,SuggestBeerNameFixesTest`.
+
 ## Push notifications
 
 Two messages, both opt-in per browser from the "Varsler" card on the profile page: a daily
@@ -283,10 +299,13 @@ page (name, optional sponsor line, optional e-mail domains that pre-select the t
 
 A visitor who is not signed in gets a public landing page at `/` (server-rendered, both languages,
 `?lang=en` for English); a signed-in person goes straight into the app as before. `/velkommen` always shows
-the page (the dev profile signs everyone in, so use that path locally), and the app sends a logged-out
+the page (the dev profile signs everyone in, so use that path locally), and so do `/welcome` and `/landing`
+(same page, same `?lang=en`); the app sends a logged-out
 visitor on `/` there instead of straight to Google. The page has no scripts and loads nothing from other
 sites: it sends `default-src 'none'; style-src 'unsafe-inline'; img-src 'self'` and draws its charts as
-CSS and inline SVG. It reads nothing from the database. Its history numbers come from
+CSS and inline SVG. It reads nothing from the database. It describes the season's features (teams, live reveal,
+blind pour, the podium tip, label photos); the push-notification card appears only when the VAPID keys are set,
+with the configured nudge time. Its history numbers come from
 `backend/src/main/resources/landing/history-stats.json`, aggregates only (no names, no per-person scores),
 written from `data/` by:
 

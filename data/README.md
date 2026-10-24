@@ -41,3 +41,7 @@ differs from the votes listed in the same source.
 
 `python3 tools/to_landing_stats.py backend/src/main/resources/landing/history-stats.json` writes the aggregates the public
 landing page shows (counts and per-beer numbers only, no names). Rerun it whenever `data/` changes; `LandingStatsTest` fails otherwise.
+
+Beer names stay as written in these files. Corrections live in `backend/src/main/resources/history/beer_names.csv`;
+`tools/to_landing_stats.py` applies them. `python3 -I tools/suggest_beer_name_fixes.py` writes a review sheet of likely
+misspellings to `data/review/beer-name-candidates.csv` (suggestions only, a person decides).
