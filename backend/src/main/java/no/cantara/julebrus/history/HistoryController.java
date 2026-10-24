@@ -1,6 +1,7 @@
 package no.cantara.julebrus.history;
 
 import no.cantara.julebrus.user.CurrentUser;
+import no.cantara.julebrus.user.User;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -10,6 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -38,11 +40,14 @@ public class HistoryController {
     private final HistoricSeasonRepository seasons;
     private final HistoricRatingRepository ratings;
     private final CurrentUser currentUser;
+    private final ClaimService claims;
 
-    public HistoryController(HistoricSeasonRepository seasons, HistoricRatingRepository ratings, CurrentUser currentUser) {
+    public HistoryController(HistoricSeasonRepository seasons, HistoricRatingRepository ratings, CurrentUser currentUser,
+                             ClaimService claims) {
         this.seasons = seasons;
         this.ratings = ratings;
         this.currentUser = currentUser;
+        this.claims = claims;
     }
 
     @GetMapping("/seasons")
@@ -51,12 +56,19 @@ public class HistoryController {
                 .sorted((a, b) -> Integer.compare(b.year(), a.year())).toList();
     }
 
-    /** The logged-in person's own ratings from earlier years, matched on email. */
+    /**
+     * The logged-in person's own ratings from earlier years: matched on email, plus the
+     * ratings under any rater name an admin has approved for them. One query, so no duplicates.
+     */
     @GetMapping("/me")
     public List<RatingView> mine() {
+        User me = currentUser.get();
         Map<Integer, HistoricSeason> byYear = seasonIndex();
-        return ratings.findByRaterEmailIgnoreCaseOrderBySeasonYearDescBeerNameAsc(currentUser.get().getEmail()).stream()
-                .map(r -> view(r, byYear)).toList();
+        Set<String> names = claims.approvedNamesOf(me.getId());
+        List<HistoricRating> found = names.isEmpty()
+                ? ratings.findByRaterEmailIgnoreCaseOrderBySeasonYearDescBeerNameAsc(me.getEmail())
+                : ratings.findMineByEmailOrApprovedNames(me.getEmail(), names);
+        return found.stream().map(r -> view(r, byYear)).toList();
     }
 
     /** Everything said about one beer in earlier years, matched on name. */
