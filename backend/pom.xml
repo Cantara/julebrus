@@ -19,6 +19,8 @@
 
   <properties>
     <java.version>21</java.version>
+    <!-- Boot 3.5.16 manages Tomcat 10.1.55, which carries GHSA-9xv2-5v5q-p794 and friends. -->
+    <tomcat.version>10.1.61</tomcat.version>
   </properties>
 
   <dependencies>
