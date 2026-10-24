@@ -1,5 +1,8 @@
 package no.cantara.julebrus.blind;
 
+import no.cantara.julebrus.beer.Beer;
+import no.cantara.julebrus.beer.BeerRepository;
+import no.cantara.julebrus.live.SessionEvents;
 import no.cantara.julebrus.session.SessionService;
 import no.cantara.julebrus.session.TastingSession;
 import no.cantara.julebrus.web.ApiException;
@@ -24,11 +27,15 @@ public class BlindService {
 
     private final BlindRoundRepository rounds;
     private final SessionService sessions;
+    private final BeerRepository beers;
+    private final SessionEvents events;
     private final Clock clock;
 
-    public BlindService(BlindRoundRepository rounds, SessionService sessions, Clock clock) {
+    public BlindService(BlindRoundRepository rounds, SessionService sessions, BeerRepository beers, SessionEvents events, Clock clock) {
         this.rounds = rounds;
+        this.beers = beers;
         this.sessions = sessions;
+        this.events = events;
         this.clock = clock;
     }
 
@@ -62,7 +69,13 @@ public class BlindService {
         if (answerBeerId == null || !options.contains(answerBeerId)) {
             throw new ApiException(HttpStatus.UNPROCESSABLE_ENTITY, "BLIND_ANSWER", "The poured beer must be one of the options");
         }
-        return rounds.save(new BlindRound(sessionId, hostId, answerBeerId, List.copyOf(options), clock.instant()));
+        // Pending beers stay usable; one the organisers rejected (also after it was added to the table) is not.
+        if (beers.findAllById(options).stream().anyMatch(b -> b.getStatus() == Beer.Status.REJECTED)) {
+            throw new ApiException(HttpStatus.UNPROCESSABLE_ENTITY, "BLIND_OPTIONS", "A rejected beer cannot be used");
+        }
+        BlindRound round = rounds.save(new BlindRound(sessionId, hostId, answerBeerId, List.copyOf(options), clock.instant()));
+        events.publish(sessionId, SessionEvents.Kind.BLIND);
+        return round;
     }
 
     @Transactional
@@ -83,6 +96,7 @@ public class BlindService {
         }
         round.addGuess(userId, beerId, clock.instant());
         if (everyGuestGuessed(session, round)) round.reveal(clock.instant());
+        events.publish(sessionId, SessionEvents.Kind.BLIND);
         return round;
     }
 
@@ -97,6 +111,7 @@ public class BlindService {
             throw new ApiException(HttpStatus.UNPROCESSABLE_ENTITY, "BLIND_NO_GUESSES", "Nobody has guessed yet");
         }
         round.reveal(clock.instant());
+        events.publish(sessionId, SessionEvents.Kind.BLIND);
         return round;
     }
 
@@ -104,6 +119,7 @@ public class BlindService {
     @Transactional
     public void revealAllOpen(UUID sessionId) {
         rounds.findBySessionIdAndRevealedAtIsNull(sessionId).forEach(r -> r.reveal(clock.instant()));
+        events.publish(sessionId, SessionEvents.Kind.BLIND);
     }
 
     /** Correct blind guesses per person over the whole season, for badges and the finale. */

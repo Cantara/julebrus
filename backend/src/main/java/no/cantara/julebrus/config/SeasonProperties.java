@@ -31,4 +31,9 @@ public record SeasonProperties(
     public Instant revealAt() {
         return end.atTime(finaleTime).atZone(zone).toInstant();
     }
+
+    /** Podium tips close when the last day starts: the night before the reveal, Oslo time. */
+    public Instant tipDeadline() {
+        return end.atStartOfDay(zone).toInstant();
+    }
 }

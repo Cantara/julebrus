@@ -2,11 +2,8 @@
 import { onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { get, logout, post } from '../api/client'
-import AdminBeerImport from '../components/AdminBeerImport.vue'
-import AdminMatches from '../components/AdminMatches.vue'
-import AdminBeers from '../components/AdminBeers.vue'
-import AdminClaims from '../components/AdminClaims.vue'
-import AdminRaterLinks from '../components/AdminRaterLinks.vue'
+import PushSettings from '../components/PushSettings.vue'
+import TeamPicker from '../components/TeamPicker.vue'
 import DumbbellChart from '../components/DumbbellChart.vue'
 import LiftChart from '../components/LiftChart.vue'
 import ClaimHistory from '../components/ClaimHistory.vue'
@@ -19,6 +16,7 @@ import { useMe } from '../stores/me'
 const store = useMe()
 const router = useRouter()
 const confirmingWithdraw = ref(false)
+const editingTeams = ref(false)
 const badges = ref<BadgeView[]>([])
 const mine = ref<Tasting[]>([])
 const history = ref<HistoricRating[]>([])
@@ -77,6 +75,22 @@ const byYear = () => {
     <p class="muted" style="margin: 6px 0 0">{{ store.me.weight.reason }}</p>
     <p class="muted" style="margin: 6px 0 0">Nye starter på 0,5. En vanlig sesong med minst sju terningkast gir 1,0 neste år. Juks gir 0, men du kan fortsatt smake og stemme.</p>
   </div>
+
+  <div class="card">
+    <div class="row">
+      <div>
+        <strong>Lag</strong>
+        <div v-if="store.me?.teams.length"><span v-for="t in store.me.teams" :key="t.id" class="pill on">{{ t.name }}</span></div>
+        <div v-else class="muted">Du spiller ikke for noe lag ennå.</div>
+      </div>
+      <button v-if="!editingTeams" class="secondary" @click="editingTeams = true">{{ store.me?.teams.length ? 'Endre' : 'Velg lag' }}</button>
+    </div>
+    <div v-if="editingTeams" style="margin-top: 10px">
+      <TeamPicker @done="editingTeams = false" />
+    </div>
+  </div>
+
+  <PushSettings />
 
   <h2>Merker</h2>
   <div class="card">
@@ -159,11 +173,13 @@ const byYear = () => {
   <p v-if="!history.length" class="muted">Ingen historikk koblet til {{ store.me?.email }} ennå.</p>
 
   <ClaimHistory @changed="reloadHistory" />
-  <AdminClaims v-if="store.me?.admin" />
-  <AdminRaterLinks v-if="store.me?.admin" />
-  <AdminBeers v-if="store.me?.admin" />
-  <AdminBeerImport v-if="store.me?.admin" />
-  <AdminMatches v-if="store.me?.admin" />
+  <router-link v-if="store.me?.admin" class="card row" to="/admin" style="text-decoration: none">
+    <div>
+      <strong class="display">Admin</strong>
+      <div class="muted">Nye øl, bilder, import, lag, krav og koblinger til tidligere år.</div>
+    </div>
+    <span class="muted">›</span>
+  </router-link>
 
   <h2>{{ t('withdrawTitle') }}</h2>
   <div class="card">

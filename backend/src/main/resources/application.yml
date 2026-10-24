@@ -1,6 +1,11 @@
 spring:
   application:
     name: julebrus
+  servlet:
+    multipart:
+      # Label photos: hard limit before anything is decoded. Larger requests are answered 413 PHOTO_TOO_LARGE.
+      max-file-size: 6MB
+      max-request-size: 7MB
   jpa:
     open-in-view: false
     hibernate:
@@ -31,11 +36,20 @@ julebrus:
   mcp:
     # Bearer token agents present on /mcp. Empty disables the endpoint.
     token: ${JULEBRUS_MCP_TOKEN:}
+  push:
+    # Web Push (VAPID). Generate a pair with GET /api/push/keygen as an admin. Blank keys switch notifications off.
+    vapid-public-key: ${JULEBRUS_VAPID_PUBLIC_KEY:}
+    vapid-private-key: ${JULEBRUS_VAPID_PRIVATE_KEY:}
+    # Contact for the push services (mailto: or https:). Defaults to the contact e-mail.
+    subject: ${JULEBRUS_PUSH_SUBJECT:}
+    # Local time of the daily "dagens luke" nudge to people who have not tasted yet.
+    nudge-time: "17:00"
   auth:
     # Comma separated. Empty means any Google account may log in.
     allowed-domains: ${JULEBRUS_ALLOWED_DOMAINS:}
-    # Comma separated emails that may flag raters and override weights.
-    admins: ${JULEBRUS_ADMINS:totto@exoreaction.com}
+    # Comma separated emails that may flag raters, override weights and decide beers, photos and claims.
+    # Empty means no admins: production must set JULEBRUS_ADMINS (the dev profile sets its own).
+    admins: ${JULEBRUS_ADMINS:}
   sponsor:
     # Shown as "Sponsored by <name>" in the footer and on the consent screen. Blank name hides it.
     name: ${JULEBRUS_SPONSOR_NAME:eXOReaction}
@@ -43,6 +57,11 @@ julebrus:
   contact:
     # Named in the consent text as where to ask for deletion. Blank means "contact the organisers".
     email: ${JULEBRUS_CONTACT_EMAIL:}
+
+server:
+  tomcat:
+    # Read (and discard) up to this much of a refused upload so the client gets the 413 instead of a reset connection.
+    max-swallow-size: 16MB
 
 management:
   endpoints:

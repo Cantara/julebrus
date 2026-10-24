@@ -80,6 +80,10 @@ and attaches their login email.
    device, within their own per-day cap.
 4. **Locked blind reveal:** scores in a session are hidden until every member has
    rated that beer. Then they are revealed together. No anchoring on the loudest voice.
+   Together means together: every write at the table (a score, a duel, a join, a beer, a
+   blind guess) is pushed to the members over server-sent events (`/api/sessions/{id}/events`),
+   and every phone refetches at once, so the paper tears off on all of them in the same
+   second. A slow poll and a refetch when the tab comes back cover a stream that died.
 5. After two or more beers, each member answers duel questions: "A or B?". Duels
    feed a Bradley–Terry ranking that ignores how generous or stingy each rater is.
 6. Optional prediction step: guess the group average before the reveal. Accuracy
@@ -91,6 +95,39 @@ and attaches their login email.
    table closes. One open round per table. Three correct guesses in a season give the
    Blind Taster badge; most correct guesses (min. 3 guesses, ties by hit rate) is a
    finale award.
+
+## Teams (decided 24 Oct)
+
+A person plays for one or more teams. Right after consent, once, the app asks "Hvilket lag spiller du
+for?": Cantara and Rebel are seeded, "Et annet lag?" opens a mail to the contact address (other teams
+are enabled by an organiser against a contribution to the tasting; no billing in the app), and "Velg
+senere" answers the question without a team. The e-mail domain suggests a team (cantara.no → Cantara)
+but never decides. The choice is changeable on the profile; admins create, edit and enable teams there.
+
+What a team changes: team pills next to names around the table; a team filter on the ranking (the same
+Bayesian ranking over that team's raters only, with the team's own mean as prior); in the finale each
+team's own number one and the award "Årets lag" (most tastings per member, so a small team can win);
+an MCP tool `team_ranking`. Membership is visible to other tasters like the display name; the consent
+text gets that line at the next version bump.
+
+## Tipping the podium (decided 24 Oct)
+
+Everyone may tip the season's podium (gold, silver, bronze among the beers that count), one tip
+per person, changeable or withdrawable until the last day begins (midnight before the reveal,
+Oslo time: `SeasonProperties.tipDeadline()`). Scoring at the reveal against the official podium:
+3 points for a beer in its right spot, 1 for a beer on the podium in the wrong spot, 9 is perfect
+(`TipScoring`, pure). Before the reveal the finale only says how many have tipped; after it the
+whole league is shown, best first, earlier tip ahead on a tie, and "Årets tipper" joins the
+awards (at least one point).
+
+## Push notifications (decided 24 Oct)
+
+Opt-in per browser. A daily nudge at 17:00 Oslo time to anyone who has not opened that day's
+door, once per day per browser, during the season only; and one "Stjernen er tent" at the reveal
+to browsers subscribed before it (`PushPlanner`, pure). Web Push with VAPID keys from the
+environment; the message encryption is RFC 8291 on the JDK, verified against the RFC's own test
+vector. Subscriptions hold only what the browser hands over (endpoint, its public key, its auth
+secret) and are deleted on unsubscribe, on 404/410 from the push service, or after five failures.
 
 ## Statistics
 

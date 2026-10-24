@@ -2,6 +2,7 @@
 import { computed, onMounted, onUnmounted, ref } from 'vue'
 import { useRoute } from 'vue-router'
 import { get, post } from '../api/client'
+import { subscribeSession, type LiveStatus } from '../api/live'
 import type { Beer, BlindRound, DuelPair, Session } from '../api/types'
 import BlindPour from '../components/BlindPour.vue'
 import QrCode from '../components/QrCode.vue'
@@ -17,6 +18,10 @@ const q = ref('')
 const pending = ref<DuelPair[]>([])
 const rounds = ref<BlindRound[]>([])
 const error = ref('')
+const live = ref<LiveStatus>('connecting')
+/** The gift tag with the QR stays up while the host is alone; once there is company it folds to a line. */
+const showQr = ref<boolean | null>(null)
+const qrOpen = computed(() => showQr.value ?? (session.value ? session.value.members.length < 2 : true))
 
 const isHost = computed(() => session.value && store.me && session.value.hostId === store.me.id)
 const joinUrl = computed(() => `${location.origin}/join/${session.value?.joinCode ?? ''}`)
@@ -81,6 +86,22 @@ async function close() {
 }
 
 let timer: number | undefined
+let unsubscribe: (() => void) | undefined
+let refreshQueued: number | undefined
+
+/** Several events can land within a few ms (the last score reveals and closes a round); one refetch is enough. */
+function refreshSoon() {
+  if (refreshQueued) return
+  refreshQueued = window.setTimeout(() => {
+    refreshQueued = undefined
+    refresh().catch(() => {})
+  }, 120)
+}
+
+function onVisible() {
+  if (document.visibilityState === 'visible') refreshSoon()
+}
+
 onMounted(async () => {
   try {
     await refresh()
@@ -88,10 +109,23 @@ onMounted(async () => {
   } catch (e) {
     error.value = (e as Error).message
   }
-  // Cheap polling keeps everyone's reveal state in sync around the table.
-  timer = window.setInterval(() => refresh().catch(() => {}), 5000)
+  // Live: every write at the table pushes an event, and every phone refetches at once.
+  unsubscribe = subscribeSession(props.id, refreshSoon, (s) => (live.value = s))
+  // Fallback for a stream that silently died (a proxy, a sleeping phone): every 5 s while
+  // not connected, every 30 s while live, and a refetch when the tab comes back.
+  let tick = 0
+  timer = window.setInterval(() => {
+    tick += 1
+    if (live.value !== 'live' || tick % 6 === 0) refresh().catch(() => {})
+  }, 5000)
+  document.addEventListener('visibilitychange', onVisible)
 })
-onUnmounted(() => clearInterval(timer))
+onUnmounted(() => {
+  clearInterval(timer)
+  clearTimeout(refreshQueued)
+  unsubscribe?.()
+  document.removeEventListener('visibilitychange', onVisible)
+})
 </script>
 
 <template>
@@ -99,18 +133,28 @@ onUnmounted(() => clearInterval(timer))
   <template v-if="session">
     <h1>Smaking {{ session.closedAt ? '(avsluttet)' : '' }}</h1>
 
-    <div v-if="!session.closedAt" class="card gift-tag" style="text-align: center">
+    <div v-if="!session.closedAt && qrOpen" class="card gift-tag" style="text-align: center">
       <span class="string" aria-hidden="true" />
       <span class="hole" aria-hidden="true" />
       <p class="muted" style="margin: 0 0 8px">Til: alle rundt bordet</p>
       <QrCode :value="joinUrl" :size="220" />
       <p class="code" style="margin: 10px 0 0">{{ session.joinCode }}</p>
       <p class="muted">Skann eller skriv inn koden for å bli med</p>
+      <button v-if="session.members.length >= 2" class="secondary" style="margin-top: 4px" @click="showQr = false">Skjul</button>
+    </div>
+    <div v-else-if="!session.closedAt" class="card row">
+      <span class="muted">Flere til bordet? Kode <strong class="display" style="letter-spacing: 0.2em">{{ session.joinCode }}</strong></span>
+      <button class="secondary" @click="showQr = true">Vis QR</button>
     </div>
 
     <div class="card">
-      <strong>Rundt bordet</strong>
-      <div><span v-for="m in session.members" :key="m.userId" class="pill" :class="{ on: m.userId === myId }">{{ m.displayName }}</span></div>
+      <div class="row">
+        <strong>Rundt bordet</strong>
+        <span class="live" :class="live" :title="live === 'live' ? 'Direkte: alle ser avsløringen samtidig' : live === 'connecting' ? 'Kobler til' : 'Frakoblet, oppdaterer hvert 5. sekund'">
+          <i aria-hidden="true" />{{ live === 'live' ? 'direkte' : live === 'connecting' ? 'kobler til' : 'frakoblet' }}
+        </span>
+      </div>
+      <div><span v-for="m in session.members" :key="m.userId" class="pill" :class="{ on: m.userId === myId }">{{ m.displayName }}<span v-if="m.teams.length" class="muted"> · {{ m.teams.join(' · ') }}</span></span></div>
       <p v-if="session.solo" class="muted">Du er alene. Dette teller som en solo-dag til noen blir med.</p>
     </div>
 
@@ -159,3 +203,11 @@ onUnmounted(() => clearInterval(timer))
     <button v-if="isHost && !session.closedAt" class="secondary" style="width: 100%; margin-top: 12px" @click="close">Avslutt smakingen</button>
   </template>
 </template>
+
+<style scoped>
+.live { font-size: 0.75rem; color: var(--muted); display: inline-flex; align-items: center; gap: 5px; }
+.live i { width: 8px; height: 8px; border-radius: 50%; background: var(--muted); opacity: 0.5; }
+.live.live i { background: #3c8a4f; opacity: 1; box-shadow: 0 0 6px #3c8a4f88; }
+.live.connecting i { animation: blink 1.2s ease-in-out infinite; }
+@keyframes blink { 50% { opacity: 0.15; } }
+</style>

@@ -18,6 +18,54 @@ export interface Me {
   admin: boolean
   consentRequired: boolean
   consentVersion: string
+  /** the enabled teams the person plays for; empty before the choice and after "later" */
+  teams: { id: string; slug: string; name: string }[]
+  /** false until the team page has been answered, "later" included */
+  teamsChosen: boolean
+  /** the newest open table this person sits at; null when none */
+  openTable: OpenTable | null
+}
+
+export interface OpenTable {
+  id: string
+  hostName: string
+  host: boolean
+  members: number
+  beers: number
+  pendingForMe: number
+}
+
+export interface MySession {
+  id: string
+  hostName: string
+  host: boolean
+  members: number
+  beers: number
+  pendingForMe: number
+  createdAt: string
+  closedAt?: string
+}
+
+export interface Team {
+  id: string
+  slug: string
+  name: string
+  sponsorName?: string
+  sponsorUrl?: string
+  members: number
+  suggested: boolean
+  mine: boolean
+}
+
+export interface AdminTeam {
+  id: string
+  slug: string
+  name: string
+  sponsorName?: string
+  sponsorUrl?: string
+  domains?: string
+  enabled: boolean
+  members: number
 }
 
 export interface Beer {
@@ -32,6 +80,40 @@ export interface Beer {
   status: 'PENDING' | 'APPROVED' | 'REJECTED'
   mine: boolean
   homebrew: boolean
+  /** a cover is available to this caller at /api/beers/{id}/photo */
+  hasPhoto: boolean
+  /** the caller's own newest photo of the beer */
+  myPhotoId?: string | null
+  myPhotoStatus?: 'PENDING' | 'APPROVED' | 'REJECTED' | null
+  /** approved and Vinmonopolet strength: in the ranking and tippable */
+  counts: boolean
+}
+
+export interface PushConfig {
+  enabled: boolean
+  publicKey?: string
+  nudgeTime: string
+}
+
+export interface TipPick {
+  beerId: string
+  name: string
+  brewery?: string
+}
+
+export interface MyTip {
+  tip: { podium: TipPick[]; createdAt: string; updatedAt: string } | null
+  deadline: string
+  closed: boolean
+  tipped: number
+}
+
+export interface TipResult {
+  userId: string
+  name: string
+  tip: string[]
+  points: number
+  createdAt: string
 }
 
 export interface StructuredNotes {
@@ -80,7 +162,7 @@ export interface Session {
   createdAt: string
   closedAt?: string
   solo: boolean
-  members: { userId: string; displayName: string }[]
+  members: { userId: string; displayName: string; teams: string[] }[]
   beers: SessionBeer[]
 }
 
@@ -154,6 +236,20 @@ export interface Finale {
   podium?: BeerRank[]
   duelPodium?: DuelRank[]
   awards?: Award[]
+  teamWinners?: TeamWinner[]
+  /** the tipping league, best first; only after the reveal */
+  tips?: TipResult[]
+  tipped: number
+}
+
+export interface TeamWinner {
+  slug: string
+  team: string
+  beerId: string
+  beerName: string
+  brewery?: string
+  bayesian: number
+  ratings: number
 }
 
 export interface ConsentView {
@@ -311,6 +407,16 @@ export interface PalatePairs {
   twins: PalatePair[]
   opposites: PalatePair[]
   minCommon: number
+}
+
+export interface AdminPhoto {
+  id: string
+  beerId: string
+  beerName: string
+  uploaderName: string
+  uploaderEmail: string
+  status: 'PENDING' | 'APPROVED' | 'REJECTED'
+  createdAt: string
 }
 
 export interface BlindOption {

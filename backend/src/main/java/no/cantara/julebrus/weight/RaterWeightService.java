@@ -29,11 +29,14 @@ public class RaterWeightService {
     private final UserRepository users;
     private final SeasonProperties season;
     private final no.cantara.julebrus.consent.ConsentService consents;
+    private final no.cantara.julebrus.history.HistoricRaterClaimRepository claims;
 
     public RaterWeightService(RaterWeightRepository weights, HistoricRatingRepository history,
                               TastingRepository tastings, UserRepository users, SeasonProperties season,
-                              no.cantara.julebrus.consent.ConsentService consents) {
+                              no.cantara.julebrus.consent.ConsentService consents,
+                              no.cantara.julebrus.history.HistoricRaterClaimRepository claims) {
         this.consents = consents;
+        this.claims = claims;
         this.weights = weights;
         this.history = history;
         this.tastings = tastings;
@@ -51,6 +54,13 @@ public class RaterWeightService {
      */
     public RaterWeight current(User user) {
         return weights.findBySeasonYearAndEmailIgnoreCase(season.year(), user.getEmail())
+                .map(w -> {
+                    // A row the policy decided is re-decided on every read: the person's earlier
+                    // seasons can come into view later (an approved claim, a linked name).
+                    if (w.isFlagged() || w.isOverridden()) return w;
+                    RaterWeightPolicy.Decision d = RaterWeightPolicy.decide(mostRecentPreviousSeason(user));
+                    return w.redecide(d.weight(), d.reason()) ? weights.save(w) : w;
+                })
                 .orElseGet(() -> {
                     RaterWeightPolicy.Decision d = RaterWeightPolicy.decide(mostRecentPreviousSeason(user));
                     try {
@@ -91,13 +101,23 @@ public class RaterWeightService {
         return w;
     }
 
+    /**
+     * The most recent earlier season, from this app's tastings and from the history: rows
+     * matched on e-mail, plus every row of a person (key) whose claim an admin approved.
+     */
     private Optional<RaterWeightPolicy.PreviousSeason> mostRecentPreviousSeason(User user) {
+        java.util.Set<String> keys = claims.findByUserIdOrderByCreatedAtAsc(user.getId()).stream()
+                .filter(c -> c.getStatus() == no.cantara.julebrus.history.HistoricRaterClaim.Status.APPROVED)
+                .map(no.cantara.julebrus.history.HistoricRaterClaim::getRaterKey)
+                .collect(java.util.stream.Collectors.toSet());
         TreeSet<Integer> years = new TreeSet<>(history.findSeasonYearsByEmail(user.getEmail()));
+        if (!keys.isEmpty()) years.addAll(history.findSeasonYearsByKeys(keys));
         years.addAll(tastings.findSeasonYears(user.getId()));
         Integer previous = years.lower(season.year());
         if (previous == null) return Optional.empty();
 
         int scores = history.countBySeasonYearAndRaterEmailIgnoreCase(previous, user.getEmail())
+                + (keys.isEmpty() ? 0 : history.countBySeasonYearAndKeys(previous, keys))
                 + tastings.countByUserIdAndTastedDayBetween(user.getId(),
                 LocalDate.of(previous, 1, 1), LocalDate.of(previous, 12, 31));
         boolean flagged = weights.findBySeasonYearAndEmailIgnoreCase(previous, user.getEmail())

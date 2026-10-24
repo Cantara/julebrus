@@ -98,8 +98,10 @@ nav.tabs {
   background: var(--card); border-top: 1px solid var(--line);
   padding: 8px 0 calc(8px + env(safe-area-inset-bottom));
 }
-nav.tabs a { text-decoration: none; font-size: 0.8rem; color: var(--muted); text-align: center; min-width: 64px; }
+nav.tabs a { text-decoration: none; font-size: 0.72rem; color: var(--muted); text-align: center; min-width: 64px; display: flex; flex-direction: column; align-items: center; gap: 2px; position: relative; }
+nav.tabs a svg { width: 24px; height: 24px; fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
 nav.tabs a.router-link-active { color: var(--brand); font-weight: 600; }
+nav.tabs a .dot { position: absolute; top: -2px; right: 14px; width: 9px; height: 9px; border-radius: 50%; background: var(--candle); box-shadow: 0 0 0 2px var(--card), 0 0 6px var(--glow); }
 table { width: 100%; border-collapse: collapse; }
 td, th { text-align: left; padding: 8px 6px; border-bottom: 1px solid var(--line); font-variant-numeric: tabular-nums; }
 th { font-size: 0.8rem; color: var(--muted); font-weight: 600; }

@@ -50,6 +50,14 @@ public class RankingService {
 
     /** The official ranking: weighted 1 to 6 scores, shrunk towards the season mean. */
     public List<BeerRank> beerRanking() {
+        return beerRanking(null);
+    }
+
+    /**
+     * The same ranking over one group of raters only (a team), null meaning everyone. The
+     * prior is that group's own mean, so a strict team is not shrunk towards the generous one.
+     */
+    public List<BeerRank> beerRanking(java.util.Set<UUID> onlyRaters) {
         Map<UUID, Double> weightOf = weights.weightsByUserId();
         Map<UUID, Beer> beerById = beerIndex();
         // Only approved Vinmonopolet-strength beers count; pending, rejected and butikkøl are left out,
@@ -57,6 +65,7 @@ public class RankingService {
         Map<UUID, Long> perBeer = tastings.findAll().stream()
                 .collect(Collectors.groupingBy(Tasting::getBeerId, Collectors.counting()));
         List<Tasting> all = tastings.findAll().stream()
+                .filter(t -> onlyRaters == null || onlyRaters.contains(t.getUserId()))
                 .filter(t -> beerById.get(t.getBeerId()) != null && beerById.get(t.getBeerId()).counts())
                 .filter(t -> !beerById.get(t.getBeerId()).isHomebrew()
                         || perBeer.getOrDefault(t.getBeerId(), 0L) >= Beer.HOMEBREW_MIN_RATINGS)
@@ -99,6 +108,11 @@ public class RankingService {
                         brewery(beerById.get(e.getKey())), e.getValue()))
                 .toList();
         return withRank(ranked, (r, i) -> new DuelRank(i, r.beerId(), r.name(), r.brewery(), r.strength()));
+    }
+
+    /** A beer's name by id, "?" when unknown. */
+    public String nameOf(UUID beerId) {
+        return beers.findById(beerId).map(Beer::getName).orElse("?");
     }
 
     private Map<UUID, Beer> beerIndex() {

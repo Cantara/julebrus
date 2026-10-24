@@ -8,6 +8,7 @@ import no.cantara.julebrus.beer.BeerRepository;
 import no.cantara.julebrus.blind.BlindService;
 import no.cantara.julebrus.tasting.Tasting;
 import no.cantara.julebrus.tasting.TastingRepository;
+import no.cantara.julebrus.team.TeamService;
 import no.cantara.julebrus.user.CurrentUser;
 import no.cantara.julebrus.user.User;
 import no.cantara.julebrus.user.UserRepository;
@@ -31,7 +32,7 @@ import java.util.stream.Collectors;
 @RequestMapping("/api/sessions")
 public class SessionController {
 
-    public record MemberView(UUID userId, String displayName) {
+    public record MemberView(UUID userId, String displayName, List<String> teams) {
     }
 
     /**
@@ -46,6 +47,11 @@ public class SessionController {
                               boolean solo, List<MemberView> members, List<SessionBeerView> beers) {
     }
 
+    /** A table as it appears in "Dine bord": who hosts, how big, and how many beers still wait for your roll. */
+    public record MySessionView(UUID id, String hostName, boolean host, int members, int beers, int pendingForMe,
+                                Instant createdAt, Instant closedAt) {
+    }
+
     public record JoinRequest(@NotBlank String code) {
     }
 
@@ -58,15 +64,17 @@ public class SessionController {
     private final BeerRepository beers;
     private final TastingRepository tastings;
     private final BlindService blind;
+    private final TeamService teams;
 
     public SessionController(SessionService service, CurrentUser currentUser, UserRepository users,
-                             BeerRepository beers, TastingRepository tastings, BlindService blind) {
+                             BeerRepository beers, TastingRepository tastings, BlindService blind, TeamService teams) {
         this.service = service;
         this.currentUser = currentUser;
         this.users = users;
         this.beers = beers;
         this.tastings = tastings;
         this.blind = blind;
+        this.teams = teams;
     }
 
     @PostMapping
@@ -80,6 +88,27 @@ public class SessionController {
         return view(service.join(currentUser.get().getId(), in.code()));
     }
 
+    /** The tables this person sits at: open ones first, then the last few closed, newest first. */
+    @GetMapping("/mine")
+    public List<MySessionView> mine() {
+        UUID me = currentUser.get().getId();
+        List<TastingSession> all = service.mine(me);
+        Map<UUID, User> hosts = users.findAllById(all.stream().map(TastingSession::getHostId).distinct().toList()).stream()
+                .collect(Collectors.toMap(User::getId, Function.identity()));
+        List<MySessionView> open = new java.util.ArrayList<>(), closed = new java.util.ArrayList<>();
+        for (TastingSession s : all) {
+            long ratedByMe = tastings.findBySessionId(s.getId()).stream().filter(t -> t.getUserId().equals(me))
+                    .map(Tasting::getBeerId).distinct().count();
+            User host = hosts.get(s.getHostId());
+            MySessionView v = new MySessionView(s.getId(), host == null ? "?" : host.getDisplayName(), s.getHostId().equals(me),
+                    s.getMembers().size(), s.getBeers().size(), (int) Math.max(0, s.getBeers().size() - ratedByMe),
+                    s.getCreatedAt(), s.getClosedAt());
+            (s.isOpen() ? open : closed).add(v);
+        }
+        open.addAll(closed.stream().limit(5).toList());
+        return open;
+    }
+
     @GetMapping("/{id}")
     public SessionView get(@PathVariable UUID id) {
         return view(service.getForMember(id, currentUser.get().getId()));
@@ -87,7 +116,12 @@ public class SessionController {
 
     @PostMapping("/{id}/beers")
     public SessionView addBeer(@PathVariable UUID id, @Valid @RequestBody AddBeerRequest in) {
-        if (!beers.existsById(in.beerId())) throw new org.springframework.web.server.ResponseStatusException(HttpStatus.NOT_FOUND, "Unknown beer");
+        Beer beer = beers.findById(in.beerId())
+                .orElseThrow(() -> new org.springframework.web.server.ResponseStatusException(HttpStatus.NOT_FOUND, "Unknown beer"));
+        // A rejected beer is not part of the tasting, not even for the person who added it. Pending ones stay usable.
+        if (beer.getStatus() == Beer.Status.REJECTED) {
+            throw new no.cantara.julebrus.web.ApiException(HttpStatus.UNPROCESSABLE_ENTITY, "BEER_REJECTED", "That beer was rejected by the organisers");
+        }
         return view(service.addBeer(id, currentUser.get().getId(), in.beerId()));
     }
 
@@ -102,8 +136,10 @@ public class SessionController {
         List<UUID> memberIds = s.getMembers().stream().map(TastingSession.Member::userId).toList();
         Map<UUID, User> userById = users.findAllById(memberIds).stream()
                 .collect(Collectors.toMap(User::getId, Function.identity()));
+        Map<UUID, List<String>> teamsOf = teams.slugsOf(memberIds);
         List<MemberView> members = memberIds.stream()
-                .map(id -> new MemberView(id, userById.containsKey(id) ? userById.get(id).getDisplayName() : "?"))
+                .map(id -> new MemberView(id, userById.containsKey(id) ? userById.get(id).getDisplayName() : "?",
+                        teamsOf.getOrDefault(id, List.of())))
                 .toList();
 
         List<UUID> beerIds = s.getBeers().stream().map(TastingSession.SessionBeer::beerId).toList();

@@ -4,8 +4,7 @@
 --
 -- (year is a reserved word in H2, so the columns are list_year and season_year, as elsewhere.)
 --
--- Numbered V8 on purpose: V7 belongs to the label-photo work. Flyway on a database that
--- already has V8 refuses a later-merged V7 unless outOfOrder is set (see CLAUDE.md).
+-- V11: V8 (tips), V9 (beer photos) and V10 (beer-name fixes) come first; migrations must reach main in order (see CLAUDE.md).
 
 create table vmp_products (
   article_no   varchar(32) primary key,

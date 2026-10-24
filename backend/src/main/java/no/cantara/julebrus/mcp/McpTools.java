@@ -13,6 +13,9 @@ import no.cantara.julebrus.history.HistoryController;
 import no.cantara.julebrus.stats.RankingService;
 import no.cantara.julebrus.tasting.Tasting;
 import no.cantara.julebrus.tasting.TastingRepository;
+import no.cantara.julebrus.team.Team;
+import no.cantara.julebrus.team.TeamService;
+import no.cantara.julebrus.tip.TipService;
 import org.springframework.stereotype.Component;
 
 import java.time.Clock;
@@ -39,11 +42,15 @@ public class McpTools {
     private final FinaleService finale;
     private final TastingRepository tastings;
     private final SeasonProperties season;
+    private final TeamService teams;
+    private final TipService tips;
     private final Clock clock;
 
     public McpTools(ObjectMapper json, HistoryController history, HistoricSeasonRepository seasons,
                     HistoricRatingRepository ratings, RankingService ranking, FinaleService finale,
-                    TastingRepository tastings, SeasonProperties season, Clock clock) {
+                    TastingRepository tastings, SeasonProperties season, TeamService teams, TipService tips, Clock clock) {
+        this.teams = teams;
+        this.tips = tips;
         this.json = json;
         this.history = history;
         this.seasons = seasons;
@@ -78,6 +85,13 @@ public class McpTools {
                 tool("current_ranking",
                         "The running ranking of this season: approved Vinmonopolet-strength beers with people count, effective (weighted) votes, weighted mean, Bayesian score and controversy. No per-person scores.",
                         noArgs(), args -> ranking.beerRanking()),
+                tool("team_ranking",
+                        "This season's ranking as seen by one team's raters only (same Bayesian method, the team's own mean as prior). Teams are listed by season_status.",
+                        schema(Map.of("team", Map.of("type", "string", "description", "Team slug, e.g. 'cantara' or 'rebel'")), List.of("team")),
+                        args -> {
+                            Team t = teams.bySlug(stringArg(args, "team"));
+                            return ranking.beerRanking(t.getMembers().stream().map(Team.Member::userId).collect(Collectors.toSet()));
+                        }),
                 tool("duel_ranking",
                         "This season's sidebar ranking from pairwise duels (Bradley-Terry strengths), independent of how generous each rater is.",
                         noArgs(), args -> ranking.duelRanking()),
@@ -101,10 +115,14 @@ public class McpTools {
         out.put("inSeason", !today.isBefore(season.start()) && !today.isAfter(season.end()));
         out.put("daysLeft", Math.max(0, java.time.temporal.ChronoUnit.DAYS.between(today, season.end())));
         out.put("revealAt", season.revealAt().toString());
+        out.put("tipDeadline", season.tipDeadline().toString());
+        out.put("tipped", tips.count());
         out.put("rules", Map.of(
                 "maxTastingsPerDay", season.maxTastingsPerDay(),
                 "maxSoloDays", season.maxSoloDays(),
                 "counts", "Vinmonopolet juleøl above 4.7 % ABV; homebrew only at a table of 6+ and with 4+ scores"));
+        out.put("teams", teams.enabled().stream().map(t -> Map.of("slug", t.getSlug(), "name", t.getName(),
+                "members", t.getMembers().size())).toList());
         out.put("totals", Map.of(
                 "tastings", all.size(),
                 "beers", all.stream().map(Tasting::getBeerId).distinct().count(),
@@ -165,7 +183,8 @@ public class McpTools {
                                 .addTextContent(json.writeValueAsString(result))
                                 .structuredContent(result instanceof Map ? result : Map.of("result", result))
                                 .build();
-                    } catch (IllegalArgumentException | com.fasterxml.jackson.core.JsonProcessingException e) {
+                    } catch (IllegalArgumentException | com.fasterxml.jackson.core.JsonProcessingException
+                             | no.cantara.julebrus.web.ApiException e) {
                         return McpSchema.CallToolResult.builder().isError(true).addTextContent(e.getMessage()).build();
                     } catch (org.springframework.web.server.ResponseStatusException e) {
                         return McpSchema.CallToolResult.builder().isError(true).addTextContent("Not found").build();
