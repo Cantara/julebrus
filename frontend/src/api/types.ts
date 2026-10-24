@@ -327,3 +327,24 @@ export interface AdminPhoto {
   status: 'PENDING' | 'APPROVED' | 'REJECTED'
   createdAt: string
 }
+
+export interface BlindOption {
+  beerId: string
+  name: string
+  brewery?: string
+}
+
+/** Who has guessed is always visible; the picks and the answer only once revealed. */
+export interface BlindRound {
+  id: string
+  hostId: string
+  createdAt: string
+  revealedAt?: string
+  revealed: boolean
+  options: BlindOption[]
+  guessedBy: string[]
+  myGuess?: string
+  answerBeerId?: string
+  guesses?: Record<string, string>
+  correct?: string[]
+}

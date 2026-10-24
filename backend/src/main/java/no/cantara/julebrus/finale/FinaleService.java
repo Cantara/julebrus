@@ -1,5 +1,7 @@
 package no.cantara.julebrus.finale;
 
+import no.cantara.julebrus.blind.BlindService;
+import no.cantara.julebrus.blind.BlindTally;
 import no.cantara.julebrus.config.SeasonProperties;
 import no.cantara.julebrus.session.SessionRepository;
 import no.cantara.julebrus.session.TastingSession;
@@ -45,21 +47,24 @@ public class FinaleService {
 
     static final int MIN_RATED_FOR_OFFSET_AWARDS = 10;
     static final int MIN_PREDICTIONS = 5;
+    static final int MIN_BLIND_GUESSES = 3;
 
     private final SeasonProperties season;
     private final RankingService ranking;
     private final TastingRepository tastings;
     private final SessionRepository sessions;
     private final UserRepository users;
+    private final BlindService blind;
     private final Clock clock;
 
     public FinaleService(SeasonProperties season, RankingService ranking, TastingRepository tastings,
-                         SessionRepository sessions, UserRepository users, Clock clock) {
+                         SessionRepository sessions, UserRepository users, BlindService blind, Clock clock) {
         this.season = season;
         this.ranking = ranking;
         this.tastings = tastings;
         this.sessions = sessions;
         this.users = users;
+        this.blind = blind;
         this.clock = clock;
     }
 
@@ -151,7 +156,35 @@ public class FinaleService {
         out.add(pick("SOCIAL", "Årets midtpunkt", "Smakt sammen med flest forskjellige folk", byUser, nameOf,
                 ts -> (double) coTasters.apply(ts).size(), true, ts -> coTasters.apply(ts).size() + " bordvenner", ts -> true));
 
+        out.add(blindTaster(nameOf));
+
         return out;
+    }
+
+    /**
+     * Blind pours are scored from the rounds, not the tasting log: most correct guesses,
+     * ties broken by hit rate, at least {@value MIN_BLIND_GUESSES} guesses.
+     */
+    private Award blindTaster(Map<UUID, String> nameOf) {
+        String id = "BLIND_TASTER", title = "Årets blindsmaker";
+        String description = "Flest riktige i blindsmaking, minst %d gjetninger".formatted(MIN_BLIND_GUESSES);
+        Map<UUID, BlindTally> tally = blind.tally();
+        List<Map.Entry<UUID, BlindTally>> candidates = tally.entrySet().stream()
+                .filter(e -> e.getValue().guesses() >= MIN_BLIND_GUESSES && e.getValue().correct() > 0)
+                .toList();
+        if (candidates.isEmpty()) return new Award(id, title, description, null, "Ingen kvalifiserte i år");
+        Comparator<Map.Entry<UUID, BlindTally>> best = Comparator
+                .<Map.Entry<UUID, BlindTally>>comparingInt(e -> e.getValue().correct())
+                .thenComparingDouble(e -> e.getValue().accuracy());
+        Map.Entry<UUID, BlindTally> top = candidates.stream().max(best).orElseThrow();
+        List<Map.Entry<UUID, BlindTally>> winners = candidates.stream()
+                .filter(e -> best.compare(e, top) == 0)
+                .sorted(Comparator.comparing(e -> nameOf.getOrDefault(e.getKey(), "?")))
+                .toList();
+        String names = winners.stream().map(e -> nameOf.getOrDefault(e.getKey(), "?"))
+                .collect(Collectors.joining(", ")).replaceFirst(", ([^,]+)$", " og $1");
+        BlindTally t = top.getValue();
+        return new Award(id, title, description, names, "%d av %d riktig".formatted(t.correct(), t.guesses()));
     }
 
     /** Picks the best qualifier; a tie lists everyone on it, in display-name order. */

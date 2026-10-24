@@ -27,9 +27,13 @@ public final class BadgeEvaluator {
             /** beerId -> crowd mean excluding this person */
             Map<UUID, Double> crowdMean,
             /** beerId -> group average revealed in the session the person predicted in */
-            Map<UUID, Double> groupAverage
+            Map<UUID, Double> groupAverage,
+            /** correct guesses in revealed blind pours */
+            int blindCorrect
     ) {
     }
+
+    public static final int BLIND_TASTER_HITS = 3;
 
     private final SeasonProperties season;
 
@@ -40,6 +44,7 @@ public final class BadgeEvaluator {
     public Set<Badge> evaluate(Context ctx) {
         Set<Badge> out = EnumSet.noneOf(Badge.class);
         List<Tasting> mine = ctx.mine();
+        if (ctx.blindCorrect() >= BLIND_TASTER_HITS) out.add(Badge.BLIND_TASTER);
         if (mine.isEmpty()) return out;
 
         out.add(Badge.FIRST_BLOOD);
