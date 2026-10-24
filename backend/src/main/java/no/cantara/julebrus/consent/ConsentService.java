@@ -24,7 +24,7 @@ public class ConsentService {
      * <p>DRAFT: the consent texts are a draft for the organisers to review and approve
      * before the season opens. Nobody has given them legal sign-off.</p>
      */
-    public static final String CONSENT_VERSION = "2026-3";
+    public static final String CONSENT_VERSION = "2026-4";
 
     public record Texts(String nb, String en) {
     }

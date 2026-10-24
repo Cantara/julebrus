@@ -21,4 +21,8 @@ public interface BeerRepository extends JpaRepository<Beer, UUID> {
     List<Beer> findByStatusOrderByCreatedAtAsc(Beer.Status status);
 
     List<Beer> findByStatus(Beer.Status status);
+
+    long countByCreatedByAndStatus(UUID createdBy, Beer.Status status);
+
+    List<Beer> findByCreatedBy(UUID createdBy);
 }

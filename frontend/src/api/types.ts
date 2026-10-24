@@ -58,6 +58,11 @@ export interface Beer {
   status: 'PENDING' | 'APPROVED' | 'REJECTED'
   mine: boolean
   homebrew: boolean
+  /** a cover is available to this caller at /api/beers/{id}/photo */
+  hasPhoto: boolean
+  /** the caller's own newest photo of the beer */
+  myPhotoId?: string | null
+  myPhotoStatus?: 'PENDING' | 'APPROVED' | 'REJECTED' | null
   /** approved and Vinmonopolet strength: in the ranking and tippable */
   counts: boolean
 }
@@ -380,6 +385,16 @@ export interface PalatePairs {
   twins: PalatePair[]
   opposites: PalatePair[]
   minCommon: number
+}
+
+export interface AdminPhoto {
+  id: string
+  beerId: string
+  beerName: string
+  uploaderName: string
+  uploaderEmail: string
+  status: 'PENDING' | 'APPROVED' | 'REJECTED'
+  createdAt: string
 }
 
 export interface BlindOption {

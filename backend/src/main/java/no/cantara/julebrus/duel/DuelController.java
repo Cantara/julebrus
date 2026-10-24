@@ -2,6 +2,8 @@ package no.cantara.julebrus.duel;
 
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
+import no.cantara.julebrus.beer.Beer;
+import no.cantara.julebrus.beer.BeerRepository;
 import no.cantara.julebrus.session.SessionService;
 import no.cantara.julebrus.session.TastingSession;
 import no.cantara.julebrus.tasting.Tasting;
@@ -36,12 +38,14 @@ public class DuelController {
     private final DuelRepository duels;
     private final SessionService sessions;
     private final TastingRepository tastings;
+    private final BeerRepository beers;
     private final CurrentUser currentUser;
 
     private final no.cantara.julebrus.live.SessionEvents events;
 
-    public DuelController(DuelRepository duels, SessionService sessions, TastingRepository tastings, CurrentUser currentUser,
-                          no.cantara.julebrus.live.SessionEvents events) {
+    public DuelController(DuelRepository duels, SessionService sessions, TastingRepository tastings, BeerRepository beers,
+                          CurrentUser currentUser, no.cantara.julebrus.live.SessionEvents events) {
+        this.beers = beers;
         this.events = events;
         this.duels = duels;
         this.sessions = sessions;
@@ -57,9 +61,11 @@ public class DuelController {
     public List<Pair> pending(@PathVariable UUID sessionId) {
         UUID userId = currentUser.get().getId();
         TastingSession session = sessions.getForMember(sessionId, userId);
-        List<UUID> rated = tastings.findBySessionId(session.getId()).stream()
+        List<UUID> ratedAll = tastings.findBySessionId(session.getId()).stream()
                 .filter(t -> t.getUserId().equals(userId))
                 .map(Tasting::getBeerId).toList();
+        Set<UUID> rejected = rejectedAmong(ratedAll);
+        List<UUID> rated = ratedAll.stream().filter(id -> !rejected.contains(id)).toList();
         Set<String> answered = duels.findByUserIdAndSessionId(userId, sessionId).stream()
                 .map(d -> key(d.getWinnerBeerId(), d.getLoserBeerId()))
                 .collect(Collectors.toSet());
@@ -85,6 +91,9 @@ public class DuelController {
         if (!session.hasBeer(in.winnerBeerId()) || !session.hasBeer(in.loserBeerId())) {
             throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, "Both beers must be in the session");
         }
+        if (!rejectedAmong(List.of(in.winnerBeerId(), in.loserBeerId())).isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, "A rejected beer cannot be compared");
+        }
         boolean alreadyAnswered = duels.findByUserIdAndSessionId(userId, in.sessionId()).stream()
                 .anyMatch(d -> key(d.getWinnerBeerId(), d.getLoserBeerId()).equals(key(in.winnerBeerId(), in.loserBeerId())));
         if (alreadyAnswered) {
@@ -92,6 +101,12 @@ public class DuelController {
         }
         duels.save(new Duel(userId, in.sessionId(), in.winnerBeerId(), in.loserBeerId()));
         events.publish(in.sessionId(), no.cantara.julebrus.live.SessionEvents.Kind.DUEL);
+    }
+
+    /** Beers the organisers rejected, among these (also after they were added to a table). */
+    private Set<UUID> rejectedAmong(List<UUID> ids) {
+        return beers.findAllById(ids).stream().filter(b -> b.getStatus() == Beer.Status.REJECTED)
+                .map(Beer::getId).collect(Collectors.toSet());
     }
 
     private static String key(UUID a, UUID b) {

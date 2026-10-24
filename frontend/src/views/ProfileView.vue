@@ -4,6 +4,7 @@ import { useRouter } from 'vue-router'
 import { get, logout, post } from '../api/client'
 import AdminBeerImport from '../components/AdminBeerImport.vue'
 import AdminBeers from '../components/AdminBeers.vue'
+import AdminPhotos from '../components/AdminPhotos.vue'
 import AdminClaims from '../components/AdminClaims.vue'
 import AdminRaterLinks from '../components/AdminRaterLinks.vue'
 import AdminTeams from '../components/AdminTeams.vue'
@@ -181,6 +182,7 @@ const byYear = () => {
   <AdminClaims v-if="store.me?.admin" />
   <AdminRaterLinks v-if="store.me?.admin" />
   <AdminBeers v-if="store.me?.admin" />
+<AdminPhotos v-if="store.me?.admin" />
   <AdminBeerImport v-if="store.me?.admin" />
   <AdminTeams v-if="store.me?.admin" />
 
