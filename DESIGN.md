@@ -180,28 +180,30 @@ Rule violations return HTTP 422 with a machine-readable `code`:
 `data/vinmonopolet/README.md`. 2013 is in; other years are added as they are found. Their terms of use are read
 before the lists are published, and nothing but facts is stored.
 
-**Images: link, never copy.** Product photos belong to Vinmonopolet or the producers, so the repository and the
-database never hold a copy. `beers.image_url` holds a link taken from the Vinmonopolet product API for the
-current assortment, at the 2026 catalogue import. Old lists get no image column, because an old article number is
-not a reliable key to today's picture. Loading an image from their server sends the visitor's IP address to them:
-before the first image is shown, one line goes into the consent and privacy text and `CONSENT_VERSION` is bumped.
-This is batched with other text changes so people accept once.
+**Images: our users' photos, not Vinmonopolet's.** Product photos belong to Vinmonopolet or the producers, so neither the
+repository nor the database holds a copy of theirs, and the app does not hotlink them (no visitor IP goes to a third
+party). The images come from the people tasting: before tasting, a person may take a photo of the beer's label.
+The photographer owns the copyright of their own photo, so the consent text carries a licence line ("you allow the tasting
+to show it"); the label artwork in the picture is the producer's, which is normal for a casual label photo in a community app.
+Old lists (`data/vinmonopolet/<year>.csv`) therefore get no image column.
 
-**Matching a beer.** Today: search by name. Next: scan the barcode in the browser (the browser's own detector where
-it exists, a small library elsewhere), with nothing stored; it maps to a product when the product data carries the
-code (to be checked against the API). Recognising beers from photos is not planned: it would send users' photos to a
-third party.
+**Matching a beer.** Today: search by name. Next (after the season starts): scan the barcode in the browser (the browser's
+own detector where it exists, a small library elsewhere), nothing stored; it maps to a product when the product data carries
+the code (to be checked). Recognising beers from photos is not planned: it would send users' photos to a third party.
 
-**User photos of the label (only if the season shows demand).** Optional per photo, never required to rate.
-Guidance "the label only, no people", and a licence line ("you allow the tasting to show it"). Stored in a private
-S3 bucket added by a CloudFormation update, served through the app and never as public links; metadata (GPS,
-device) removed by re-encoding on the server; resized, with limits on size and type; shown to others only after
-an admin approves it; used only where no official image exists. The consent and privacy text covers storage,
-visibility and deletion, and the manual deletion procedure in the README includes the photos.
+**User photos (v0.5, decided 24 Oct).** Optional, never required to rate; offered before tasting. A plain file input
+(`accept="image/*" capture="environment"`). Stored in PostgreSQL (a resized photo is about 60-100 KB; a season gives a few
+hundred), not S3: no new infrastructure before the season. Server side: limits on size and pixel dimensions BEFORE decoding,
+only JPEG and PNG, re-encoded and resized to about 800 px (this removes GPS and device metadata), a per-person quota.
+Served through the app with login, never as public links. An admin approves each photo before others see it (the uploader
+sees their own at once; admins' uploads are auto-approved); the first approved photo becomes the beer's image. The consent and
+privacy text covers the licence, storage, who sees it and deletion, and the manual deletion procedure in the README includes
+the photos. A move to S3 later is possible if the volume asks for it.
 
-**Order.** Before 1 Nov: the 2026 catalogue with linked images, the small fixes from the last reviews and the
-consent-text answers from Cantara, as one consent bump. Then barcode scanning. Then label photos, if wanted. Not
-earlier: photos add storage, a new data category and a text change on a live app a week before the season.
+**Order.** v0.5 (about 30-31 Oct, one consent bump): the small fixes from the last reviews, the consent-text answers from
+Cantara, the photo feature, and the 2026 Vinmonopolet list imported as DATA through the admin CSV import (the owner downloads
+the official list by hand on the day it is published; no API key and no release needed for the list itself). If the photo review
+finds a blocker that cannot be fixed in time, v0.5 ships without photos and they follow as v0.5.1. Then barcode scanning.
 
 ## Plan
 
@@ -217,8 +219,8 @@ Today is 24 Oct. Phase 1 must be live by 1 Nov.
 
 - Should half points (4.5) be allowed? Current answer: no, stay with the dice.
 - Allowed email domains: cantara.no only, or also partner domains?
-- Vinmonopolet API key for the catalogue import, or a one-off CSV? An API key is needed for the 2026 list and
-  its image links; the owner registers it and stores it with a script (never in chat or in the repository).
+- Vinmonopolet API key? Not needed for the 2026 list (official list download + the admin CSV import) and not for images
+  (user photos). Only worth it if barcode scanning needs the product's GTIN.
 - Does Vinmonopolet's product data carry the barcode (GTIN)? Decides whether barcode scanning can match beers.
 - Emails for the historic raters in `history/raters.csv`, so people see their own
   history. Only the names are mapped so far.
