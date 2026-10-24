@@ -127,6 +127,12 @@ backend/    Spring Boot 3.5, Java 21, PostgreSQL, Flyway, Google OIDC
   without Google credentials or a database.
 - Beer catalogue: seeded from the Vinmonopolet product API filtered to juleøl,
   plus manual entries for homebrew and imports (phase 2; manual entry in phase 1).
+- MCP server at `/mcp` (MCP Java SDK, Streamable HTTP) with read-only tools over the
+  history and the running season, guarded by one shared bearer token
+  (`JULEBRUS_MCP_TOKEN`; unset means the endpoint answers 404). It sits beside the
+  DispatcherServlet, so login, consent and CSRF do not apply; the tools only expose
+  what the web app already shows to everyone logged in, and never e-mails or
+  per-person scores from the running season.
 
 ### Data model
 

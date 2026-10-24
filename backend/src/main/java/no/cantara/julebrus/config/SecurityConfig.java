@@ -42,6 +42,7 @@ public class SecurityConfig {
                         new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED), new AntPathRequestMatcher("/api/**")))
                 .logout(l -> l.logoutUrl("/api/logout").logoutSuccessUrl("/"))
                 .csrf(c -> c
+                        .ignoringRequestMatchers("/mcp", "/mcp/**")
                         .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
                         .csrfTokenRequestHandler(new CsrfTokenRequestAttributeHandler()))
                 // Spring Security 6 loads the CSRF token lazily and only writes the cookie when
