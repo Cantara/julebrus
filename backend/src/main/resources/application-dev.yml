@@ -24,6 +24,6 @@ julebrus:
     email: dev@cantara.no
     name: Dev Tester
   season:
-    # Widen the window so the app is usable before 1 Nov while developing.
-    start: 2026-01-01
-    end: 2026-12-31
+    # Open the window a month early so the app is usable before 1 Nov while developing.
+    start: 2026-10-01
+    end: 2026-12-23
