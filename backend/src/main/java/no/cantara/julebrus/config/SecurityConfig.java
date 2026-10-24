@@ -33,7 +33,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(a -> a
                         .requestMatchers("/", "/index.html", "/assets/**", "/manifest.webmanifest", "/sw.js",
                                 "/workbox-*.js", "/icons/**", "/favicon.ico", "/actuator/health", "/api/config", "/api/privacy", "/privacy", "/privacy/",
-                                "/velkommen", "/velkommen/").permitAll()
+                                "/velkommen", "/velkommen/", "/welcome", "/welcome/", "/landing", "/landing/").permitAll()
                         .requestMatchers("/api/**").authenticated()
                         .anyRequest().permitAll())
                 .oauth2Login(o -> o

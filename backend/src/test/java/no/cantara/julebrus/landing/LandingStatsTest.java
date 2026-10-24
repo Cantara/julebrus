@@ -150,12 +150,54 @@ class LandingStatsTest {
         for (boolean en : new boolean[]{false, true}) {
             Locale locale = en ? Locale.UK : Locale.forLanguageTag("nb-NO");
             String html = LandingPage.render(STATS, season, new SponsorProperties("eXOReaction", "https://exoreaction.com"),
-                    new ContactProperties("kontakt@example.org"), en, "/");
+                    new ContactProperties("kontakt@example.org"), null, en, "/");
             assertThat(html).contains("<strong>" + NumberFormat.getIntegerInstance(locale).format(total) + "</strong>");
             assertThat(html).contains("<td>" + votes2003 + "</td>");
             assertThat(html).contains("mailto:kontakt@example.org").contains(en ? "Sponsored by " : "Støttet av ");
         }
         Set<String> seen = new HashSet<>();
         STATS.seasons().forEach(s -> assertThat(seen.add(String.valueOf(s.year()))).isTrue());
+    }
+
+    /**
+     * Teams, the live reveal, the podium tip and label photos are always described; push notifications
+     * only when push is switched on, with the configured nudge time. The tipping rules come from TipScoring.
+     */
+    @Test
+    void thePageDescribesTheSeasonFeaturesInBothLanguages() {
+        SeasonProperties season = new SeasonProperties(2026, LocalDate.of(2026, 11, 1), LocalDate.of(2026, 12, 23),
+                ZoneId.of("Europe/Oslo"), 5, 5, LocalTime.of(18, 0));
+        SponsorProperties sponsor = new SponsorProperties("eXOReaction", "https://exoreaction.com");
+        ContactProperties contact = new ContactProperties("kontakt@example.org");
+        Set<String> names = RepoData.personNames();
+        for (boolean en : new boolean[]{false, true}) {
+            String on = LandingPage.render(STATS, season, sponsor, contact, LocalTime.of(17, 0), en, "/");
+            String off = LandingPage.render(STATS, season, sponsor, contact, null, en, "/");
+            for (String html : List.of(on, off)) {
+                if (en) {
+                    assertThat(html).contains("Play for your team, tip the podium")
+                            .contains("All through Advent").contains("Cantara against Rebel").contains("Cantara, Rebel or both")
+                            .contains("unwrapped on every phone in the same second")
+                            .contains("Tip the podium").contains("3 points for the right spot, 1 for a podium beer in the wrong spot, 9 is perfect")
+                            .contains("closing at midnight before 23\u00a0December")
+                            .contains("Make it yours").contains("A photo of the label")
+                            .contains("Ask to link your name to your login");
+                } else {
+                    assertThat(html).contains("Spill for laget ditt, tipp pallen")
+                            .contains("Hele adventstiden").contains("Cantara mot Rebel").contains("Cantara, Rebel eller begge")
+                            .contains("pakkes scorene opp på alle telefonene i samme sekund")
+                            .contains("Tipp pallen").contains("3 poeng for riktig plass, 1 for et øl på pallen på feil plass, 9 er perfekt")
+                            .contains("frist ved midnatt før 23.\u00a0desember")
+                            .contains("Gjør den til din").contains("Bilde av etiketten")
+                            .contains("Be om å koble navnet ditt til innloggingen");
+                }
+                // "Lag" now means a team, so the table is never called one.
+                assertThat(html).doesNotContain("dere er et lag").doesNotContain("i små lag");
+                assertThat(RepoData.namesIn(html, names)).as("names in the page").isEmpty();
+            }
+            assertThat(on).contains(en ? "A nudge from the calendar" : "Et dytt fra kalenderen").contains(en ? "at 17:00" : "klokka 17.00");
+            assertThat(off).doesNotContain("A nudge from the calendar").doesNotContain("Et dytt fra kalenderen")
+                    .doesNotContain(en ? "notifications" : "varsler");
+        }
     }
 }

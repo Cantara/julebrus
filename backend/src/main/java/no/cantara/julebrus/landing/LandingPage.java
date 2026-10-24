@@ -5,10 +5,12 @@ import no.cantara.julebrus.beer.Beer;
 import no.cantara.julebrus.config.ContactProperties;
 import no.cantara.julebrus.config.SeasonProperties;
 import no.cantara.julebrus.config.SponsorProperties;
+import no.cantara.julebrus.tip.TipScoring;
 import no.cantara.julebrus.weight.RaterWeightPolicy;
 import org.springframework.web.util.HtmlUtils;
 
 import java.text.NumberFormat;
+import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Comparator;
 import java.util.EnumMap;
@@ -31,24 +33,31 @@ public final class LandingPage {
     private final SeasonProperties season;
     private final SponsorProperties sponsor;
     private final ContactProperties contact;
+    /** When the daily push nudge goes out; null when push notifications are switched off, and then the page does not offer them. */
+    private final LocalTime nudgeTime;
     private final boolean en;
     private final String self;
     private final Locale locale;
 
     private LandingPage(HistoryStats stats, SeasonProperties season, SponsorProperties sponsor, ContactProperties contact,
-                        boolean english, String selfPath) {
+                        LocalTime nudgeTime, boolean english, String selfPath) {
         this.stats = stats;
         this.season = season;
         this.sponsor = sponsor;
         this.contact = contact;
+        this.nudgeTime = nudgeTime;
         this.en = english;
         this.self = selfPath;
         this.locale = english ? Locale.UK : Locale.forLanguageTag("nb-NO");
     }
 
+    /**
+     * @param nudgeTime the local time of the daily push nudge, or null when push is off
+     *                  (no VAPID keys): the page then says nothing about notifications.
+     */
     public static String render(HistoryStats stats, SeasonProperties season, SponsorProperties sponsor,
-                                ContactProperties contact, boolean english, String selfPath) {
-        return new LandingPage(stats, season, sponsor, contact, english, selfPath).html();
+                                ContactProperties contact, LocalTime nudgeTime, boolean english, String selfPath) {
+        return new LandingPage(stats, season, sponsor, contact, nudgeTime, english, selfPath).html();
     }
 
     private static final Map<Badge, String> BADGE_NB = new EnumMap<>(Map.of(
@@ -164,10 +173,12 @@ public final class LandingPage {
                 .append(season.year()).append("</p>\n")
                 .append("<h1>Cantaras juleøl <span class=\"yr\">").append(season.year()).append("</span></h1>\n")
                 .append("<p class=\"lead\">").append(l(
-                        "En hel adventstid med juleøl, terningkast og godt selskap. Litt hver kveld, i små lag, fra "
-                                + seasonSpan() + ". Den 23. desember kårer vi årets beste.",
+                        "En hel adventstid med juleøl, terningkast og godt selskap. Litt hver kveld, rundt små bord, fra "
+                                + seasonSpan() + ". Spill for laget ditt, tipp pallen, og " + date(season.end(), false)
+                                + " kårer vi årets beste.",
                         "A whole Advent of Christmas beer, dice and good company. A little every evening, at small tables, from "
-                                + seasonSpan() + ". On 23 December we name the best of the year.")).append("</p>\n")
+                                + seasonSpan() + ". Play for your team, tip the podium, and on " + date(season.end(), false)
+                                + " we name the best of the year.")).append("</p>\n")
                 .append("<p class=\"cta\"><a class=\"btn\" href=\"/oauth2/authorization/google\">").append(SIGN_IN)
                 .append(l("Logg inn med Google", "Sign in with Google")).append("</a>")
                 .append("<a class=\"btn ghost\" href=\"#regler\">").append(l("Se reglene", "See the rules")).append("</a></p>\n");
@@ -299,13 +310,22 @@ public final class LandingPage {
                         "Above " + abv() + ", rated only at a table of " + Beer.HOMEBREW_MIN_GROUP + " or more, ranked with at least "
                                 + Beer.HOMEBREW_MIN_RATINGS + " scores"),
                 l("Ingen rigger sitt eget.", "Nobody rigs their own."));
+        rule(h, l("Tipp pallen", "The podium tip"),
+                l("Gull, sølv og bronse: tre forskjellige øl som teller, ett tips per person, frist ved midnatt før " + date(season.end(), false),
+                        "Gold, silver and bronze: three different beers that count, one tip each, closing at midnight before " + date(season.end(), false)),
+                l(TipScoring.RIGHT_SPOT + " poeng for riktig plass, " + TipScoring.ON_PODIUM + " for et øl på pallen på feil plass, "
+                                + TipScoring.MAX + " er perfekt. Står det likt, vinner den som tippet først.",
+                        TipScoring.RIGHT_SPOT + " points for the right spot, " + TipScoring.ON_PODIUM + " for a podium beer in the wrong spot, "
+                                + TipScoring.MAX + " is perfect. On a tie, the earlier tip wins."));
         rule(h, l("Vekt", "Weight"),
                 "<span class=\"w\"><b>" + rookie + "</b> " + l("første sesong, eller under " + RaterWeightPolicy.MIN_SCORES_FOR_FULL_WEIGHT + " scorer sist",
                         "first season, or under " + RaterWeightPolicy.MIN_SCORES_FOR_FULL_WEIGHT + " scores last time") + "</span>"
                         + "<span class=\"w\"><b>" + full + "</b> " + l("ellers", "otherwise") + "</span>"
                         + "<span class=\"w\"><b>" + muted + "</b> " + l("flagget for juks i fjor", "flagged for rigging last time") + "</span>",
-                l("Vekt " + muted + " er ingen utestengelse: du smaker, scorer og får merker, men flytter ikke snittet. Fast for hele sesongen.",
-                        "A weight of " + muted + " is not a ban: you taste, score and earn badges, you just do not move the average. Fixed for the season."));
+                l("Vekt " + muted + " er ingen utestengelse: du smaker, scorer og får merker, men flytter ikke snittet. Fast for hele sesongen. "
+                                + "Var du med i de gamle regnearkene? Be om å koble navnet ditt til innloggingen, så teller sist gang du var med.",
+                        "A weight of " + muted + " is not a ban: you taste, score and earn badges, you just do not move the average. Fixed for the season. "
+                                + "In the old spreadsheets? Ask to link your name to your login, and the last season you took part in counts."));
         h.append("</tbody>\n</table></div>\n</div>\n</section>\n");
     }
 
@@ -317,29 +337,59 @@ public final class LandingPage {
     // ---------------------------------------------------------------- how it works
 
     private void how(StringBuilder h) {
-        String finale = season.finaleTime().format(DateTimeFormatter.ofPattern(en ? "HH:mm" : "HH.mm"));
+        String finale = clock(season.finaleTime());
         h.append("<section class=\"band\" aria-labelledby=\"slik\">\n<div class=\"wrap\">\n")
                 .append("<p class=\"eyebrow\">").append(l("Slik fungerer det", "How it works")).append("</p>\n")
                 .append("<h2 id=\"slik\">").append(l("En kveld rundt bordet", "An evening around the table")).append("</h2>\n")
                 .append("<ol class=\"steps\">\n");
         step(h, ICON_QR, l("Åpne et bord", "Open a table"), l(
-                "Én er vert. Telefonen viser en QR-kode og en kode på 6 tegn for mørke kjøkken og døde kameraer. De andre skanner eller taster, og dere er et lag.",
-                "Someone hosts. Their phone shows a QR code and a 6-character code for dim kitchens and dead cameras. The others scan or type it, and you are a group."));
+                "Én er vert. Telefonen viser en QR-kode og en kode på 6 tegn for mørke kjøkken og døde kameraer. De andre skanner eller taster, og dere sitter ved samme bord.",
+                "Someone hosts. Their phone shows a QR code and a 6-character code for dim kitchens and dead cameras. The others scan or type it, and you are at the same table."));
         step(h, ICON_LOCK, l("Låst, blind avsløring", "Locked blind reveal"), l(
-                "Alle scorer på sin egen telefon. Ingen ser noe før siste person har scoret, så avsløres alt på en gang. Ingen ankrer på den som roper først.",
-                "Everyone scores on their own phone. Nobody sees anything until the last person has scored, then it is all revealed at once. No anchoring on whoever shouts first."));
+                "Alle scorer på sin egen telefon. Ingen ser noe før siste person har scoret. Da pakkes scorene opp på alle telefonene i samme sekund, uten at noen laster siden på nytt. Ingen ankrer på den som roper først.",
+                "Everyone scores on their own phone. Nobody sees anything until the last person has scored. Then the scores are unwrapped on every phone in the same second, no reloading. No anchoring on whoever shouts first."));
         step(h, ICON_DUEL, l("Dueller på siden", "Duels on the side"), l(
                 "Etter to øl: hvilket var best? Svarene gir en egen rangering ved siden av, som ikke bryr seg om hvor raus du er med terningen. Den offisielle rangeringen er terningkastet.",
                 "After two beers: which was better? The answers build a separate ranking on the side that does not care how generous you are with the dice. The official ranking is the dice."));
         step(h, ICON_GLASS, l("Blindskjenking", "Blind pour"), l(
                 "Verten skjenker ett av ølene på bordet uten å si hvilket. De andre gjetter, og svaret kommer når siste gjetning er inne.",
                 "The host pours one of the beers on the table without saying which. The others guess, and the answer comes out when the last guess is in."));
+        h.append("</ol>\n");
+        group(h, l("Hele adventstiden", "All through Advent"), l(
+                "Smakingen er en sesong, ikke en kveld. Det er noe å spille for hele veien.",
+                "The tasting is a season, not an evening. There is something to play for all the way."));
+        step(h, ICON_TEAM, l("Cantara mot Rebel", "Cantara against Rebel"), l(
+                "Etter samtykket velger du lag: Cantara, Rebel eller begge. Rangeringen kan vises per lag, hvert lag får sin egen vinner i finalen, "
+                        + "og årets lag kåres på terningkast per hode, så et lite lag kan slå et stort. Vil dere stille med et eget lag, spør arrangørene.",
+                "After the consent step you pick a team: Cantara, Rebel or both. The ranking can be shown per team, each team gets its own winner in the finale, "
+                        + "and the team of the year is decided by scores per head, so a small team can beat a big one. Want a team of your own? Ask the organisers."));
+        step(h, ICON_PODIUM, l("Tipp pallen", "Tip the podium"), l(
+                "Hvilke tre øl ender på pallen? Tipp gull, sølv og bronse, og endre tipset så ofte du vil til siste dag begynner. "
+                        + "Ingen ser tipsene før finalen, og der kåres årets tipper.",
+                "Which three beers make the podium? Tip gold, silver and bronze, and change your tip as often as you like until the last day begins. "
+                        + "Nobody sees the tips before the finale, where the tipster of the year is named."));
         step(h, ICON_CAL, l("Adventskalenderen", "The advent calendar"), l(
                 "Hjemskjermen er en adventskalender. Hver dag du smaker, åpner en luke.",
                 "The home screen is an advent calendar. Every day you taste opens a door."));
         step(h, ICON_STAR, l("Finalen " + date(season.end(), false), "The finale on " + date(season.end(), false)), l(
-                "Klokka " + finale + " tennes stjerna. Cantaras juleøl " + season.year() + " kåres, med duellrangeringen ved siden av og sesongens priser.",
-                "At " + finale + " the star lights up. Cantara's juleøl " + season.year() + " is named, with the duel ranking beside it and the season's awards."));
+                "Klokka " + finale + " tennes stjerna. Cantaras juleøl " + season.year() + " kåres, med duellrangeringen ved siden av, lagenes egne vinnere, tippeligaen og sesongens priser.",
+                "At " + finale + " the star lights up. Cantara's juleøl " + season.year() + " is named, with the duel ranking beside it, each team's own winner, the tipping league and the season's awards."));
+        h.append("</ol>\n");
+        group(h, l("Gjør den til din", "Make it yours"), l(
+                "Alt her er valgfritt. Terningen og et glass er nok.",
+                "Everything here is optional. The dice and a glass are enough."));
+        step(h, ICON_CAMERA, l("Bilde av etiketten", "A photo of the label"), l(
+                "Ta gjerne et bilde av etiketten før du smaker. Bildet gjøres mindre og renses for sted og kameradata, og de andre ser det når en arrangør har godkjent det. "
+                        + "Det første godkjente blir ølets bilde.",
+                "Snap the label before you taste, if you like. The photo is made smaller and stripped of location and camera data, and the others see it once an organiser has approved it. "
+                        + "The first approved one becomes the beer's picture."));
+        if (nudgeTime != null) {
+            step(h, ICON_BELL, l("Et dytt fra kalenderen", "A nudge from the calendar"), l(
+                    "Skru på varsler hvis du vil, for hver nettleser: klokka " + clock(nudgeTime) + " de dagene luka di ennå er uåpnet, og én beskjed når stjerna tennes. "
+                            + "På iPhone virker det når appen ligger på hjemskjermen.",
+                    "Switch on notifications if you like, per browser: at " + clock(nudgeTime) + " on the days your door is still shut, and one message when the star lights up. "
+                            + "On an iPhone it works once the app is on the home screen."));
+        }
         h.append("</ol>\n<h3 class=\"badges-h\">").append(l("Merker på treet", "Baubles on the tree")).append("</h3>\n<ul class=\"badges\">\n");
         for (Badge b : Badge.values()) {
             h.append("<li><span class=\"bauble\" aria-hidden=\"true\"></span><span><b>").append(esc(b.title)).append("</b> ")
@@ -348,8 +398,17 @@ public final class LandingPage {
         h.append("</ul>\n</div>\n</section>\n");
     }
 
+    private String clock(LocalTime t) {
+        return t.format(DateTimeFormatter.ofPattern(en ? "HH:mm" : "HH.mm"));
+    }
+
+    /** A sub-heading inside "how it works", with one line under it, then the next list of steps. */
+    private static void group(StringBuilder h, String title, String lede) {
+        h.append("<h3 class=\"group-h\">").append(title).append("</h3>\n<p class=\"group-p\">").append(lede).append("</p>\n<ol class=\"steps\">\n");
+    }
+
     private static void step(StringBuilder h, String icon, String title, String text) {
-        h.append("<li class=\"step\">").append(icon).append("<h3>").append(title).append("</h3><p>").append(text).append("</p></li>\n");
+        h.append("<li class=\"step\">").append(icon).append("<h4>").append(title).append("</h4><p>").append(text).append("</p></li>\n");
     }
 
     // ---------------------------------------------------------------- history
@@ -579,8 +638,10 @@ public final class LandingPage {
                 .append(l("Les hele personvernerklæringen", "Read the full privacy notice")).append("</a></p>\n</div>\n<ul class=\"plain\">\n")
                 .append("<li>").append(l("Logger du inn, lagrer appen navnet og e-postadressen fra Google-kontoen din, og scorene og notatene du gir. Før du kan bruke appen, ber den om samtykke.",
                         "When you sign in, the app stores the name and email address from your Google account, and the scores and notes you give. Before you can use the app, it asks for your consent.")).append("</li>\n")
-                .append("<li>").append(l("Ved et bord ser dere hverandres scorer når alle har scoret. Sesongresultatene vises per øl.",
-                        "At a table you see each other's scores once everyone has scored. Season results are shown per beer.")).append("</li>\n")
+                .append("<li>").append(l("Bilder av etiketten er valgfrie. Du eier bildet ditt og kan slette det selv, og de andre ser det først når en arrangør har godkjent det.",
+                        "Label photos are optional. The photo is yours and you can delete it yourself, and the others see it only once an organiser has approved it.")).append("</li>\n")
+                .append("<li>").append(l("Ved et bord ser dere hverandres scorer når alle har scoret, og hvilket lag hver spiller for. Sesongresultatene vises per øl.",
+                        "At a table you see each other's scores once everyone has scored, and which team each of you plays for. Season results are shown per beer.")).append("</li>\n")
                 .append("<li>").append(l("Inne i appen viser historikken navnene fra de gamle regnearkene. Du kan be om å få navnet ditt fjernet.",
                         "Inside the app the history shows the names from the old spreadsheets. You can ask to have your name removed.")).append("</li>\n")
                 .append("<li>").append(l("Vil du ha dataene dine slettet, ta kontakt med ", "To have your data deleted, get in touch with ")).append(who)
@@ -618,6 +679,10 @@ public final class LandingPage {
     private static final String ICON_DUEL = icon("<path d=\"M5 19 19 5M14 5h5v5M19 19 5 5M5 10V5h5\"/>");
     private static final String ICON_GLASS = icon("<path d=\"M7 4h10l-1 9a4 4 0 0 1-8 0zM12 17v3M9 20h6\"/><path d=\"M7.6 8h8.8\"/>");
     private static final String ICON_CAL = icon("<rect x=\"4\" y=\"5\" width=\"16\" height=\"15\" rx=\"2\"/><path d=\"M4 10h16M9 3v4M15 3v4M9 14h2v2H9z\"/>");
+    private static final String ICON_TEAM = icon("<path d=\"M5 21V4h11l-2 4 2 4H5\"/>");
+    private static final String ICON_PODIUM = icon("<path d=\"M3 20h18M9 20V8h6v12M3 20v-7h6M15 20v-9h6v9\"/>");
+    private static final String ICON_CAMERA = icon("<path d=\"M4 8h3l2-3h6l2 3h3v11H4z\"/><circle cx=\"12\" cy=\"13\" r=\"3.5\"/>");
+    private static final String ICON_BELL = icon("<path d=\"M6 16v-5a6 6 0 0 1 12 0v5l2 2H4zM10 21h4\"/>");
     private static final String ICON_STAR = icon("<path d=\"m12 3 2.6 5.6 6 .7-4.5 4.1 1.2 6L12 16.4 6.7 19.4l1.2-6L3.4 9.3l6-.7z\"/>");
 
     private static String icon(String body) {
