@@ -45,8 +45,13 @@ case "$MODE" in
     "${A[@]}" s3 sync "$SRC/systemd" "s3://$B/deploy/systemd" --delete --quiet
     echo "uploaded scripts/ and systemd/ to s3://$B/deploy/ ; running the one-time setup on the box"
     XB "sudo bash -c 'rm -rf /root/deploy && aws s3 sync s3://$B/deploy /root/deploy --quiet && bash /root/deploy/scripts/box-setup.sh'"
-    echo "--- check"
-    XB 'if systemctl is-enabled julebrus-update.timer >/dev/null 2>&1 && test -x /opt/julebrus/julebrus-update.sh && sudo nginx -t >/dev/null 2>&1; then echo "OK: timer enabled, updater installed, nginx config valid"; else echo "FAILED: setup did not complete; read the output above"; fi' ;;
+    echo "--- check (installed files must equal the uploaded ones)"
+    sums="$( { cd "$SRC/scripts" && sha256sum julebrus-update.sh julebrus-prestart.sh julebrus-env.sh | awk '{print $1"  /opt/julebrus/"$2}'; cd "$SRC/systemd" && sha256sum julebrus.service julebrus-update.service julebrus-update.timer | awk '{print $1"  /etc/systemd/system/"$2}'; } )"
+    XB "if sha256sum -c --quiet - <<'SUMS'
+$sums
+SUMS
+then ok=1; else ok=0; fi
+if [ \$ok = 1 ] && systemctl is-enabled julebrus-update.timer >/dev/null 2>&1 && sudo nginx -t >/dev/null 2>&1; then echo 'OK: installed scripts and units match the uploaded ones, timer enabled, nginx config valid'; else echo 'FAILED: setup did not complete or the installed files differ from the uploaded ones; read the output above'; fi" ;;
   tls)
     EMAIL="${2:-}"
     [[ "$EMAIL" =~ ^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$ ]] || { echo "usage: $0 tls EMAIL (a plain e-mail address)"; exit 1; }
@@ -58,9 +63,10 @@ case "$MODE" in
     confirm "This pulls the release named in latest.json and restarts the app on $ID (rolls back if it does not start or /actuator/health fails)." UPDATE
     XB 'sudo systemctl start julebrus-update.service; sudo journalctl -u julebrus-update -n 40 --no-pager; echo "--- check"; want=$(aws s3 cp "s3://$(cat /etc/julebrus/artifacts-bucket)/latest.json" - 2>/dev/null | jq -r .version); have=$(basename "$(readlink /opt/julebrus/current 2>/dev/null)" 2>/dev/null); if [ -n "$want" ] && [ "$want" = "$have" ] && curl -fsS -m 3 http://127.0.0.1:8080/actuator/health >/dev/null; then echo "OK: installed $have = latest.json, and healthy"; else echo "FAILED: installed [${have:-none}], latest.json says [${want:-unreadable}], or the app is not healthy (see the log above)"; fi' ;;
   retry)
+    # Same shape as the release workflow's tag regex and the updater's check: N.N.N only (no pre-release suffix, no / or ..).
     V="${2:-}"; [[ "$V" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]] || { echo "usage: $0 retry VERSION (like 1.2.0)"; exit 1; }
     confirm "This forgets that $V failed on $ID, so the updater (timer, or 'update') tries it again." RETRY
-    XB "sudo rm -f /var/lib/julebrus/failed-$V; if [ -e /var/lib/julebrus/failed-$V ]; then echo 'FAILED: marker still there'; else echo 'OK: marker for $V removed; the next update run (within 5 minutes, or: update) tries it'; fi" ;;
+    XB "f=/var/lib/julebrus/failed-$V; if [ ! -e \$f ]; then echo 'no marker for $V (nothing to clear; it has not failed on this box, or was already cleared)'; elif sudo rm -f \$f && [ ! -e \$f ]; then echo 'OK: marker for $V removed; the next update run (within 5 minutes, or: update) tries it'; else echo 'FAILED: could not remove the marker'; fi" ;;
   update-log) [[ "${2:-60}" =~ ^[0-9]+$ ]] || { echo "usage: $0 update-log [N] (N a number)"; exit 1; }; XB "sudo journalctl -u julebrus-update -n ${2:-60} --no-pager; echo; echo current: \$(readlink /opt/julebrus/current 2>/dev/null); ls -l /opt/julebrus/releases 2>/dev/null; echo; sudo systemctl status julebrus --no-pager -l | head -20" ;;
   diag)    XB 'echo "--- health (with detail):"; curl -s -m 5 -i http://127.0.0.1:8080/actuator/health | head -8; echo; echo "--- key log lines (no stack frames):"; sudo journalctl -u julebrus -n 1500 --no-pager | grep -v -E "java\[[0-9]+\]:[[:space:]]+(at |\.\.\. [0-9]+ )" | grep -i -E "Started Julebrus|Flyway|Migrat|health|oauth|Caused by|ERROR|WARN|Exception|prestart" | cut -c1-260 | tail -40' ;;
   env)

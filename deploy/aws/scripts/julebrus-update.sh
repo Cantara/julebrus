@@ -28,7 +28,8 @@ flock -n 9 || { log "another update is running; skipping"; log "RESULT: skipped-
 work="$(mktemp -d)"; trap 'rm -rf "$work"' EXIT
 aws s3 cp "s3://$BUCKET/latest.json" "$work/latest.json" --quiet || die "cannot read latest.json"
 want="$(jq -r '.version // empty' "$work/latest.json")"; [ -n "$want" ] || die "latest.json has no version"
-[[ "$want" =~ ^[0-9A-Za-z._-]+$ ]] || die "latest.json has an odd version: refusing"
+# Same shape as the release workflow's tag regex (no pre-release suffixes), so sort -V orders versions correctly.
+[[ "$want" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]] || die "latest.json has a version that is not N.N.N: refusing"
 key="$(jq -r '.key // empty' "$work/latest.json")"; sha="$(jq -r '.sha256 // empty' "$work/latest.json")"
 [ -n "$key" ] && [ -n "$sha" ] || die "latest.json lacks key or sha256"
 have=""; [ ! -d "$ROOT/current" ] || have="$(basename "$(readlink -f "$ROOT/current")")"   # empty on a first install
@@ -52,29 +53,33 @@ install -d -m 0755 "$ROOT/releases/$want"
 install -m 0644 "$work/app.jar" "$ROOT/releases/$want/app.jar"
 prev="$(readlink -f "$ROOT/current" 2>/dev/null || true)"
 ln -sfn "$ROOT/releases/$want" "$ROOT/current"
+wait_healthy() { local i; for i in $(seq 1 "$TRIES"); do if curl -fsS -m 3 "$HEALTH_URL" >/dev/null 2>&1; then return 0; fi; sleep "$PAUSE"; done; return 1; }
 healthy=0
 # reset-failed first: earlier failed starts can leave the unit at its start limit, which would refuse this restart.
 systemctl reset-failed julebrus.service 2>/dev/null || true
 if systemctl restart julebrus.service; then
-  for _ in $(seq 1 "$TRIES"); do
-    if curl -fsS -m 3 "$HEALTH_URL" >/dev/null 2>&1; then healthy=1; break; fi
-    sleep "$PAUSE"
-  done
-  [ "$healthy" = 1 ] || log "health check failed on $want"
+  if wait_healthy; then healthy=1; else log "health check failed on $want"; fi
 else
   log "the service did not start, or died while starting, on $want (see: journalctl -u julebrus)"
 fi
 if [ "$healthy" = 1 ]; then
   log "now on $want"; log "RESULT: installed $want"; rm -f "$STATE/allow-downgrade"
-  # Keep the five newest releases, never the one in use.
-  ls -1dt "$ROOT"/releases/* | tail -n +6 | while read -r d; do [ "$d" = "$(readlink -f "$ROOT/current")" ] || rm -rf "$d"; done
+  # Keep the five newest GOOD releases, never the one in use nor the one we came from. Releases that failed do not count
+  # toward the five; their directories are kept for 14 days (for a look at them) and then removed.
+  curd="$(readlink -f "$ROOT/current")"
+  ls -1dt "$ROOT"/releases/* | while read -r d; do [ -e "$STATE/failed-$(basename "$d")" ] || echo "$d"; done | tail -n +6 \
+    | while read -r d; do if [ "$d" != "$curd" ] && [ "$d" != "$prev" ]; then rm -rf "$d"; fi; done || true
+  find "$STATE" -maxdepth 1 -name 'failed-*' -mtime +14 | while read -r f; do rm -rf "$ROOT/releases/${f##*/failed-}"; done || true
   exit 0
 fi
 printf '%s' "$sha" > "$STATE/failed-$want"
+log "NOTE: $want is now marked as failed and will not be retried by itself. If the cause was outside the release (for example the database was unreachable), clear the marker with: julebrus.sh retry $want"
 # reset-failed: after a failed start the unit may be at its start limit, which would refuse the restart below.
 systemctl reset-failed julebrus.service 2>/dev/null || true
 if [ -n "$prev" ] && [[ "$prev" == "$ROOT/releases/"* ]] && [ -d "$prev" ]; then
-  ln -sfn "$prev" "$ROOT/current"; systemctl restart julebrus.service || true; die "rolled back to $(basename "$prev")"
+  ln -sfn "$prev" "$ROOT/current"
+  if systemctl restart julebrus.service && wait_healthy; then die "rolled back to $(basename "$prev") (healthy)"; fi
+  die "rolled back to $(basename "$prev") BUT UNHEALTHY: the previous release does not come up either (see: journalctl -u julebrus)"
 fi
 rm -f "$ROOT/current"; systemctl stop julebrus.service || true
 die "failed and there is no previous release: removed the current link and stopped the service"
