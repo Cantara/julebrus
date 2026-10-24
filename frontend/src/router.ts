@@ -13,6 +13,7 @@ export const router = createRouter({
     { path: '/stats', component: () => import('./views/StatsView.vue') },
     { path: '/finale', component: () => import('./views/FinaleView.vue') },
     { path: '/historien', component: () => import('./views/StoryView.vue') },
+    { path: '/historikk', component: () => import('./views/HistoryView.vue') },
     { path: '/privacy', component: () => import('./views/PrivacyView.vue') },
     { path: '/consent', component: () => import('./views/ConsentView.vue') },
     { path: '/me', component: () => import('./views/ProfileView.vue') },

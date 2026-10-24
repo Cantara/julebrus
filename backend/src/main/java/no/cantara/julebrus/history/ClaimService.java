@@ -232,4 +232,60 @@ public class ClaimService {
         }
         return c;
     }
+
+    /**
+     * An admin ties a historic name to a login directly, no request from the person needed. The
+     * result is an approved claim with the admin as actor, so the usual views and revoke apply.
+     * A revoked pair can be linked again this way; that is the admin changing their mind.
+     */
+    @Transactional
+    public HistoricRaterClaim adminLink(UUID adminId, UUID userId, String rawKey) {
+        String key = rawKey == null ? "" : rawKey.trim();
+        Candidate c = candidates().get(key);
+        if (c == null) {
+            throw new ApiException(HttpStatus.NOT_FOUND, "RATER_NOT_FOUND", "No earlier rater with that name");
+        }
+        User target = users.findById(userId)
+                .orElseThrow(() -> new ApiException(HttpStatus.NOT_FOUND, "USER_NOT_FOUND", "No such user"));
+        if (c.linkedByEmail() && !c.loginEmail().equalsIgnoreCase(target.getEmail())) {
+            throw new ApiException(HttpStatus.CONFLICT, "RATER_LINKED",
+                    "raters.csv ties that name to another login; change the file instead");
+        }
+        var holder = claims.findByRaterKeyAndStatus(key, APPROVED);
+        if (holder.isPresent()) {
+            if (holder.get().getUserId().equals(userId)) return holder.get();
+            throw new ApiException(HttpStatus.CONFLICT, "RATER_TAKEN", "That name is already linked to someone else; unlink first");
+        }
+        HistoricRaterClaim claim = claims.findByUserIdAndRaterKey(userId, key).orElse(null);
+        if (claim == null) {
+            claim = claims.saveAndFlush(new HistoricRaterClaim(userId, key, clock.instant()));
+            events.save(new ClaimEvent(claim.getId(), ClaimEvent.Kind.CREATE, adminId, clock.instant()));
+        } else if (claim.getStatus() != PENDING) {
+            claim.reopen();
+            claim = claims.saveAndFlush(claim);
+            events.save(new ClaimEvent(claim.getId(), ClaimEvent.Kind.REOPEN, adminId, clock.instant()));
+        }
+        claim.approve(adminId, clock.instant());
+        try {
+            claims.saveAndFlush(claim);
+        } catch (DataIntegrityViolationException e) {
+            throw new ApiException(HttpStatus.CONFLICT, "RATER_TAKEN", "That name is already linked to someone else");
+        }
+        events.save(new ClaimEvent(claim.getId(), ClaimEvent.Kind.APPROVE, adminId, clock.instant()));
+        for (HistoricRaterClaim other : claims.findAllByRaterKeyAndStatus(key, PENDING)) {
+            other.reject(adminId, clock.instant());
+            claims.saveAndFlush(other);
+            events.save(new ClaimEvent(other.getId(), ClaimEvent.Kind.REJECT, adminId, clock.instant()));
+        }
+        return claim;
+    }
+
+    /** An admin removes the link a name currently has. */
+    @Transactional
+    public HistoricRaterClaim adminUnlink(UUID adminId, String rawKey) {
+        String key = rawKey == null ? "" : rawKey.trim();
+        HistoricRaterClaim c = claims.findByRaterKeyAndStatus(key, APPROVED)
+                .orElseThrow(() -> new ApiException(HttpStatus.NOT_FOUND, "CLAIM_NOT_FOUND", "That name is not linked"));
+        return revoke(adminId, c.getId());
+    }
 }

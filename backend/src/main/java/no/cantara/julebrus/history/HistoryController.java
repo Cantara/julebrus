@@ -88,15 +88,7 @@ public class HistoryController {
         HistoricSeason season = seasons.findById(year)
                 .orElseThrow(() -> new org.springframework.web.server.ResponseStatusException(
                         org.springframework.http.HttpStatus.NOT_FOUND));
-        Map<String, List<HistoricRating>> byBeer = ratings.findBySeasonYearOrderByBeerNameAsc(year).stream()
-                .collect(Collectors.groupingBy(r -> r.getBeerName().toLowerCase(), java.util.LinkedHashMap::new, Collectors.toList()));
-        return byBeer.values().stream().map(rs -> {
-            double w = rs.stream().mapToDouble(r -> r.getWeight().doubleValue()).sum();
-            double weighted = rs.stream().mapToDouble(r -> r.getScore().doubleValue() * r.getWeight().doubleValue()).sum() / w;
-            double normalised = rs.stream().mapToDouble(r -> season.normalise(r.getScore()) * r.getWeight().doubleValue()).sum() / w;
-            HistoricRating first = rs.get(0);
-            return new BeerSeasonView(year, first.getBeerName(), first.getBrewery(), rs.size(), weighted, normalised);
-        }).sorted((a, b) -> Double.compare(b.weightedMean(), a.weightedMean())).toList();
+        return seasonResults(season, ratings.findBySeasonYearOrderByBeerNameAsc(year));
     }
 
     /** Who has tasted over the years, joined by raters.csv. Emails are not exposed. */
@@ -105,6 +97,73 @@ public class HistoryController {
         return ratings.summariseRaters().stream()
                 .map(r -> new RaterView(r.raterKey(), r.raterEmail() != null, r.ratings(), r.firstYear(), r.lastYear()))
                 .toList();
+    }
+
+    /** One row per season with its size and winner, for the history page and its charts. */
+    public record SeasonOverview(int year, String title, long raters, long beers, long votes,
+                                 String winnerName, Double winnerWeightedMean, Double winnerNormalisedMean,
+                                 String weightingDescription, String sourceUrl) {
+    }
+
+    @GetMapping("/overview")
+    public List<SeasonOverview> overview() {
+        Map<Integer, List<HistoricRating>> byYear = ratings.findAll().stream()
+                .collect(Collectors.groupingBy(HistoricRating::getSeasonYear));
+        return seasons.findAll().stream()
+                .sorted((a, b) -> Integer.compare(b.getYear(), a.getYear()))
+                .map(season -> {
+                    List<HistoricRating> rs = byYear.getOrDefault(season.getYear(), List.of());
+                    BeerSeasonView top = seasonResults(season, rs).stream().findFirst().orElse(null);
+                    return new SeasonOverview(season.getYear(), season.getTitle(),
+                            rs.stream().map(r -> r.getRaterKey() == null ? r.getRaterName() : r.getRaterKey()).distinct().count(),
+                            rs.stream().map(r -> r.getBeerName().toLowerCase()).distinct().count(),
+                            rs.size(),
+                            top == null ? null : top.beerName(),
+                            top == null ? null : top.weightedMean(),
+                            top == null ? null : top.normalisedMean(),
+                            season.getWeightingDescription(), season.getSourceUrl());
+                })
+                .toList();
+    }
+
+    /** Per season: how the logged-in person scored against everyone else, on 1–6. */
+    public record MySeason(int year, long myRatings, double myMean, double crowdMean) {
+    }
+
+    @GetMapping("/me/summary")
+    public List<MySeason> mySummary() {
+        Map<Integer, HistoricSeason> byYear = seasonIndex();
+        List<RatingView> mine = mine();
+        if (mine.isEmpty()) return List.of();
+        Map<Integer, List<HistoricRating>> all = ratings.findAll().stream()
+                .collect(Collectors.groupingBy(HistoricRating::getSeasonYear));
+        return mine.stream().collect(Collectors.groupingBy(RatingView::year)).entrySet().stream()
+                .map(e -> {
+                    HistoricSeason season = byYear.get(e.getKey());
+                    double myMean = e.getValue().stream().mapToDouble(RatingView::normalised).average().orElse(0);
+                    List<HistoricRating> rs = all.getOrDefault(e.getKey(), List.of());
+                    double w = rs.stream().mapToDouble(r -> r.getWeight().doubleValue()).sum();
+                    double crowd = w == 0 ? 0 : rs.stream()
+                            .mapToDouble(r -> (season == null ? r.getScore().doubleValue() : season.normalise(r.getScore())) * r.getWeight().doubleValue())
+                            .sum() / w;
+                    return new MySeason(e.getKey(), e.getValue().size(), myMean, crowd);
+                })
+                .sorted(java.util.Comparator.comparingInt(MySeason::year))
+                .toList();
+    }
+
+    private List<BeerSeasonView> seasonResults(HistoricSeason season, List<HistoricRating> rows) {
+        Map<String, List<HistoricRating>> byBeer = rows.stream()
+                .collect(Collectors.groupingBy(r -> r.getBeerName().toLowerCase(), java.util.LinkedHashMap::new, Collectors.toList()));
+        return byBeer.values().stream().map(rs -> {
+            double w = rs.stream().mapToDouble(r -> r.getWeight().doubleValue()).sum();
+            if (w == 0) return null;
+            double weighted = rs.stream().mapToDouble(r -> r.getScore().doubleValue() * r.getWeight().doubleValue()).sum() / w;
+            double normalised = rs.stream().mapToDouble(r -> season.normalise(r.getScore()) * r.getWeight().doubleValue()).sum() / w;
+            HistoricRating first = rs.get(0);
+            return new BeerSeasonView(season.getYear(), first.getBeerName(), first.getBrewery(), rs.size(), weighted, normalised);
+        }).filter(java.util.Objects::nonNull)
+          .sorted((a, b) -> Double.compare(b.weightedMean(), a.weightedMean())).toList();
     }
 
     private Map<Integer, HistoricSeason> seasonIndex() {

@@ -2,11 +2,14 @@
 import { onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { get, logout, post } from '../api/client'
+import AdminBeers from '../components/AdminBeers.vue'
 import AdminClaims from '../components/AdminClaims.vue'
+import AdminRaterLinks from '../components/AdminRaterLinks.vue'
+import DumbbellChart from '../components/DumbbellChart.vue'
 import ClaimHistory from '../components/ClaimHistory.vue'
 import LangToggle from '../components/LangToggle.vue'
 import { t } from '../i18n'
-import type { BadgeView, Beer, HistoricRating, Tasting } from '../api/types'
+import type { BadgeView, Beer, HistoricRating, MySeason, Tasting } from '../api/types'
 import BadgeTree from '../components/BadgeTree.vue'
 import { useMe } from '../stores/me'
 
@@ -16,6 +19,7 @@ const confirmingWithdraw = ref(false)
 const badges = ref<BadgeView[]>([])
 const mine = ref<Tasting[]>([])
 const history = ref<HistoricRating[]>([])
+const mySeasons = ref<MySeason[]>([])
 const beerNames = ref<Record<string, string>>({})
 
 onMounted(async () => {
@@ -24,6 +28,7 @@ onMounted(async () => {
     get<Tasting[]>('/api/tastings/mine'),
     get<HistoricRating[]>('/api/history/me').catch(() => []),
     get<Beer[]>('/api/beers'),
+    get<MySeason[]>('/api/history/me/summary').catch(() => []).then((r) => (mySeasons.value = r)),
   ])
   badges.value = b
   mine.value = t
@@ -33,6 +38,7 @@ onMounted(async () => {
 
 async function reloadHistory() {
   history.value = await get<HistoricRating[]>('/api/history/me').catch(() => [])
+  mySeasons.value = await get<MySeason[]>('/api/history/me/summary').catch(() => [])
 }
 
 const withdrawFailed = ref(false)
@@ -92,6 +98,12 @@ const byYear = () => {
   </div>
 
   <h2>Mine historiske scorer</h2>
+  <div v-if="mySeasons.length" class="card">
+    <strong class="display">Deg mot flokken, år for år</strong>
+    <p class="muted" style="margin: 2px 0 8px">Ditt snitt og sesongens vektede snitt, på 1–6.</p>
+    <DumbbellChart :rows="mySeasons.map((s) => ({ label: String(s.year), a: s.myMean, b: s.crowdMean }))" a-name="Deg" b-name="Alle" />
+    <p class="muted" style="margin: 6px 0 0"><router-link to="/historikk">Alle årene, med resultatlister og vinnere</router-link></p>
+  </div>
   <p class="muted">Fra tidligere års smakinger, med den vektingen som gjaldt da.</p>
   <div v-for="[year, rows] in byYear()" :key="year" class="card">
     <strong>{{ year }}</strong>
@@ -109,6 +121,8 @@ const byYear = () => {
 
   <ClaimHistory @changed="reloadHistory" />
   <AdminClaims v-if="store.me?.admin" />
+  <AdminRaterLinks v-if="store.me?.admin" />
+  <AdminBeers v-if="store.me?.admin" />
 
   <h2>{{ t('withdrawTitle') }}</h2>
   <div class="card">
