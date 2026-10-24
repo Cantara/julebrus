@@ -15,7 +15,7 @@ of wiki.cantara.no (the site's robots.txt allows reading).
 ## Google Sheets
 
 The Confluence pages for 2011-2019 link a Google Sheet each; these were exported as CSV on 2026-10-24 into
-`source/google-sheets/` (one request per sheet; the sheets' robots.txt allows `/spreadsheet*`).
+`../source/google-sheets/` (one request per sheet; the sheets' robots.txt allows `/spreadsheet*`).
 
 | Year | Layout | Notes |
 | --- | --- | --- |
@@ -27,7 +27,7 @@ The Confluence pages for 2011-2019 link a Google Sheet each; these were exported
 
 ## Checked against the sources
 
-Every stated mean and vote count is compared with the votes listed in the same source (`tools/build_data.py` prints
+Every stated mean and vote count is compared with the votes listed in the same source (`../tools/build_data.py` prints
 the differences). They agree except:
 
 - 1998, Schous: the page says 3 votes; the row holds 6 and the stated mean 4.33 matches the 6.

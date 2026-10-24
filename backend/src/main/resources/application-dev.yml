@@ -1,0 +1,29 @@
+# Local development: in-memory H2, no Google login. Run with
+#   mvn spring-boot:run -Dspring-boot.run.profiles=dev
+spring:
+  datasource:
+    url: jdbc:h2:mem:julebrus;MODE=PostgreSQL;DATABASE_TO_LOWER=TRUE;DEFAULT_NULL_ORDERING=HIGH
+    username: sa
+    password:
+    driver-class-name: org.h2.Driver
+  h2:
+    console:
+      enabled: true
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: dev
+            client-secret: dev
+
+julebrus:
+  auth:
+    admins: dev@cantara.no
+  dev-user:
+    email: dev@cantara.no
+    name: Dev Tester
+  season:
+    # Widen the window so the app is usable before 1 Nov while developing.
+    start: 2026-01-01
+    end: 2026-12-31
