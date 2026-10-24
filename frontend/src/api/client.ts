@@ -77,7 +77,8 @@ export const postText = <T>(path: string, text: string, contentType = 'text/csv'
   api<T>(path, { method: 'POST', body: text, headers: { 'Content-Type': contentType } })
 export const put = <T>(path: string, body?: unknown) =>
   api<T>(path, { method: 'PUT', body: body === undefined ? undefined : JSON.stringify(body) })
-export const del = <T>(path: string) => api<T>(path, { method: 'DELETE' })
+export const del = <T>(path: string, body?: unknown) =>
+  api<T>(path, { method: 'DELETE', body: body === undefined ? undefined : JSON.stringify(body) })
 
 /** Ends the session. The server answers with a redirect to "/", so the body is ignored. */
 export async function logout(): Promise<void> {

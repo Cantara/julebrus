@@ -120,6 +120,15 @@ Oslo time: `SeasonProperties.tipDeadline()`). Scoring at the reveal against the 
 whole league is shown, best first, earlier tip ahead on a tie, and "Årets tipper" joins the
 awards (at least one point).
 
+## Push notifications (decided 24 Oct)
+
+Opt-in per browser. A daily nudge at 17:00 Oslo time to anyone who has not opened that day's
+door, once per day per browser, during the season only; and one "Stjernen er tent" at the reveal
+to browsers subscribed before it (`PushPlanner`, pure). Web Push with VAPID keys from the
+environment; the message encryption is RFC 8291 on the JDK, verified against the RFC's own test
+vector. Subscriptions hold only what the browser hands over (endpoint, its public key, its auth
+secret) and are deleted on unsubscribe, on 404/410 from the push service, or after five failures.
+
 ## Statistics
 
 - **Beers:** weighted Bayesian average (prior = weighted global mean, prior weight

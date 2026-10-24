@@ -32,16 +32,16 @@ public final class RaterWeightPolicy {
 
     public static Decision decide(Optional<PreviousSeason> previous) {
         if (previous.isEmpty()) {
-            return new Decision(ROOKIE, "First season. Full weight next year after a normal season.");
+            return new Decision(ROOKIE, "Første sesong. Full vekt neste år etter en vanlig sesong.");
         }
         PreviousSeason p = previous.get();
         if (p.flagged()) {
-            return new Decision(MUTED, "Flagged for rigging in %d. Your scores are recorded but do not count this season.".formatted(p.year()));
+            return new Decision(MUTED, "Flagget for juks i %d. Terningkastene dine lagres, men teller ikke i år.".formatted(p.year()));
         }
         if (p.scoresLogged() < MIN_SCORES_FOR_FULL_WEIGHT) {
-            return new Decision(ROOKIE, "Only %d scores in %d. Log at least %d for full weight next year."
+            return new Decision(ROOKIE, "Bare %d terningkast i %d. Minst %d gir full vekt neste år."
                     .formatted(p.scoresLogged(), p.year(), MIN_SCORES_FOR_FULL_WEIGHT));
         }
-        return new Decision(FULL, "Normal season in %d.".formatted(p.year()));
+        return new Decision(FULL, "Vanlig sesong i %d.".formatted(p.year()));
     }
 }

@@ -47,7 +47,9 @@ deletion; blank means "contact the organisers"), `JULEBRUS_SPONSOR_NAME` (defaul
 (default `https://exoreaction.com`).
 
 `JULEBRUS_MCP_TOKEN` switches on the MCP server (see below); leave it empty to keep
-`/mcp` off.
+`/mcp` off. `JULEBRUS_VAPID_PUBLIC_KEY` and `JULEBRUS_VAPID_PRIVATE_KEY` switch on push
+notifications (see below); `JULEBRUS_PUSH_SUBJECT` (`mailto:` or `https:`) defaults to the
+contact e-mail.
 
 ## Consent, privacy page and claims
 
@@ -247,6 +249,19 @@ history files with:
 ```bash
 python3 tools/to_app_history.py backend/src/main/resources/history
 ```
+
+## Push notifications
+
+Two messages, both opt-in per browser from the "Varsler" card on the profile page: a daily
+"Dagens luke står uåpnet" nudge at 17:00 Oslo time (`julebrus.push.nudge-time`) to people who
+have not tasted that day, and "Stjernen er tent" at the reveal. Web Push with VAPID, encrypted
+on the JDK alone (RFC 8291, checked against the RFC's test vector), no third-party library.
+
+To switch it on, log in as an admin and open `/api/push/keygen`; put the two keys in
+`JULEBRUS_VAPID_PUBLIC_KEY` and `JULEBRUS_VAPID_PRIVATE_KEY` and restart. Changing the keys
+later invalidates every subscription (people switch it on again). The jar needs outbound
+HTTPS to the push services (Google, Mozilla, Apple). Browsers that answer 404 or 410, or fail
+five times in a row, are forgotten. On iPhone, push works only for the app on the home screen.
 
 ## Live reveal
 

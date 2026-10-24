@@ -30,6 +30,10 @@ public class RaterWeight {
     @Column(nullable = false)
     private boolean flagged;
 
+    /** Set by an admin override; the policy never touches such a row again. */
+    @jakarta.persistence.Column(nullable = false)
+    private boolean overridden;
+
     @Column(name = "flag_note")
     private String flagNote;
 
@@ -47,7 +51,19 @@ public class RaterWeight {
     public void override(double weight, String reason) {
         this.weight = BigDecimal.valueOf(weight);
         this.reason = reason;
+        this.overridden = true;
     }
+
+    /** The policy's own decision; a no-op on an overridden row. */
+    public boolean redecide(double weight, String reason) {
+        if (overridden) return false;
+        boolean changed = this.weight.compareTo(BigDecimal.valueOf(weight)) != 0 || !reason.equals(this.reason);
+        this.weight = BigDecimal.valueOf(weight);
+        this.reason = reason;
+        return changed;
+    }
+
+    public boolean isOverridden() { return overridden; }
 
     public void flag(boolean flagged, String note) {
         this.flagged = flagged;

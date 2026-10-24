@@ -36,6 +36,14 @@ julebrus:
   mcp:
     # Bearer token agents present on /mcp. Empty disables the endpoint.
     token: ${JULEBRUS_MCP_TOKEN:}
+  push:
+    # Web Push (VAPID). Generate a pair with GET /api/push/keygen as an admin. Blank keys switch notifications off.
+    vapid-public-key: ${JULEBRUS_VAPID_PUBLIC_KEY:}
+    vapid-private-key: ${JULEBRUS_VAPID_PRIVATE_KEY:}
+    # Contact for the push services (mailto: or https:). Defaults to the contact e-mail.
+    subject: ${JULEBRUS_PUSH_SUBJECT:}
+    # Local time of the daily "dagens luke" nudge to people who have not tasted yet.
+    nudge-time: "17:00"
   auth:
     # Comma separated. Empty means any Google account may log in.
     allowed-domains: ${JULEBRUS_ALLOWED_DOMAINS:}

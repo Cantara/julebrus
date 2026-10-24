@@ -67,6 +67,12 @@ export interface Beer {
   counts: boolean
 }
 
+export interface PushConfig {
+  enabled: boolean
+  publicKey?: string
+  nudgeTime: string
+}
+
 export interface TipPick {
   beerId: string
   name: string

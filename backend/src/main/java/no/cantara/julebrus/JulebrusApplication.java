@@ -10,7 +10,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 
 @SpringBootApplication
-@EnableConfigurationProperties({SeasonProperties.class, AuthProperties.class, DevUserProperties.class,
+@org.springframework.scheduling.annotation.EnableScheduling
+@EnableConfigurationProperties({no.cantara.julebrus.push.PushProperties.class, SeasonProperties.class, AuthProperties.class, DevUserProperties.class,
         SponsorProperties.class, ContactProperties.class})
 public class JulebrusApplication {
 
