@@ -55,7 +55,7 @@ async function save() {
   try {
     await post<Tasting>('/api/tastings', body)
     await store.refresh()
-    router.replace(sessionId ? `/session/${sessionId}` : '/')
+    router.replace(sessionId ? `/session/${sessionId}?just=${props.id}` : '/')
   } catch (e) {
     error.value = e instanceof ApiFailure ? (RULE_TEXT[e.code] ?? e.message) : (e as Error).message
   } finally {

@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed, onMounted, onUnmounted, ref } from 'vue'
+import { useRoute } from 'vue-router'
 import { get, post } from '../api/client'
 import type { Beer, DuelPair, Session } from '../api/types'
 import QrCode from '../components/QrCode.vue'
@@ -7,6 +8,7 @@ import { useMe } from '../stores/me'
 
 const props = defineProps<{ id: string }>()
 const store = useMe()
+const route = useRoute()
 
 const session = ref<Session | null>(null)
 const catalogue = ref<Beer[]>([])
@@ -30,9 +32,33 @@ const filtered = computed(() => {
     .slice(0, 8)
 })
 
+/** Beers whose scores were revealed since we last looked: these get unwrapped. */
+const unwrapping = ref<Set<string>>(new Set())
+let seenRevealed = new Set<string>()
+let firstLoad = true
+
+function unwrap(beerId: string) {
+  unwrapping.value = new Set([...unwrapping.value, beerId])
+  window.setTimeout(() => {
+    const next = new Set(unwrapping.value)
+    next.delete(beerId)
+    unwrapping.value = next
+  }, 2600)
+}
+
 async function refresh() {
   session.value = await get<Session>(`/api/sessions/${props.id}`)
   pending.value = await get<DuelPair[]>(`/api/duels/pending/${props.id}`).catch(() => [])
+  const revealedNow = new Set(session.value.beers.filter((b) => b.revealed && b.scores).map((b) => b.beerId))
+  if (firstLoad) {
+    // Coming back from the rating page as the last to rate: unwrap that one beer.
+    const just = typeof route.query.just === 'string' ? route.query.just : null
+    if (just && revealedNow.has(just)) unwrap(just)
+    firstLoad = false
+  } else {
+    for (const id of revealedNow) if (!seenRevealed.has(id)) unwrap(id)
+  }
+  seenRevealed = revealedNow
 }
 
 async function addBeer(beerId: string) {
@@ -70,7 +96,10 @@ onUnmounted(() => clearInterval(timer))
   <template v-if="session">
     <h1>Smaking {{ session.closedAt ? '(avsluttet)' : '' }}</h1>
 
-    <div v-if="!session.closedAt" class="card" style="text-align: center">
+    <div v-if="!session.closedAt" class="card gift-tag" style="text-align: center">
+      <span class="string" aria-hidden="true" />
+      <span class="hole" aria-hidden="true" />
+      <p class="muted" style="margin: 0 0 8px">Til: alle rundt bordet</p>
       <QrCode :value="joinUrl" :size="220" />
       <p class="code" style="margin: 10px 0 0">{{ session.joinCode }}</p>
       <p class="muted">Skann eller skriv inn koden for å bli med</p>
@@ -91,10 +120,12 @@ onUnmounted(() => clearInterval(timer))
         </div>
         <router-link v-if="myId && !b.ratedBy.includes(myId) && !session.closedAt" class="btn" :to="`/beers/${b.beerId}/rate?session=${session.id}`">Gi terningkast</router-link>
       </div>
-      <template v-if="b.revealed && b.scores">
-        <p class="ok" style="margin: 8px 0 4px">Snitt {{ b.average?.toFixed(2) }}</p>
-        <div><span v-for="(s, uid) in b.scores" :key="uid" class="pill">{{ memberName(String(uid)) }}: {{ s }}</span></div>
-      </template>
+      <div v-if="b.revealed && b.scores" class="reveal" :class="{ unwrap: unwrapping.has(b.beerId) }">
+        <span class="paper" aria-hidden="true" />
+        <span class="burst" aria-hidden="true"><i v-for="n in 10" :key="n" :style="{ '--a': `${n * 36}deg` }" /></span>
+        <div class="scores"><span v-for="(s, uid) in b.scores" :key="uid" class="pill score">{{ memberName(String(uid)) }}: <strong>{{ s }}</strong></span></div>
+        <p class="ok average display" style="margin: 8px 0 0">Snitt {{ b.average?.toFixed(2) }}</p>
+      </div>
       <p v-else class="muted" style="margin: 8px 0 0">
         {{ b.ratedBy.length }} av {{ session.members.length }} har svart. Scorene vises når alle er ferdige.
       </p>

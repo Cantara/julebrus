@@ -183,3 +183,57 @@ th { font-size: 0.8rem; color: var(--muted); font-weight: 600; }
   .snow { display: none; }
   .die.roll { animation: none; }
 }
+
+/* Gift tag around the QR card */
+.gift-tag { position: relative; padding-top: 26px; clip-path: polygon(0 18px, 18px 0, 100% 0, 100% 100%, 0 100%); border-radius: 0 16px 16px 16px; }
+.gift-tag .hole { position: absolute; top: 10px; left: 22px; width: 10px; height: 10px; border-radius: 50%; background: var(--bg); box-shadow: inset 0 0 0 2px var(--line); }
+.gift-tag .string { position: absolute; top: 14px; left: 27px; width: 60px; height: 2px; background: var(--brass); transform: rotate(-28deg); transform-origin: 0 50%; opacity: 0.8; }
+
+/* The reveal: scores sit under wrapping paper until every member has rated */
+.reveal { position: relative; margin-top: 8px; }
+.reveal .paper { display: none; }
+.reveal .burst { display: none; }
+.reveal.unwrap { overflow: visible; }
+.reveal.unwrap .paper {
+  display: block; position: absolute; inset: -6px -8px; border-radius: 12px; z-index: 2;
+  background: repeating-linear-gradient(45deg, var(--brand) 0 10px, #9a3a44 10px 14px, var(--brand) 14px 20px, #fff6e8 20px 24px);
+  animation: tear 900ms cubic-bezier(0.7, 0, 0.3, 1) 300ms forwards;
+}
+.reveal.unwrap .scores .score { animation: pop 500ms cubic-bezier(0.2, 1.4, 0.4, 1) both; }
+.reveal.unwrap .scores .score:nth-child(2) { animation-delay: 1150ms; }
+.reveal.unwrap .scores .score:nth-child(3) { animation-delay: 1250ms; }
+.reveal.unwrap .scores .score:nth-child(4) { animation-delay: 1350ms; }
+.reveal.unwrap .scores .score:nth-child(5) { animation-delay: 1450ms; }
+.reveal.unwrap .scores .score:nth-child(n+6) { animation-delay: 1550ms; }
+.reveal.unwrap .scores .score:first-child { animation-delay: 1050ms; }
+.reveal.unwrap .average { animation: land 600ms cubic-bezier(0.2, 1.2, 0.3, 1) 1700ms both; }
+.reveal.unwrap .burst {
+  display: block; position: absolute; left: 50%; top: 50%; width: 0; height: 0; z-index: 3; pointer-events: none;
+}
+.reveal.unwrap .burst i {
+  position: absolute; left: -3px; top: -3px; width: 6px; height: 6px; border-radius: 50%;
+  background: var(--candle); animation: spark 900ms ease-out 1100ms both; transform: rotate(var(--a));
+}
+.reveal.unwrap .burst i:nth-child(odd) { background: var(--brand); }
+@keyframes tear {
+  0% { clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%); }
+  40% { clip-path: polygon(0 0, 100% 0, 100% 100%, 55% 100%, 45% 60%, 0 100%); }
+  100% { clip-path: polygon(0 0, 0 0, 0 0, 0 0, 0 0, 0 0); opacity: 0; }
+}
+@keyframes pop { from { transform: scale(0.4) rotate(-12deg); opacity: 0; } to { transform: scale(1) rotate(0); opacity: 1; } }
+@keyframes land { from { transform: translateY(-14px) scale(1.4); opacity: 0; } to { transform: none; opacity: 1; } }
+@keyframes spark { from { transform: rotate(var(--a)) translateY(0); opacity: 1; } to { transform: rotate(var(--a)) translateY(-70px); opacity: 0; } }
+.reveal .average { font-size: 1.3rem; }
+
+/* Badge tree */
+.tree { width: 100%; max-width: 320px; display: block; margin: 0 auto; }
+.tree .bauble { cursor: pointer; }
+.tree .bauble.earned circle:first-of-type { filter: drop-shadow(0 0 4px var(--glow)); }
+.tree .bauble.selected circle:first-of-type { stroke: var(--ink); stroke-width: 2; stroke-dasharray: none; }
+.tree .bauble:focus { outline: none; }
+.tree .bauble:focus-visible circle:first-of-type { stroke: var(--ink); stroke-width: 2; }
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal.unwrap .paper, .reveal.unwrap .burst { display: none; }
+  .reveal.unwrap .scores .score, .reveal.unwrap .average { animation: none; }
+}
