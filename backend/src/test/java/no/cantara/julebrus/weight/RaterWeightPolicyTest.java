@@ -23,7 +23,7 @@ class RaterWeightPolicyTest {
     void fewerThanSevenScoresStaysAtHalf() {
         var d = RaterWeightPolicy.decide(Optional.of(new RaterWeightPolicy.PreviousSeason(2025, 6, false)));
         assertThat(d.weight()).isEqualTo(0.5);
-        assertThat(d.reason()).contains("6 scores");
+        assertThat(d.reason()).contains("6 terningkast");
     }
 
     @Test

@@ -29,6 +29,14 @@ public interface HistoricRatingRepository extends JpaRepository<HistoricRating, 
     @org.springframework.data.jpa.repository.Query("select distinct r.seasonYear from HistoricRating r where lower(r.raterEmail) = lower(:email)")
     List<Integer> findSeasonYearsByEmail(@org.springframework.data.repository.query.Param("email") String email);
 
+    /** Seasons of the people (keys) whose claims an admin approved for someone. */
+    @org.springframework.data.jpa.repository.Query("select distinct r.seasonYear from HistoricRating r where coalesce(r.raterKey, r.raterName) in :keys")
+    List<Integer> findSeasonYearsByKeys(@org.springframework.data.repository.query.Param("keys") java.util.Collection<String> keys);
+
+    @org.springframework.data.jpa.repository.Query("select count(r) from HistoricRating r where r.seasonYear = :year and coalesce(r.raterKey, r.raterName) in :keys")
+    int countBySeasonYearAndKeys(@org.springframework.data.repository.query.Param("year") int year,
+                                 @org.springframework.data.repository.query.Param("keys") java.util.Collection<String> keys);
+
     /**
      * Per person (key) and season: the rating count and one rater_email if any row has one. Only
      * feeds the claim-candidate list, so no scores, beers, breweries or notes are selected.
