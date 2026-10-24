@@ -22,6 +22,28 @@ export interface Me {
   teams: { id: string; slug: string; name: string }[]
   /** false until the team page has been answered, "later" included */
   teamsChosen: boolean
+  /** the newest open table this person sits at; null when none */
+  openTable: OpenTable | null
+}
+
+export interface OpenTable {
+  id: string
+  hostName: string
+  host: boolean
+  members: number
+  beers: number
+  pendingForMe: number
+}
+
+export interface MySession {
+  id: string
+  hostName: string
+  host: boolean
+  members: number
+  beers: number
+  pendingForMe: number
+  createdAt: string
+  closedAt?: string
 }
 
 export interface Team {

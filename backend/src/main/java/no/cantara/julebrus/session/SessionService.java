@@ -48,6 +48,11 @@ public class SessionService {
     }
 
     @Transactional(readOnly = true)
+    public java.util.List<TastingSession> mine(UUID userId) {
+        return sessions.findByMember(userId);
+    }
+
+    @Transactional(readOnly = true)
     public TastingSession getForMember(UUID sessionId, UUID userId) {
         TastingSession session = sessions.findById(sessionId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));

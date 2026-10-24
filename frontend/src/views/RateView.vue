@@ -75,18 +75,6 @@ async function save() {
   <p class="muted">{{ beer?.brewery }}</p>
   <BeerPhotoBox v-if="beer" :beer="beer" @changed="loadBeer" />
 
-  <div v-if="history.length" class="card">
-    <strong>Tidligere år</strong>
-    <table>
-      <thead><tr><th>År</th><th>Hvem</th><th>Score</th><th>Vekt</th><th>På 1–6</th></tr></thead>
-      <tbody>
-        <tr v-for="h in history" :key="h.year + h.raterName">
-          <td>{{ h.year }}</td><td>{{ h.raterKey }}</td><td>{{ h.score }}</td><td>{{ h.weight }}</td><td>{{ h.normalised.toFixed(1) }}</td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
-
   <form class="card" @submit.prevent="save">
     <label>Terningkast</label>
     <ScoreDice v-model="score" />
@@ -106,4 +94,16 @@ async function save() {
     <p v-if="error" class="error">{{ error }}</p>
     <button :disabled="!score || saving" style="width: 100%; margin-top: 14px">Lagre</button>
   </form>
+
+  <details v-if="history.length" class="card">
+    <summary><strong>Tidligere år</strong> <span class="muted">· {{ history.length }} terningkast siden {{ Math.min(...history.map((h) => h.year)) }}</span></summary>
+    <table>
+      <thead><tr><th>År</th><th>Hvem</th><th>Score</th><th>Vekt</th><th>På 1–6</th></tr></thead>
+      <tbody>
+        <tr v-for="h in history" :key="h.year + h.raterName">
+          <td>{{ h.year }}</td><td>{{ h.raterKey }}</td><td>{{ h.score }}</td><td>{{ h.weight }}</td><td>{{ h.normalised.toFixed(1) }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </details>
 </template>
