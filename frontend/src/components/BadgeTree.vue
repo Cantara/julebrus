@@ -8,12 +8,12 @@ import type { BadgeView } from '../api/types'
  */
 const props = defineProps<{ badges: BadgeView[] }>()
 
-// Nine slots down the tree, left to right, top to bottom.
+// Ten slots down the tree, left to right, top to bottom.
 const SLOTS: [number, number][] = [
   [100, 62],
   [78, 98], [124, 104],
   [62, 142], [100, 150], [140, 146],
-  [50, 190], [98, 196], [150, 192],
+  [46, 194], [82, 200], [118, 200], [154, 194],
 ]
 // Decorative only; the label carries identity. No pine: it would vanish against the tree.
 const TONES = ['var(--brand)', 'var(--brass)', '#9fc5d8', 'var(--candle)']

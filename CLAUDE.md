@@ -15,6 +15,7 @@ badges, and imported historic seasons. See DESIGN.md for rules and decisions.
 - `backend/src/main/java/no/cantara/julebrus/`
   - `tasting/TastingRules` — the season rules as a pure class. Change rules here and in `application.yml`.
   - `session/` — group sessions, join codes, blind reveal is computed in `SessionController.view`.
+  - `blind/` — blind pour rounds under `/api/sessions/{id}/blind` (`BlindService` holds the rules: host only, 2–6 options from the table, one open round per table, one guess each, host never guesses, auto-reveal on the last guest's guess, session close reveals the rest); `BlindTally` is the pure per-person score used by the Blind Taster badge and the finale award.
   - `duel/BradleyTerry`, `stats/BayesianAverage` — pure ranking math.
   - `badge/BadgeEvaluator` — pure badge rules over a tasting log.
   - `history/` — CSV import of earlier seasons and their weighting.
@@ -35,7 +36,7 @@ cd frontend && npm run build
 ```
 
 ## Conventions
-- Rule violations are HTTP 422 with a stable `code` (`OUTSIDE_SEASON`, `DAILY_LIMIT`, `SOLO_DAYS_EXHAUSTED`, `ALREADY_RATED`). Other errors carry their own codes too: `CONSENT_REQUIRED`, `CONSENT_VERSION_MISMATCH`, `RATER_NOT_FOUND`, `CLAIM_EXISTS`, `RATER_TAKEN`, `CLAIM_LIMIT`, `CLAIM_NOT_PENDING`, `CLAIM_NOT_APPROVED`, `CLAIM_DAILY_LIMIT`, `CLAIM_REVOKED`, `CLAIM_NOT_FOUND`, `RATER_LINKED`, and `CONFLICT` for a lost unique-constraint race.
+- Rule violations are HTTP 422 with a stable `code` (`OUTSIDE_SEASON`, `DAILY_LIMIT`, `SOLO_DAYS_EXHAUSTED`, `ALREADY_RATED`). Other errors carry their own codes too: `CONSENT_REQUIRED`, `CONSENT_VERSION_MISMATCH`, `RATER_NOT_FOUND`, `CLAIM_EXISTS`, `RATER_TAKEN`, `CLAIM_LIMIT`, `CLAIM_NOT_PENDING`, `CLAIM_NOT_APPROVED`, `CLAIM_DAILY_LIMIT`, `CLAIM_REVOKED`, `CLAIM_NOT_FOUND`, `RATER_LINKED`, `CONFLICT` for a lost unique-constraint race, and the blind pour's `BLIND_NOT_HOST` (403), `BLIND_NEEDS_GUESTS`, `BLIND_ROUND_OPEN`, `BLIND_OPTIONS`, `BLIND_ANSWER`, `BLIND_HOST_GUESS`, `BLIND_ALREADY_GUESSED`, `BLIND_NOT_OPTION`, `BLIND_REVEALED`, `BLIND_NO_GUESSES`, `BLIND_NOT_FOUND` (404).
 - Days are Europe/Oslo. Scores are integers 1–6.
 - A beer counts only if it is from Vinmonopolet, i.e. above grocery strength (`Beer.GROCERY_MAX_ABV` = 4.7 %); `Beer.counts()` is what the rankings use. Non-admin additions are PENDING until approved. Homebrew (`Beer.homebrew`) must state an ABV above that, is rated only in a session of `HOMEBREW_MIN_GROUP` (6) members (`HOMEBREW_NEEDS_GROUP`), and ranks only with `HOMEBREW_MIN_RATINGS` (4) scores.
 - Schema changes go in a new Flyway migration; Hibernate runs with `ddl-auto: validate`.

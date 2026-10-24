@@ -84,6 +84,13 @@ and attaches their login email.
    feed a Bradley–Terry ranking that ignores how generous or stingy each rater is.
 6. Optional prediction step: guess the group average before the reveal. Accuracy
    feeds the Sommelier badge.
+7. **Blind pour:** the host pours one of the beers on the table without saying which,
+   picks 2–6 candidates and marks the answer (only the host sees that). The other
+   members guess once each; the host never guesses. Who has guessed is visible, the
+   picks and the answer only once the last guest has guessed, the host reveals, or the
+   table closes. One open round per table. Three correct guesses in a season give the
+   Blind Taster badge; most correct guesses (min. 3 guesses, ties by hit rate) is a
+   finale award.
 
 ## Statistics
 
@@ -110,6 +117,7 @@ Computed from the tasting log, so they can be added or re-tuned mid-season.
 | Advent | Rated every day 1 – 23 Dec |
 | Sommelier | Best prediction accuracy (min. 10 predictions) |
 | Closing Time | A rating on 23 Dec |
+| Blind Taster | Named the beer in a blind pour 3 times |
 
 The home screen shows "least tasted beers" so the long tail gets covered.
 
