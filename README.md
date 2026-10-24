@@ -35,8 +35,10 @@ cd ../backend && mvn package        # one runnable jar
 
 Environment variables: `JULEBRUS_DB_URL`, `JULEBRUS_DB_USER`, `JULEBRUS_DB_PASSWORD`,
 `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`, optionally `JULEBRUS_ALLOWED_DOMAINS`
-(comma separated; empty allows any Google account) and `JULEBRUS_ADMINS` (emails
-that may flag raters, override weights and approve history claims). The Google OAuth redirect URI is
+(comma separated; empty allows any Google account) and **`JULEBRUS_ADMINS`** (emails
+that may flag raters, override weights, approve history claims, beers and photos). **Production must set
+`JULEBRUS_ADMINS`**: it has no default, and empty means nobody is an admin (the `dev` profile has its own
+dev admin; the box has it set). The Google OAuth redirect URI is
 `https://<host>/login/oauth2/code/google`.
 
 Also optional: `JULEBRUS_CONTACT_EMAIL` (named in the consent text as where to ask for
@@ -74,6 +76,50 @@ an admin deleting the claim row resets it). Withdrawing keeps the row (status `W
 still counts: at most 5 claims wait at once (`CLAIM_LIMIT`) and at most 10 are created or reopened
 per 24 hours (`CLAIM_DAILY_LIMIT`). Every step is recorded in `claim_events`; claim rows have an
 optimistic lock, so two admins deciding at once get 409 `CONFLICT`.
+
+## Label photos
+
+Optional photo of a beer's label (`BeerPhotoBox` on the beer card and the rating page). Stored in PostgreSQL in
+`beer_photos` (migration `V6__beer_photos.sql`, `data` is a `bytea`), never as a file or a public link. Nothing that
+lists beers reads the bytes: the JPA entity `BeerPhoto` does not map the `data` column, and only `PhotoStore` (plain
+JDBC) writes the row or selects `data`.
+
+| Endpoint | Who | What |
+|---|---|---|
+| `POST /api/beers/{beerId}/photos` | consented user, CSRF | multipart, part `file`; 201 with the photo (status `PENDING`; an admin's is `APPROVED` at once) |
+| `GET /api/beers/{beerId}/photo` | consented user | the cover: the oldest `APPROVED` photo, else the caller's own `PENDING` one; 404 when none |
+| `GET /api/beers/photos/{photoId}/image` | uploader, admin, or anyone once `APPROVED` | one photo; 404 for everything else (no difference between "not yours" and "does not exist") |
+| `DELETE /api/beers/photos/{photoId}` | uploader (any status) or admin | 204; the bytes are wiped, see below |
+| `GET /api/admin/photos?status=PENDING` | admin | id, beer id and name, uploader name and email, time; never bytes. Only people with active consent |
+| `POST /api/admin/photos/{id}/decision` | admin | `{"decision":"APPROVE"|"REJECT"}`; 409 `PHOTO_NOT_PENDING` if already decided (one conditional update, so parallel decisions cannot both win) |
+
+`BeerView` gained `hasPhoto` (a cover exists for this caller), `myPhotoId` and `myPhotoStatus` (the caller's own newest
+photo only) and `homebrew`. Responses carry `Content-Type: image/jpeg`, `Content-Length`, `Content-Disposition: inline`,
+`X-Content-Type-Options: nosniff`, `Cache-Control: private, max-age=60`, `Vary: Cookie` and a `Content-Security-Policy: default-src 'none'; sandbox`.
+
+**What happens to an upload** (`ImageSanitizer`, pure and unit tested): the request is limited to 6 MB by
+`spring.servlet.multipart.*` (a bigger one is a 413 `PHOTO_TOO_LARGE`; `server.tomcat.max-swallow-size` is 16 MB so the
+client sees the 413 and not a reset). The format is decided by the magic bytes only (JPEG or PNG; the client's content
+type and file name are ignored). The header gives the dimensions: more than 8000 px on a side or 24 megapixels is refused
+before any pixel is decoded (`PHOTO_DIMENSIONS`, decompression bombs). The picture is then decoded sub-sampled, turned by its EXIF
+orientation, flattened onto white, scaled to at most 800 px and written again as a JPEG (quality 0.85, falling to 0.55 if it
+would exceed 900 KB). The new file contains none of the original: no EXIF (GPS, device), no ICC profile (wide-gamut colours
+are shown as sRGB), no comments, no trailing bytes. At most 3 pictures are decoded at the same time (`PHOTO_BUSY` 503
+after 5 s of waiting).
+
+Quotas, per person, enforced under a row lock on the person (like claims) and checked once more before decoding so an
+over-limit person costs nothing: 5 uploads per Oslo day, 30 per season year (since 1 January of `julebrus.season.year`) and
+one `PENDING` photo per beer. Organisers (admins) are exempt from the day and season limits, since they photograph whole
+shelves. Deleting a photo wipes `data` and sets `deleted_at` but keeps the empty row: the quotas count those rows, otherwise
+upload-delete-upload would never hit a limit.
+
+Error codes: `PHOTO_FORMAT` (415, also animated PNG), `PHOTO_TOO_LARGE` (413), `PHOTO_DIMENSIONS` (422),
+`PHOTO_UNREADABLE` (422, corrupt or truncated), `PHOTO_MISSING` (400), `PHOTO_DAILY_LIMIT` and `PHOTO_SEASON_LIMIT` (422),
+`PHOTO_PENDING_EXISTS` (409), `PHOTO_NOT_PENDING` (409), `PHOTO_NOT_FOUND` (404), `PHOTO_BUSY` (503), `BEER_REJECTED` (422).
+A rejected beer takes no photos; homebrew and pending beers do.
+
+Not handled: a browser that does not turn portrait photos by itself still works, because the server applies the EXIF
+orientation (JPEG only; PNG has none). Wide-gamut colour profiles are dropped.
 
 ### Deleting a person's data by hand (procedure to review before use)
 
@@ -113,6 +159,15 @@ delete from tasting_tags where tasting_id in (select id from tastings where user
 delete from tastings where user_id = :'uid';
 delete from duels where user_id = :'uid';
 delete from session_members where user_id = :'uid';
+
+-- 3b. Photos they uploaded (the person owns the copyright, so approved ones go too; the beer just loses that
+--     cover. To keep one with the person's written permission, re-assign it instead:
+--       update beer_photos set user_id = <an admin's users.id> where id = ...;  before the delete below).
+--     Photos they decided as an admin keep the row, only the pointer goes. Beers they added keep existing.
+delete from beer_photos where user_id = :'uid';
+update beer_photos set decided_by = null where decided_by = :'uid';
+update beers set created_by = null where created_by = :'uid';
+update beers set decided_by = null where decided_by = :'uid';
 
 -- 4. Sessions they hosted (sessions.host_id is NOT NULL). A session nobody else belongs to can go.
 --    One with other members must be handed to a member first (update sessions set host_id = ...),
