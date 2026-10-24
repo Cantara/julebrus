@@ -8,6 +8,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.greaterThanOrEqualTo;
 import static org.hamcrest.Matchers.hasSize;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -130,7 +131,10 @@ class JulebrusApplicationTest {
         mvc.perform(get("/api/sessions/" + sessionId).header("X-Dev-User", "nosy@cantara.no"))
                 .andExpect(status().isForbidden());
 
-        mvc.perform(get("/api/history/seasons")).andExpect(status().isOk()).andExpect(jsonPath("$", hasSize(0)));
+        // The bundled history (history/*.csv) is imported at startup: newest season first.
+        mvc.perform(get("/api/history/seasons")).andExpect(status().isOk())
+                .andExpect(jsonPath("$.length()").value(greaterThanOrEqualTo(12)))
+                .andExpect(jsonPath("$[0].year").value(2019));
         mvc.perform(get("/api/tastings/tags")).andExpect(content().string(containsString("liquorice")));
     }
 
