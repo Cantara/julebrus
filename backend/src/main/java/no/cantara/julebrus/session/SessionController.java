@@ -5,6 +5,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import no.cantara.julebrus.beer.Beer;
 import no.cantara.julebrus.beer.BeerRepository;
+import no.cantara.julebrus.blind.BlindService;
 import no.cantara.julebrus.tasting.Tasting;
 import no.cantara.julebrus.tasting.TastingRepository;
 import no.cantara.julebrus.user.CurrentUser;
@@ -56,14 +57,16 @@ public class SessionController {
     private final UserRepository users;
     private final BeerRepository beers;
     private final TastingRepository tastings;
+    private final BlindService blind;
 
     public SessionController(SessionService service, CurrentUser currentUser, UserRepository users,
-                             BeerRepository beers, TastingRepository tastings) {
+                             BeerRepository beers, TastingRepository tastings, BlindService blind) {
         this.service = service;
         this.currentUser = currentUser;
         this.users = users;
         this.beers = beers;
         this.tastings = tastings;
+        this.blind = blind;
     }
 
     @PostMapping
@@ -90,7 +93,9 @@ public class SessionController {
 
     @PostMapping("/{id}/close")
     public SessionView close(@PathVariable UUID id) {
-        return view(service.close(id, currentUser.get().getId()));
+        SessionView closed = view(service.close(id, currentUser.get().getId()));
+        blind.revealAllOpen(id);
+        return closed;
     }
 
     private SessionView view(TastingSession s) {

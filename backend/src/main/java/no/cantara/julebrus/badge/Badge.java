@@ -9,7 +9,8 @@ public enum Badge {
     CONTRARIAN("Contrarian", "Furthest from the crowd, on at least ten beers"),
     ADVENT("Advent", "Rated every day from 1 to 23 December"),
     SOMMELIER("Sommelier", "Predicted the group average within half a point, ten times"),
-    CLOSING_TIME("Closing Time", "A rating on 23 December");
+    CLOSING_TIME("Closing Time", "A rating on 23 December"),
+    BLIND_TASTER("Blindsmaker", "Named the beer in a blind pour three times");
 
     public final String title;
     public final String description;

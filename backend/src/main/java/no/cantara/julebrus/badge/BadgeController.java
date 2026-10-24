@@ -1,5 +1,7 @@
 package no.cantara.julebrus.badge;
 
+import no.cantara.julebrus.blind.BlindService;
+import no.cantara.julebrus.blind.BlindTally;
 import no.cantara.julebrus.config.SeasonProperties;
 import no.cantara.julebrus.session.SessionRepository;
 import no.cantara.julebrus.session.TastingSession;
@@ -28,13 +30,15 @@ public class BadgeController {
     private final SessionRepository sessions;
     private final CurrentUser currentUser;
     private final BadgeEvaluator evaluator;
+    private final BlindService blind;
 
     public BadgeController(TastingRepository tastings, SessionRepository sessions, CurrentUser currentUser,
-                           SeasonProperties season) {
+                           SeasonProperties season, BlindService blind) {
         this.tastings = tastings;
         this.sessions = sessions;
         this.currentUser = currentUser;
         this.evaluator = new BadgeEvaluator(season);
+        this.blind = blind;
     }
 
     @GetMapping("/me")
@@ -64,8 +68,9 @@ public class BadgeController {
                 .filter(id -> !id.equals(me)).forEach(coTasters::add);
 
         int soloDays = tastings.findSoloDays(me).size();
+        int blindCorrect = blind.tally().getOrDefault(me, BlindTally.NONE).correct();
         Set<Badge> earned = evaluator.evaluate(new BadgeEvaluator.Context(
-                mine, soloDays, coTasters, othersBefore, crowdMean, groupAverage));
+                mine, soloDays, coTasters, othersBefore, crowdMean, groupAverage, blindCorrect));
 
         return java.util.Arrays.stream(Badge.values())
                 .map(b -> new BadgeView(b, b.title, b.description, earned.contains(b)))
