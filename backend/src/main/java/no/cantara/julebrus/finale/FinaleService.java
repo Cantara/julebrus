@@ -6,6 +6,8 @@ import no.cantara.julebrus.config.SeasonProperties;
 import no.cantara.julebrus.session.SessionRepository;
 import no.cantara.julebrus.session.TastingSession;
 import no.cantara.julebrus.stats.RankingService;
+import no.cantara.julebrus.team.Team;
+import no.cantara.julebrus.team.TeamService;
 import no.cantara.julebrus.tasting.Tasting;
 import no.cantara.julebrus.tasting.TastingRepository;
 import no.cantara.julebrus.user.User;
@@ -40,9 +42,14 @@ public class FinaleService {
     public record Award(String id, String title, String description, String winnerName, String detail) {
     }
 
+    /** One team's own number one, by the same Bayesian ranking over that team's raters only. */
+    public record TeamWinner(String slug, String team, UUID beerId, String beerName, String brewery, double bayesian,
+                             long ratings) {
+    }
+
     public record FinaleView(int year, Instant revealAt, boolean revealed, boolean preview, Totals totals,
                              List<RankingService.BeerRank> podium, List<RankingService.DuelRank> duelPodium,
-                             List<Award> awards) {
+                             List<Award> awards, List<TeamWinner> teamWinners) {
     }
 
     static final int MIN_RATED_FOR_OFFSET_AWARDS = 10;
@@ -55,16 +62,19 @@ public class FinaleService {
     private final SessionRepository sessions;
     private final UserRepository users;
     private final BlindService blind;
+    private final TeamService teams;
     private final Clock clock;
 
     public FinaleService(SeasonProperties season, RankingService ranking, TastingRepository tastings,
-                         SessionRepository sessions, UserRepository users, BlindService blind, Clock clock) {
+                         SessionRepository sessions, UserRepository users, BlindService blind, TeamService teams,
+                         Clock clock) {
         this.season = season;
         this.ranking = ranking;
         this.tastings = tastings;
         this.sessions = sessions;
         this.users = users;
         this.blind = blind;
+        this.teams = teams;
         this.clock = clock;
     }
 
@@ -78,12 +88,24 @@ public class FinaleService {
                 all.stream().map(Tasting::getUserId).distinct().count(),
                 all.stream().map(Tasting::getSessionId).filter(java.util.Objects::nonNull).distinct().count());
         if (!revealed && !preview) {
-            return new FinaleView(season.year(), revealAt, false, false, totals, null, null, null);
+            return new FinaleView(season.year(), revealAt, false, false, totals, null, null, null, null);
         }
         return new FinaleView(season.year(), revealAt, revealed, preview && !revealed, totals,
                 ranking.beerRanking().stream().limit(3).toList(),
                 ranking.duelRanking().stream().limit(3).toList(),
-                awards(all));
+                awards(all), teamWinners());
+    }
+
+    /** Teams with at least one ranked beer, in name order. */
+    List<TeamWinner> teamWinners() {
+        List<TeamWinner> out = new ArrayList<>();
+        for (Team t : teams.enabled()) {
+            Set<UUID> raters = t.getMembers().stream().map(Team.Member::userId).collect(Collectors.toSet());
+            if (raters.isEmpty()) continue;
+            ranking.beerRanking(raters).stream().findFirst().ifPresent(top -> out.add(new TeamWinner(
+                    t.getSlug(), t.getName(), top.beerId(), top.name(), top.brewery(), top.bayesian(), top.ratings())));
+        }
+        return out;
     }
 
     List<Award> awards(List<Tasting> all) {
@@ -157,8 +179,34 @@ public class FinaleService {
                 ts -> (double) coTasters.apply(ts).size(), true, ts -> coTasters.apply(ts).size() + " bordvenner", ts -> true));
 
         out.add(blindTaster(nameOf));
+        out.add(teamOfTheYear(all));
 
         return out;
+    }
+
+    /** Tastings per member, so a small team can beat a big one. Members who never tasted still count. */
+    Award teamOfTheYear(List<Tasting> all) {
+        String id = "TEAM", title = "Årets lag", description = "Flest terningkast per hode";
+        Map<UUID, Long> perUser = all.stream().collect(Collectors.groupingBy(Tasting::getUserId, Collectors.counting()));
+        record Score(Team team, double perHead, long tastings) {
+        }
+        List<Score> scores = teams.enabled().stream()
+                .filter(t -> !t.getMembers().isEmpty())
+                .map(t -> {
+                    long n = t.getMembers().stream().mapToLong(m -> perUser.getOrDefault(m.userId(), 0L)).sum();
+                    return new Score(t, (double) n / t.getMembers().size(), n);
+                })
+                .filter(s -> s.tastings() > 0)
+                .toList();
+        if (scores.isEmpty()) return new Award(id, title, description, null, "Ingen lag har smakt i år");
+        double best = scores.stream().mapToDouble(Score::perHead).max().orElse(0);
+        List<Score> winners = scores.stream().filter(s -> Math.abs(s.perHead() - best) < 1e-9)
+                .sorted(Comparator.comparing(s -> s.team().getName())).toList();
+        String names = winners.stream().map(s -> s.team().getName()).collect(Collectors.joining(", "))
+                .replaceFirst(", ([^,]+)$", " og $1");
+        Score top = winners.get(0);
+        return new Award(id, title, description, names,
+                "%.1f øl per hode, %d i alt".formatted(top.perHead(), top.tastings()).replace('.', ','));
     }
 
     /**

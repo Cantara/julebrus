@@ -63,6 +63,8 @@ export const post = <T>(path: string, body?: unknown) =>
 /** POST a raw text body (CSV upload); the content type is passed through as given. */
 export const postText = <T>(path: string, text: string, contentType = 'text/csv') =>
   api<T>(path, { method: 'POST', body: text, headers: { 'Content-Type': contentType } })
+export const put = <T>(path: string, body?: unknown) =>
+  api<T>(path, { method: 'PUT', body: body === undefined ? undefined : JSON.stringify(body) })
 export const del = <T>(path: string) => api<T>(path, { method: 'DELETE' })
 
 /** Ends the session. The server answers with a redirect to "/", so the body is ignored. */

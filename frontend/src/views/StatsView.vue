@@ -1,17 +1,26 @@
 <script setup lang="ts">
-import { onMounted, ref } from 'vue'
+import { onMounted, ref, watch } from 'vue'
 import { get } from '../api/client'
-import type { BeerRank, DuelRank, HistoricSeason } from '../api/types'
+import type { BeerRank, DuelRank, HistoricSeason, Team } from '../api/types'
 
 const beers = ref<BeerRank[]>([])
 const duels = ref<DuelRank[]>([])
 const seasons = ref<HistoricSeason[]>([])
+const teams = ref<Team[]>([])
+/** Empty means everyone; otherwise one team's raters only. */
+const team = ref('')
+
+async function loadBeers() {
+  beers.value = await get<BeerRank[]>('/api/stats/beers' + (team.value ? `?team=${encodeURIComponent(team.value)}` : ''))
+}
+watch(team, () => loadBeers().catch(() => {}))
 
 onMounted(async () => {
-  ;[beers.value, duels.value, seasons.value] = await Promise.all([
-    get<BeerRank[]>('/api/stats/beers'),
+  ;[, duels.value, seasons.value, teams.value] = await Promise.all([
+    loadBeers(),
     get<DuelRank[]>('/api/stats/duels').catch(() => []),
     get<HistoricSeason[]>('/api/history/seasons').catch(() => []),
+    get<Team[]>('/api/teams').catch(() => []),
   ])
 })
 </script>
@@ -20,6 +29,11 @@ onMounted(async () => {
   <h1>Resultater</h1>
   <p><router-link to="/finale">★ Til finalen</router-link></p>
   <p class="muted">Offisiell liste: terningkast 1–6 vektet etter hver smakers vekt, og trukket mot sesongsnittet til et øl har fått nok stemmer.</p>
+
+  <div v-if="teams.length" class="filter" role="group" aria-label="Lag">
+    <button class="pill" :class="{ on: team === '' }" @click="team = ''">Alle</button>
+    <button v-for="t in teams" :key="t.id" class="pill" :class="{ on: team === t.slug }" @click="team = t.slug">{{ t.name }}</button>
+  </div>
 
   <div class="card">
     <table>
@@ -34,7 +48,7 @@ onMounted(async () => {
         </tr>
       </tbody>
     </table>
-    <p v-if="!beers.length" class="muted">Ingen smakinger ennå.</p>
+    <p v-if="!beers.length" class="muted">{{ team ? 'Laget har ikke smakt ennå.' : 'Ingen smakinger ennå.' }}</p>
   </div>
 
   <h2>Duellene (sideranking)</h2>
@@ -60,3 +74,8 @@ onMounted(async () => {
     <span class="muted">›</span>
   </router-link>
 </template>
+
+<style scoped>
+.filter { margin: 0 0 10px; }
+.filter .pill { border: 1px solid var(--line); cursor: pointer; font: inherit; font-size: 0.85rem; }
+</style>

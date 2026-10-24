@@ -110,7 +110,7 @@ onUnmounted(() => clearInterval(timer))
 
     <div class="card">
       <strong>Rundt bordet</strong>
-      <div><span v-for="m in session.members" :key="m.userId" class="pill" :class="{ on: m.userId === myId }">{{ m.displayName }}</span></div>
+      <div><span v-for="m in session.members" :key="m.userId" class="pill" :class="{ on: m.userId === myId }">{{ m.displayName }}<span v-if="m.teams.length" class="muted"> · {{ m.teams.join(' · ') }}</span></span></div>
       <p v-if="session.solo" class="muted">Du er alene. Dette teller som en solo-dag til noen blir med.</p>
     </div>
 

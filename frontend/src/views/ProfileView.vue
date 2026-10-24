@@ -7,6 +7,8 @@ import AdminBeers from '../components/AdminBeers.vue'
 import AdminPhotos from '../components/AdminPhotos.vue'
 import AdminClaims from '../components/AdminClaims.vue'
 import AdminRaterLinks from '../components/AdminRaterLinks.vue'
+import AdminTeams from '../components/AdminTeams.vue'
+import TeamPicker from '../components/TeamPicker.vue'
 import DumbbellChart from '../components/DumbbellChart.vue'
 import LiftChart from '../components/LiftChart.vue'
 import ClaimHistory from '../components/ClaimHistory.vue'
@@ -19,6 +21,7 @@ import { useMe } from '../stores/me'
 const store = useMe()
 const router = useRouter()
 const confirmingWithdraw = ref(false)
+const editingTeams = ref(false)
 const badges = ref<BadgeView[]>([])
 const mine = ref<Tasting[]>([])
 const history = ref<HistoricRating[]>([])
@@ -76,6 +79,20 @@ const byYear = () => {
     </div>
     <p class="muted" style="margin: 6px 0 0">{{ store.me.weight.reason }}</p>
     <p class="muted" style="margin: 6px 0 0">Nye starter på 0,5. En vanlig sesong med minst sju terningkast gir 1,0 neste år. Juks gir 0, men du kan fortsatt smake og stemme.</p>
+  </div>
+
+  <div class="card">
+    <div class="row">
+      <div>
+        <strong>Lag</strong>
+        <div v-if="store.me?.teams.length"><span v-for="t in store.me.teams" :key="t.id" class="pill on">{{ t.name }}</span></div>
+        <div v-else class="muted">Du spiller ikke for noe lag ennå.</div>
+      </div>
+      <button v-if="!editingTeams" class="secondary" @click="editingTeams = true">{{ store.me?.teams.length ? 'Endre' : 'Velg lag' }}</button>
+    </div>
+    <div v-if="editingTeams" style="margin-top: 10px">
+      <TeamPicker @done="editingTeams = false" />
+    </div>
   </div>
 
   <h2>Merker</h2>
@@ -164,6 +181,7 @@ const byYear = () => {
   <AdminBeers v-if="store.me?.admin" />
 <AdminPhotos v-if="store.me?.admin" />
   <AdminBeerImport v-if="store.me?.admin" />
+  <AdminTeams v-if="store.me?.admin" />
 
   <h2>{{ t('withdrawTitle') }}</h2>
   <div class="card">
