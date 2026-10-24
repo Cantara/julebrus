@@ -31,6 +31,7 @@ export interface Beer {
   ratingCount: number
   status: 'PENDING' | 'APPROVED' | 'REJECTED'
   mine: boolean
+  homebrew: boolean
 }
 
 export interface StructuredNotes {

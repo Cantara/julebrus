@@ -135,7 +135,7 @@ onUnmounted(() => clearInterval(timer))
       <label>Legg et øl på bordet</label>
       <input v-model="q" placeholder="Søk i katalogen" />
       <div v-for="b in filtered" :key="b.id" class="row" style="padding: 8px 0; border-bottom: 1px solid var(--line)">
-        <span>{{ b.name }} <span class="muted">{{ b.brewery }}</span></span>
+        <span>{{ b.name }} <span class="muted">{{ b.brewery }}</span><span v-if="b.homebrew" class="pill" style="margin-left: 6px">hjemmebrygg</span></span>
         <button class="secondary" @click="addBeer(b.id)">Legg til</button>
       </div>
       <p class="muted" style="margin-top: 8px">Mangler ølet? <router-link to="/beers">Legg det til i katalogen.</router-link></p>

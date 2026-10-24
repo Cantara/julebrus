@@ -46,7 +46,8 @@ async function run(dryRun: boolean) {
   <div class="card">
     <p class="muted" style="margin-top: 0">
       Kolonner: <code>name, brewery, style, abv, vinmonopolet_id</code>. Komma eller semikolon, desimalkomma går fint.
-      Nye rader blir godkjente øl; de som finnes fra før (samme Polet-nummer eller navn) hoppes over.
+      Nye rader blir godkjente øl; de som finnes fra før (samme Polet-nummer eller navn) hoppes over, og
+      butikkstyrke (4,7 % eller under) avvises.
     </p>
     <input type="file" accept=".csv,text/csv,text/plain" @change="onFile" />
     <label>Eller lim inn</label>

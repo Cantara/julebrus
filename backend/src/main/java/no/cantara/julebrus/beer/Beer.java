@@ -34,6 +34,24 @@ public class Beer {
 
     public enum Status { PENDING, APPROVED, REJECTED }
 
+    /**
+     * What counts as a Norwegian Christmas beer here: sold at Vinmonopolet, which means
+     * stronger than the grocery-shelf limit. Anything at or under this ABV is butikkøl.
+     */
+    public static final BigDecimal GROCERY_MAX_ABV = new BigDecimal("4.7");
+
+    public static boolean isGroceryStrength(BigDecimal abv) {
+        return abv != null && abv.compareTo(GROCERY_MAX_ABV) <= 0;
+    }
+
+    /** Homebrew is rated only at a table of more than five people ... */
+    public static final int HOMEBREW_MIN_GROUP = 6;
+    /** ... and ranks only once this many people have scored it. */
+    public static final int HOMEBREW_MIN_RATINGS = 4;
+
+    @Column(nullable = false)
+    private boolean homebrew;
+
     @jakarta.persistence.Enumerated(jakarta.persistence.EnumType.STRING)
     @Column(nullable = false)
     private Status status = Status.APPROVED;
@@ -56,6 +74,12 @@ public class Beer {
 
     public Beer(String name, String brewery, String style, BigDecimal abv, String vinmonopoletId, String imageUrl,
                 UUID createdBy, Status status) {
+        this(name, brewery, style, abv, vinmonopoletId, imageUrl, createdBy, status, false);
+    }
+
+    public Beer(String name, String brewery, String style, BigDecimal abv, String vinmonopoletId, String imageUrl,
+                UUID createdBy, Status status, boolean homebrew) {
+        this.homebrew = homebrew;
         this.id = UUID.randomUUID();
         this.name = name;
         this.brewery = brewery;
@@ -75,7 +99,10 @@ public class Beer {
     }
 
     public Instant getCreatedAt() { return createdAt; }
+    public boolean isHomebrew() { return homebrew; }
     public boolean isApproved() { return status == Status.APPROVED; }
+    /** Approved and not grocery strength: the only beers the rankings count. */
+    public boolean counts() { return isApproved() && !isGroceryStrength(abv); }
     public Status getStatus() { return status; }
     public UUID getCreatedBy() { return createdBy; }
     public Instant getDecidedAt() { return decidedAt; }

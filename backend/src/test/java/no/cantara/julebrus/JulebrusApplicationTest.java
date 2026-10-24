@@ -231,20 +231,26 @@ class JulebrusApplicationTest {
     }
 
     @Test
-    void perennialsAreSeededAndCsvImportPreviewsThenCreates() throws Exception {
+    void csvImportPreviewsThenCreatesAndOnlyPoletStrengthCounts() throws Exception {
         ConsentSupport.accept(mvc, null);
         ConsentSupport.accept(mvc, "guest@cantara.no");
 
-        // The seed put the grocery shelf in place, approved.
-        mvc.perform(get("/api/beers").param("q", "Aass Jule"))
-                .andExpect(jsonPath("$[?(@.name=='Aass Juleøl')].status").value("APPROVED"));
+        // Grocery-strength juleøl is not a Christmas beer here, however it is added.
+        mvc.perform(post("/api/beers").contentType(APPLICATION_JSON)
+                        .content("{\"name\":\"Aass Juleøl\",\"brewery\":\"Aass\",\"abv\":4.7}"))
+                .andExpect(status().isUnprocessableEntity())
+                .andExpect(jsonPath("$.code").value("BEER_GROCERY_STRENGTH"));
+        mvc.perform(post("/api/beers").contentType(APPLICATION_JSON)
+                        .content("{\"name\":\"Aass Julebokk\",\"brewery\":\"Aass\",\"abv\":6.5}"))
+                .andExpect(status().isCreated());
 
         String csv = """
                 name;brewery;style;abv;vinmonopolet_id
                 Nøgne Ø God Jul;Nøgne Ø;Juleøl, sterk;8,5;1234501
-                Aass Juleøl;Aass;Juleøl;4,7;
+                Aass Julebokk;Aass;Julebokk;6,5;
                 ;Ukjent;;;
                 Lervig Juleøl;Lervig;Juleøl;abc;
+                Ringnes Juleøl;Ringnes;Juleøl;4,5;
                 """;
         mvc.perform(post("/api/admin/beers/import?dryRun=true").header("X-Dev-User", "guest@cantara.no")
                         .contentType("text/csv").content(csv))
@@ -254,12 +260,14 @@ class JulebrusApplicationTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.dryRun").value(true))
                 .andExpect(jsonPath("$.created").value(0))
-                .andExpect(jsonPath("$.rows", hasSize(4)))
+                .andExpect(jsonPath("$.rows", hasSize(5)))
                 .andExpect(jsonPath("$.rows[0].action").value("NEW"))
                 .andExpect(jsonPath("$.rows[0].abv").value(8.5))
                 .andExpect(jsonPath("$.rows[1].action").value("DUPLICATE"))
                 .andExpect(jsonPath("$.rows[2].action").value("INVALID"))
-                .andExpect(jsonPath("$.rows[3].action").value("INVALID"));
+                .andExpect(jsonPath("$.rows[3].action").value("INVALID"))
+                .andExpect(jsonPath("$.rows[4].action").value("INVALID"))
+                .andExpect(jsonPath("$.rows[4].reason").value(containsString("Butikkstyrke")));
         mvc.perform(get("/api/beers").param("q", "God Jul")).andExpect(jsonPath("$", hasSize(0)));
 
         mvc.perform(post("/api/admin/beers/import?dryRun=false").contentType("text/csv").content(csv))
@@ -307,6 +315,54 @@ class JulebrusApplicationTest {
                 .andExpect(jsonPath("$.dislikes[0].tag").value("thin"));
         mvc.perform(get("/api/stats/palate/pairs")).andExpect(status().isOk())
                 .andExpect(jsonPath("$.twins[0].similarity").value(1.0));
+    }
+
+    @Test
+    void homebrewNeedsABigTableAndFourScores() throws Exception {
+        String[] table = {"h1@cantara.no", "h2@cantara.no", "h3@cantara.no", "h4@cantara.no", "h5@cantara.no", "h6@cantara.no"};
+        for (String who : table) ConsentSupport.accept(mvc, who);
+        ConsentSupport.accept(mvc, null);
+
+        // Strength must be stated and above grocery level.
+        mvc.perform(post("/api/beers").contentType(APPLICATION_JSON)
+                        .content("{\"name\":\"Kjellerens Jul\",\"homebrew\":true}"))
+                .andExpect(status().isUnprocessableEntity()).andExpect(jsonPath("$.code").value("BEER_HOMEBREW_NEEDS_ABV"));
+        String brew = mvc.perform(post("/api/beers").contentType(APPLICATION_JSON)
+                        .content("{\"name\":\"Kjellerens Jul\",\"homebrew\":true,\"abv\":7.2}"))
+                .andExpect(status().isCreated()).andExpect(jsonPath("$.homebrew").value(true))
+                .andReturn().getResponse().getContentAsString().replaceAll(".*\"id\":\"([^\"]+)\".*", "$1");
+
+        // Alone: no. At a table of five: no. At six: yes.
+        mvc.perform(post("/api/tastings").header("X-Dev-User", table[0]).contentType(APPLICATION_JSON)
+                        .content("{\"beerId\":\"%s\",\"score\":6}".formatted(brew)))
+                .andExpect(status().isUnprocessableEntity()).andExpect(jsonPath("$.code").value("HOMEBREW_NEEDS_GROUP"));
+
+        String session = mvc.perform(post("/api/sessions").header("X-Dev-User", table[0])).andReturn().getResponse().getContentAsString();
+        String sid = session.replaceAll(".*\"id\":\"([^\"]+)\".*", "$1");
+        String code = session.replaceAll(".*\"joinCode\":\"([^\"]+)\".*", "$1");
+        for (int i = 1; i < 5; i++) {
+            mvc.perform(post("/api/sessions/join").header("X-Dev-User", table[i]).contentType(APPLICATION_JSON)
+                    .content("{\"code\":\"%s\"}".formatted(code))).andExpect(status().isOk());
+        }
+        mvc.perform(post("/api/sessions/" + sid + "/beers").header("X-Dev-User", table[0]).contentType(APPLICATION_JSON)
+                .content("{\"beerId\":\"%s\"}".formatted(brew))).andExpect(status().isOk());
+        mvc.perform(post("/api/tastings").header("X-Dev-User", table[0]).contentType(APPLICATION_JSON)
+                        .content("{\"beerId\":\"%s\",\"sessionId\":\"%s\",\"score\":6}".formatted(brew, sid)))
+                .andExpect(status().isUnprocessableEntity()).andExpect(jsonPath("$.code").value("HOMEBREW_NEEDS_GROUP"));
+        mvc.perform(post("/api/sessions/join").header("X-Dev-User", table[5]).contentType(APPLICATION_JSON)
+                .content("{\"code\":\"%s\"}".formatted(code))).andExpect(status().isOk());
+
+        // Three scores: still not ranked. Four: ranked.
+        for (int i = 0; i < 3; i++) {
+            mvc.perform(post("/api/tastings").header("X-Dev-User", table[i]).contentType(APPLICATION_JSON)
+                            .content("{\"beerId\":\"%s\",\"sessionId\":\"%s\",\"score\":%d}".formatted(brew, sid, 4 + i % 2)))
+                    .andExpect(status().isCreated());
+        }
+        mvc.perform(get("/api/stats/beers")).andExpect(jsonPath("$[?(@.beerId=='%s')]".formatted(brew)).doesNotExist());
+        mvc.perform(post("/api/tastings").header("X-Dev-User", table[3]).contentType(APPLICATION_JSON)
+                        .content("{\"beerId\":\"%s\",\"sessionId\":\"%s\",\"score\":5}".formatted(brew, sid)))
+                .andExpect(status().isCreated());
+        mvc.perform(get("/api/stats/beers")).andExpect(jsonPath("$[?(@.beerId=='%s')].ratings".formatted(brew)).value(4));
     }
 
     private static org.springframework.test.web.servlet.result.ContentResultMatchers content() {
