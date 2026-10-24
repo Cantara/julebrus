@@ -19,8 +19,8 @@ class ConsentTextsTest {
     @Test
     void blankContactFallsBackToTheOrganisersAndBlankSponsorDropsItsSentence() {
         var texts = new ConsentService(null, null, new SponsorProperties("", ""), new ContactProperties("")).texts();
-        assertThat(texts.nb()).contains("kontakt arrangørene").doesNotContain("eXOReaction").doesNotContain("{");
-        assertThat(texts.en()).contains("contact the organisers").doesNotContain("eXOReaction").doesNotContain("{");
+        assertThat(texts.nb()).contains("ta kontakt med arrangørene").doesNotContain("eXOReaction").doesNotContain("{");
+        assertThat(texts.en()).contains("get in touch with the organisers").doesNotContain("eXOReaction").doesNotContain("{");
     }
 
     @Test

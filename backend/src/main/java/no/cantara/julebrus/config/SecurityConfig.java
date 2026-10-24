@@ -32,7 +32,7 @@ public class SecurityConfig {
         http
                 .authorizeHttpRequests(a -> a
                         .requestMatchers("/", "/index.html", "/assets/**", "/manifest.webmanifest", "/sw.js",
-                                "/workbox-*.js", "/icons/**", "/favicon.ico", "/actuator/health", "/api/config", "/api/privacy").permitAll()
+                                "/workbox-*.js", "/icons/**", "/favicon.ico", "/actuator/health", "/api/config", "/api/privacy", "/privacy", "/privacy/").permitAll()
                         .requestMatchers("/api/**").authenticated()
                         .anyRequest().permitAll())
                 .oauth2Login(o -> o

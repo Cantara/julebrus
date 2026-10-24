@@ -42,6 +42,9 @@ public class RaterWeightService {
      * Deliberately not transactional: a person's first requests can arrive together, the
      * losing insert hits the unique (season, email) and must not poison a surrounding
      * transaction. The loser re-reads the winner's row.
+     *
+     * <p>WARNING: do not call this from a {@code @Transactional} method: the failed insert would
+     * mark that transaction rollback-only.</p>
      */
     public RaterWeight current(User user) {
         return weights.findBySeasonYearAndEmailIgnoreCase(season.year(), user.getEmail())

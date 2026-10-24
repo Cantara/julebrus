@@ -24,7 +24,7 @@ public class ConsentService {
      * <p>DRAFT: the consent texts are a draft for the organisers to review and approve
      * before the season opens. Nobody has given them legal sign-off.</p>
      */
-    public static final String CONSENT_VERSION = "2026-1";
+    public static final String CONSENT_VERSION = "2026-2";
 
     public record Texts(String nb, String en) {
     }
@@ -38,11 +38,11 @@ public class ConsentService {
         this.consents = consents;
         this.events = events;
         this.texts = new Texts(
-                render("consent/consent-nb.md", sponsor, contact, "kontakt arrangørene"),
-                render("consent/consent-en.md", sponsor, contact, "contact the organisers"));
+                render("consent/consent-nb.md", sponsor, contact, "arrangørene"),
+                render("consent/consent-en.md", sponsor, contact, "the organisers"));
     }
 
-    /** Fills {sponsor} and {contact} in a text. Without a sponsor only the line that carries {sponsor} is dropped. */
+    /** Fills {sponsor} and {contact} in a text ("the organisers" stands in for a blank contact). Without a sponsor only the line that carries {sponsor} is dropped. */
     private static String render(String path, SponsorProperties sponsor, ContactProperties contact, String noContact) {
         String raw;
         try {

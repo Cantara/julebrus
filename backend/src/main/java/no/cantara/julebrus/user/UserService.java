@@ -19,6 +19,9 @@ public class UserService {
      * first requests from one person can arrive together, one insert loses on the unique
      * email, and that loss must not poison a surrounding transaction. The loser re-reads
      * the winner's row.
+     *
+     * <p>WARNING: do not call this from a {@code @Transactional} method; the caller's transaction
+     * would be suspended, and a lost race must not run inside one.</p>
      */
     @Transactional(propagation = Propagation.NOT_SUPPORTED)
     public User upsert(String email, String displayName) {
