@@ -19,6 +19,14 @@ function devUser(): string | null {
   }
 }
 
+function localStorageLang(): string | null {
+  try {
+    return localStorage.getItem('lang')
+  } catch {
+    return null
+  }
+}
+
 export async function api<T>(path: string, init: RequestInit = {}, retried = false): Promise<T> {
   const headers: Record<string, string> = { Accept: 'application/json', ...(init.headers as Record<string, string>) }
   if (init.body && !headers['Content-Type']) headers['Content-Type'] = 'application/json'
@@ -30,7 +38,11 @@ export async function api<T>(path: string, init: RequestInit = {}, retried = fal
   const res = await fetch(path, { credentials: 'same-origin', ...init, headers })
   // /privacy is public: nothing on it may send a logged-out visitor to Google.
   if (res.status === 401 && window.location.pathname !== '/privacy') {
-    window.location.href = '/oauth2/authorization/google'
+    // On the front door (a cached app shell, an installed PWA, after logout) a logged-out visitor
+    // gets the public landing page with its own sign-in button; deep links still go to Google.
+    const frontDoor = window.location.pathname === '/' || window.location.pathname === '/index.html'
+    if (frontDoor) window.location.replace('/velkommen' + (localStorageLang() === 'en' ? '?lang=en' : ''))
+    else window.location.href = '/oauth2/authorization/google'
     throw new ApiFailure(401, 'UNAUTHORIZED', 'Logging in')
   }
   // A mutating call without an XSRF cookie yet (fresh login, cookies cleared): the server has

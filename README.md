@@ -264,6 +264,24 @@ consent (or "Velg senere"). Admins add and enable more teams under *Admin: lag* 
 page (name, optional sponsor line, optional e-mail domains that pre-select the team at signup).
 "Et annet lag?" on the signup page opens a mail to `JULEBRUS_CONTACT_EMAIL`.
 
+## Landing page
+
+A visitor who is not signed in gets a public landing page at `/` (server-rendered, both languages,
+`?lang=en` for English); a signed-in person goes straight into the app as before. `/velkommen` always shows
+the page (the dev profile signs everyone in, so use that path locally), and the app sends a logged-out
+visitor on `/` there instead of straight to Google. The page has no scripts and loads nothing from other
+sites: it sends `default-src 'none'; style-src 'unsafe-inline'; img-src 'self'` and draws its charts as
+CSS and inline SVG. It reads nothing from the database. Its history numbers come from
+`backend/src/main/resources/landing/history-stats.json`, aggregates only (no names, no per-person scores),
+written from `data/` by:
+
+```bash
+python3 tools/to_landing_stats.py backend/src/main/resources/landing/history-stats.json
+```
+
+`LandingStatsTest` recomputes the numbers from `data/` and fails when the file is stale; `LandingPageTest`
+checks that no name from `data/votes.csv`, `data/participation.csv` or `history/raters.csv` appears in the page.
+
 ## MCP server
 
 The tasting data is also available to AI agents over the Model Context Protocol
