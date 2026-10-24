@@ -70,6 +70,19 @@ class JulebrusApplicationTest {
                 .andExpect(jsonPath("$[0].ratings").value(1))
                 .andExpect(jsonPath("$[0].effectiveVotes").value(0.5));
 
+        // The finale hides the podium until 23 Dec, except for an admin preview.
+        mvc.perform(get("/api/finale")).andExpect(status().isOk())
+                .andExpect(jsonPath("$.revealed").value(false))
+                .andExpect(jsonPath("$.totals.tastings").value(5))
+                .andExpect(jsonPath("$.podium").doesNotExist());
+        mvc.perform(get("/api/finale?preview=true").header("X-Dev-User", "nobody@cantara.no"))
+                .andExpect(status().isForbidden());
+        mvc.perform(get("/api/finale?preview=true")).andExpect(status().isOk())
+                .andExpect(jsonPath("$.preview").value(true))
+                .andExpect(jsonPath("$.podium[0].name").value("Testøl 4"))
+                .andExpect(jsonPath("$.awards[?(@.id=='MOST_TASTINGS')].winnerName").value("Dev Tester"))
+                .andExpect(jsonPath("$.awards[?(@.id=='CONTRARIAN')].detail").value("Ingen kvalifiserte i år"));
+
         // A muted rater is listed but moves nothing.
         mvc.perform(post("/api/admin/raters/override").contentType(APPLICATION_JSON)
                         .content("{\"email\":\"dev@cantara.no\",\"weight\":0,\"reason\":\"test\"}"))

@@ -18,6 +18,7 @@ onMounted(async () => {
 
 <template>
   <h1>Resultater</h1>
+  <p><router-link to="/finale">★ Til finalen</router-link></p>
   <p class="muted">Offisiell liste: terningkast 1–6 vektet etter hver smakers vekt, og trukket mot sesongsnittet til et øl har fått nok stemmer.</p>
 
   <div class="card">

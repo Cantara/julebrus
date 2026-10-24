@@ -10,6 +10,7 @@ export const router = createRouter({
     { path: '/session/:id', component: () => import('./views/SessionView.vue'), props: true },
     { path: '/join/:code?', component: () => import('./views/JoinView.vue'), props: true },
     { path: '/stats', component: () => import('./views/StatsView.vue') },
+    { path: '/finale', component: () => import('./views/FinaleView.vue') },
     { path: '/me', component: () => import('./views/ProfileView.vue') },
   ],
 })
