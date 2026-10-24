@@ -43,8 +43,26 @@ public class SecurityConfig {
                 .logout(l -> l.logoutUrl("/api/logout").logoutSuccessUrl("/"))
                 .csrf(c -> c
                         .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
-                        .csrfTokenRequestHandler(new CsrfTokenRequestAttributeHandler()));
+                        .csrfTokenRequestHandler(new CsrfTokenRequestAttributeHandler()))
+                // Spring Security 6 loads the CSRF token lazily and only writes the cookie when
+                // something reads it. A JSON API never does on a GET, so without this the first
+                // POST after login (consent, start a session, join) has no token and gets 403.
+                .addFilterAfter(new CsrfCookieFilter(), org.springframework.security.web.authentication.www.BasicAuthenticationFilter.class);
         return http.build();
+    }
+
+    /** Reads the deferred CSRF token on every request so the XSRF-TOKEN cookie is issued. */
+    static final class CsrfCookieFilter extends org.springframework.web.filter.OncePerRequestFilter {
+        @Override
+        protected void doFilterInternal(jakarta.servlet.http.HttpServletRequest req,
+                                        jakarta.servlet.http.HttpServletResponse res,
+                                        jakarta.servlet.FilterChain chain)
+                throws jakarta.servlet.ServletException, java.io.IOException {
+            org.springframework.security.web.csrf.CsrfToken token =
+                    (org.springframework.security.web.csrf.CsrfToken) req.getAttribute(org.springframework.security.web.csrf.CsrfToken.class.getName());
+            if (token != null) token.getToken();
+            chain.doFilter(req, res);
+        }
     }
 
     private static OAuth2UserService<OidcUserRequest, OidcUser> domainCheckingUserService(AuthProperties auth) {
