@@ -16,6 +16,21 @@ const tip = ref<MyTip | null>(null)
 const beerName = ref<Record<string, string>>({})
 const soloSessions = ref<Set<string>>(new Set())
 
+const wholeCalendar = ref(false)
+try {
+  wholeCalendar.value = localStorage.getItem('calendar') === 'all'
+} catch {
+  /* private mode */
+}
+function toggleCalendar() {
+  wholeCalendar.value = !wholeCalendar.value
+  try {
+    localStorage.setItem('calendar', wholeCalendar.value ? 'all' : 'week')
+  } catch {
+    /* ignore */
+  }
+}
+
 const snow = ref(true)
 try {
   snow.value = localStorage.getItem('snow') !== 'off'
@@ -93,6 +108,17 @@ const dayOfSeason = computed(() => {
     <span class="muted">›</span>
   </router-link>
 
+  <router-link v-if="store.me?.openTable" class="card row table-card" :to="`/session/${store.me.openTable.id}`" style="text-decoration: none">
+    <div>
+      <strong class="display">{{ store.me.openTable.host ? 'Du er vert ved et bord' : `Du sitter ved bordet hos ${store.me.openTable.hostName}` }}</strong>
+      <div class="muted">
+        {{ store.me.openTable.members }} rundt bordet · {{ store.me.openTable.beers }} øl
+        <template v-if="store.me.openTable.pendingForMe > 0"> · <strong style="color: var(--brand)">{{ store.me.openTable.pendingForMe }} venter på terningen din</strong></template>
+      </div>
+    </div>
+    <span class="muted">›</span>
+  </router-link>
+
   <div v-if="store.me" class="card">
     <strong class="display">Hei, {{ store.me.displayName }}</strong>
     <p class="muted" style="margin: 8px 0 0">I dag</p>
@@ -107,10 +133,13 @@ const dayOfSeason = computed(() => {
     <router-link class="btn secondary" to="/join" style="flex: 1; text-align: center">Bli med</router-link>
   </div>
 
-  <h2>Kalenderen</h2>
+  <div class="row" style="align-items: baseline">
+    <h2>Kalenderen</h2>
+    <button class="secondary" style="padding: 6px 10px; font-size: 0.8rem" @click="toggleCalendar">{{ wholeCalendar ? 'Bare denne uka' : 'Hele kalenderen' }}</button>
+  </div>
   <div v-if="season" class="card">
-    <AdventCalendar :start="season.start" :end="season.end" :today="today" :days="days" @finale="router.push('/finale')" />
-    <p class="muted" style="margin: 10px 0 0">Én luke per dag. Trykk på en åpnet luke for å se hva som sto på bordet. Stjernen er finalen.</p>
+    <AdventCalendar :start="season.start" :end="season.end" :today="today" :days="days" :compact="!wholeCalendar" @finale="router.push('/finale')" />
+    <p class="muted" style="margin: 10px 0 0">{{ wholeCalendar ? 'Én luke per dag. Trykk på en åpnet luke for å se hva som sto på bordet. Stjernen er finalen.' : 'Denne uka. Trykk på en åpnet luke for å se hva som sto på bordet.' }}</p>
   </div>
 
   <router-link v-if="tip && !tip.closed" class="card row" to="/tipp" style="text-decoration: none">
@@ -135,8 +164,12 @@ const dayOfSeason = computed(() => {
   <div v-for="b in leastTasted" :key="b.id" class="card row">
     <div>
       <strong>{{ b.name }}</strong>
-      <div class="muted">{{ b.brewery }} · {{ b.ratingCount }} smakinger</div>
+      <div class="muted">{{ b.brewery }} · {{ b.ratingCount }} {{ b.ratingCount === 1 ? 'smaking' : 'smakinger' }}</div>
     </div>
     <router-link class="btn secondary" :to="`/beers/${b.id}/rate`">Smak</router-link>
   </div>
 </template>
+
+<style scoped>
+.table-card { border: 1px solid var(--candle); box-shadow: 0 0 0 1px var(--candle) inset, 0 2px 10px rgba(0,0,0,0.05); }
+</style>
