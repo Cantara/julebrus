@@ -38,3 +38,6 @@ differs from the votes listed in the same source.
 
 `python3 tools/to_app_history.py backend/src/main/resources/history` writes the files the tasting app's
 `HistoryImporter` loads (`seasons.csv` and one `<year>.csv` per season) from `data/votes.csv`.
+
+`python3 tools/to_landing_stats.py backend/src/main/resources/landing/history-stats.json` writes the aggregates the public
+landing page shows (counts and per-beer numbers only, no names). Rerun it whenever `data/` changes; `LandingStatsTest` fails otherwise.
