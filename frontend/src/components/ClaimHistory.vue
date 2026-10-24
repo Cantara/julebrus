@@ -30,7 +30,8 @@ async function claim(name: string) {
     await post('/api/history/claims', { raterKey: name })
   } catch (e) {
     const code = e instanceof ApiFailure ? e.code : ''
-    error.value = code === 'RATER_LINKED' ? t('claimLinked') : code === 'CLAIM_LIMIT' ? t('claimLimit') : code === 'CLAIM_EXISTS' ? t('claimExists')
+    error.value = code === 'RATER_LINKED' ? t('claimLinked') : code === 'CLAIM_LIMIT' ? t('claimLimit')
+      : code === 'CLAIM_DAILY_LIMIT' ? t('claimDailyLimit') : code === 'CLAIM_REVOKED' ? t('claimRevoked') : code === 'CLAIM_EXISTS' ? t('claimExists')
       : code === 'RATER_TAKEN' ? t('claimTakenErr') : t('claimError')
   }
   await load(true).catch(() => {})
@@ -63,8 +64,8 @@ const taken = (r: ClaimCandidate) => (r.linkedToYou ? t('claimLinkedToYou') : r.
     <strong>{{ t('claimSuggested') }}</strong>
     <p v-if="!suggested.length" class="muted">{{ t('claimNone') }}</p>
     <div v-for="r in suggested" :key="r.raterKey" class="row" style="padding: 6px 0">
-      <span>{{ r.raterKey }}<div class="muted">{{ describe(r) }}</div></span>
-      <span v-if="r.myClaim" class="pill">{{ t(r.myClaim.status) }}</span>
+      <span>{{ r.raterKey }}<div class="muted">{{ describe(r) }}</div><div v-if="r.myClaim?.status === 'REJECTED'" class="muted">{{ t('claimRejectedNote') }}</div></span>
+      <span v-if="r.myClaim && r.myClaim.status !== 'REJECTED'" class="pill">{{ t(r.myClaim.status) }}</span>
       <span v-else-if="!r.available" class="muted">{{ taken(r) }}</span>
       <button v-else @click="claim(r.raterKey)">{{ t('claimButton') }}</button>
     </div>
@@ -74,8 +75,8 @@ const taken = (r: ClaimCandidate) => (r.linkedToYou ? t('claimLinkedToYou') : r.
   <div v-if="showAll" class="card" style="margin-top: 12px">
     <strong>{{ t('claimOthers') }}</strong>
     <div v-for="r in others" :key="r.raterKey" class="row" style="padding: 6px 0">
-      <span>{{ r.raterKey }}<div class="muted">{{ describe(r) }}</div></span>
-      <span v-if="r.myClaim" class="pill">{{ t(r.myClaim.status) }}</span>
+      <span>{{ r.raterKey }}<div class="muted">{{ describe(r) }}</div><div v-if="r.myClaim?.status === 'REJECTED'" class="muted">{{ t('claimRejectedNote') }}</div></span>
+      <span v-if="r.myClaim && r.myClaim.status !== 'REJECTED'" class="pill">{{ t(r.myClaim.status) }}</span>
       <span v-else-if="!r.available" class="muted">{{ taken(r) }}</span>
       <button v-else class="secondary" @click="claim(r.raterKey)">{{ t('claimButton') }}</button>
     </div>

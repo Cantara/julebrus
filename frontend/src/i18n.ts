@@ -14,9 +14,12 @@ function stored(): Lang {
 }
 
 export const lang = ref<Lang>(stored())
+// Screen readers and hyphenation follow the page language, not just the text block.
+document.documentElement.lang = lang.value
 
 export function setLang(l: Lang) {
   lang.value = l
+  document.documentElement.lang = l
   try {
     localStorage.setItem('lang', l)
   } catch {
@@ -54,7 +57,12 @@ const dict = {
     claimLinked: 'Allerede koblet til en innlogging',
     claimLinkedToYou: 'Koblet til din innlogging',
     claimWithdraw: 'Trekk tilbake',
-    claimLimit: 'Du kan ha høyst 5 forespørsler til behandling om gangen.',
+    claimLimit: 'Du har for mange forespørsler som venter på godkjenning. Vent til noen er behandlet, eller trekk en tilbake.',
+    claimDailyLimit: 'Du har bedt om for mange koblinger det siste døgnet. Prøv igjen i morgen.',
+    claimRevoked: 'En administrator har trukket denne koblingen tilbake. Kontakt arrangørene.',
+    claimRejectedNote: 'Avvist tidligere. Du kan be om koblingen på nytt.',
+    REVOKED: 'Trukket tilbake',
+    WITHDRAWN: 'Trukket',
     claimExists: 'Du har allerede bedt om det navnet.',
     claimTakenErr: 'Det navnet er allerede koblet til noen andre.',
     claimError: 'Noe gikk galt. Prøv igjen.',
@@ -107,7 +115,12 @@ const dict = {
     claimLinked: 'Already linked to a login',
     claimLinkedToYou: 'Linked to your login',
     claimWithdraw: 'Withdraw',
-    claimLimit: 'You can have at most 5 requests waiting at a time.',
+    claimLimit: 'You have too many requests waiting for approval. Wait for one to be handled, or withdraw one.',
+    claimDailyLimit: 'You have asked for too many links in the last 24 hours. Try again tomorrow.',
+    claimRevoked: 'An administrator took this link back. Contact the organisers.',
+    claimRejectedNote: 'Rejected earlier. You can ask for the link again.',
+    REVOKED: 'Revoked',
+    WITHDRAWN: 'Withdrawn',
     claimExists: 'You have already asked for that name.',
     claimTakenErr: 'That name is already linked to someone else.',
     claimError: 'Something went wrong. Please try again.',

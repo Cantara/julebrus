@@ -50,14 +50,14 @@ async function accept() {
   <p v-if="loadFailed" class="error" role="alert">{{ t('loadFailed') }}</p>
   <div v-if="consent" class="card">
     <div :lang="lang"><ConsentText :text="lang === 'en' ? consent.texts.en : consent.texts.nb" /></div>
-    <p class="muted">{{ t('consentVersion') }} {{ consent.version }} · <router-link to="/privacy">{{ t('privacyLink') }}</router-link></p>
+    <p class="muted">{{ t('consentVersion') }} {{ consent.version }} · <a href="/privacy">{{ t('privacyLink') }}</a></p>
     <p v-if="failed" class="error" role="alert">{{ t('consentFailed') }}</p>
     <p v-if="consent.accepted" class="ok" role="status">{{ t('consentAlready') }}</p>
     <div class="row" style="justify-content: flex-start">
       <button v-if="!consent.accepted" :disabled="busy" @click="accept">{{ t('consentAccept') }}</button>
       <router-link v-else class="btn" to="/">{{ t('consentContinue') }}</router-link>
       <!-- Logout is a security-chain endpoint, so it works while consent is still missing. -->
-      <a v-if="!consent.accepted" href="#" @click.prevent="logout()">{{ t('decline') }}</a>
+      <button v-if="!consent.accepted" type="button" class="secondary" @click="logout()">{{ t('decline') }}</button>
     </div>
   </div>
 </template>

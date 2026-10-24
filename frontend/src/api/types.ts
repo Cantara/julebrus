@@ -143,7 +143,7 @@ export interface PublicConfig {
   contactEmail: string | null
 }
 
-export type ClaimStatus = 'PENDING' | 'APPROVED' | 'REJECTED'
+export type ClaimStatus = 'PENDING' | 'APPROVED' | 'REJECTED' | 'REVOKED' | 'WITHDRAWN'
 
 export interface ClaimCandidate {
   raterKey: string

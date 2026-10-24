@@ -7,7 +7,8 @@ import { t } from '../i18n'
   <footer>
     <SponsorLine />
     <p class="muted" style="text-align: center; margin: 4px 0 0">
-      <router-link to="/privacy">{{ t('privacyLink') }}</router-link>
+      <!-- A full page load: /privacy is a server-rendered page. -->
+      <a href="/privacy">{{ t('privacyLink') }}</a>
     </p>
   </footer>
 </template>
