@@ -283,10 +283,13 @@ page (name, optional sponsor line, optional e-mail domains that pre-select the t
 
 A visitor who is not signed in gets a public landing page at `/` (server-rendered, both languages,
 `?lang=en` for English); a signed-in person goes straight into the app as before. `/velkommen` always shows
-the page (the dev profile signs everyone in, so use that path locally), and the app sends a logged-out
+the page (the dev profile signs everyone in, so use that path locally), and so do `/welcome` and `/landing`
+(same page, same `?lang=en`); the app sends a logged-out
 visitor on `/` there instead of straight to Google. The page has no scripts and loads nothing from other
 sites: it sends `default-src 'none'; style-src 'unsafe-inline'; img-src 'self'` and draws its charts as
-CSS and inline SVG. It reads nothing from the database. Its history numbers come from
+CSS and inline SVG. It reads nothing from the database. It describes the season's features (teams, live reveal,
+blind pour, the podium tip, label photos); the push-notification card appears only when the VAPID keys are set,
+with the configured nudge time. Its history numbers come from
 `backend/src/main/resources/landing/history-stats.json`, aggregates only (no names, no per-person scores),
 written from `data/` by:
 

@@ -54,7 +54,8 @@ class LandingPageTest {
     @Test
     void anonymousRootIsTheLandingPageWithAStrictPolicy() throws Exception {
         for (MockHttpServletRequestBuilder req : new MockHttpServletRequestBuilder[]{get("/"), get("/").param("lang", "en"),
-                get("/velkommen"), get("/velkommen/").param("lang", "en")}) {
+                get("/velkommen"), get("/velkommen/").param("lang", "en"), get("/welcome"), get("/welcome/").param("lang", "en"),
+                get("/landing"), get("/landing/").param("lang", "en")}) {
             MockHttpServletResponse res = fetch(req);
             assertThat(res.getStatus()).isEqualTo(200);
             assertThat(res.getForwardedUrl()).isNull();
@@ -72,6 +73,11 @@ class LandingPageTest {
                     .doesNotContain("@import").doesNotContain("@font-face").doesNotContain("<img").doesNotContain("<iframe")
                     .doesNotContain("href=\"http://").doesNotContainPattern("\\son[a-z]+=");
             assertThat(res.getContentAsByteArray().length).as("page weight").isLessThan(150_000);
+            // The season's features, in the page's own language; push is off here (no VAPID keys), so not offered.
+            boolean en = html.contains("<html lang=\"en\">");
+            assertThat(html).contains(en ? "Cantara against Rebel" : "Cantara mot Rebel").contains(en ? "Tip the podium" : "Tipp pallen")
+                    .contains(en ? "A photo of the label" : "Bilde av etiketten").contains(en ? "in the same second" : "i samme sekund")
+                    .doesNotContain(en ? "A nudge from the calendar" : "Et dytt fra kalenderen");
         }
         assertThat(fetch(get("/")).getContentAsString()).contains("<html lang=\"nb\">").contains("Logg inn med Google").contains("Støttet av");
         assertThat(fetch(get("/").param("lang", "en")).getContentAsString()).contains("<html lang=\"en\">").contains("Sign in with Google").contains("Sponsored by");
@@ -82,10 +88,32 @@ class LandingPageTest {
         Set<String> names = RepoData.personNames();
         assertThat(names).contains("Totto").hasSizeGreaterThan(80);
         for (MockHttpServletRequestBuilder req : new MockHttpServletRequestBuilder[]{get("/"), get("/").param("lang", "en"),
-                get("/velkommen"), get("/velkommen").param("lang", "en")}) {
+                get("/velkommen"), get("/velkommen").param("lang", "en"), get("/welcome"), get("/welcome").param("lang", "en"),
+                get("/landing"), get("/landing").param("lang", "en")}) {
             String html = new String(fetch(req).getContentAsByteArray(), StandardCharsets.UTF_8);
             assertThat(RepoData.namesIn(html, names)).as("names in the page").isEmpty();
         }
+    }
+
+    @Test
+    void welcomeAndLandingAreTheSamePageAsVelkommen() throws Exception {
+        for (String path : new String[]{"/welcome", "/landing"}) {
+            for (String lang : new String[]{null, "en"}) {
+                String velkommen = lang == null ? fetch(get("/velkommen")).getContentAsString() : fetch(get("/velkommen").param("lang", lang)).getContentAsString();
+                MockHttpServletResponse res = lang == null ? fetch(get(path)) : fetch(get(path).param("lang", lang));
+                String html = res.getContentAsString();
+                // Same page; only the language switch and hreflang links point at the path itself.
+                assertThat(html.replace("\"" + path, "\"/velkommen")).isEqualTo(velkommen);
+                assertThat(html).contains(lang == null ? "href=\"" + path + "?lang=en\"" : "href=\"" + path + "\" hreflang=\"nb\"");
+                assertThat(html).contains(lang == null ? "<html lang=\"nb\">" : "<html lang=\"en\">");
+            }
+            // Signed in, too: it is the landing page, not the app.
+            MockHttpServletResponse in = fetch(get(path).with(login("landing-" + path.substring(1) + "-" + System.nanoTime() + "@x.no")));
+            assertThat(in.getForwardedUrl()).isNull();
+            assertThat(in.getHeader("Content-Security-Policy")).isEqualTo(LandingController.CSP);
+        }
+        // /velkommen is unchanged: Norwegian by default, its own path in the switch.
+        assertThat(fetch(get("/velkommen")).getContentAsString()).contains("<html lang=\"nb\">").contains("href=\"/velkommen?lang=en\"");
     }
 
     @Test

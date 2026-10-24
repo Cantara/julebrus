@@ -109,9 +109,12 @@ final class LandingCss {
             .rules td.val{margin:4px 0}}
 
             /* how it works */
-            .steps{list-style:none;margin:0;padding:0;display:grid;gap:16px;grid-template-columns:repeat(auto-fit,minmax(min(100%,260px),1fr))}
+            .steps{list-style:none;margin:0;padding:0;display:grid;gap:16px;grid-template-columns:repeat(auto-fill,minmax(min(100%,230px),1fr))}
             .step{background:var(--bg);border:1px solid var(--line);border-radius:20px;padding:22px}
+            .step h4{font-family:"Iowan Old Style","Palatino Linotype",Palatino,"Book Antiqua",Georgia,"Times New Roman",serif;font-size:1.2rem;line-height:1.25;margin:0 0 .3em}
             .step p{margin:0;color:var(--muted)}
+            .group-h{font-size:clamp(1.35rem,3vw,1.7rem);margin:48px 0 .2em}
+            .group-p{margin:0 0 18px;color:var(--muted);max-width:44rem}
             .ic{width:44px;height:44px;padding:10px;border-radius:14px;background:var(--brand);stroke:#fff6e8;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;margin-bottom:14px}
             @media (prefers-color-scheme:dark){.ic{background:#7a1f2b}}
             .badges-h{margin-top:48px}

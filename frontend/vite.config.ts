@@ -26,8 +26,8 @@ export default defineConfig({
       workbox: {
         // Web Push handlers live in public/push-sw.js and ride inside the generated worker.
         importScripts: ['push-sw.js'],
-        // /privacy and /velkommen are server-rendered public pages, never the cached app shell.
-        navigateFallbackDenylist: [/^\/api/, /^\/oauth2/, /^\/login/, /^\/privacy/, /^\/velkommen/],
+        // /privacy and the landing page (/velkommen, /welcome, /landing) are server-rendered public pages, never the cached app shell.
+        navigateFallbackDenylist: [/^\/api/, /^\/oauth2/, /^\/login/, /^\/privacy/, /^\/velkommen/, /^\/welcome/, /^\/landing/],
         runtimeCaching: [{ urlPattern: /^\/api\//, handler: 'NetworkOnly' }],
       },
     }),
