@@ -21,7 +21,7 @@ import java.util.stream.Collectors;
 
 import static no.cantara.julebrus.history.HistoricRaterClaim.Status.APPROVED;
 import static no.cantara.julebrus.history.HistoricRaterClaim.Status.PENDING;
-import static no.cantara.julebrus.history.HistoricRaterClaim.Status.REJECTED;
+import static no.cantara.julebrus.history.HistoricRaterClaim.Status.WITHDRAWN;
 
 /**
  * Claim-your-history: a person asks to be linked to the historic rater names that are
@@ -31,7 +31,7 @@ import static no.cantara.julebrus.history.HistoricRaterClaim.Status.REJECTED;
 public class ClaimService {
 
     public static final int MAX_PENDING_PER_USER = 5;
-    /** Every claim created or reopened counts, whatever its status, so a rejection is not a free retry. */
+    /** Every claim created or reopened counts, whatever happens to it afterwards. */
     public static final int MAX_CLAIMS_PER_DAY = 10;
 
     /**
@@ -48,11 +48,14 @@ public class ClaimService {
     private final HistoricRatingRepository ratings;
     private final HistoricRaterClaimRepository claims;
     private final UserRepository users;
+    private final ClaimEventRepository events;
 
-    public ClaimService(HistoricRatingRepository ratings, HistoricRaterClaimRepository claims, UserRepository users) {
+    public ClaimService(HistoricRatingRepository ratings, HistoricRaterClaimRepository claims, UserRepository users,
+                        ClaimEventRepository events) {
         this.ratings = ratings;
         this.claims = claims;
         this.users = users;
+        this.events = events;
     }
 
     /** Every historic person (key) with years and rating count. */
@@ -72,9 +75,10 @@ public class ClaimService {
         return out;
     }
 
+    /** The person's claims as they see them: a withdrawn claim is gone from their list (the row is kept). */
     @Transactional(readOnly = true)
     public List<HistoricRaterClaim> mine(UUID userId) {
-        return claims.findByUserIdOrderByCreatedAtAsc(userId);
+        return claims.findByUserIdOrderByCreatedAtAsc(userId).stream().filter(c -> c.getStatus() != WITHDRAWN).toList();
     }
 
     /** Keys that are approved for someone, mapped to that someone. */
@@ -90,8 +94,13 @@ public class ClaimService {
                 .filter(c -> c.getStatus() == APPROVED).map(HistoricRaterClaim::getRaterKey).collect(Collectors.toSet());
     }
 
+    /**
+     * Creates or reopens a claim. Everything runs under a row lock on the person's users row, so
+     * two requests from one person cannot both pass the pending or daily count (check, then insert).
+     */
     @Transactional
     public HistoricRaterClaim create(UUID userId, String userEmail, String rawKey) {
+        users.lockById(userId).orElseThrow(() -> new ApiException(HttpStatus.UNAUTHORIZED, "UNAUTHORIZED", "Unknown user"));
         String key = rawKey == null ? "" : rawKey.trim();
         Candidate c = candidates().get(key);
         if (c == null) {
@@ -104,38 +113,55 @@ public class ClaimService {
                             : "That person is already linked to a login");
         }
         var existing = claims.findByUserIdAndRaterKey(userId, key);
-        if (existing.isPresent() && existing.get().getStatus() != REJECTED) {
-            throw new ApiException(HttpStatus.CONFLICT, "CLAIM_EXISTS", "You have already claimed that name");
+        if (existing.isPresent()) {
+            switch (existing.get().getStatus()) {
+                case PENDING, APPROVED ->
+                        throw new ApiException(HttpStatus.CONFLICT, "CLAIM_EXISTS", "You have already claimed that name");
+                case REVOKED ->
+                        throw new ApiException(HttpStatus.CONFLICT, "CLAIM_REVOKED",
+                                "An administrator took this link back; ask the organisers");
+                default -> { /* REJECTED or WITHDRAWN: asking again is allowed */ }
+            }
         }
         if (claims.findByRaterKeyAndStatus(key, APPROVED).isPresent()) {
             throw new ApiException(HttpStatus.CONFLICT, "RATER_TAKEN", "That name is already linked to someone");
         }
         if (claims.countByUserIdAndStatus(userId, PENDING) >= MAX_PENDING_PER_USER) {
             throw new ApiException(HttpStatus.UNPROCESSABLE_ENTITY, "CLAIM_LIMIT",
-                    "At most " + MAX_PENDING_PER_USER + " claims can wait for approval at once");
+                    "You can have at most " + MAX_PENDING_PER_USER + " claims waiting for approval");
         }
-        if (claims.countByUserIdAndCreatedAtAfter(userId, Instant.now().minus(24, ChronoUnit.HOURS)) >= MAX_CLAIMS_PER_DAY) {
-            throw new ApiException(HttpStatus.UNPROCESSABLE_ENTITY, "CLAIM_LIMIT",
-                    "At most " + MAX_CLAIMS_PER_DAY + " claims can be made in 24 hours");
+        // The daily limit counts events, not rows, so withdrawing and asking again does not reset it.
+        if (events.countByActorUserIdAndKindInAndAtAfter(userId, List.of(ClaimEvent.Kind.CREATE, ClaimEvent.Kind.REOPEN),
+                Instant.now().minus(24, ChronoUnit.HOURS)) >= MAX_CLAIMS_PER_DAY) {
+            throw new ApiException(HttpStatus.UNPROCESSABLE_ENTITY, "CLAIM_DAILY_LIMIT",
+                    "You can make at most " + MAX_CLAIMS_PER_DAY + " claims in 24 hours");
         }
+        HistoricRaterClaim claim;
         if (existing.isPresent()) {
-            // Asking again after a rejection reopens the old row (kept for audit).
-            HistoricRaterClaim again = existing.get();
-            again.reopen();
-            return claims.save(again);
+            claim = existing.get();
+            claim.reopen();
+            claim = claims.saveAndFlush(claim);
+            events.save(new ClaimEvent(claim.getId(), ClaimEvent.Kind.REOPEN, userId));
+        } else {
+            claim = claims.saveAndFlush(new HistoricRaterClaim(userId, key));
+            events.save(new ClaimEvent(claim.getId(), ClaimEvent.Kind.CREATE, userId));
         }
-        return claims.save(new HistoricRaterClaim(userId, key));
+        return claim;
     }
 
-    /** A person withdraws their own pending claim. Someone else's claim looks like it does not exist. */
+    /** A person withdraws their own pending claim. The row stays (it counts towards the daily limit). */
     @Transactional
     public void withdraw(UUID userId, UUID claimId) {
+        users.lockById(userId);
         HistoricRaterClaim c = claims.findById(claimId).filter(x -> x.getUserId().equals(userId))
+                .filter(x -> x.getStatus() != WITHDRAWN)
                 .orElseThrow(() -> new ApiException(HttpStatus.NOT_FOUND, "CLAIM_NOT_FOUND", "No such claim"));
         if (c.getStatus() != PENDING) {
             throw new ApiException(HttpStatus.CONFLICT, "CLAIM_NOT_PENDING", "Only a pending claim can be withdrawn");
         }
-        claims.delete(c);
+        c.withdraw();
+        claims.saveAndFlush(c);
+        events.save(new ClaimEvent(c.getId(), ClaimEvent.Kind.WITHDRAW, userId));
     }
 
     @Transactional(readOnly = true)
@@ -149,7 +175,7 @@ public class ClaimService {
         return users.findAllById(ids).stream().collect(Collectors.toMap(User::getId, u -> u));
     }
 
-    /** An admin takes back an approval. Only APPROVED claims can be revoked. */
+    /** An admin takes back an approval. Only APPROVED claims can be revoked, and a revoked claim stays revoked. */
     @Transactional
     public HistoricRaterClaim revoke(UUID adminId, UUID claimId) {
         HistoricRaterClaim c = claims.findById(claimId)
@@ -158,6 +184,8 @@ public class ClaimService {
             throw new ApiException(HttpStatus.CONFLICT, "CLAIM_NOT_APPROVED", "Only an approved claim can be revoked");
         }
         c.revoke(adminId);
+        claims.saveAndFlush(c);
+        events.save(new ClaimEvent(c.getId(), ClaimEvent.Kind.REVOKE, adminId));
         return c;
     }
 
@@ -170,6 +198,8 @@ public class ClaimService {
         }
         if (!approve) {
             c.reject(adminId);
+            claims.saveAndFlush(c);
+            events.save(new ClaimEvent(c.getId(), ClaimEvent.Kind.REJECT, adminId));
             return c;
         }
         if (claims.findByRaterKeyAndStatus(c.getRaterKey(), APPROVED).isPresent()) {
@@ -182,6 +212,7 @@ public class ClaimService {
         } catch (DataIntegrityViolationException e) {
             throw new ApiException(HttpStatus.CONFLICT, "RATER_TAKEN", "That name is already linked to someone else");
         }
+        events.save(new ClaimEvent(c.getId(), ClaimEvent.Kind.APPROVE, adminId));
         return c;
     }
 }

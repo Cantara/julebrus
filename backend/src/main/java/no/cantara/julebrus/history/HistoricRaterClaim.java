@@ -19,7 +19,12 @@ import java.util.UUID;
 @Table(name = "historic_rater_claims")
 public class HistoricRaterClaim {
 
-    public enum Status { PENDING, APPROVED, REJECTED }
+    /**
+     * REJECTED: an admin said no (the person may ask again). REVOKED: an admin took an approval
+     * back (sticky, the person cannot ask again). WITHDRAWN: the person took a pending claim
+     * back (hidden from them, still counted by the daily limit, may ask again).
+     */
+    public enum Status { PENDING, APPROVED, REJECTED, REVOKED, WITHDRAWN }
 
     @Id
     private UUID id;
@@ -46,6 +51,10 @@ public class HistoricRaterClaim {
     @Column(name = "approved_key")
     private String approvedKey;
 
+    /** Optimistic lock: two admins deciding at once, or a withdrawal during an approval, cannot both win. */
+    @jakarta.persistence.Version
+    private long version;
+
     protected HistoricRaterClaim() {
     }
 
@@ -70,17 +79,22 @@ public class HistoricRaterClaim {
 
     /** An admin takes an approval back: the key becomes claimable again and the link disappears. */
     public void revoke(UUID adminId) {
-        this.status = Status.REJECTED;
+        this.status = Status.REVOKED;
         this.approvedKey = null;
         decide(adminId);
     }
 
-    /** A rejected claim asked for again: the old row is reused so the audit trail stays one row per (user, key). */
+    /** The person takes a pending claim back. */
+    public void withdraw() {
+        this.status = Status.WITHDRAWN;
+    }
+
+    /**
+     * A rejected or withdrawn claim asked for again: the row is reused (one row per user and key).
+     * decided_by/decided_at keep the last admin decision; {@code claim_events} has the full history.
+     */
     public void reopen() {
         this.status = Status.PENDING;
-        this.createdAt = Instant.now();
-        this.decidedBy = null;
-        this.decidedAt = null;
     }
 
     private void decide(UUID adminId) {

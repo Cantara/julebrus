@@ -181,9 +181,11 @@ class ClaimsTest {
                 .andExpect(status().isNotFound());
 
         mvc.perform(post("/api/admin/history/claims/" + id + "/revoke").header("X-Dev-User", ADMIN))
-                .andExpect(status().isOk()).andExpect(jsonPath("$.status").value("REJECTED"));
+                .andExpect(status().isOk()).andExpect(jsonPath("$.status").value("REVOKED"));
         historySize(f.me, 0);
-        mvc.perform(get("/api/history/claims/me").header("X-Dev-User", f.me)).andExpect(jsonPath("$[0].status").value("REJECTED"));
+        mvc.perform(get("/api/history/claims/me").header("X-Dev-User", f.me)).andExpect(jsonPath("$[0].status").value("REVOKED"));
+        // Revoking is sticky for that person: they cannot ask again. Only an admin could reset it by deleting the row.
+        claimExpecting(f.me, f.person, 409, "CLAIM_REVOKED");
         // The key is claimable again, by someone else and approvable.
         mvc.perform(get("/api/history/claim-candidates").header("X-Dev-User", rival))
                 .andExpect(jsonPath("$[?(@.raterKey=='%s')].available".formatted(f.person)).value(true));
@@ -205,15 +207,15 @@ class ClaimsTest {
         mvc.perform(get("/api/history/claims/me").header("X-Dev-User", f.me)).andExpect(jsonPath("$", hasSize(1)));
         decide(id, "REJECT", 200);
 
-        // Nine more claims, each rejected, bring the day's count to ten: the eleventh is refused.
-        for (int i = 0; i < 9; i++) {
+        // Eight more claims, each rejected, bring the day's count to ten (create, reopen and eight): the next is refused.
+        for (int i = 0; i < 8; i++) {
             String key = "Zq" + f.s + "-bulk" + i;
             f.row(2001, key, key, null, "3");
             decide(claim(f.me, key), "REJECT", 200);
         }
-        f.row(2001, "Zq" + f.s + "-bulk9", "Zq" + f.s + "-bulk9", null, "3");
-        claimExpecting(f.me, "Zq" + f.s + "-bulk9", 422, "CLAIM_LIMIT");
-        claimExpecting(f.me, f.solo, 422, "CLAIM_LIMIT"); // re-asking counts too
+        f.row(2001, "Zq" + f.s + "-bulk8", "Zq" + f.s + "-bulk8", null, "3");
+        claimExpecting(f.me, "Zq" + f.s + "-bulk8", 422, "CLAIM_DAILY_LIMIT");
+        claimExpecting(f.me, f.solo, 422, "CLAIM_DAILY_LIMIT"); // re-asking counts too
     }
 
     @Test
@@ -375,5 +377,161 @@ class ClaimsTest {
         claimRepo.saveAndFlush(one);
         org.assertj.core.api.Assertions.assertThatThrownBy(() -> claimRepo.saveAndFlush(two))
                 .isInstanceOf(org.springframework.dao.DataIntegrityViolationException.class);
+    }
+
+    @Autowired
+    ClaimEventRepository claimEvents;
+
+    private int pendingCount(String email) {
+        return (int) claimRepo.countByUserIdAndStatus(users.upsert(email, "x").getId(), HistoricRaterClaim.Status.PENDING);
+    }
+
+    @Test
+    void withdrawingKeepsTheRowHidesItAndStillCountsTowardsTheDailyLimit() throws Exception {
+        Fx f = new Fx();
+        // The same key, ten times: the first create plus nine reopens are ten claims in the day.
+        String id = claim(f.me, f.solo);
+        for (int i = 0; i < 9; i++) {
+            mvc.perform(delete("/api/history/claims/" + id).header("X-Dev-User", f.me)).andExpect(status().isNoContent());
+            // Hidden from the person's list, offered again in the candidate list.
+            mvc.perform(get("/api/history/claims/me").header("X-Dev-User", f.me)).andExpect(jsonPath("$", hasSize(0)));
+            mvc.perform(get("/api/history/claim-candidates").header("X-Dev-User", f.me))
+                    .andExpect(jsonPath("$[?(@.raterKey=='%s')].myClaim".formatted(f.solo), contains(org.hamcrest.Matchers.nullValue())));
+            org.assertj.core.api.Assertions.assertThat(pendingCount(f.me)).isZero();
+            // Asking again reopens the same row.
+            mvc.perform(post("/api/history/claims").header("X-Dev-User", f.me).contentType(APPLICATION_JSON)
+                            .content("{\"raterKey\":\"%s\"}".formatted(f.solo)))
+                    .andExpect(status().isCreated()).andExpect(jsonPath("$.id").value(id));
+        }
+        mvc.perform(delete("/api/history/claims/" + id).header("X-Dev-User", f.me)).andExpect(status().isNoContent());
+        claimExpecting(f.me, f.solo, 422, "CLAIM_DAILY_LIMIT");
+        // The row is still there, and so is its history.
+        org.assertj.core.api.Assertions.assertThat(claimRepo.findById(java.util.UUID.fromString(id))).get()
+                .extracting(HistoricRaterClaim::getStatus).isEqualTo(HistoricRaterClaim.Status.WITHDRAWN);
+        org.assertj.core.api.Assertions.assertThat(claimEvents.findByClaimIdOrderByAtAsc(java.util.UUID.fromString(id)))
+                .hasSize(20).extracting(e -> e.getKind().name()).startsWith("CREATE", "WITHDRAW", "REOPEN");
+        // Withdrawing an already withdrawn claim looks like it does not exist.
+        mvc.perform(delete("/api/history/claims/" + id).header("X-Dev-User", f.me)).andExpect(status().isNotFound());
+    }
+
+    @Test
+    void createAndWithdrawOfDistinctKeysStopsAtTen() throws Exception {
+        Fx f = new Fx();
+        for (int i = 0; i < 10; i++) {
+            String key = "Zq" + f.s + "-cw" + i;
+            f.row(2001, key, key, null, "3");
+            String id = claim(f.me, key);
+            mvc.perform(delete("/api/history/claims/" + id).header("X-Dev-User", f.me)).andExpect(status().isNoContent());
+        }
+        f.row(2001, "Zq" + f.s + "-cw10", "Zq" + f.s + "-cw10", null, "3");
+        claimExpecting(f.me, "Zq" + f.s + "-cw10", 422, "CLAIM_DAILY_LIMIT");
+    }
+
+    @Test
+    void parallelClaimsOfDistinctKeysNeverExceedFivePending() throws Exception {
+        Fx f = new Fx();
+        int n = 12;
+        for (int i = 0; i < n; i++) f.row(2001, "Zq" + f.s + "-par" + i, "Zq" + f.s + "-par" + i, null, "3");
+        var pool = java.util.concurrent.Executors.newFixedThreadPool(n);
+        var start = new java.util.concurrent.CountDownLatch(1);
+        try {
+            var futures = new java.util.ArrayList<java.util.concurrent.Future<Integer>>();
+            for (int i = 0; i < n; i++) {
+                String key = "Zq" + f.s + "-par" + i;
+                futures.add(pool.submit(() -> {
+                    start.await();
+                    return mvc.perform(post("/api/history/claims").header("X-Dev-User", f.me).contentType(APPLICATION_JSON)
+                            .content("{\"raterKey\":\"%s\"}".formatted(key))).andReturn().getResponse().getStatus();
+                }));
+            }
+            start.countDown();
+            java.util.Map<Integer, Integer> codes = new java.util.TreeMap<>();
+            for (var fu : futures) codes.merge(fu.get(60, java.util.concurrent.TimeUnit.SECONDS), 1, Integer::sum);
+            org.assertj.core.api.Assertions.assertThat(codes).containsEntry(201, 5).containsEntry(422, n - 5).hasSize(2);
+        } finally {
+            pool.shutdownNow();
+        }
+        org.assertj.core.api.Assertions.assertThat(pendingCount(f.me)).isEqualTo(5);
+    }
+
+    @Test
+    void parallelDecisionsOnOneClaimHaveExactlyOneWinnerAndNoServerErrors() throws Exception {
+        Fx f = new Fx();
+        String id = claim(f.me, f.solo);
+        int n = 6;
+        var pool = java.util.concurrent.Executors.newFixedThreadPool(n);
+        var start = new java.util.concurrent.CountDownLatch(1);
+        try {
+            var futures = new java.util.ArrayList<java.util.concurrent.Future<Integer>>();
+            for (int i = 0; i < n; i++) {
+                futures.add(pool.submit(() -> {
+                    start.await();
+                    return mvc.perform(post("/api/admin/history/claims/" + id + "/decision").header("X-Dev-User", ADMIN)
+                            .contentType(APPLICATION_JSON).content("{\"decision\":\"APPROVE\"}")).andReturn().getResponse().getStatus();
+                }));
+            }
+            start.countDown();
+            java.util.Map<Integer, Integer> codes = new java.util.TreeMap<>();
+            for (var fu : futures) codes.merge(fu.get(60, java.util.concurrent.TimeUnit.SECONDS), 1, Integer::sum);
+            org.assertj.core.api.Assertions.assertThat(codes).containsEntry(200, 1).containsEntry(409, n - 1).hasSize(2);
+        } finally {
+            pool.shutdownNow();
+        }
+        org.assertj.core.api.Assertions.assertThat(claimEvents.findByClaimIdOrderByAtAsc(java.util.UUID.fromString(id)))
+                .extracting(e -> e.getKind().name()).containsExactly("CREATE", "APPROVE");
+    }
+
+    @Test
+    void approvalRacingAWithdrawalNeverLeavesAnInconsistentClaim() throws Exception {
+        Fx f = new Fx();
+        for (int round = 0; round < 6; round++) {
+            String key = "Zq" + f.s + "-race" + round;
+            f.row(2001, key, key, null, "3");
+            String id = claim(f.me, key);
+            var pool = java.util.concurrent.Executors.newFixedThreadPool(2);
+            var start = new java.util.concurrent.CountDownLatch(1);
+            try {
+                var a = pool.submit(() -> {
+                    start.await();
+                    return mvc.perform(post("/api/admin/history/claims/" + id + "/decision").header("X-Dev-User", ADMIN)
+                            .contentType(APPLICATION_JSON).content("{\"decision\":\"APPROVE\"}")).andReturn().getResponse().getStatus();
+                });
+                var w = pool.submit(() -> {
+                    start.await();
+                    return mvc.perform(delete("/api/history/claims/" + id).header("X-Dev-User", f.me)).andReturn().getResponse().getStatus();
+                });
+                start.countDown();
+                int sa = a.get(60, java.util.concurrent.TimeUnit.SECONDS), sw = w.get(60, java.util.concurrent.TimeUnit.SECONDS);
+                org.assertj.core.api.Assertions.assertThat(sa).isIn(200, 409);
+                org.assertj.core.api.Assertions.assertThat(sw).isIn(204, 409);
+                var status = claimRepo.findById(java.util.UUID.fromString(id)).get().getStatus();
+                // Exactly one of the two actions took effect.
+                org.assertj.core.api.Assertions.assertThat(status).isIn(HistoricRaterClaim.Status.APPROVED, HistoricRaterClaim.Status.WITHDRAWN);
+                org.assertj.core.api.Assertions.assertThat(sa == 200).isEqualTo(status == HistoricRaterClaim.Status.APPROVED);
+            } finally {
+                pool.shutdownNow();
+            }
+        }
+    }
+
+    @Test
+    void claimEventsRecordWhoDidWhat() throws Exception {
+        Fx f = new Fx();
+        String id = claim(f.me, f.solo);
+        decide(id, "REJECT", 200);
+        claim(f.me, f.solo); // reopen
+        decide(id, "APPROVE", 200);
+        mvc.perform(post("/api/admin/history/claims/" + id + "/revoke").header("X-Dev-User", ADMIN)).andExpect(status().isOk());
+        var events = claimEvents.findByClaimIdOrderByAtAsc(java.util.UUID.fromString(id));
+        org.assertj.core.api.Assertions.assertThat(events).extracting(e -> e.getKind().name())
+                .containsExactly("CREATE", "REJECT", "REOPEN", "APPROVE", "REVOKE");
+        var person = users.upsert(f.me, "x").getId();
+        var admin = users.upsert(ADMIN, "x").getId();
+        org.assertj.core.api.Assertions.assertThat(events).extracting(ClaimEvent::getActorUserId)
+                .containsExactly(person, admin, person, admin, admin);
+        // A revoked decision is not erased by anything: the last decision stays on the row.
+        var row = claimRepo.findById(java.util.UUID.fromString(id)).get();
+        org.assertj.core.api.Assertions.assertThat(row.getStatus()).isEqualTo(HistoricRaterClaim.Status.REVOKED);
+        org.assertj.core.api.Assertions.assertThat(row.getDecidedBy()).isEqualTo(admin);
     }
 }
