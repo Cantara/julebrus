@@ -62,7 +62,7 @@ single number (`product_article_no` empty, `article_options` lists the numbers s
 
 Years without a list (1998-2012) can only match against other years' beers, so generic brewery names ("Hansa", "Ringnes") mostly stay `review`.
 Human decisions go in `vote_match_overrides.csv` (`year, vote_beer, product_article_no, product_name`; the article number OR the name, or `none`) and win over the
-script on the next run. The app does not use these files yet (planned for v0.7, with an admin review screen).
+script on the next run. The app imports these files at startup into its database (admins review the matches there), and from then on the database decisions are the source of truth; `GET /api/admin/matches/overrides.csv` exports them in the override format above.
 
 ## Images (decision 2026-10-24)
 Product photos are not stored here and not hotlinked: the app's images come from its users' own label photos (see DESIGN.md). The lists have no image column.
