@@ -38,7 +38,11 @@ public class DuelController {
     private final TastingRepository tastings;
     private final CurrentUser currentUser;
 
-    public DuelController(DuelRepository duels, SessionService sessions, TastingRepository tastings, CurrentUser currentUser) {
+    private final no.cantara.julebrus.live.SessionEvents events;
+
+    public DuelController(DuelRepository duels, SessionService sessions, TastingRepository tastings, CurrentUser currentUser,
+                          no.cantara.julebrus.live.SessionEvents events) {
+        this.events = events;
         this.duels = duels;
         this.sessions = sessions;
         this.tastings = tastings;
@@ -87,6 +91,7 @@ public class DuelController {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "Already answered");
         }
         duels.save(new Duel(userId, in.sessionId(), in.winnerBeerId(), in.loserBeerId()));
+        events.publish(in.sessionId(), no.cantara.julebrus.live.SessionEvents.Kind.DUEL);
     }
 
     private static String key(UUID a, UUID b) {

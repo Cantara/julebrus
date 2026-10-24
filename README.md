@@ -180,6 +180,15 @@ history files with:
 python3 tools/to_app_history.py backend/src/main/resources/history
 ```
 
+## Live reveal
+
+Every phone at a table holds one server-sent event stream (`/api/sessions/{id}/events`). A
+reverse proxy in front of the jar must not buffer it: the response carries
+`X-Accel-Buffering: no` and `Cache-Control: no-cache`, which nginx honours; otherwise set
+`proxy_buffering off` for `/api/sessions/` and give the location a read timeout above the
+20-second heartbeat (`proxy_read_timeout 60s` or more). Without the stream the app still
+works: the session page falls back to polling every five seconds.
+
 ## Teams
 
 Cantara and Rebel exist from the first migration; everyone picks their teams once, right after

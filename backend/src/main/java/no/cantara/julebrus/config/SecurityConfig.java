@@ -103,8 +103,10 @@ public class SecurityConfig {
                                         jakarta.servlet.FilterChain chain)
                 throws jakarta.servlet.ServletException, java.io.IOException {
             // X-Dev-User lets you impersonate a second person from another browser tab
-            // when testing group sessions locally.
+            // when testing group sessions locally. EventSource cannot set headers, so the
+            // live stream takes the same thing as ?devUser= (dev profile only, like all of this).
             String email = req.getHeader("X-Dev-User");
+            if (email == null) email = req.getParameter("devUser");
             if (email != null && email.indexOf('@') < 1) {
                 res.setStatus(400);
                 res.setContentType("application/json");
