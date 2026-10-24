@@ -21,7 +21,8 @@ import java.util.Locale;
 import java.util.Map;
 
 /**
- * Loads earlier seasons from CSV files on the classpath at startup, once per season.
+ * Loads earlier seasons from CSV files on the classpath at startup, once per season (raters.csv and
+ * beer_names.csv are re-applied on every startup).
  *
  * <p>Layout: {@code history/seasons.csv} describes each season, and
  * {@code history/<year>.csv} holds that season's ratings. See
@@ -76,6 +77,40 @@ public class HistoryImporter implements ApplicationRunner {
         }
 
         applyRaterMapping(resolver.getResource("classpath:history/raters.csv"));
+        applyBeerNames(resolver.getResource("classpath:history/beer_names.csv"));
+    }
+
+    /**
+     * Corrects misspelled beer names in ratings already in the database. Runs on every startup, like
+     * raters.csv: a row (year, as_written, canonical) renames the ratings of that season whose source name is
+     * as_written; ratings are neither deleted nor re-imported, and the source name stays in beer_name_original.
+     * A row removed from the file puts the source name back. Unknown rows are ignored.
+     */
+    private void applyBeerNames(Resource namesCsv) throws IOException {
+        applyBeerNames(readBeerNames(namesCsv));
+    }
+
+    /** beer_names.csv as "year|as written" to canonical name; incomplete rows are ignored. */
+    public static Map<String, String> readBeerNames(Resource namesCsv) throws IOException {
+        Map<String, String> mapping = new HashMap<>();
+        if (namesCsv.exists()) {
+            for (List<String> row : Csv.read(namesCsv)) {
+                if (row.get(0).isBlank() || row.get(1).isBlank() || row.get(2).isBlank()) continue;
+                mapping.put(row.get(0) + "|" + row.get(1), row.get(2));
+            }
+        }
+        return mapping;
+    }
+
+    /** Applies a "year|as written" to canonical mapping to every rating; returns how many ratings changed. */
+    @Transactional
+    public int applyBeerNames(Map<String, String> mapping) {
+        int changed = 0;
+        for (HistoricRating r : ratings.findAll()) {
+            if (r.applyBeerName(mapping.get(r.getSeasonYear() + "|" + r.sourceBeerName().trim()))) changed++;
+        }
+        if (changed > 0) log.info("Applied beer name corrections to {} historic ratings", changed);
+        return changed;
     }
 
     /**

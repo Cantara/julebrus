@@ -14,16 +14,16 @@ import java.util.TreeSet;
 import java.util.regex.Pattern;
 
 /** Reads the repository's data/ files directly (tests run in backend/), independently of the generator. */
-final class RepoData {
+public final class RepoData {
 
-    static final Path DATA = Path.of("..", "data");
+    public static final Path DATA = Path.of("..", "data");
     static final Path RATERS = Path.of("src", "main", "resources", "history", "raters.csv");
 
     private RepoData() {
     }
 
     /** Rows as header-keyed maps. A small RFC 4180 reader: quotes, doubled quotes, commas and newlines in quotes. */
-    static List<Map<String, String>> csv(Path file) {
+    public static List<Map<String, String>> csv(Path file) {
         String text;
         try {
             text = Files.readString(file, StandardCharsets.UTF_8);
@@ -58,8 +58,23 @@ final class RepoData {
         return out;
     }
 
-    static List<Map<String, String>> votes() {
-        return csv(DATA.resolve("votes.csv"));
+    public static final Path BEER_NAMES = Path.of("src", "main", "resources", "history", "beer_names.csv");
+
+    /** The rows with beer names corrected by the app's beer_names.csv, as tools/to_landing_stats.py does. */
+    static List<Map<String, String>> corrected(List<Map<String, String>> rows) {
+        Map<String, String> names = new HashMap<>();
+        csv(BEER_NAMES).forEach(r -> names.put(r.get("year").trim() + "|" + r.get("as_written").trim(), r.get("canonical").trim()));
+        List<Map<String, String>> out = new ArrayList<>();
+        for (Map<String, String> r : rows) {
+            Map<String, String> c = new HashMap<>(r);
+            c.computeIfPresent("beer", (k, v) -> names.getOrDefault(r.get("year") + "|" + v.trim(), v));
+            out.add(c);
+        }
+        return out;
+    }
+
+    public static List<Map<String, String>> votes() {
+        return corrected(csv(DATA.resolve("votes.csv")));
     }
 
     /** Every name of a person the repository holds: voters, 2016 participants, and both columns of raters.csv. */

@@ -67,7 +67,7 @@ class LandingStatsTest {
 
     @Test
     void the2016SummaryComesFromTheRankedListAndTheParticipationCounts() {
-        List<Map<String, String>> results = RepoData.csv(RepoData.DATA.resolve("results.csv")).stream()
+        List<Map<String, String>> results = RepoData.corrected(RepoData.csv(RepoData.DATA.resolve("results.csv"))).stream()
                 .filter(r -> r.get("year").equals("2016")).toList();
         List<Map<String, String>> people = RepoData.csv(RepoData.DATA.resolve("participation.csv")).stream()
                 .filter(r -> r.get("year").equals("2016")).toList();
