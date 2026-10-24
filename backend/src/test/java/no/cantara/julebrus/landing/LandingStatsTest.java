@@ -36,6 +36,19 @@ class LandingStatsTest {
 
     static final HistoryStats STATS = HistoryStats.load();
 
+    /** The same list as NON_BEER in tools/to_landing_stats.py: items scored in the sheets that are not beer. */
+    static final List<String> NON_BEER = List.of("fenalår", "^låret$", "spekeskinke", "vossakjøt", "jacobs kjøt", "finsbråten",
+            "smedstuen", "smestadstuen", "^vertskapet$");
+
+    static boolean isBeer(String name) {
+        return NON_BEER.stream().noneMatch(p -> java.util.regex.Pattern.compile(p, java.util.regex.Pattern.CASE_INSENSITIVE
+                | java.util.regex.Pattern.UNICODE_CASE).matcher(name.trim()).find());
+    }
+
+    static boolean isBeer(Map<String, String> row) {
+        return isBeer(row.get("beer"));
+    }
+
     static double weight(Map<String, String> r) {
         String w = r.get("weight").trim();
         return w.isEmpty() ? 1.0 : Double.parseDouble(w);
@@ -52,13 +65,17 @@ class LandingStatsTest {
     @Test
     void perSeasonCountsMatchTheVotes() {
         Map<Integer, List<Map<String, String>>> byYear = votesByYear();
-        assertThat(STATS.totals().seasonsWithVotes()).isEqualTo(byYear.size()).isEqualTo(12);
+        // Every season the app imports (history/seasons.csv) has single votes, and the other way round.
+        List<Integer> imported = RepoData.csv(Path.of("src", "main", "resources", "history", "seasons.csv")).stream()
+                .map(r -> Integer.parseInt(r.get("year"))).toList();
+        assertThat(STATS.totals().seasonsWithVotes()).isEqualTo(byYear.size()).isEqualTo(imported.size());
+        assertThat(byYear.keySet()).containsExactlyElementsOf(imported);
         assertThat(STATS.totals().votes()).isEqualTo(RepoData.votes().size());
         byYear.forEach((year, rows) -> {
             HistoryStats.Season s = season(year);
             assertThat(s.votes()).as("votes " + year).isEqualTo(rows.size());
             assertThat(s.voters()).as("voters " + year).isEqualTo(rows.stream().map(r -> r.get("voter")).distinct().count());
-            assertThat(s.beers()).as("beers " + year).isEqualTo(rows.stream().map(r -> r.get("beer").trim().toLowerCase()).distinct().count());
+            assertThat(s.beers()).as("beers " + year).isEqualTo(rows.stream().filter(LandingStatsTest::isBeer).map(r -> r.get("beer").trim().toLowerCase()).distinct().count());
             double w = rows.stream().mapToDouble(LandingStatsTest::weight).sum();
             double mean = rows.stream().mapToDouble(r -> Double.parseDouble(r.get("score")) * weight(r)).sum() / w;
             assertThat(s.meanScore()).as("mean " + year).isCloseTo(mean, org.assertj.core.data.Offset.offset(0.006));
@@ -68,7 +85,7 @@ class LandingStatsTest {
     @Test
     void the2016SummaryComesFromTheRankedListAndTheParticipationCounts() {
         List<Map<String, String>> results = RepoData.corrected(RepoData.csv(RepoData.DATA.resolve("results.csv"))).stream()
-                .filter(r -> r.get("year").equals("2016")).toList();
+                .filter(r -> r.get("year").equals("2016")).filter(LandingStatsTest::isBeer).toList();
         List<Map<String, String>> people = RepoData.csv(RepoData.DATA.resolve("participation.csv")).stream()
                 .filter(r -> r.get("year").equals("2016")).toList();
         HistoryStats.Season s = season(2016);
@@ -85,7 +102,7 @@ class LandingStatsTest {
     @Test
     void topBeerIsTheHighestWeightedMeanWithEnoughVotes() {
         votesByYear().forEach((year, rows) -> {
-            Map<String, List<Map<String, String>>> beers = rows.stream()
+            Map<String, List<Map<String, String>>> beers = rows.stream().filter(LandingStatsTest::isBeer)
                     .collect(Collectors.groupingBy(r -> r.get("beer").trim().toLowerCase(), LinkedHashMap::new, Collectors.toList()));
             Map<String, Double> means = new LinkedHashMap<>();
             beers.forEach((k, vs) -> {
@@ -102,6 +119,28 @@ class LandingStatsTest {
                 assertThat(t.votes()).isEqualTo(beers.get(t.beer().toLowerCase()).size());
             });
         });
+    }
+
+    @Test
+    void nonBeerItemsStayInTheVotesButNeverWin() throws IOException {
+        // The generator's list is the one this test uses.
+        try (InputStream in = HistoryStats.class.getResourceAsStream(HistoryStats.RESOURCE)) {
+            List<String> generated = new com.fasterxml.jackson.databind.ObjectMapper().readTree(in).get("nonBeerPatterns")
+                    .valueStream().map(com.fasterxml.jackson.databind.JsonNode::asText).toList();
+            assertThat(generated).isEqualTo(NON_BEER);
+        }
+        assertThat(isBeer("Fenalår Bjorli")).isFalse();
+        assertThat(isBeer("fenalår Smedstuen")).isFalse();
+        assertThat(isBeer("Vertskapet")).isFalse();
+        assertThat(isBeer("Spekeskinke 1 (Voss røkt)")).isFalse();
+        assertThat(isBeer("Nøgne Ø - God Jul")).isTrue();
+        // Without the filter a fenalår or the hosts would top these years; with it, a beer does.
+        assertThat(season(2008).top()).extracting(HistoryStats.Top::beer).containsExactly("Nøgne Ø - God Jul");
+        assertThat(season(2010).top()).extracting(HistoryStats.Top::beer).containsExactly("Aass Juleøl premium");
+        assertThat(season(2011).top()).extracting(HistoryStats.Top::beer).containsExactly("Nøgne Ø God Jul");
+        // They still count as votes.
+        assertThat(STATS.totals().votes()).isEqualTo(RepoData.votes().size());
+        assertThat(RepoData.votes().stream().filter(r -> !isBeer(r))).isNotEmpty();
     }
 
     @Test
@@ -122,6 +161,7 @@ class LandingStatsTest {
     @Test
     void regularsCountSeasonsAndVotesByNameAsWritten() {
         for (HistoryStats.Regular reg : STATS.regulars()) {
+            assertThat(isBeer(reg.beer())).as(reg.beer()).isTrue();
             List<Map<String, String>> rows = RepoData.votes().stream().filter(r -> r.get("beer").trim().equalsIgnoreCase(reg.beer())).toList();
             assertThat(reg.votes()).as(reg.beer()).isEqualTo(rows.size());
             assertThat(reg.years()).as(reg.beer()).containsExactlyElementsOf(rows.stream().map(r -> Integer.parseInt(r.get("year"))).distinct().sorted().toList());

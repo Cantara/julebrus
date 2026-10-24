@@ -65,6 +65,52 @@ year,beer,n_votes,mean_unweighted,mean_weighted,rank,weight_sum
 2007,Mack,1,,3.67,8,
 2007,Fredrikstad,5,,2.89,14,
 2007,Levig,2,,5,1,
+2008,Aass,10,,,,9
+2008,Aass Premium,12,,,,11
+2008,CB,5,,,,4
+2008,Dahl,8,,,,7
+2008,Fredrikstad,7,,,,6.5
+2008,Grans,3,,,,3
+2008,Hansa,9,,,,9
+2008,Hansa Vellagret,9,,,,8
+2008,Lervik,2,,,,2
+2008,Mack Juleøl,11,,,,10
+2008,Nøgne Ø - Underlig jul,6,,,,4.5
+2008,Nøgne Ø - God Jul,5,,,,3.5
+2008,Nissemor,2,,,,1.5
+2008,Nissefar,1,,,,1
+2008,Ringnes,8,,,,7
+2008,Ringnes Julebokk,11,,,,10
+2008,Berentsen Julefnugg,4,,,,4
+2008,Berentsen Jule Avec,2,,,,2
+2008,Borg,4,,,,3.5
+2008,Fenalår Tinde,8,,,,6.5
+2008,Fenalår Bjorli,8,,,,6.5
+2008,Fenalår Grillstad,9,,,,7.5
+2010,Dahls,,2.92,2.81,,10.5
+2010,Aas Juleøl,,3.86,3.63,,8
+2010,Hansa Julebrygg,,3.67,3.41,,8.5
+2010,Borg,,3,2.8,,5
+2010,NøgneØ Underlig jul,,2,1.86,,7
+2010,Hansa juleøl,,3.64,3.55,,11
+2010,Ringnes julebokk,,4.11,4,,9
+2010,Borg Juleøl,,3.2,3,,6
+2010,Aass Juleøl premium,,4.43,4.13,,8
+2010,Nøgne Ø Special Holiday Ale,,5,4,,3
+2010,CB,,3,2.87,,11.5
+2010,Fredrikstad,,3.67,3.5,,10
+2010,Berentsen Julefnugg,,4,3.73,,5.5
+2010,Ægir julebrygg,,4,3.5,,4
+2010,Haandbryggeriet Nissefar,,3.6,3.33,,6
+2010,Berentsen Juleavec,,4.33,4,,7
+2010,Håndbryggeriet Nissemor,,4,3.5,,4
+2010,Ringnes Juleøl Sterk,,3.71,3.5,,8
+2010,Mack Juleøl,,3.75,3.57,,7
+2010,NøgneØ God Jul,,3.5,3.2,,5
+2010,Grans Juleøl,,4,3.71,,7
+2010,fenalår Smedstuen,,4.56,4.22,,9
+2010,Fenalår Aronmat,,3.44,3.44,,9
+2010,fenalår Ringdal,,3.7,3.6,,10
 2011,Dahls Juleøl,7,3.29,3.17,,
 2011,Aass Juleøl,10,3.9,3.76,,
 2011,Hansa Julebrygg,5,4.4,4.4,,

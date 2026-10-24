@@ -8,6 +8,7 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.test.context.ActiveProfiles;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -16,7 +17,10 @@ import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-/** beer_names.csv: applied to ratings already in the database, idempotent, reversible, and well formed. */
+/**
+ * beer_names.csv: applied to ratings already in the database, idempotent, reversible, and well formed. Rows marked
+ * legacy correct names the source files no longer hold, for databases imported before the files were corrected.
+ */
 @SpringBootTest
 @ActiveProfiles("dev")
 class BeerNamesTest {
@@ -85,6 +89,62 @@ class BeerNamesTest {
         assertThat(rows).noneMatch(r -> r.getBeerName().equals("Ringnes julebokk"));
     }
 
+    /** The rows of the shipped beer_names.csv marked legacy (fourth column), as (year, as written, canonical). */
+    static List<List<String>> legacyRows() {
+        return RepoData.csv(RepoData.BEER_NAMES).stream().filter(r -> "legacy".equals(r.getOrDefault("note", "").trim()))
+                .map(r -> List.of(r.get("year").trim(), r.get("as_written").trim(), r.get("canonical").trim())).toList();
+    }
+
+    @Test
+    void legacyRowsRenameADatabaseImportedBeforeTheFilesWereCorrected() throws Exception {
+        // A database imported from the old files (production) holds the old names. Put one rating per legacy row
+        // into that row's real season under the old name, as the first import wrote it, and start again.
+        List<List<String>> legacy = legacyRows();
+        assertThat(legacy).hasSize(41);
+        String rater = "Legacy Rater " + System.nanoTime();
+        List<HistoricRating> added = new ArrayList<>();
+        for (List<String> row : legacy) {
+            added.add(ratings.save(new HistoricRating(Integer.parseInt(row.get(0)), row.get(1), null, rater, null,
+                    new BigDecimal("4"), BigDecimal.ONE, null)));
+        }
+        try {
+            long before = ratings.count();
+            assertThat(importer.applyBeerNames(real())).isEqualTo(legacy.size());
+            assertThat(ratings.count()).isEqualTo(before);
+            for (int i = 0; i < legacy.size(); i++) {
+                HistoricRating r = ratings.findById(added.get(i).getId()).orElseThrow();
+                assertThat(r.getBeerName()).as(legacy.get(i).toString()).isEqualTo(legacy.get(i).get(2));
+                assertThat(r.getBeerNameOriginal()).as(legacy.get(i).toString()).isEqualTo(legacy.get(i).get(1));
+            }
+            assertThat(importer.applyBeerNames(real())).as("second start changes nothing").isZero();
+        } finally {
+            ratings.deleteAllById(added.stream().map(HistoricRating::getId).toList());
+        }
+    }
+
+    @Test
+    void aDatabaseImportedFromTheCorrectedFilesIsNotTouchedByLegacyRows() throws Exception {
+        // This context imported the current history/<year>.csv at startup and applied beer_names.csv.
+        assertThat(importer.applyBeerNames(real())).as("idempotent").isZero();
+        Set<String> legacyKeys = new HashSet<>();
+        legacyRows().forEach(r -> legacyKeys.add(r.get(0) + "|" + r.get(1)));
+        Set<String> certainKeys = new HashSet<>();
+        RepoData.csv(RepoData.BEER_NAMES).stream().filter(r -> r.getOrDefault("note", "").isBlank())
+                .forEach(r -> certainKeys.add(r.get("year").trim() + "|" + r.get("as_written").trim()));
+        for (HistoricRating r : ratings.findAll()) {
+            String key = r.getSeasonYear() + "|" + r.sourceBeerName().trim();
+            assertThat(legacyKeys).as("legacy row matched a fresh import: " + key).doesNotContain(key);
+            if (r.getBeerNameOriginal() != null) {
+                assertThat(certainKeys).as("only the certain rows rename a fresh import: " + key).contains(key);
+            }
+        }
+        // Grouping by beer name across seasons, as the app's beer history does.
+        assertThat(ratings.findByBeerNameIgnoreCaseOrderBySeasonYearDesc("Dahls Juleøl"))
+                .extracting(HistoricRating::getSeasonYear).contains(2011, 2012, 2013, 2014, 2015, 2017, 2018, 2019);
+        assertThat(ratings.findByBeerNameIgnoreCaseOrderBySeasonYearDesc("Ringnes Julebokk"))
+                .extracting(HistoricRating::getSeasonYear).contains(2014, 2015, 2019);
+    }
+
     @Test
     void theFileIsWellFormed() {
         Set<String> seen = new HashSet<>();
@@ -97,11 +157,19 @@ class BeerNamesTest {
         List<Map<String, String>> rows = RepoData.csv(RepoData.BEER_NAMES);
         for (Map<String, String> r : rows) {
             String year = r.get("year").trim(), name = r.get("as_written").trim(), canonical = r.get("canonical").trim();
+            String note = r.getOrDefault("note", "").trim();
             assertThat(year).as("year of " + name).matches("\\d{4}");
             assertThat(canonical).as("canonical for " + year + " " + name).isNotEmpty();
             assertThat(seen.add(year + "|" + name)).as("duplicate " + year + " " + name).isTrue();
-            assertThat(written.getOrDefault(Integer.parseInt(year), Set.of()))
-                    .as(name + " is not written in " + year + "'s data").contains(name);
+            assertThat(note).as("note of " + year + " " + name).isIn("", "legacy");
+            Set<String> names = written.getOrDefault(Integer.parseInt(year), Set.of());
+            if (note.isEmpty()) {
+                assertThat(names).as(name + " is not written in " + year + "'s data").contains(name);
+            } else {
+                // legacy: the files were corrected; the old name is gone and the new one is what they say now
+                assertThat(names).as(name + " is still written in " + year + "'s data: not a legacy row").doesNotContain(name);
+                assertThat(names).as(canonical + " (legacy target) is not written in " + year + "'s data").contains(canonical);
+            }
         }
     }
 }
