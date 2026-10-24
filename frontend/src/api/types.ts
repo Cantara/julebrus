@@ -45,6 +45,7 @@ export interface Tasting {
   structuredNotes?: StructuredNotes
   tags: string[]
   tastedAt: string
+  tastedDay: string
 }
 
 export interface NewTasting extends StructuredNotes {
