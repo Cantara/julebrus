@@ -2,13 +2,14 @@
 import { computed, onMounted, onUnmounted, ref } from 'vue'
 import { useRoute } from 'vue-router'
 import { get } from '../api/client'
-import type { Finale } from '../api/types'
+import type { Finale, PalatePairs } from '../api/types'
 import Snow from '../components/Snow.vue'
 import { useMe } from '../stores/me'
 
 const store = useMe()
 const route = useRoute()
 const finale = ref<Finale | null>(null)
+const pairs = ref<PalatePairs | null>(null)
 const error = ref('')
 const now = ref(Date.now())
 let tick: number | undefined
@@ -19,6 +20,7 @@ async function load() {
   try {
     const q = wantPreview.value ? '?preview=true' : ''
     finale.value = await get<Finale>(`/api/finale${q}`)
+    if (finale.value.podium) pairs.value = await get<PalatePairs>('/api/stats/palate/pairs').catch(() => null)
   } catch (e) {
     error.value = (e as Error).message
   }
@@ -212,6 +214,19 @@ function fit(ctx: CanvasRenderingContext2D, text: string, max: number) {
       </table>
       <p v-if="!finale.duelPodium?.length" class="muted">Ingen dueller i år.</p>
     </div>
+
+    <template v-if="pairs && (pairs.twins.length || pairs.opposites.length)">
+      <h2>Smaksvillingene</h2>
+      <div class="card">
+        <p class="muted" style="margin-top: 0">Hvem sine terningkast fulgte hverandre, og hvem sine gikk hver sin vei. Minst {{ pairs.minCommon }} felles øl.</p>
+        <table>
+          <tbody>
+            <tr v-for="p in pairs.twins" :key="'t' + p.a + p.b"><td>❤ {{ p.a }} og {{ p.b }}</td><td style="text-align: right">{{ p.similarity.toFixed(2) }} · {{ p.common }} øl</td></tr>
+            <tr v-for="p in pairs.opposites" :key="'o' + p.a + p.b"><td>⚡ {{ p.a }} mot {{ p.b }}</td><td style="text-align: right">{{ p.similarity.toFixed(2) }} · {{ p.common }} øl</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </template>
 
     <h2>Årets priser</h2>
     <div v-for="a in finale.awards" :key="a.id" class="card award" :class="{ none: !a.winnerName }">

@@ -285,3 +285,5 @@ th { font-size: 0.8rem; color: var(--muted); font-weight: 600; }
 .chart .legend .sw.b { background: var(--brass); }
 .chart details { margin-top: 6px; }
 select { font: inherit; width: 100%; padding: 10px 12px; border: 1px solid var(--line); border-radius: 12px; background: var(--card); color: var(--ink); }
+.chart .bar.up { fill: var(--brass); }
+.chart .bar.down { fill: var(--brand); }
