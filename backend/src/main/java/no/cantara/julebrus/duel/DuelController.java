@@ -41,9 +41,12 @@ public class DuelController {
     private final BeerRepository beers;
     private final CurrentUser currentUser;
 
+    private final no.cantara.julebrus.live.SessionEvents events;
+
     public DuelController(DuelRepository duels, SessionService sessions, TastingRepository tastings, BeerRepository beers,
-                          CurrentUser currentUser) {
+                          CurrentUser currentUser, no.cantara.julebrus.live.SessionEvents events) {
         this.beers = beers;
+        this.events = events;
         this.duels = duels;
         this.sessions = sessions;
         this.tastings = tastings;
@@ -97,6 +100,7 @@ public class DuelController {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "Already answered");
         }
         duels.save(new Duel(userId, in.sessionId(), in.winnerBeerId(), in.loserBeerId()));
+        events.publish(in.sessionId(), no.cantara.julebrus.live.SessionEvents.Kind.DUEL);
     }
 
     /** Beers the organisers rejected, among these (also after they were added to a table). */
