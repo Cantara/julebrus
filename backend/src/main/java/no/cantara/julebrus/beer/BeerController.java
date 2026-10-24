@@ -28,11 +28,11 @@ public class BeerController {
     /** {@code status} is PENDING for a beer someone added that an admin has not approved yet. */
     public record BeerView(UUID id, String name, String brewery, String style, BigDecimal abv,
                            String vinmonopoletId, String imageUrl, long ratingCount, Beer.Status status, boolean mine,
-                           boolean homebrew) {
+                           boolean homebrew, /** approved and Vinmonopolet strength: in the ranking and tippable */ boolean counts) {
         static BeerView of(Beer b, long ratingCount, UUID me) {
             return new BeerView(b.getId(), b.getName(), b.getBrewery(), b.getStyle(), b.getAbv(),
                     b.getVinmonopoletId(), b.getImageUrl(), ratingCount, b.getStatus(),
-                    me != null && me.equals(b.getCreatedBy()), b.isHomebrew());
+                    me != null && me.equals(b.getCreatedBy()), b.isHomebrew(), b.counts());
         }
     }
 

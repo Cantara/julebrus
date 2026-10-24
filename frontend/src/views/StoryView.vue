@@ -54,6 +54,7 @@ const copy = computed<{ title: string; lead: string; sections: Section[]; closin
               'After two beers you get the duel: which was better? Those answers build a second ranking on the side that does not care how generous or stingy you are with the dice. The dice decide the winner. The duels tell you who was right.',
               'Then the blind pour. The host pours one of the beers on the table without saying which, and everyone else guesses on their own phone. The answer comes out when the last guess is in. Three hits over the season earn you the Blind Taster bauble, and whoever hits most often gets a prize on 23 December.',
               'And you play for a team: Cantara, Rebel, or both. Each team gets its own winner on the night, and the team of the year is the one with most dice rolls per head, so a small team can beat a big one.',
+              'Before the last day begins, tip the podium: gold, silver, bronze. Three points for the right beer in the right spot, one for a beer on the podium in the wrong spot. The tips come out with the result, and the best tipster gets a prize too.',
             ],
           },
           {
@@ -105,6 +106,7 @@ const copy = computed<{ title: string; lead: string; sections: Section[]; closin
               'Etter to øl kommer duellen: hvilket var best? Svarene bygger en sideranking som ikke bryr seg om hvor snill eller streng du er med terningen. Terningen kårer vinneren. Duellene sier hvem som hadde rett.',
               'Og så blindsmakingen. Verten heller opp ett av ølene på bordet uten å si hvilket, og resten gjetter på egen telefon. Svaret kommer når den siste har gjettet. Tre riktige i løpet av sesongen gir deg Blindsmaker-kula, og den som treffer oftest får en pris 23. desember.',
               'Og du spiller for et lag: Cantara, Rebel, eller begge. Hvert lag får sin egen vinner på finalekvelden, og årets lag er det med flest terningkast per hode, så et lite lag kan slå et stort.',
+              'Før siste dag begynner, tipper du pallen: gull, sølv, bronse. Tre poeng for rett øl på rett plass, ett for et øl på pallen på feil plass. Tipsene kommer fram sammen med resultatet, og årets tipper får en pris.',
             ],
           },
           {
