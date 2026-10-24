@@ -29,7 +29,7 @@ const copy = computed<{ title: string; lead: string; sections: Section[]; closin
           {
             title: 'How it started',
             paragraphs: [
-              'Norwegian breweries release their juleøl in November, and Vinmonopolet fills a whole shelf with them. Someone at Cantara had the obvious idea: buy one of each, gather the team, and settle once and for all which one is best. Scores on a dice, one to six. Winner announced. Arguments for the rest of the year. One rule from the start: it has to be the Vinmonopolet shelf, the beers above grocery strength. The supermarket juleøl is for the sofa, not the table.',
+              'Norwegian breweries release their juleøl in November, and Vinmonopolet fills a whole shelf with them. Someone at Cantara had the obvious idea: buy one of each, gather the team, and settle once and for all which one is best. Scores on a dice, one to six. Winner announced. Arguments for the rest of the year. One rule from the start: it has to be the Vinmonopolet shelf, the beers above grocery strength. The supermarket juleøl is for the sofa, not the table. Homebrew is welcome if it is as strong, but only at a table of more than five, and it needs four scores before it ranks. Nobody rigs their own.',
               `The record goes back to ${firstYear.value}. ${seasons.value.length || 'Twelve'} seasons of votes survive, with names, weights and all. You can find your own old scores on your profile, if you were there.`,
             ],
           },
@@ -78,7 +78,7 @@ const copy = computed<{ title: string; lead: string; sections: Section[]; closin
           {
             title: 'Slik begynte det',
             paragraphs: [
-              'Bryggeriene slipper juleølet i november, og Polet fyller en hel hylle. Noen i Cantara fikk den åpenbare ideen: kjøp én av hver, samle gjengen, og avgjør én gang for alle hvilket som er best. Terningkast fra én til seks. Vinner kåres. Krangling resten av året. Én regel fra første dag: det må være Polets hylle, ølet over butikkstyrke. Juleølet fra dagligvaren er for sofaen, ikke for bordet.',
+              'Bryggeriene slipper juleølet i november, og Polet fyller en hel hylle. Noen i Cantara fikk den åpenbare ideen: kjøp én av hver, samle gjengen, og avgjør én gang for alle hvilket som er best. Terningkast fra én til seks. Vinner kåres. Krangling resten av året. Én regel fra første dag: det må være Polets hylle, ølet over butikkstyrke. Juleølet fra dagligvaren er for sofaen, ikke for bordet. Hjemmebrygg er velkomment om det er like sterkt, men bare rundt bord med mer enn fem, og det må ha fire terningkast før det teller. Ingen jukser med sitt eget.',
               `Arkivet går tilbake til ${firstYear.value}. ${seasons.value.length || 'Tolv'} sesonger med stemmer har overlevd, med navn og vekt og alt. Du finner dine egne gamle terningkast på profilen din, om du var med.`,
             ],
           },

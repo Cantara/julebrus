@@ -27,16 +27,17 @@ public class BeerController {
 
     /** {@code status} is PENDING for a beer someone added that an admin has not approved yet. */
     public record BeerView(UUID id, String name, String brewery, String style, BigDecimal abv,
-                           String vinmonopoletId, String imageUrl, long ratingCount, Beer.Status status, boolean mine) {
+                           String vinmonopoletId, String imageUrl, long ratingCount, Beer.Status status, boolean mine,
+                           boolean homebrew) {
         static BeerView of(Beer b, long ratingCount, UUID me) {
             return new BeerView(b.getId(), b.getName(), b.getBrewery(), b.getStyle(), b.getAbv(),
                     b.getVinmonopoletId(), b.getImageUrl(), ratingCount, b.getStatus(),
-                    me != null && me.equals(b.getCreatedBy()));
+                    me != null && me.equals(b.getCreatedBy()), b.isHomebrew());
         }
     }
 
     public record NewBeer(@NotBlank String name, String brewery, String style, BigDecimal abv,
-                          String vinmonopoletId, String imageUrl) {
+                          String vinmonopoletId, String imageUrl, boolean homebrew) {
     }
 
     private final BeerRepository beers;
@@ -85,9 +86,14 @@ public class BeerController {
             throw new no.cantara.julebrus.web.ApiException(HttpStatus.UNPROCESSABLE_ENTITY, "BEER_GROCERY_STRENGTH",
                     "Only Vinmonopolet juleøl counts: above %s %%".formatted(Beer.GROCERY_MAX_ABV));
         }
+        if (in.homebrew() && in.abv() == null) {
+            // Homebrew has no Polet listing to vouch for its strength, so the brewer states it.
+            throw new no.cantara.julebrus.web.ApiException(HttpStatus.UNPROCESSABLE_ENTITY, "BEER_HOMEBREW_NEEDS_ABV",
+                    "State the ABV of a homebrew; it must be above %s %%".formatted(Beer.GROCERY_MAX_ABV));
+        }
         Beer.Status status = auth.isAdmin(me.getEmail()) ? Beer.Status.APPROVED : Beer.Status.PENDING;
         Beer saved = beers.save(new Beer(in.name().trim(), in.brewery(), in.style(), in.abv(),
-                blankToNull(in.vinmonopoletId()), blankToNull(in.imageUrl()), me.getId(), status));
+                blankToNull(in.vinmonopoletId()), blankToNull(in.imageUrl()), me.getId(), status, in.homebrew()));
         return BeerView.of(saved, 0, me.getId());
     }
 

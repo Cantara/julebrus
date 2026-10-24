@@ -317,6 +317,54 @@ class JulebrusApplicationTest {
                 .andExpect(jsonPath("$.twins[0].similarity").value(1.0));
     }
 
+    @Test
+    void homebrewNeedsABigTableAndFourScores() throws Exception {
+        String[] table = {"h1@cantara.no", "h2@cantara.no", "h3@cantara.no", "h4@cantara.no", "h5@cantara.no", "h6@cantara.no"};
+        for (String who : table) ConsentSupport.accept(mvc, who);
+        ConsentSupport.accept(mvc, null);
+
+        // Strength must be stated and above grocery level.
+        mvc.perform(post("/api/beers").contentType(APPLICATION_JSON)
+                        .content("{\"name\":\"Kjellerens Jul\",\"homebrew\":true}"))
+                .andExpect(status().isUnprocessableEntity()).andExpect(jsonPath("$.code").value("BEER_HOMEBREW_NEEDS_ABV"));
+        String brew = mvc.perform(post("/api/beers").contentType(APPLICATION_JSON)
+                        .content("{\"name\":\"Kjellerens Jul\",\"homebrew\":true,\"abv\":7.2}"))
+                .andExpect(status().isCreated()).andExpect(jsonPath("$.homebrew").value(true))
+                .andReturn().getResponse().getContentAsString().replaceAll(".*\"id\":\"([^\"]+)\".*", "$1");
+
+        // Alone: no. At a table of five: no. At six: yes.
+        mvc.perform(post("/api/tastings").header("X-Dev-User", table[0]).contentType(APPLICATION_JSON)
+                        .content("{\"beerId\":\"%s\",\"score\":6}".formatted(brew)))
+                .andExpect(status().isUnprocessableEntity()).andExpect(jsonPath("$.code").value("HOMEBREW_NEEDS_GROUP"));
+
+        String session = mvc.perform(post("/api/sessions").header("X-Dev-User", table[0])).andReturn().getResponse().getContentAsString();
+        String sid = session.replaceAll(".*\"id\":\"([^\"]+)\".*", "$1");
+        String code = session.replaceAll(".*\"joinCode\":\"([^\"]+)\".*", "$1");
+        for (int i = 1; i < 5; i++) {
+            mvc.perform(post("/api/sessions/join").header("X-Dev-User", table[i]).contentType(APPLICATION_JSON)
+                    .content("{\"code\":\"%s\"}".formatted(code))).andExpect(status().isOk());
+        }
+        mvc.perform(post("/api/sessions/" + sid + "/beers").header("X-Dev-User", table[0]).contentType(APPLICATION_JSON)
+                .content("{\"beerId\":\"%s\"}".formatted(brew))).andExpect(status().isOk());
+        mvc.perform(post("/api/tastings").header("X-Dev-User", table[0]).contentType(APPLICATION_JSON)
+                        .content("{\"beerId\":\"%s\",\"sessionId\":\"%s\",\"score\":6}".formatted(brew, sid)))
+                .andExpect(status().isUnprocessableEntity()).andExpect(jsonPath("$.code").value("HOMEBREW_NEEDS_GROUP"));
+        mvc.perform(post("/api/sessions/join").header("X-Dev-User", table[5]).contentType(APPLICATION_JSON)
+                .content("{\"code\":\"%s\"}".formatted(code))).andExpect(status().isOk());
+
+        // Three scores: still not ranked. Four: ranked.
+        for (int i = 0; i < 3; i++) {
+            mvc.perform(post("/api/tastings").header("X-Dev-User", table[i]).contentType(APPLICATION_JSON)
+                            .content("{\"beerId\":\"%s\",\"sessionId\":\"%s\",\"score\":%d}".formatted(brew, sid, 4 + i % 2)))
+                    .andExpect(status().isCreated());
+        }
+        mvc.perform(get("/api/stats/beers")).andExpect(jsonPath("$[?(@.beerId=='%s')]".formatted(brew)).doesNotExist());
+        mvc.perform(post("/api/tastings").header("X-Dev-User", table[3]).contentType(APPLICATION_JSON)
+                        .content("{\"beerId\":\"%s\",\"sessionId\":\"%s\",\"score\":5}".formatted(brew, sid)))
+                .andExpect(status().isCreated());
+        mvc.perform(get("/api/stats/beers")).andExpect(jsonPath("$[?(@.beerId=='%s')].ratings".formatted(brew)).value(4));
+    }
+
     private static org.springframework.test.web.servlet.result.ContentResultMatchers content() {
         return org.springframework.test.web.servlet.result.MockMvcResultMatchers.content();
     }

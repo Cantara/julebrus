@@ -52,9 +52,15 @@ public class RankingService {
     public List<BeerRank> beerRanking() {
         Map<UUID, Double> weightOf = weights.weightsByUserId();
         Map<UUID, Beer> beerById = beerIndex();
-        // Only approved Vinmonopolet-strength beers count; pending, rejected and butikkøl are left out.
+        // Only approved Vinmonopolet-strength beers count; pending, rejected and butikkøl are left out,
+        // and a homebrew needs HOMEBREW_MIN_RATINGS scores before it is in.
+        Map<UUID, Long> perBeer = tastings.findAll().stream()
+                .collect(Collectors.groupingBy(Tasting::getBeerId, Collectors.counting()));
         List<Tasting> all = tastings.findAll().stream()
-                .filter(t -> beerById.get(t.getBeerId()) != null && beerById.get(t.getBeerId()).counts()).toList();
+                .filter(t -> beerById.get(t.getBeerId()) != null && beerById.get(t.getBeerId()).counts())
+                .filter(t -> !beerById.get(t.getBeerId()).isHomebrew()
+                        || perBeer.getOrDefault(t.getBeerId(), 0L) >= Beer.HOMEBREW_MIN_RATINGS)
+                .toList();
 
         double totalW = all.stream().mapToDouble(t -> weightOf.getOrDefault(t.getUserId(), 0.0)).sum();
         double globalMean = totalW == 0 ? SCALE_MIDPOINT

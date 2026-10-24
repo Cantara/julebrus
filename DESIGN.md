@@ -18,6 +18,7 @@ small. Three rules do that:
 | Max tastings per person per day | 5 | Real pours, fresh palate |
 | Max solo tasting days per person | 5 | Pushes tasting into groups, which is the point |
 | What counts as a juleøl | From Vinmonopolet, above grocery strength (4.7 %) | Butikkøl is refused on add and import, and never ranked |
+| Homebrew | Allowed above 4.7 %, rated only at a table of 6+, ranked only with 4+ scores | Nobody rigs their own |
 
 ## Decisions
 

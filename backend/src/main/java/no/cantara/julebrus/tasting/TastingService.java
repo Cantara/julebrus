@@ -1,6 +1,9 @@
 package no.cantara.julebrus.tasting;
 
+import no.cantara.julebrus.beer.Beer;
+import no.cantara.julebrus.beer.BeerRepository;
 import no.cantara.julebrus.config.SeasonProperties;
+import no.cantara.julebrus.web.ApiException;
 import no.cantara.julebrus.session.SessionRepository;
 import no.cantara.julebrus.session.TastingSession;
 import org.springframework.http.HttpStatus;
@@ -25,13 +28,16 @@ public class TastingService {
 
     private final TastingRepository tastings;
     private final SessionRepository sessions;
+    private final BeerRepository beers;
     private final TastingRules rules;
     private final SeasonProperties season;
     private final Clock clock;
 
-    public TastingService(TastingRepository tastings, SessionRepository sessions, SeasonProperties season, Clock clock) {
+    public TastingService(TastingRepository tastings, SessionRepository sessions, BeerRepository beers,
+                          SeasonProperties season, Clock clock) {
         this.tastings = tastings;
         this.sessions = sessions;
+        this.beers = beers;
         this.season = season;
         this.rules = new TastingRules(season);
         this.clock = clock;
@@ -41,6 +47,7 @@ public class TastingService {
     public Tasting rate(UUID userId, UUID beerId, UUID sessionId, int score, BigDecimal prediction, String notes,
                         Tasting.Notes structured, Set<String> tags) {
         boolean solo = true;
+        int tableSize = 1;
         if (sessionId != null) {
             TastingSession session = sessions.findById(sessionId)
                     .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Unknown session"));
@@ -48,6 +55,13 @@ public class TastingService {
             if (!session.isOpen()) throw new ResponseStatusException(HttpStatus.GONE, "Session is closed");
             if (!session.hasBeer(beerId)) throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, "Beer is not in this session");
             solo = session.isSolo();
+            tableSize = session.getMembers().size();
+        }
+        // Homebrew is rated only at a table of more than five, so nobody scores their own in a quiet corner.
+        boolean homebrew = beers.findById(beerId).map(Beer::isHomebrew).orElse(false);
+        if (homebrew && tableSize < Beer.HOMEBREW_MIN_GROUP) {
+            throw new ApiException(HttpStatus.UNPROCESSABLE_ENTITY, "HOMEBREW_NEEDS_GROUP",
+                    "Homebrew is rated only in a group of at least %d people".formatted(Beer.HOMEBREW_MIN_GROUP));
         }
 
         Instant now = clock.instant();

@@ -37,6 +37,7 @@ const RULE_TEXT: Record<string, string> = {
   DAILY_LIMIT: 'Fem er nok for i dag. Palaten takker deg i morgen.',
   SOLO_DAYS_EXHAUSTED: 'Alle solo-dagene er brukt opp. Finn noen å smake med.',
   ALREADY_RATED: 'Du har allerede gitt dette ølet terningkast.',
+  HOMEBREW_NEEDS_GROUP: 'Hjemmebrygg smakes bare rundt bord med mer enn fem. Få flere til bordet først.',
 }
 
 async function save() {
