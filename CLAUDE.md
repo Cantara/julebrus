@@ -22,6 +22,7 @@ badges, and imported historic seasons. See DESIGN.md for rules and decisions.
   - `history/ClaimService`, `RaterNameSuggester` (pure) — claim-your-history on `rater_key` (create/withdraw run under a row lock on the user; `claim_events` is the history; claims have `@Version`; approving re-checks e-mail linkage and auto-rejects other pending claims; time comes from the injected `Clock`); admin decide/revoke in `admin/AdminClaimsController`.
   - `web/ConfigController` — public `/api/config` (sponsor line).
   - `config/SecurityConfig` — Google chain (`!dev`) and dev chain with `X-Dev-User` impersonation.
+  - `mcp/` — MCP server (Streamable HTTP) at `/mcp`: `McpConfig` mounts the SDK servlet beside the DispatcherServlet (so no login, consent or CSRF there), `McpTokenFilter` is the whole access control (404 when `julebrus.mcp.token` is blank, else bearer token), `McpTools` the read-only tools. Keep tools to aggregates and public history; never emails or per-person season scores. Test over a real port (`McpServerTest`), MockMvc does not reach it.
 - `frontend/src/views/` — one view per screen; `api/client.ts` handles CSRF, 401 redirect and dev user.
 - Frontend production build lands in `backend/src/main/resources/static` and is served by the jar.
 

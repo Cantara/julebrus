@@ -21,6 +21,7 @@
     <java.version>21</java.version>
     <!-- Boot 3.5.16 manages Tomcat 10.1.55, which carries GHSA-9xv2-5v5q-p794 and friends. -->
     <tomcat.version>10.1.61</tomcat.version>
+    <mcp.version>2.1.0</mcp.version>
   </properties>
 
   <dependencies>
@@ -65,6 +66,20 @@
       <groupId>com.h2database</groupId>
       <artifactId>h2</artifactId>
       <scope>runtime</scope>
+    </dependency>
+
+    <!-- MCP server: read-only tools over the tasting data, served at /mcp. Core plus the
+         Jackson 2 mapper, which is what Spring Boot 3.5 ships; the aggregate "mcp" artifact
+         would pull in Jackson 3. -->
+    <dependency>
+      <groupId>io.modelcontextprotocol.sdk</groupId>
+      <artifactId>mcp-core</artifactId>
+      <version>${mcp.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>io.modelcontextprotocol.sdk</groupId>
+      <artifactId>mcp-json-jackson2</artifactId>
+      <version>${mcp.version}</version>
     </dependency>
 
     <dependency>

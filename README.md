@@ -44,6 +44,9 @@ deletion; blank means "contact the organisers"), `JULEBRUS_SPONSOR_NAME` (defaul
 `eXOReaction`; blank hides the "Sponsored by" line) and `JULEBRUS_SPONSOR_URL`
 (default `https://exoreaction.com`).
 
+`JULEBRUS_MCP_TOKEN` switches on the MCP server (see below); leave it empty to keep
+`/mcp` off.
+
 ## Consent, privacy page and claims
 
 Everyone must accept the consent notice (`CONSENT_VERSION` in `ConsentService`, texts in
@@ -176,6 +179,37 @@ history files with:
 ```bash
 python3 tools/to_app_history.py backend/src/main/resources/history
 ```
+
+## MCP server
+
+The tasting data is also available to AI agents over the Model Context Protocol
+(Streamable HTTP) at `/mcp`. The endpoint is off until `JULEBRUS_MCP_TOKEN` is set;
+with it set, every request must carry `Authorization: Bearer <token>`, and nothing
+else (login, consent, CSRF) applies there. All tools are read-only and return
+aggregates or the already public history; no per-person scores from the running
+season and no e-mail addresses.
+
+| Tool | Arguments | Answers |
+|---|---|---|
+| `list_seasons` | | every recorded season with size, winner, weighting and source |
+| `season_results` | `year` | that season's ranked result list, weighted as it was that year |
+| `beer_history` | `name` | one beer's mean and vote count per season |
+| `list_raters` | | everyone who has tasted, with years and vote count |
+| `rater_history` | `name` | one rater's mean against the crowd mean per season |
+| `current_ranking` | | this season's weighted Bayesian ranking |
+| `duel_ranking` | | this season's Bradley-Terry duel ranking |
+| `season_status` | | dates, days left, rules and totals so far |
+| `finale` | | the revealed result on the last day; before that only the reveal time |
+
+Claude Code, for example, connects with:
+
+```bash
+claude mcp add --transport http julebrus https://<host>/mcp --header "Authorization: Bearer <token>"
+```
+
+Generate the token with something like `openssl rand -hex 32`. The server is
+`McpConfig` and the tools `McpTools`, both in `backend/.../mcp/`; `McpServerTest`
+speaks the protocol by hand against a real port.
 
 ## Tests
 
