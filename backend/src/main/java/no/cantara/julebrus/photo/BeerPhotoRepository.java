@@ -21,14 +21,19 @@ public interface BeerPhotoRepository extends JpaRepository<BeerPhoto, UUID> {
     @Query("select p from BeerPhoto p where p.id = :id and p.deletedAt is null")
     Optional<BeerPhoto> findLive(@Param("id") UUID id);
 
-    /** Beers this person can see a cover for: an approved photo exists, or they have a pending one of their own. */
+    /**
+     * Beers this person can see a cover for: an approved photo exists, or they have a pending one of their own.
+     * Only photos whose uploader's consent (the given version) is active count.
+     */
     @Query("""
             select distinct p.beerId from BeerPhoto p
             where p.deletedAt is null
               and (p.status = no.cantara.julebrus.photo.BeerPhoto.Status.APPROVED
                    or (p.userId = :me and p.status = no.cantara.julebrus.photo.BeerPhoto.Status.PENDING))
+              and exists (select 1 from no.cantara.julebrus.consent.UserConsent c
+                          where c.userId = p.userId and c.consentVersion = :version and c.withdrawnAt is null)
             """)
-    Set<UUID> coverBeerIds(@Param("me") UUID me);
+    Set<UUID> coverBeerIds(@Param("me") UUID me, @Param("version") String version);
 
     /** The oldest approved photo of the beer, else the caller's own newest pending one. */
     @Query("""
@@ -36,10 +41,12 @@ public interface BeerPhotoRepository extends JpaRepository<BeerPhoto, UUID> {
             where p.beerId = :beerId and p.deletedAt is null
               and (p.status = no.cantara.julebrus.photo.BeerPhoto.Status.APPROVED
                    or (p.userId = :me and p.status = no.cantara.julebrus.photo.BeerPhoto.Status.PENDING))
+              and exists (select 1 from no.cantara.julebrus.consent.UserConsent c
+                          where c.userId = p.userId and c.consentVersion = :version and c.withdrawnAt is null)
             order by case when p.status = no.cantara.julebrus.photo.BeerPhoto.Status.APPROVED then 0 else 1 end,
                      p.createdAt asc, p.id asc
             """)
-    List<BeerPhoto> coverCandidates(@Param("beerId") UUID beerId, @Param("me") UUID me);
+    List<BeerPhoto> coverCandidates(@Param("beerId") UUID beerId, @Param("me") UUID me, @Param("version") String version);
 
     List<BeerPhoto> findByUserIdAndDeletedAtIsNullOrderByCreatedAtDesc(UUID userId);
 

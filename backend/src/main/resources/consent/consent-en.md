@@ -40,6 +40,8 @@ To run the tasting and show results and history.
 - Pictures are stored in our database, never as public links. Metadata such as location and camera is removed, and the picture is made smaller
 - The label artwork in a picture belongs to the producer
 - You can delete your own picture. You can also ask {contact} to delete it
+- When you delete a picture, the picture itself is deleted. A small record (who, which beer and when) is kept to count uploads against the limits
+- If you withdraw your consent, your pictures are no longer shown to the other participants
 
 ## Earlier seasons
 

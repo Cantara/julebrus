@@ -118,7 +118,9 @@ upload-delete-upload would never hit a limit.
 
 Error codes: `PHOTO_FORMAT` (415, also animated PNG), `PHOTO_TOO_LARGE` (413), `PHOTO_DIMENSIONS` (422),
 `PHOTO_UNREADABLE` (422, corrupt or truncated), `PHOTO_MISSING` (400), `PHOTO_DAILY_LIMIT` and `PHOTO_SEASON_LIMIT` (422),
-`PHOTO_PENDING_EXISTS` (409), `PHOTO_NOT_PENDING` (409), `PHOTO_NOT_FOUND` (404), `PHOTO_BUSY` (503), `BEER_REJECTED` (422).
+`PHOTO_PENDING_EXISTS` (409), `PHOTO_NOT_PENDING` (409), `PHOTO_NOT_FOUND` (404), `PHOTO_BUSY` (503), `PHOTO_IN_PROGRESS` (429, one upload at a time per person), `BEER_REJECTED` (422).
+While a person's consent is withdrawn their approved photos are not shown to others (admins still see them, to delete)
+and admins cannot decide their pending ones.
 A rejected beer takes no photos; homebrew and pending beers do.
 
 Not handled: a browser that does not turn portrait photos by itself still works, because the server applies the EXIF
@@ -126,12 +128,15 @@ orientation (JPEG only; PNG has none). Wide-gamut colour profiles are dropped.
 
 ### Deleting a person's data by hand (procedure to review before use)
 
-Deletion requests go to `JULEBRUS_CONTACT_EMAIL` and are done by an organiser. It was tested against a
-throwaway PostgreSQL 16 with seeded data, but never run on a real database. Run each recipe with
-`psql -v ON_ERROR_STOP=1 -f recipe.sql`: it stops at the first error and the open transaction is rolled
-back when the session ends. A second run of a recipe is harmless (the person or rows are already gone). Review it
-against the current schema, take a backup, run it in one transaction and check the row counts
-before `commit`.
+Deletion requests go to `JULEBRUS_CONTACT_EMAIL` and are done by an organiser. Recipe 1 was run
+(2026-10-24, schema V1 to V7) on a throwaway PostgreSQL 16 with seeded data, once as an admin (who had decided
+beers, photos and claims and uploaded a photo) and once as a normal user (tastings, duels, a hosted session with
+a handed-over member, blind-pour rounds and guesses, photos, an approved claim): both ran to the end and the
+other people's rows were left alone. It has never been run on a real database, and Recipe 2 was not part of that test.
+Run each recipe with `psql -v ON_ERROR_STOP=1 -f recipe.sql`: it stops at the first error and the open transaction is rolled
+back when the session ends. A second run of Recipe 1 stops at the first step ("no rows returned": the person is gone)
+and changes nothing. Review it against the current schema, take a backup, run it in one transaction and check the row counts
+before `commit`. When the schema changes, check that every foreign key to `users` is still handled.
 
 Two things to know first. Everything is deleted, including the person's `consent_events` rows:
 that log is append-only for the application, but erasure on request overrides it. And the person's
@@ -161,6 +166,11 @@ delete from historic_ratings
 delete from tasting_tags where tasting_id in (select id from tastings where user_id = :'uid');
 delete from tastings where user_id = :'uid';
 delete from duels where user_id = :'uid';
+-- Blind pour: their guesses, and every round they hosted with its options and everybody's guesses in it.
+delete from blind_guesses where user_id = :'uid'
+                             or round_id in (select id from blind_rounds where host_id = :'uid');
+delete from blind_round_options where round_id in (select id from blind_rounds where host_id = :'uid');
+delete from blind_rounds where host_id = :'uid';
 delete from session_members where user_id = :'uid';
 
 -- 3b. Photos they uploaded (the person owns the copyright, so approved ones go too; the beer just loses that
@@ -180,6 +190,9 @@ update beers set decided_by = null where decided_by = :'uid';
 create temp table erase_sessions on commit drop as
   select s.id from sessions s where s.host_id = :'uid'
    and not exists (select 1 from session_members m where m.session_id = s.id);
+delete from blind_guesses where round_id in (select id from blind_rounds where session_id in (select id from erase_sessions));
+delete from blind_round_options where round_id in (select id from blind_rounds where session_id in (select id from erase_sessions));
+delete from blind_rounds where session_id in (select id from erase_sessions);
 delete from tasting_tags where tasting_id in (select id from tastings where session_id in (select id from erase_sessions));
 delete from tastings where session_id in (select id from erase_sessions);
 delete from duels where session_id in (select id from erase_sessions);

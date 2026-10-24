@@ -46,10 +46,13 @@ class ConsentTextsTest {
         var texts = new ConsentService(null, null, new SponsorProperties("x", ""), new ContactProperties("a@b.no")).texts();
         assertThat(texts.nb()).contains("Bilder av etiketten").contains("opphavsretten").contains("aldri som offentlige lenker")
                 .contains("Metadata").contains("slette bildet ditt selv").contains("tilhører produsenten")
-                .contains("navnet og e-postadressen til den som lastet det opp").doesNotContain("{");
+                .contains("navnet og e-postadressen til den som lastet det opp").contains("Bilder er valgfrie")
+                .contains("før en administrator har godkjent").contains("hvem, hvilket øl og når").contains("vises bildene dine ikke lenger")
+                .doesNotContain("{");
         assertThat(texts.en()).contains("Pictures of the label").contains("copyright").contains("never as public links")
                 .contains("Metadata").contains("delete your own picture").contains("belongs to the producer")
-                .contains("name and email address of the person who uploaded it").doesNotContain("{");
+                .contains("name and email address of the person who uploaded it").contains("who, which beer and when")
+                .contains("no longer shown to the other participants").doesNotContain("{");
     }
 
     @Test

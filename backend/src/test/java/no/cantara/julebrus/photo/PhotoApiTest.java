@@ -57,6 +57,8 @@ class PhotoApiTest {
     MockMvc mvc;
     @Autowired
     PhotoStore store;
+    @Autowired
+    PhotoService service;
 
     // ---- helpers
 
@@ -278,13 +280,14 @@ class PhotoApiTest {
         try {
             List<Future<Integer>> fs = new ArrayList<>();
             for (String b : beers) fs.add(pool.submit((Callable<Integer>) () -> up(a, b, jpg, "p.jpg", "image/jpeg").andReturn().getResponse().getStatus()));
-            int created = 0, refused = 0;
+            // One upload at a time per person: some are turned away with 429, none may get past the daily limit.
+            int created = 0, other = 0;
             for (Future<Integer> f : fs) {
                 int s = f.get();
-                if (s == 201) created++; else if (s == 422) refused++;
+                if (s == 201) created++; else if (s == 422 || s == 429) other++;
             }
-            assertThat(created).isEqualTo(PhotoService.MAX_PER_DAY);
-            assertThat(refused).isEqualTo(12 - PhotoService.MAX_PER_DAY);
+            assertThat(created).isBetween(1, PhotoService.MAX_PER_DAY);
+            assertThat(created + other).isEqualTo(12);
         } finally {
             pool.shutdownNow();
         }
@@ -298,16 +301,97 @@ class PhotoApiTest {
         try {
             List<Future<Integer>> fs = new ArrayList<>();
             for (int i = 0; i < 8; i++) fs.add(pool.submit((Callable<Integer>) () -> up(a, beer, jpg, "p.jpg", "image/jpeg").andReturn().getResponse().getStatus()));
-            int created = 0, conflict = 0;
+            int created = 0, refused = 0;
             for (Future<Integer> f : fs) {
                 int s = f.get();
-                if (s == 201) created++; else if (s == 409) conflict++;
+                if (s == 201) created++; else if (s == 409 || s == 429) refused++;
             }
             assertThat(created).isEqualTo(1);
-            assertThat(conflict).isEqualTo(7);
+            assertThat(refused).isEqualTo(7);
         } finally {
             pool.shutdownNow();
         }
+    }
+
+    @Test
+    void onlyOneUploadInFlightPerPerson() throws Exception {
+        String a = person(), b = person(), beer = beer();
+        UUID aId = UUID.fromString(userId(a));
+        assertThat(service.beginUpload(aId)).isTrue(); // a's first upload is "in flight"
+        assertThat(service.beginUpload(aId)).isFalse();
+        try {
+            up(a, beer).andExpect(status().isTooManyRequests()).andExpect(jsonPath("$.code").value("PHOTO_IN_PROGRESS"));
+            up(b, beer).andExpect(status().isCreated()); // someone else is not held up
+        } finally {
+            service.endUpload(aId);
+        }
+        up(a, beer).andExpect(status().isCreated()); // the slot is free again, also after the refused try
+    }
+
+    @Test
+    void withdrawingConsentStopsOthersSeeingTheApprovedPhoto() throws Exception {
+        String a = person(), b = person(), beer = beer();
+        String photo = upOk(a, beer);
+        decide(photo, "APPROVE", 200);
+        mvc.perform(get("/api/beers/photos/" + photo + "/image").header("X-Dev-User", b)).andExpect(status().isOk());
+        mvc.perform(get("/api/beers/" + beer + "/photo").header("X-Dev-User", b)).andExpect(status().isOk());
+
+        mvc.perform(post("/api/consent/withdraw").header("X-Dev-User", a)).andExpect(status().is2xxSuccessful());
+
+        mvc.perform(get("/api/beers/photos/" + photo + "/image").header("X-Dev-User", b)).andExpect(status().isNotFound());
+        mvc.perform(get("/api/beers/" + beer + "/photo").header("X-Dev-User", b)).andExpect(status().isNotFound());
+        mvc.perform(get("/api/beers").header("X-Dev-User", b))
+                .andExpect(jsonPath("$[?(@.id=='%s')].hasPhoto".formatted(beer)).value(false));
+        // an admin may still look, to moderate or delete
+        mvc.perform(get("/api/beers/photos/" + photo + "/image").header("X-Dev-User", ADMIN)).andExpect(status().isOk());
+        mvc.perform(delete("/api/beers/photos/" + photo).header("X-Dev-User", ADMIN)).andExpect(status().isNoContent());
+    }
+
+    @Test
+    void coverFallsBackToTheNextConsentedUploaderOrNothing() throws Exception {
+        String a = person(), b = person(), reader = person(), beer = beer();
+        String first = upOk(a, beer);
+        decide(first, "APPROVE", 200);
+        String second = upOk(b, beer);
+        decide(second, "APPROVE", 200);
+        // the oldest approved photo is the cover
+        MvcResult one = mvc.perform(get("/api/beers/" + beer + "/photo").header("X-Dev-User", reader)).andExpect(status().isOk()).andReturn();
+
+        mvc.perform(post("/api/consent/withdraw").header("X-Dev-User", a)).andExpect(status().is2xxSuccessful());
+        // a's photo is gone from view; b's takes over
+        mvc.perform(get("/api/beers/" + beer + "/photo").header("X-Dev-User", reader)).andExpect(status().isOk());
+        mvc.perform(get("/api/beers").header("X-Dev-User", reader))
+                .andExpect(jsonPath("$[?(@.id=='%s')].hasPhoto".formatted(beer)).value(true));
+        assertThat(one.getResponse().getContentAsByteArray()).isNotEmpty();
+
+        mvc.perform(post("/api/consent/withdraw").header("X-Dev-User", b)).andExpect(status().is2xxSuccessful());
+        // nobody left to show: clean 404 and no image flag
+        mvc.perform(get("/api/beers/" + beer + "/photo").header("X-Dev-User", reader)).andExpect(status().isNotFound());
+        mvc.perform(get("/api/beers").header("X-Dev-User", reader))
+                .andExpect(jsonPath("$[?(@.id=='%s')].hasPhoto".formatted(beer)).value(false));
+    }
+
+    @Test
+    void adminCannotDecideOrSeeNameOfSomeoneWhoWithdrew() throws Exception {
+        String a = person(), beer = beer();
+        String photo = upOk(a, beer);
+        mvc.perform(post("/api/consent/withdraw").header("X-Dev-User", a)).andExpect(status().is2xxSuccessful());
+        MvcResult r = mvc.perform(post("/api/admin/photos/" + photo + "/decision").header("X-Dev-User", ADMIN)
+                .contentType(APPLICATION_JSON).content("{\"decision\":\"APPROVE\"}")).andExpect(status().isNotFound()).andReturn();
+        assertThat(r.getResponse().getContentAsString()).doesNotContain(a);
+        mvc.perform(get("/api/admin/photos?status=PENDING").header("X-Dev-User", ADMIN)).andExpect(jsonPath("$[*].id", not(hasItem(photo))));
+        // and it did not turn APPROVED behind the scenes
+        mvc.perform(get("/api/admin/photos?status=APPROVED").header("X-Dev-User", ADMIN)).andExpect(jsonPath("$[*].id", not(hasItem(photo))));
+    }
+
+    @Test
+    void adminCanDeleteAnApprovedPhoto() throws Exception {
+        String a = person(), b = person(), beer = beer();
+        String photo = upOk(a, beer);
+        decide(photo, "APPROVE", 200);
+        mvc.perform(delete("/api/beers/photos/" + photo).header("X-Dev-User", b)).andExpect(status().isNotFound());
+        mvc.perform(delete("/api/beers/photos/" + photo).header("X-Dev-User", ADMIN)).andExpect(status().isNoContent());
+        mvc.perform(get("/api/beers/" + beer + "/photo").header("X-Dev-User", b)).andExpect(status().isNotFound());
     }
 
     @Test

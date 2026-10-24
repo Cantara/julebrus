@@ -4,6 +4,7 @@ import no.cantara.julebrus.beer.Beer;
 import no.cantara.julebrus.beer.BeerRepository;
 import no.cantara.julebrus.config.AuthProperties;
 import no.cantara.julebrus.config.SeasonProperties;
+import no.cantara.julebrus.consent.ConsentService;
 import no.cantara.julebrus.user.User;
 import no.cantara.julebrus.user.UserRepository;
 import no.cantara.julebrus.web.ApiException;
@@ -21,6 +22,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
 
@@ -58,25 +60,50 @@ public class PhotoService {
     private final UserRepository users;
     private final AuthProperties auth;
     private final SeasonProperties season;
+    private final ConsentService consents;
     private final Clock clock;
     private final TransactionTemplate tx;
     private final Semaphore decoding = new Semaphore(MAX_CONCURRENT_DECODES);
+    /** People with an upload being processed right now: one at a time each. */
+    private final Set<UUID> uploading = ConcurrentHashMap.newKeySet();
 
     public PhotoService(BeerPhotoRepository photos, PhotoStore store, BeerRepository beers, UserRepository users,
-                        AuthProperties auth, SeasonProperties season, Clock clock, PlatformTransactionManager txm) {
+                        AuthProperties auth, SeasonProperties season, ConsentService consents, Clock clock,
+                        PlatformTransactionManager txm) {
         this.photos = photos;
         this.store = store;
         this.beers = beers;
         this.users = users;
         this.auth = auth;
         this.season = season;
+        this.consents = consents;
         this.clock = clock;
         this.tx = new TransactionTemplate(txm);
     }
 
     // ---- upload
 
+    /** Claims the person's single upload slot; false if one of their uploads is already in flight. */
+    boolean beginUpload(UUID userId) {
+        return uploading.add(userId);
+    }
+
+    void endUpload(UUID userId) {
+        uploading.remove(userId);
+    }
+
     public PhotoView upload(User me, UUID beerId, byte[] bytes) {
+        if (!beginUpload(me.getId())) {
+            throw new ApiException(HttpStatus.TOO_MANY_REQUESTS, "PHOTO_IN_PROGRESS", "Another picture from you is still being processed");
+        }
+        try {
+            return doUpload(me, beerId, bytes);
+        } finally {
+            endUpload(me.getId());
+        }
+    }
+
+    private PhotoView doUpload(User me, UUID beerId, byte[] bytes) {
         Beer beer = beers.findById(beerId).orElseThrow(PhotoService::noSuchBeer);
         if (beer.getStatus() == Beer.Status.REJECTED) {
             throw new ApiException(HttpStatus.UNPROCESSABLE_ENTITY, "BEER_REJECTED", "That beer was rejected by the organisers");
@@ -153,10 +180,13 @@ public class PhotoService {
     public Optional<Image> cover(UUID beerId, User me) {
         Optional<Beer> beer = beers.findById(beerId).filter(b -> beerVisible(b, me));
         if (beer.isEmpty()) return Optional.empty();
-        return photos.coverCandidates(beerId, me.getId()).stream().findFirst().flatMap(this::image);
+        return photos.coverCandidates(beerId, me.getId(), ConsentService.CONSENT_VERSION).stream().findFirst().flatMap(this::image);
     }
 
-    /** A specific photo: the admin, the uploader, or anyone once it is approved (and its beer is visible). */
+    /**
+     * A specific photo: the admin (for moderation), the uploader, or anyone once it is approved (and its beer is
+     * visible). Others see it only while the uploader's consent is active; admins and the uploader are not held to that.
+     */
     public Optional<Image> image(UUID photoId, User me) {
         Optional<BeerPhoto> p = photos.findLive(photoId);
         if (p.isEmpty()) return Optional.empty();
@@ -164,6 +194,7 @@ public class PhotoService {
         boolean own = me.getId().equals(photo.getUserId());
         boolean admin = auth.isAdmin(me.getEmail());
         boolean shown = photo.getStatus() == BeerPhoto.Status.APPROVED
+                && consents.hasAccepted(photo.getUserId())
                 && beers.findById(photo.getBeerId()).filter(b -> beerVisible(b, me)).isPresent();
         if (!own && !admin && !shown) return Optional.empty();
         return image(photo);
@@ -175,7 +206,7 @@ public class PhotoService {
 
     /** For the beer list: no image bytes are read. */
     public Covers covers(User me) {
-        Set<UUID> with = photos.coverBeerIds(me.getId());
+        Set<UUID> with = photos.coverBeerIds(me.getId(), ConsentService.CONSENT_VERSION);
         Map<UUID, BeerPhoto> mine = new HashMap<>();
         for (BeerPhoto p : photos.findByUserIdAndDeletedAtIsNullOrderByCreatedAtDesc(me.getId())) {
             mine.putIfAbsent(p.getBeerId(), p); // newest first
@@ -205,6 +236,8 @@ public class PhotoService {
     /** One conditional update decides: a second, parallel decision finds the row no longer pending and gets 409. */
     public BeerPhotoRepository.AdminRow decide(UUID photoId, Choice choice, User admin) {
         BeerPhoto p = photos.findLive(photoId).orElseThrow(PhotoService::noSuchPhoto);
+        // Someone who withdrew consent: nothing about them is shown or decided, and no name or email goes back.
+        if (!consents.hasAccepted(p.getUserId())) throw noSuchPhoto();
         boolean won = Boolean.TRUE.equals(tx.execute(s -> store.decide(photoId,
                 choice == Choice.APPROVE ? BeerPhoto.Status.APPROVED : BeerPhoto.Status.REJECTED, admin.getId(), clock.instant())));
         if (!won) throw new ApiException(HttpStatus.CONFLICT, "PHOTO_NOT_PENDING", "That picture is already decided");
