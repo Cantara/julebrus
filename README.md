@@ -53,18 +53,21 @@ The exempt paths are `/api/me`, `/api/consent`, `/api/consent/**`, `/api/config`
 `/api/privacy` (kept in step in `ConsentWebConfig` and `SecurityConfig`). Bump the version to
 ask everyone again. Accepts and withdrawals are kept as an append-only trail in
 `consent_events` (erasure on request deletes the person's rows, see below); `user_consents` holds the current state. Withdrawing closes the person's
-access only: it deletes nothing (see the deletion procedure below).
+access only: it deletes nothing (see the deletion procedure below). The admin rater overview and the
+season weights cover people with active consent only; before consent only the `users` row exists.
 
 **Privacy policy URL.** The same texts are public at `/privacy`: server-rendered HTML that works
 without JavaScript, both languages on one page, `?lang=en` puts English first (the JSON is at
-`GET /api/privacy`). No login, no consent. Enter `https://xmas.cantara.no/privacy` as the privacy policy link on
+`GET /api/privacy`). No login, no consent. The page itself sends a restrictive
+Content-Security-Policy, Referrer-Policy and Permissions-Policy; HSTS and the forwarded-header
+handling (`SERVER_FORWARD_HEADERS_STRATEGY`) belong to the proxy and deploy kit (nginx), not to this app. Enter `https://xmas.cantara.no/privacy` as the privacy policy link on
 the Google Cloud console OAuth consent screen (APIs & Services, OAuth consent screen, app
 information). `JULEBRUS_CONTACT_EMAIL` is shown there and named in the text; the app logs a
 WARN at startup when it is blank outside the `dev` profile.
 
 Under *Meg* people can ask to link the historic people (`rater_key`, the canonical names from
 `history/raters.csv`) that are them to their login. Candidates: `GET /api/history/claim-candidates`.
-People raters.csv already ties to an email are not claimable. An admin approves each claim, can
+People raters.csv already ties to an email are not claimable (an admin cannot approve a claim for a key that has been tied to another login since). An admin approves each claim (approving auto-rejects every other pending claim for that person), can
 revoke an approval (`POST /api/admin/history/claims/{id}/revoke`), and sees everyone who asks for
 the same person together. A rejected or withdrawn claim can be asked for again; a revoked one cannot (`CLAIM_REVOKED`, only
 an admin deleting the claim row resets it). Withdrawing keeps the row (status `WITHDRAWN`), so it
@@ -74,8 +77,10 @@ optimistic lock, so two admins deciding at once get 409 `CONFLICT`.
 
 ### Deleting a person's data by hand (procedure to review before use)
 
-Deletion requests go to `JULEBRUS_CONTACT_EMAIL` and are done by an organiser. It was tested once
-against a throwaway PostgreSQL 16 with seeded data, but never run on a real database. Review it
+Deletion requests go to `JULEBRUS_CONTACT_EMAIL` and are done by an organiser. It was tested against a
+throwaway PostgreSQL 16 with seeded data, but never run on a real database. Run each recipe with
+`psql -v ON_ERROR_STOP=1 -f recipe.sql`: it stops at the first error and the open transaction is rolled
+back when the session ends. A second run of a recipe is harmless (the person or rows are already gone). Review it
 against the current schema, take a backup, run it in one transaction and check the row counts
 before `commit`.
 
@@ -92,9 +97,9 @@ begin;
 select id as uid from users where lower(email) = lower(:'email') \gset
 
 -- 1. Capture the historic people (rater_key) linked to this person, BEFORE deleting any claim:
---    their approved claims, and rows already mapped to their email by raters.csv.
+--    their approved and revoked claims (a revoked one was linked for a while), and rows already mapped to their email by raters.csv.
 create temp table erase_keys on commit drop as
-  select approved_key as k from historic_rater_claims where user_id = :'uid' and status = 'APPROVED'
+  select rater_key as k from historic_rater_claims where user_id = :'uid' and status in ('APPROVED', 'REVOKED')
   union
   select rater_key from historic_ratings where lower(rater_email) = lower(:'email') and rater_key is not null;
 select * from erase_keys;   -- look at it: these names disappear from the history for everyone

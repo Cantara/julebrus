@@ -19,7 +19,7 @@ badges, and imported historic seasons. See DESIGN.md for rules and decisions.
   - `badge/BadgeEvaluator` — pure badge rules over a tasting log.
   - `history/` — CSV import of earlier seasons and their weighting.
   - `consent/` — versioned consent (current state in `user_consents`, append-only `consent_events`); `ConsentInterceptor` answers 403 `CONSENT_REQUIRED` on all `/api/**` except `/api/me`, `/api/consent*`, `/api/config`, `/api/privacy` (public texts); `PrivacyPageController` serves `/privacy` as server-rendered HTML. Texts in `resources/consent/`.
-  - `history/ClaimService`, `RaterNameSuggester` (pure) — claim-your-history on `rater_key` (create/withdraw run under a row lock on the user; `claim_events` is the history; claims have `@Version`); admin decide/revoke in `admin/AdminClaimsController`.
+  - `history/ClaimService`, `RaterNameSuggester` (pure) — claim-your-history on `rater_key` (create/withdraw run under a row lock on the user; `claim_events` is the history; claims have `@Version`; approving re-checks e-mail linkage and auto-rejects other pending claims; time comes from the injected `Clock`); admin decide/revoke in `admin/AdminClaimsController`.
   - `web/ConfigController` — public `/api/config` (sponsor line).
   - `config/SecurityConfig` — Google chain (`!dev`) and dev chain with `X-Dev-User` impersonation.
 - `frontend/src/views/` — one view per screen; `api/client.ts` handles CSRF, 401 redirect and dev user.
