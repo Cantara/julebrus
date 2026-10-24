@@ -158,4 +158,39 @@ class BlindRoundTest {
                 .andExpect(jsonPath("$.awards[?(@.id=='BLIND_TASTER')].winnerName").value("blind-a"))
                 .andExpect(jsonPath("$.awards[?(@.id=='BLIND_TASTER')].detail").value("3 av 3 riktig"));
     }
+
+    @Test
+    void aBeerRejectedAfterItWasAddedCannotBePouredNorIsAPendingOneRefused() throws Exception {
+        String host = "blind-rej-host@cantara.no", guest = "blind-rej-guest@cantara.no", admin = "dev@cantara.no";
+        for (String who : new String[]{host, guest, admin}) ConsentSupport.accept(mvc, who);
+        String[] b = new String[3];
+        for (int i = 0; i < 3; i++) {
+            b[i] = idOf(mvc.perform(post("/api/beers").header("X-Dev-User", host).contentType(APPLICATION_JSON)
+                    .content("{\"name\":\"Rejblind " + i + "\",\"abv\":5.5}")).andReturn().getResponse().getContentAsString());
+        }
+        String session = mvc.perform(post("/api/sessions").header("X-Dev-User", host)).andReturn().getResponse().getContentAsString();
+        String sid = idOf(session);
+        String code = session.replaceAll(".*\"joinCode\":\"([^\"]+)\".*", "$1");
+        mvc.perform(post("/api/sessions/join").header("X-Dev-User", guest).contentType(APPLICATION_JSON)
+                .content("{\"code\":\"%s\"}".formatted(code))).andExpect(status().isOk());
+        for (String id : b) {
+            mvc.perform(post("/api/sessions/" + sid + "/beers").header("X-Dev-User", host).contentType(APPLICATION_JSON)
+                    .content("{\"beerId\":\"%s\"}".formatted(id))).andExpect(status().isOk());
+        }
+        // rejected after it was added to the table
+        mvc.perform(post("/api/admin/beers/" + b[0] + "/decision").header("X-Dev-User", admin).contentType(APPLICATION_JSON)
+                .content("{\"decision\":\"REJECT\"}")).andExpect(status().isOk());
+        String blind = "/api/sessions/" + sid + "/blind";
+        // as the answer, and as a plain option
+        mvc.perform(post(blind).header("X-Dev-User", host).contentType(APPLICATION_JSON)
+                        .content("{\"answerBeerId\":\"%s\",\"optionBeerIds\":[\"%s\",\"%s\"]}".formatted(b[0], b[0], b[1])))
+                .andExpect(status().isUnprocessableEntity()).andExpect(jsonPath("$.code").value("BLIND_OPTIONS"));
+        mvc.perform(post(blind).header("X-Dev-User", host).contentType(APPLICATION_JSON)
+                        .content("{\"answerBeerId\":\"%s\",\"optionBeerIds\":[\"%s\",\"%s\"]}".formatted(b[1], b[0], b[1])))
+                .andExpect(status().isUnprocessableEntity()).andExpect(jsonPath("$.code").value("BLIND_OPTIONS"));
+        // the other two are still pending (not rejected) and work
+        mvc.perform(post(blind).header("X-Dev-User", host).contentType(APPLICATION_JSON)
+                        .content("{\"answerBeerId\":\"%s\",\"optionBeerIds\":[\"%s\",\"%s\"]}".formatted(b[1], b[1], b[2])))
+                .andExpect(status().isCreated());
+    }
 }

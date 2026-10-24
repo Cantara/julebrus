@@ -2,6 +2,7 @@
 import { onMounted, ref, watch } from 'vue'
 import { get, post } from '../api/client'
 import type { Beer } from '../api/types'
+import BeerPhotoBox from '../components/BeerPhotoBox.vue'
 
 const q = ref('')
 const beers = ref<Beer[]>([])
@@ -45,6 +46,7 @@ onMounted(load)
       <span v-else-if="b.status === 'REJECTED'" class="pill">avvist</span>
       <div class="muted">{{ [b.brewery, b.style, b.abv ? b.abv + ' %' : null].filter(Boolean).join(' · ') }}</div>
       <div class="muted">{{ b.ratingCount }} smakinger</div>
+      <BeerPhotoBox :beer="b" @changed="load" />
     </div>
     <router-link class="btn secondary" :to="`/beers/${b.id}/rate`">Smak</router-link>
   </div>

@@ -3,6 +3,7 @@ import { onMounted, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { ApiFailure, get, post } from '../api/client'
 import type { Beer, HistoricRating, NewTasting, StructuredNotes, Tasting } from '../api/types'
+import BeerPhotoBox from '../components/BeerPhotoBox.vue'
 import ScoreDice from '../components/ScoreDice.vue'
 import TastingNotes from '../components/TastingNotes.vue'
 import { useMe } from '../stores/me'
@@ -24,9 +25,13 @@ const saving = ref(false)
 
 const sessionId = typeof route.query.session === 'string' ? route.query.session : undefined
 
-onMounted(async () => {
+async function loadBeer() {
   const all = await get<Beer[]>('/api/beers')
   beer.value = all.find((b) => b.id === props.id) ?? null
+}
+
+onMounted(async () => {
+  await loadBeer()
   if (beer.value) {
     history.value = await get<HistoricRating[]>(`/api/history/beers?name=${encodeURIComponent(beer.value.name)}`).catch(() => [])
   }
@@ -68,6 +73,7 @@ async function save() {
 <template>
   <h1>{{ beer?.name ?? '…' }}</h1>
   <p class="muted">{{ beer?.brewery }}</p>
+  <BeerPhotoBox v-if="beer" :beer="beer" @changed="loadBeer" />
 
   <div v-if="history.length" class="card">
     <strong>Tidligere år</strong>

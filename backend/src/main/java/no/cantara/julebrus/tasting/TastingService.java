@@ -7,6 +7,7 @@ import no.cantara.julebrus.config.SeasonProperties;
 import no.cantara.julebrus.web.ApiException;
 import no.cantara.julebrus.session.SessionRepository;
 import no.cantara.julebrus.session.TastingSession;
+import no.cantara.julebrus.web.ApiException;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -50,6 +51,11 @@ public class TastingService {
     @Transactional
     public Tasting rate(UUID userId, UUID beerId, UUID sessionId, int score, BigDecimal prediction, String notes,
                         Tasting.Notes structured, Set<String> tags) {
+        Beer beer = beers.findById(beerId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Unknown beer"));
+        if (beer.getStatus() == Beer.Status.REJECTED) {
+            throw new ApiException(HttpStatus.UNPROCESSABLE_ENTITY, "BEER_REJECTED", "That beer was rejected by the organisers");
+        }
         boolean solo = true;
         int tableSize = 1;
         if (sessionId != null) {
@@ -62,8 +68,7 @@ public class TastingService {
             tableSize = session.getMembers().size();
         }
         // Homebrew is rated only at a table of more than five, so nobody scores their own in a quiet corner.
-        boolean homebrew = beers.findById(beerId).map(Beer::isHomebrew).orElse(false);
-        if (homebrew && tableSize < Beer.HOMEBREW_MIN_GROUP) {
+        if (beer.isHomebrew() && tableSize < Beer.HOMEBREW_MIN_GROUP) {
             throw new ApiException(HttpStatus.UNPROCESSABLE_ENTITY, "HOMEBREW_NEEDS_GROUP",
                     "Homebrew is rated only in a group of at least %d people".formatted(Beer.HOMEBREW_MIN_GROUP));
         }
