@@ -11,6 +11,7 @@ import LangToggle from '../components/LangToggle.vue'
 import { t } from '../i18n'
 import type { BadgeView, Beer, HistoricRating, MySeason, Palate, Tasting } from '../api/types'
 import BadgeTree from '../components/BadgeTree.vue'
+import DiceFace from '../components/DiceFace.vue'
 import { useMe } from '../stores/me'
 
 const store = useMe()
@@ -143,7 +144,7 @@ const byYear = () => {
       <tbody>
         <tr v-for="t in mine" :key="t.id">
           <td>{{ beerNames[t.beerId] ?? '?' }}<div v-if="t.tags.length" class="muted">{{ t.tags.join(', ') }}</div></td>
-          <td style="text-align: right"><strong>{{ t.score }}</strong></td>
+          <td style="text-align: right"><DiceFace :value="t.score" :size="26" /></td>
         </tr>
       </tbody>
     </table>

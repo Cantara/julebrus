@@ -262,11 +262,15 @@ function fit(ctx: CanvasRenderingContext2D, text: string, max: number) {
     </template>
 
     <h2>Årets priser</h2>
-    <div v-for="a in finale.awards" :key="a.id" class="card award" :class="{ none: !a.winnerName }">
+    <div v-for="a in (finale.awards ?? []).filter((x) => x.winnerName)" :key="a.id" class="card award">
       <strong class="display">{{ a.title }}</strong>
       <div class="muted">{{ a.description }}</div>
-      <div class="who"><strong>{{ a.winnerName ?? 'Ingen i år' }}</strong><span class="muted"> · {{ a.detail }}</span></div>
+      <div class="who"><strong>{{ a.winnerName }}</strong><span class="muted"> · {{ a.detail }}</span></div>
     </div>
+    <p v-if="(finale.awards ?? []).some((x) => !x.winnerName)" class="muted" style="margin: 6px 0 0">
+      {{ (finale.awards ?? []).every((x) => !x.winnerName) ? 'Ingen priser delt ut ennå.' : 'Ingen kvalifiserte i år:' }}
+      {{ (finale.awards ?? []).filter((x) => !x.winnerName).map((x) => x.title.replace(/^Årets /, '')).join(', ') }}.
+    </p>
 
     <p class="muted" style="text-align: center; margin-top: 16px">
       {{ finale.totals.tastings }} terningkast · {{ finale.totals.beers }} øl · {{ finale.totals.people }} smakere. Takk for i år.

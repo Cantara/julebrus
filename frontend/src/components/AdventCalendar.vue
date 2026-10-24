@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue'
+import DiceFace from './DiceFace.vue'
 
 /**
  * The season as an advent calendar: one door per day from start to end.
@@ -131,7 +132,7 @@ const detailDate = computed(() => {
       <tbody>
         <tr v-for="b in detail.beers" :key="b.name">
           <td>{{ b.name }}</td>
-          <td style="text-align: right"><strong>{{ b.score }}</strong></td>
+          <td style="text-align: right"><DiceFace :value="b.score" :size="26" /></td>
         </tr>
       </tbody>
     </table>

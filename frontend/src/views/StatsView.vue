@@ -35,21 +35,20 @@ onMounted(async () => {
     <button v-for="t in teams" :key="t.id" class="pill" :class="{ on: team === t.slug }" @click="team = t.slug">{{ t.name }}</button>
   </div>
 
-  <div class="card">
-    <table>
-      <thead><tr><th>#</th><th>Øl</th><th>Snitt</th><th>Justert</th><th>Smakere</th></tr></thead>
-      <tbody>
-        <tr v-for="r in beers" :key="r.beerId">
-          <td>{{ r.rank }}</td>
-          <td>{{ r.name }}<div class="muted">{{ r.brewery }}</div></td>
-          <td>{{ r.mean.toFixed(2) }}</td>
-          <td><strong>{{ r.bayesian.toFixed(2) }}</strong></td>
-          <td>{{ r.ratings }}<div class="muted">{{ r.effectiveVotes.toFixed(1) }} vekt</div></td>
-        </tr>
-      </tbody>
-    </table>
-    <p v-if="!beers.length" class="muted">{{ team ? 'Laget har ikke smakt ennå.' : 'Ingen smakinger ennå.' }}</p>
-  </div>
+  <ol class="ranked">
+    <li v-for="r in beers" :key="r.beerId" class="card" :class="`r${Math.min(r.rank, 4)}`">
+      <span class="rank display">{{ r.rank }}</span>
+      <div class="body">
+        <div class="row" style="align-items: baseline">
+          <strong class="name">{{ r.name }}</strong>
+          <strong class="display score">{{ r.bayesian.toFixed(2) }}</strong>
+        </div>
+        <div class="bar" role="img" :aria-label="`Justert ${r.bayesian.toFixed(2)} av 6`"><span :style="{ width: `${((r.bayesian - 1) / 5) * 100}%` }" /></div>
+        <div class="muted small">{{ r.brewery }}<template v-if="r.brewery"> · </template>snitt {{ r.mean.toFixed(2) }} · {{ r.ratings }} {{ r.ratings === 1 ? 'smaker' : 'smakere' }}</div>
+      </div>
+    </li>
+  </ol>
+  <p v-if="!beers.length" class="muted card">{{ team ? 'Laget har ikke smakt ennå.' : 'Ingen smakinger ennå.' }}</p>
 
   <h2>Duellene (sideranking)</h2>
   <p class="muted">Parvise valg i gruppesmakinger. Bryr seg ikke om hvem som er snill eller streng med terningen.</p>
@@ -76,6 +75,19 @@ onMounted(async () => {
 </template>
 
 <style scoped>
+.ranked { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+.ranked li { display: flex; gap: 12px; align-items: center; margin: 0; }
+.ranked .rank { flex: 0 0 34px; height: 34px; border-radius: 50%; display: grid; place-items: center; background: var(--line); color: var(--ink); font-size: 1rem; }
+.ranked .r1 .rank { background: var(--candle); color: #2b1a14; box-shadow: 0 0 10px var(--glow); }
+.ranked .r2 .rank { background: #d9d4cc; color: #2b1a14; }
+.ranked .r3 .rank { background: #c99a6b; color: #2b1a14; }
+.ranked .body { flex: 1; min-width: 0; display: grid; gap: 4px; }
+.ranked .name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.ranked .score { color: var(--brand); }
+.ranked .bar { height: 6px; background: var(--line); border-radius: 999px; overflow: hidden; }
+.ranked .bar span { display: block; height: 100%; background: var(--brass); border-radius: 999px; }
+.ranked .r1 .bar span { background: var(--candle); }
+.ranked .small { font-size: 0.85rem; }
 .filter { margin: 0 0 10px; }
 .filter .pill { border: 1px solid var(--line); cursor: pointer; font: inherit; font-size: 0.85rem; }
 </style>
