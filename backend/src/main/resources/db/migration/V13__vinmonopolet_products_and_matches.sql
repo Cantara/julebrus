@@ -4,7 +4,7 @@
 --
 -- (year is a reserved word in H2, so the columns are list_year and season_year, as elsewhere.)
 --
--- V11: V8 (tips), V9 (beer photos) and V10 (beer-name fixes) come first; migrations must reach main in order (see CLAUDE.md).
+-- V13: V8 (tips) to V12 (beer-name fixes) come first; migrations must reach main in order (see CLAUDE.md).
 
 create table vmp_products (
   article_no   varchar(32) primary key,
