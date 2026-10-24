@@ -1,11 +1,13 @@
 #!/usr/bin/env python3
 """Product facts from two Norwegian beer blogs' yearly posts about the Vinmonopolet juleøl launch -> data/vinmonopolet/<year>.csv.
 
-Usage: extract_vinmonopolet_blog.py YEAR SAVED_PAGE.html     (YEAR = 2022, 2023, 2024 or 2025)
+Usage: extract_vinmonopolet_blog.py YEAR SAVED_PAGE.html     (YEAR = 2014-2020 or 2022-2025)
 The pages are fetched by hand (or by a script that respects robots.txt) and are NOT stored in the repository; only the facts are kept.
 
 Formats (secondary sources, not Vinmonopolet's own files):
   2025 olbloggen.no: one HTML table (Land, Artikkelnr, Produsent, Artikkelnavn, Ølstil, ABV, Volum, Salgspris inkl pant).
+  2014-2017 thegundersen.wordpress.com: beer NAMES only, one per line (2014 under "Bestillingsutvalget:" / "Tilleggsutvalget:").
+  2018: two tables (name, price, range). 2019, 2020: "name - price" lines (2020 with a BU/TU marker).
   2022, 2024 thegundersen.wordpress.com: a run-together list "- article no - name - price" (2022: some numbers carry a "(BU)" marker,
   kept as `selection`).
   2023 thegundersen.wordpress.com: "- article no - name - ABV - price".
@@ -112,6 +114,53 @@ def rec(year, **kw):
     return [r[k] for k in OUT]
 
 
+LINE_PRICE = re.compile(r"^-?\s*(?P<name>.+?)\s*[–-]\s*(?P<price>\d{1,4},\d{2})(?:\s+(?P<tag>[A-Z]{1,3}))?$")
+SECTION = {"bestillingsutvalget": "Bestillingsutvalget", "tilleggsutvalget": "Tilleggsutvalget"}
+
+
+def line_blocks(page, minimum=20):
+    """Blocks of lines (one <p> with <br> line breaks) with at least `minimum` lines: the lists in the older posts."""
+    text = re.sub(r"(?s)<(script|style)[^>]*>.*?</\1>", "", page)
+    blocks = []
+    for p in re.findall(r"(?s)<p[^>]*>(.*?)</p>", text):
+        p = re.sub(r"<br\s*/?>", "\n", p)
+        lines = [re.sub(r"\s+", " ", x).strip() for x in html.unescape(re.sub(r"<[^>]+>", "", p)).split("\n")]
+        lines = [x for x in lines if x]
+        if len(lines) >= minimum:
+            blocks.append(lines)
+    return blocks
+
+
+def names_only(year, page):
+    """2014-2017: one beer name per line (optional leading '-'); "Bestillingsutvalget:"-style lines set `selection`."""
+    out = []
+    for lines in line_blocks(page):
+        dashed = sum(1 for x in lines if x.startswith("-")) >= 0.8 * (len(lines) - 1)
+        selection = ""
+        for x in lines:
+            label = SECTION.get(x.rstrip(":").strip().lower())
+            if label:
+                selection = label
+                continue
+            if dashed and not x.startswith("-"):
+                continue  # intro sentence
+            name = x.lstrip("-").strip()
+            if name:
+                out.append(rec(year, name=name, selection=selection))
+    return out
+
+
+def lines_with_price(year, page):
+    """2019, 2020: "Name - price" lines (2020 adds a BU/TU marker after the price)."""
+    out = []
+    for lines in line_blocks(page):
+        for x in lines:
+            m = LINE_PRICE.match(x)
+            if m:
+                out.append(rec(year, name=m.group("name").strip(), selection=m.group("tag") or "", price_nok=num(m.group("price"))))
+    return out
+
+
 def parse(year, page):
     if year == "2025":
         p = Tables()
@@ -132,14 +181,26 @@ def parse(year, page):
         return [rec(year, article_no=a, name=n, selection=t, price_nok=num(p) if p else '') for t, a, n, p in dash_runs(page, 1)]
     if year == "2023":
         return [rec(year, article_no=a, name=n, selection=t, abv_percent=num(v) if v else '', price_nok=num(p) if p else '') for t, a, n, v, p in dash_runs(page, 2)]
-    raise SystemExit("YEAR must be 2022, 2023, 2024 or 2025")
+    if year in ("2014", "2015", "2016", "2017"):
+        return names_only(year, page)
+    if year in ("2019", "2020"):
+        return lines_with_price(year, page)
+    if year == "2018":
+        p = Tables()
+        p.feed(page)
+        return [rec(year, name=r[0], price_nok=num(r[1]), selection=r[2]) for t in p.tables if len(t) > 20 for r in t
+                if len(r) == 3 and re.fullmatch(r"\d{1,4},\d{2}", r[1])]
+    raise SystemExit("YEAR must be 2014-2020 or 2022-2025 (2021 has no usable list: only a mixed novelties post)")
 
 
 def main(year, path):
     with open(path, encoding="utf-8", errors="replace") as fh:
         rows = parse(year, fh.read())
-    ids = [r[1] for r in rows]
+    ids = [r[1] for r in rows if r[1]]
     assert len(ids) == len(set(ids)), "duplicate article numbers"
+    names = [r[2].casefold() for r in rows]
+    if len(names) != len(set(names)):
+        print(f"note: {len(names) - len(set(names))} repeated names in {year} (kept)", file=sys.stderr)
     dest = os.path.join(ROOT, "data", "vinmonopolet", f"{year}.csv")
     with open(dest, "w", newline="", encoding="utf-8") as fh:
         w = csv.writer(fh, lineterminator="\n")
