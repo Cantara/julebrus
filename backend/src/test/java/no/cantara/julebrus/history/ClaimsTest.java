@@ -275,8 +275,49 @@ class ClaimsTest {
         org.assertj.core.api.Assertions.assertThat(body).contains(f.me).contains(b);
 
         decide(first, "APPROVE", 200);
+        // The winner's approval turned the other pending claim down in the same step (and wrote its event).
+        mvc.perform(get("/api/history/claims/me").header("X-Dev-User", b)).andExpect(jsonPath("$[0].status").value("REJECTED"));
+        org.assertj.core.api.Assertions.assertThat(claimEvents.findByClaimIdOrderByAtAsc(java.util.UUID.fromString(second)))
+                .extracting(e -> e.getKind().name()).containsExactly("CREATE", "REJECT");
+        org.assertj.core.api.Assertions.assertThat(pendingCount(b)).isZero();
         decide(second, "APPROVE", 409);
-        decide(second, "REJECT", 200);
+        decide(second, "REJECT", 409);
+    }
+
+    @Test
+    void approvingIsRefusedWhenTheKeyHasSinceBeenTiedToAnotherLogin() throws Exception {
+        Fx f = new Fx();
+        String id = claim(f.me, f.solo);
+        // raters.csv is edited and re-applied at startup: the rows of the key now carry someone else's email.
+        for (var r : ratings.findAll().stream().filter(x -> f.solo.equals(x.getRaterKey())).toList()) {
+            r.applyMapping(f.solo, f.linkedEmail);
+            ratings.save(r);
+        }
+        mvc.perform(get("/api/admin/history/claims").header("X-Dev-User", ADMIN))
+                .andExpect(jsonPath("$[?(@.id=='%s')].linkedByEmail".formatted(id)).value(true));
+        decide(id, "APPROVE", 409);
+        mvc.perform(post("/api/admin/history/claims/" + id + "/decision").header("X-Dev-User", ADMIN)
+                .contentType(APPLICATION_JSON).content("{\"decision\":\"APPROVE\"}"))
+                .andExpect(jsonPath("$.code").value("RATER_LINKED"));
+        historySize(f.me, 0);
+        decide(id, "REJECT", 200); // rejecting stays possible
+    }
+
+    @Test
+    void reopeningClearsTheDecisionOnTheRowButNotInTheEventLog() throws Exception {
+        Fx f = new Fx();
+        String id = claim(f.me, f.solo);
+        decide(id, "REJECT", 200);
+        var rejected = claimRepo.findById(java.util.UUID.fromString(id)).get();
+        org.assertj.core.api.Assertions.assertThat(rejected.getDecidedBy()).isNotNull();
+        org.assertj.core.api.Assertions.assertThat(rejected.getDecidedAt()).isNotNull();
+        claim(f.me, f.solo); // reopen
+        var reopened = claimRepo.findById(java.util.UUID.fromString(id)).get();
+        org.assertj.core.api.Assertions.assertThat(reopened.getStatus()).isEqualTo(HistoricRaterClaim.Status.PENDING);
+        org.assertj.core.api.Assertions.assertThat(reopened.getDecidedBy()).isNull();
+        org.assertj.core.api.Assertions.assertThat(reopened.getDecidedAt()).isNull();
+        org.assertj.core.api.Assertions.assertThat(claimEvents.findByClaimIdOrderByAtAsc(reopened.getId()))
+                .extracting(e -> e.getKind().name()).containsExactly("CREATE", "REJECT", "REOPEN");
     }
 
     @Test
@@ -370,10 +411,10 @@ class ClaimsTest {
     void databaseRefusesTwoApprovedClaimsForOneKey() throws Exception {
         Fx f = new Fx();
         var admin = users.upsert(ADMIN, "Dev Tester").getId();
-        var one = new HistoricRaterClaim(users.upsert(f.other("db1"), "a").getId(), f.solo);
-        var two = new HistoricRaterClaim(users.upsert(f.other("db2"), "b").getId(), f.solo);
-        one.approve(admin);
-        two.approve(admin);
+        var one = new HistoricRaterClaim(users.upsert(f.other("db1"), "a").getId(), f.solo, java.time.Instant.now());
+        var two = new HistoricRaterClaim(users.upsert(f.other("db2"), "b").getId(), f.solo, java.time.Instant.now());
+        one.approve(admin, java.time.Instant.now());
+        two.approve(admin, java.time.Instant.now());
         claimRepo.saveAndFlush(one);
         org.assertj.core.api.Assertions.assertThatThrownBy(() -> claimRepo.saveAndFlush(two))
                 .isInstanceOf(org.springframework.dao.DataIntegrityViolationException.class);

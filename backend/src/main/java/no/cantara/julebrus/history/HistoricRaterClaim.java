@@ -58,30 +58,30 @@ public class HistoricRaterClaim {
     protected HistoricRaterClaim() {
     }
 
-    public HistoricRaterClaim(UUID userId, String raterKey) {
+    public HistoricRaterClaim(UUID userId, String raterKey, Instant now) {
         this.id = UUID.randomUUID();
         this.userId = userId;
         this.raterKey = raterKey;
         this.status = Status.PENDING;
-        this.createdAt = Instant.now();
+        this.createdAt = now;
     }
 
-    public void approve(UUID adminId) {
+    public void approve(UUID adminId, Instant now) {
         this.status = Status.APPROVED;
         this.approvedKey = raterKey;
-        decide(adminId);
+        decide(adminId, now);
     }
 
-    public void reject(UUID adminId) {
+    public void reject(UUID adminId, Instant now) {
         this.status = Status.REJECTED;
-        decide(adminId);
+        decide(adminId, now);
     }
 
     /** An admin takes an approval back: the key becomes claimable again and the link disappears. */
-    public void revoke(UUID adminId) {
+    public void revoke(UUID adminId, Instant now) {
         this.status = Status.REVOKED;
         this.approvedKey = null;
-        decide(adminId);
+        decide(adminId, now);
     }
 
     /** The person takes a pending claim back. */
@@ -91,15 +91,18 @@ public class HistoricRaterClaim {
 
     /**
      * A rejected or withdrawn claim asked for again: the row is reused (one row per user and key).
-     * decided_by/decided_at keep the last admin decision; {@code claim_events} has the full history.
+     * decided_by/decided_at are cleared (a pending claim has no decision); {@code claim_events}
+     * keeps the full history.
      */
     public void reopen() {
         this.status = Status.PENDING;
+        this.decidedBy = null;
+        this.decidedAt = null;
     }
 
-    private void decide(UUID adminId) {
+    private void decide(UUID adminId, Instant now) {
         this.decidedBy = adminId;
-        this.decidedAt = Instant.now();
+        this.decidedAt = now;
     }
 
     public UUID getId() { return id; }

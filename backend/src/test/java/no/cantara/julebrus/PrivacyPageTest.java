@@ -40,11 +40,26 @@ class PrivacyPageTest {
     }
 
     @Test
-    void textsAreEscapedAndShowWhatTheCodeKeeps() throws Exception {
+    void sendsRestrictivePolicyHeadersOnThePageOnly() throws Exception {
+        var res = mvc.perform(get("/privacy")).andReturn().getResponse();
+        assertThat(res.getHeader("Content-Security-Policy"))
+                .isEqualTo("default-src 'none'; style-src 'unsafe-inline'; base-uri 'none'; frame-ancestors 'none'");
+        assertThat(res.getHeader("Referrer-Policy")).isEqualTo("no-referrer");
+        assertThat(res.getHeader("Permissions-Policy")).isEmpty();
+        assertThat(res.getHeader("Cache-Control")).contains("no-store");
+        // The JSON endpoints do not carry the page's policy.
+        assertThat(mvc.perform(get("/api/privacy")).andReturn().getResponse().getHeader("Content-Security-Policy")).isNull();
+    }
+
+    @Test
+    void textsDisclosePreConsentStorageAdminVisibilityAndBrowserStorage() throws Exception {
         String html = mvc.perform(get("/privacy")).andReturn().getResponse().getContentAsString();
-        assertThat(html).contains("Administratorer ser navn og e-postadresse").contains("En vekt per sesong")
+        assertThat(html).contains("Administratorer ser navn og e-postadresse").contains("En vekt per sesong").contains("bryggeripreferanser").contains("eller når gruppen er avsluttet")
+                .contains("Merker regnes ut").contains("Innstillinger (språk og snø)")
                 .contains("Før du har svart").contains("lokal lagring");
         assertThat(html).contains("Administrators see the name and email address").contains("A weight per season")
+                .contains("brewery preferences").contains("or when the group has been closed")
+                .contains("Badges are calculated").contains("Preferences (language and snow)")
                 .contains("Before you have answered").contains("local storage");
     }
 }

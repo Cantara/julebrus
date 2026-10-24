@@ -49,9 +49,11 @@ public class ClaimService {
     private final HistoricRaterClaimRepository claims;
     private final UserRepository users;
     private final ClaimEventRepository events;
+    private final java.time.Clock clock;
 
     public ClaimService(HistoricRatingRepository ratings, HistoricRaterClaimRepository claims, UserRepository users,
-                        ClaimEventRepository events) {
+                        ClaimEventRepository events, java.time.Clock clock) {
+        this.clock = clock;
         this.ratings = ratings;
         this.claims = claims;
         this.users = users;
@@ -132,7 +134,7 @@ public class ClaimService {
         }
         // The daily limit counts events, not rows, so withdrawing and asking again does not reset it.
         if (events.countByActorUserIdAndKindInAndAtAfter(userId, List.of(ClaimEvent.Kind.CREATE, ClaimEvent.Kind.REOPEN),
-                Instant.now().minus(24, ChronoUnit.HOURS)) >= MAX_CLAIMS_PER_DAY) {
+                clock.instant().minus(24, ChronoUnit.HOURS)) >= MAX_CLAIMS_PER_DAY) {
             throw new ApiException(HttpStatus.UNPROCESSABLE_ENTITY, "CLAIM_DAILY_LIMIT",
                     "You can make at most " + MAX_CLAIMS_PER_DAY + " claims in 24 hours");
         }
@@ -141,10 +143,10 @@ public class ClaimService {
             claim = existing.get();
             claim.reopen();
             claim = claims.saveAndFlush(claim);
-            events.save(new ClaimEvent(claim.getId(), ClaimEvent.Kind.REOPEN, userId));
+            events.save(new ClaimEvent(claim.getId(), ClaimEvent.Kind.REOPEN, userId, clock.instant()));
         } else {
-            claim = claims.saveAndFlush(new HistoricRaterClaim(userId, key));
-            events.save(new ClaimEvent(claim.getId(), ClaimEvent.Kind.CREATE, userId));
+            claim = claims.saveAndFlush(new HistoricRaterClaim(userId, key, clock.instant()));
+            events.save(new ClaimEvent(claim.getId(), ClaimEvent.Kind.CREATE, userId, clock.instant()));
         }
         return claim;
     }
@@ -161,7 +163,7 @@ public class ClaimService {
         }
         c.withdraw();
         claims.saveAndFlush(c);
-        events.save(new ClaimEvent(c.getId(), ClaimEvent.Kind.WITHDRAW, userId));
+        events.save(new ClaimEvent(c.getId(), ClaimEvent.Kind.WITHDRAW, userId, clock.instant()));
     }
 
     @Transactional(readOnly = true)
@@ -183,9 +185,9 @@ public class ClaimService {
         if (c.getStatus() != APPROVED) {
             throw new ApiException(HttpStatus.CONFLICT, "CLAIM_NOT_APPROVED", "Only an approved claim can be revoked");
         }
-        c.revoke(adminId);
+        c.revoke(adminId, clock.instant());
         claims.saveAndFlush(c);
-        events.save(new ClaimEvent(c.getId(), ClaimEvent.Kind.REVOKE, adminId));
+        events.save(new ClaimEvent(c.getId(), ClaimEvent.Kind.REVOKE, adminId, clock.instant()));
         return c;
     }
 
@@ -197,22 +199,37 @@ public class ClaimService {
             throw new ApiException(HttpStatus.CONFLICT, "CLAIM_NOT_PENDING", "That claim is already decided");
         }
         if (!approve) {
-            c.reject(adminId);
+            c.reject(adminId, clock.instant());
             claims.saveAndFlush(c);
-            events.save(new ClaimEvent(c.getId(), ClaimEvent.Kind.REJECT, adminId));
+            events.save(new ClaimEvent(c.getId(), ClaimEvent.Kind.REJECT, adminId, clock.instant()));
             return c;
         }
         if (claims.findByRaterKeyAndStatus(c.getRaterKey(), APPROVED).isPresent()) {
             throw new ApiException(HttpStatus.CONFLICT, "RATER_TAKEN", "That name is already linked to someone else");
         }
-        c.approve(adminId);
+        // raters.csv is applied at every startup: the person may have been tied to a login since the claim was made.
+        Candidate now = candidates().get(c.getRaterKey());
+        if (now != null && now.linkedByEmail()) {
+            String claimantEmail = users.findById(c.getUserId()).map(User::getEmail).orElse(null);
+            if (!now.loginEmail().equalsIgnoreCase(claimantEmail)) {
+                throw new ApiException(HttpStatus.CONFLICT, "RATER_LINKED",
+                        "That person is now linked to another login by the organisers; reject the claim");
+            }
+        }
+        c.approve(adminId, clock.instant());
         try {
             // Flush now so the unique constraint on approved_key decides a race here, not at commit.
             claims.saveAndFlush(c);
         } catch (DataIntegrityViolationException e) {
             throw new ApiException(HttpStatus.CONFLICT, "RATER_TAKEN", "That name is already linked to someone else");
         }
-        events.save(new ClaimEvent(c.getId(), ClaimEvent.Kind.APPROVE, adminId));
+        events.save(new ClaimEvent(c.getId(), ClaimEvent.Kind.APPROVE, adminId, clock.instant()));
+        // The name now has an owner: everyone else still waiting for it is turned down, so they stop counting as pending.
+        for (HistoricRaterClaim other : claims.findAllByRaterKeyAndStatus(c.getRaterKey(), PENDING)) {
+            other.reject(adminId, clock.instant());
+            claims.saveAndFlush(other);
+            events.save(new ClaimEvent(other.getId(), ClaimEvent.Kind.REJECT, adminId, clock.instant()));
+        }
         return c;
     }
 }

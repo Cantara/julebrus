@@ -7,16 +7,16 @@ Julebrus er Cantaras juleølsmaking. Den drives av Cantara-miljøet.
 ## Hva vi lagrer
 
 - Navn og e-postadresse fra Google-kontoen din
-- Scorer og smaksnotater, gruppesmakinger, dueller og merker
+- Scorer og smaksnotater, gruppesmakinger og dueller. Merker regnes ut fra dette og lagres ikke
 - En vekt per sesong, som beregnes og lagres for hver deltaker
 - Koblinger til tidligere år, beslutninger om dem og samtykkehendelser, med tidspunkt
 - Tidligere års scorer, importert fra de offentlige sidene på wiki.cantara.no, med navnene slik de står i de gamle regnearkene, noen ganger med initial eller etternavn
 - Der arrangørene har koblet tidligere års scorer til en e-postadresse, lagres adressen sammen med dem
-- Språkvalget ditt (NB eller EN), som ligger i lokal lagring i nettleseren din
+- Innstillinger (språk og snø), som ligger i lokal lagring i nettleseren din
 
 ## Før du har svart
 
-For å logge deg inn lagrer vi Google-navnet og e-postadressen din første gang du logger inn, før du har tatt stilling til samtykket. Avslår du og ber om sletting hos {contact}, fjerner vi dem.
+For å logge deg inn lagrer vi Google-navnet og e-postadressen din første gang du logger inn, før du har tatt stilling til samtykket. Før samtykket lagres ingenting annet om deg, og ingen vekt beregnes. Avslår du og ber om sletting hos {contact}, fjerner vi dem.
 
 ## Hvorfor
 
@@ -24,10 +24,11 @@ For å kjøre smakingen og vise resultater og historikk.
 
 ## Hvem ser hva
 
-- Medlemmer i en gruppe ser hverandres scorer etter at alle har smakt ølet
+- Medlemmer i en gruppe ser hverandres scorer når alle i gruppen har gitt score, eller når gruppen er avsluttet
 - Sesongstatistikken vises per øl
 - Historikken viser navnene til dem som smakte i tidligere år, slik de står i de gamle regnearkene
 - Administratorer ser navn og e-postadresse til dem som ber om å koble seg til tidligere år, i godkjenningskøen
+- Administratorer ser hver deltakers navn, e-postadresse, antall scorer, vekt og statistikk over hvordan vedkommende scorer (for eksempel bryggeripreferanser), for å oppdage juks
 
 ## Tidligere år
 

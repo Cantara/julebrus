@@ -23,7 +23,7 @@ public class MeController {
     }
 
     public record Me(UUID id, String email, String displayName, TastingService.Status status, Season season,
-                     Weight weight, boolean admin, boolean consentRequired, String consentVersion) {
+                     /** null until the person has consented */ Weight weight, boolean admin, boolean consentRequired, String consentVersion) {
     }
 
     private final CurrentUser currentUser;
@@ -47,10 +47,16 @@ public class MeController {
     @GetMapping("/api/me")
     public Me me() {
         User u = currentUser.get();
-        RaterWeight w = weights.current(u);
+        boolean consented = consents.hasAccepted(u.getId());
+        // Before consent only the users row exists: no weight is computed or stored, no history is read.
+        Weight weight = null;
+        if (consented) {
+            RaterWeight w = weights.current(u);
+            weight = new Weight(w.weight(), w.getReason());
+        }
         return new Me(u.getId(), u.getEmail(), u.getDisplayName(), tastings.status(u.getId()),
                 new Season(season.year(), season.start(), season.end(), season.maxTastingsPerDay(), season.maxSoloDays()),
-                new Weight(w.weight(), w.getReason()), auth.isAdmin(u.getEmail()),
-                !consents.hasAccepted(u.getId()), ConsentService.CONSENT_VERSION);
+                weight, auth.isAdmin(u.getEmail()),
+                !consented, ConsentService.CONSENT_VERSION);
     }
 }

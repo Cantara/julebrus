@@ -7,16 +7,16 @@ Julebrus is Cantara's Christmas beer tasting. It is run by the Cantara community
 ## What we store
 
 - Your name and email address from your Google account
-- Ratings and tasting notes, group sessions, duels and badges
+- Ratings and tasting notes, group sessions and duels. Badges are calculated from these and not stored
 - A weight per season, which is calculated and stored for every participant
 - Links to earlier seasons, the decisions about them and consent events, with timestamps
 - Earlier seasons' ratings, imported from the public pages on wiki.cantara.no, with the names as written in the old spreadsheets, sometimes with an initial or surname
 - Where the organisers have linked earlier ratings to an email address, that address is stored with them
-- Your language choice (NB or EN), kept in your browser's local storage
+- Preferences (language and snow), kept in your browser's local storage
 
 ## Before you have answered
 
-To log you in we store your Google name and email address the first time you sign in, before you have decided on consent. If you decline and ask {contact} for deletion, we remove them.
+To log you in we store your Google name and email address the first time you sign in, before you have decided on consent. Nothing else about you is stored before consent, and no weight is calculated. If you decline and ask {contact} for deletion, we remove them.
 
 ## Why
 
@@ -24,10 +24,11 @@ To run the tasting and show results and history.
 
 ## Who sees what
 
-- Members of a group see each other's scores after everyone has tasted the beer
+- Members of a group see each other's scores when everyone in the group has rated, or when the group has been closed
 - Season statistics are shown per beer
 - The history shows the names of the people who tasted in earlier years, as written in the old spreadsheets
 - Administrators see the name and email address of people who ask to link themselves to earlier seasons, in the approval queue
+- Administrators see every participant's name, email address, number of scores, weight and statistics on how they score (for example brewery preferences), to detect rigging
 
 ## Earlier seasons
 

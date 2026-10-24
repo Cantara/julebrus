@@ -36,12 +36,12 @@ public class ClaimEvent {
     protected ClaimEvent() {
     }
 
-    public ClaimEvent(UUID claimId, Kind kind, UUID actorUserId) {
+    public ClaimEvent(UUID claimId, Kind kind, UUID actorUserId, Instant at) {
         this.id = UUID.randomUUID();
         this.claimId = claimId;
         this.kind = kind;
         this.actorUserId = actorUserId;
-        this.at = Instant.now();
+        this.at = at;
     }
 
     public UUID getId() { return id; }

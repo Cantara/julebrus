@@ -24,7 +24,7 @@ public class ConsentService {
      * <p>DRAFT: the consent texts are a draft for the organisers to review and approve
      * before the season opens. Nobody has given them legal sign-off.</p>
      */
-    public static final String CONSENT_VERSION = "2026-2";
+    public static final String CONSENT_VERSION = "2026-3";
 
     public record Texts(String nb, String en) {
     }
@@ -64,6 +64,12 @@ public class ConsentService {
 
     public Texts texts() {
         return texts;
+    }
+
+    /** Everyone whose consent to the current version is active. Admin overviews and weights cover only these. */
+    @Transactional(readOnly = true)
+    public java.util.Set<UUID> activeUserIds() {
+        return new java.util.HashSet<>(consents.findActiveUserIds(CONSENT_VERSION));
     }
 
     @Transactional(readOnly = true)

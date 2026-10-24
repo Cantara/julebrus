@@ -28,9 +28,12 @@ public class RaterWeightService {
     private final TastingRepository tastings;
     private final UserRepository users;
     private final SeasonProperties season;
+    private final no.cantara.julebrus.consent.ConsentService consents;
 
     public RaterWeightService(RaterWeightRepository weights, HistoricRatingRepository history,
-                              TastingRepository tastings, UserRepository users, SeasonProperties season) {
+                              TastingRepository tastings, UserRepository users, SeasonProperties season,
+                              no.cantara.julebrus.consent.ConsentService consents) {
+        this.consents = consents;
         this.weights = weights;
         this.history = history;
         this.tastings = tastings;
@@ -58,10 +61,17 @@ public class RaterWeightService {
                 });
     }
 
-    /** Weights by user id for this season's averages. Users without a stored row get one. */
+    /**
+     * Weights by user id for this season's averages, for people with active consent only (those get
+     * a stored row if they lack one). Someone who never consented, declined or withdrew has no row
+     * created and no earlier-season data read, and counts as weight 0 in the averages.
+     */
     public Map<UUID, Double> weightsByUserId() {
+        var active = consents.activeUserIds();
         Map<UUID, Double> out = new HashMap<>();
-        for (User u : users.findAll()) out.put(u.getId(), current(u).weight());
+        for (User u : users.findAll()) {
+            if (active.contains(u.getId())) out.put(u.getId(), current(u).weight());
+        }
         return out;
     }
 

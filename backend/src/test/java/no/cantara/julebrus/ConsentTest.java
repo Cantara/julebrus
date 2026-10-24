@@ -195,4 +195,32 @@ class ConsentTest {
             pool.shutdownNow();
         }
     }
+
+    @Autowired
+    no.cantara.julebrus.weight.RaterWeightRepository weightRepo;
+
+    @Test
+    void aPersonWhoNeverConsentedGetsNoWeightRowAndIsNotProfiledByAdmins() throws Exception {
+        String who = "never-consented-" + System.nanoTime() + "@cantara.no";
+        ConsentSupport.accept(mvc, null); // the dev admin, so the overview can be read
+        // /api/me answers, without a weight block, and creates only the users row.
+        mvc.perform(get("/api/me").header("X-Dev-User", who)).andExpect(status().isOk())
+                .andExpect(jsonPath("$.consentRequired").value(true))
+                .andExpect(jsonPath("$.weight").doesNotExist());
+        mvc.perform(get("/api/consent").header("X-Dev-User", who)).andExpect(status().isOk());
+        // The ranking and the admin overview run over everyone: neither may create a row for them.
+        mvc.perform(get("/api/stats/beers")).andExpect(status().isOk());
+        mvc.perform(get("/api/admin/raters")).andExpect(status().isOk())
+                .andExpect(jsonPath("$[?(@.email=='%s')]".formatted(who)).isEmpty());
+        org.assertj.core.api.Assertions.assertThat(weightRepo.findBySeasonYearAndEmailIgnoreCase(2026, who)).isEmpty();
+        org.assertj.core.api.Assertions.assertThat(users.upsert(who, "x")).isNotNull(); // the users row exists (first sign-in)
+
+        // After consent the weight block appears and the person is part of the overview.
+        ConsentSupport.accept(mvc, who);
+        mvc.perform(get("/api/me").header("X-Dev-User", who)).andExpect(jsonPath("$.weight.weight").value(0.5));
+        mvc.perform(get("/api/admin/raters")).andExpect(jsonPath("$[?(@.email=='%s')]".formatted(who)).isNotEmpty());
+        // Withdrawing takes them out of the overview again.
+        mvc.perform(post("/api/consent/withdraw").header("X-Dev-User", who)).andExpect(status().isOk());
+        mvc.perform(get("/api/admin/raters")).andExpect(jsonPath("$[?(@.email=='%s')]".formatted(who)).isEmpty());
+    }
 }

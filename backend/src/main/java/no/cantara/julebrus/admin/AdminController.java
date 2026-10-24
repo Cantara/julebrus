@@ -59,9 +59,12 @@ public class AdminController {
     private final TastingRepository tastings;
     private final BeerRepository beers;
     private final RaterWeightService weights;
+    private final no.cantara.julebrus.consent.ConsentService consents;
 
     public AdminController(CurrentUser currentUser, AuthProperties auth, SeasonProperties season, UserRepository users,
-                           TastingRepository tastings, BeerRepository beers, RaterWeightService weights) {
+                           TastingRepository tastings, BeerRepository beers, RaterWeightService weights,
+                           no.cantara.julebrus.consent.ConsentService consents) {
+        this.consents = consents;
         this.currentUser = currentUser;
         this.auth = auth;
         this.season = season;
@@ -83,7 +86,9 @@ public class AdminController {
         Map<UUID, Beer> beerById = beers.findAll().stream().collect(Collectors.toMap(Beer::getId, Function.identity()));
         Map<UUID, List<Tasting>> byUser = tastings.findAll().stream().collect(Collectors.groupingBy(Tasting::getUserId));
 
-        return users.findAll().stream().map(u -> {
+        // Only people with active consent: nobody who never consented, declined or withdrew is profiled here.
+        var active = consents.activeUserIds();
+        return users.findAll().stream().filter(u -> active.contains(u.getId())).map(u -> {
             List<Tasting> mine = byUser.getOrDefault(u.getId(), List.of());
             RaterWeight w = weights.current(u);
             double extreme = mine.isEmpty() ? 0 : mine.stream().filter(t -> t.getScore() == 1 || t.getScore() == 6).count() / (double) mine.size();

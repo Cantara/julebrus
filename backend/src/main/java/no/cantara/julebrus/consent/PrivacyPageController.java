@@ -73,6 +73,10 @@ public class PrivacyPageController {
         html.append("<p><a href=\"/\">Julebrus</a></p></footer>\n</body>\n</html>\n");
         return ResponseEntity.ok().contentType(new MediaType("text", "html", StandardCharsets.UTF_8))
                 .cacheControl(CacheControl.noStore())
+                // Static page: nothing may load or run, nobody may frame it, nothing leaks through the Referer.
+                .header("Content-Security-Policy", "default-src 'none'; style-src 'unsafe-inline'; base-uri 'none'; frame-ancestors 'none'")
+                .header("Referrer-Policy", "no-referrer")
+                .header("Permissions-Policy", "")
                 .body(html.toString().getBytes(StandardCharsets.UTF_8));
     }
 

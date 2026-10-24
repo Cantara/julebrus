@@ -37,7 +37,8 @@ public class AdminClaimsController {
     public enum Choice { APPROVE, REJECT }
 
     public record AdminClaimView(UUID id, HistoricRaterClaim.Status status, String raterKey, List<Integer> years,
-                                 long ratingCount, UUID userId, String displayName, String email, Instant createdAt,
+                                 long ratingCount, /** raters.csv ties this person to another login: approving is refused */ boolean linkedByEmail,
+                                 UUID userId, String displayName, String email, Instant createdAt,
                                  Instant decidedAt) {
     }
 
@@ -66,7 +67,7 @@ public class AdminClaimsController {
         try {
             s = HistoricRaterClaim.Status.valueOf(status.toUpperCase(java.util.Locale.ROOT));
         } catch (IllegalArgumentException e) {
-            throw new ApiException(HttpStatus.BAD_REQUEST, "VALIDATION", "status must be PENDING, APPROVED or REJECTED");
+            throw new ApiException(HttpStatus.BAD_REQUEST, "VALIDATION", "status must be PENDING, APPROVED, REJECTED, REVOKED or WITHDRAWN");
         }
         List<HistoricRaterClaim> list = claims.byStatus(s);
         return views(list);
@@ -93,7 +94,8 @@ public class AdminClaimsController {
             User u = byId.get(c.getUserId());
             ClaimService.Candidate r = raters.get(c.getRaterKey());
             return new AdminClaimView(c.getId(), c.getStatus(), c.getRaterKey(),
-                    r == null ? List.of() : r.years(), r == null ? 0 : r.ratingCount(), c.getUserId(),
+                    r == null ? List.of() : r.years(), r == null ? 0 : r.ratingCount(),
+                    r != null && r.linkedByEmail() && (u == null || !r.loginEmail().equalsIgnoreCase(u.getEmail())), c.getUserId(),
                     u == null ? null : u.getDisplayName(), u == null ? null : u.getEmail(), c.getCreatedAt(), c.getDecidedAt());
         }).toList();
     }
