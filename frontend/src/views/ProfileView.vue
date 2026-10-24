@@ -7,6 +7,7 @@ import AdminBeers from '../components/AdminBeers.vue'
 import AdminClaims from '../components/AdminClaims.vue'
 import AdminRaterLinks from '../components/AdminRaterLinks.vue'
 import AdminTeams from '../components/AdminTeams.vue'
+import PushSettings from '../components/PushSettings.vue'
 import TeamPicker from '../components/TeamPicker.vue'
 import DumbbellChart from '../components/DumbbellChart.vue'
 import LiftChart from '../components/LiftChart.vue'
@@ -93,6 +94,8 @@ const byYear = () => {
       <TeamPicker @done="editingTeams = false" />
     </div>
   </div>
+
+  <PushSettings />
 
   <h2>Merker</h2>
   <div class="card">

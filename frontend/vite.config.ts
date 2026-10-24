@@ -9,7 +9,7 @@ export default defineConfig({
     vue(),
     VitePWA({
       registerType: 'autoUpdate',
-      includeAssets: ['icons/*.svg'],
+      includeAssets: ['icons/*.svg', 'push-sw.js'],
       manifest: {
         name: 'Cantaras juleølsmaking',
         short_name: 'Juleøl',
@@ -24,6 +24,8 @@ export default defineConfig({
         ],
       },
       workbox: {
+        // Web Push handlers live in public/push-sw.js and ride inside the generated worker.
+        importScripts: ['push-sw.js'],
         navigateFallbackDenylist: [/^\/api/, /^\/oauth2/, /^\/login/, /^\/privacy/],
         runtimeCaching: [{ urlPattern: /^\/api\//, handler: 'NetworkOnly' }],
       },
