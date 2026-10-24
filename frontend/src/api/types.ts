@@ -333,3 +333,62 @@ export interface BlindRound {
   guesses?: Record<string, string>
   correct?: string[]
 }
+
+export type MatchStatus = 'auto' | 'likely' | 'review' | 'none' | 'not-a-product'
+export type MatchDecisionKind = 'CONFIRMED' | 'CHOSEN' | 'NONE' | 'NOT_A_PRODUCT'
+
+export interface MatchCandidate {
+  name: string
+  articleNo: string | null
+  /** How many article numbers sit under the name (0 = none known, 1 = articleNo). */
+  articleCount: number | null
+  score: number | null
+}
+
+export interface MatchView {
+  id: string
+  year: number
+  voteBeer: string
+  machine: {
+    status: MatchStatus
+    method: string | null
+    score: number | null
+    articleNo: string | null
+    articleOptions: string[]
+    productName: string | null
+    listYear: string | null
+  }
+  candidates: MatchCandidate[]
+  decision: { kind: MatchDecisionKind; articleNo: string | null; productName: string | null; decidedBy: string | null; decidedAt: string | null } | null
+  version: number
+}
+
+export interface MatchSummary {
+  total: number
+  decided: number
+  undecided: number
+  byStatus: Record<string, { total: number; undecided: number }>
+  byDecision: Record<string, number>
+}
+
+export interface MatchPage {
+  items: MatchView[]
+  page: number
+  size: number
+  totalItems: number
+  totalPages: number
+  summary: MatchSummary
+}
+
+export interface ProductHit {
+  articleNo: string | null
+  name: string
+  source: 'PRODUCT' | 'LISTING'
+}
+
+export interface BulkResult {
+  dryRun: boolean
+  year: number
+  status: string
+  count: number
+}
