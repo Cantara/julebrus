@@ -15,6 +15,8 @@ Rules (the page states them):
   (beer names compared case-insensitively, as written in that year's source). Ties are all listed.
 - 2016 has no single votes: beers and the top beer come from the sheet's ranked list (data/results.csv),
   voters and votes from data/participation.csv (counted, never named).
+- Beer names are corrected with the app's history/beer_names.csv (year, as written, correct name), the same
+  file the app applies to the database, so the page and the app group the same spellings. data/ stays as written.
 - Beers that come back: names as written, compared case-insensitively; spellings are not merged.
 """
 import csv
@@ -32,6 +34,21 @@ REGULARS = 8
 def read(*path):
     with open(os.path.join(DATA, *path), encoding="utf-8", newline="") as fh:
         return list(csv.DictReader(fh))
+
+
+def beer_names():
+    """(year, name as written) -> corrected name, from the app's history/beer_names.csv."""
+    path = os.path.join(ROOT, "backend", "src", "main", "resources", "history", "beer_names.csv")
+    if not os.path.exists(path):
+        return {}
+    with open(path, encoding="utf-8", newline="") as fh:
+        lines = [ln for ln in fh if not ln.startswith("#") and ln.strip()]
+    return {(r["year"].strip(), r["as_written"].strip()): r["canonical"].strip() for r in csv.DictReader(lines)}
+
+
+def correct(rows, names):
+    """The rows with `beer` replaced by its corrected name where beer_names.csv has one."""
+    return [dict(r, beer=names.get((r["year"], r["beer"].strip()), r["beer"])) for r in rows]
 
 
 def weight(row):
@@ -83,8 +100,9 @@ def season_2016(results, participation):
 
 
 def main(out):
-    votes = read("votes.csv")
-    results = read("results.csv")
+    names = beer_names()
+    votes = correct(read("votes.csv"), names)
+    results = correct(read("results.csv"), names)
     participation = read("participation.csv")
 
     by_year = defaultdict(list)

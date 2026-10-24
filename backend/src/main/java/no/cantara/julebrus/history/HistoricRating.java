@@ -21,6 +21,10 @@ public class HistoricRating {
     @Column(name = "beer_name", nullable = false)
     private String beerName;
 
+    /** The name as the source wrote it, kept when beer_names.csv has changed {@link #beerName}; null otherwise. */
+    @Column(name = "beer_name_original")
+    private String beerNameOriginal;
+
     private String brewery;
 
     @Column(name = "beer_id")
@@ -63,6 +67,25 @@ public class HistoricRating {
     public UUID getId() { return id; }
     public int getSeasonYear() { return seasonYear; }
     public String getBeerName() { return beerName; }
+    public String getBeerNameOriginal() { return beerNameOriginal; }
+
+    /** The name as written in the source, whether or not a correction is applied. */
+    public String sourceBeerName() { return beerNameOriginal != null ? beerNameOriginal : beerName; }
+
+    /**
+     * Applies a beer_names.csv correction (null = none, which undoes an earlier one). The source name is kept in
+     * beer_name_original. Returns true when anything changed, so a second run changes nothing.
+     */
+    public boolean applyBeerName(String canonical) {
+        String source = sourceBeerName();
+        String target = canonical == null || canonical.isBlank() ? source : canonical.trim();
+        String original = target.equals(source) ? null : source;
+        boolean changed = !target.equals(beerName) || !java.util.Objects.equals(original, beerNameOriginal);
+        beerName = target;
+        beerNameOriginal = original;
+        return changed;
+    }
+
     public String getBrewery() { return brewery; }
     public UUID getBeerId() { return beerId; }
     public void setBeerId(UUID beerId) { this.beerId = beerId; }
