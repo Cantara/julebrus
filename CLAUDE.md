@@ -1,17 +1,17 @@
 # julebrus
 
 ## Purpose
-Minimal repository with only a license file and empty README. Appears to be a placeholder or very early stage project. "Julebrus" is Norwegian for "Christmas soda."
+Data repository: the history of the Cantara juleøl tests (votes and results per year, 1998 onward). See README.md.
 
 ## Tech Stack
-- Language: Not determined
+- Language: none (CSV data; Python 3 standard library for the extraction tool)
 - Build: None
 
 ## Architecture
-No implementation exists.
+`data/votes.csv`, `data/results.csv`, `tools/extract_wiki_tables.py`.
 
 ## Key Entry Points
-- None (empty repository)
+- `README.md`, `SOURCES.md`
 
 ## Development
 ```bash
@@ -19,4 +19,4 @@ No implementation exists.
 ```
 
 ## Domain Context
-Placeholder repository. No active code.
+Data only (CSV in data/, one extraction script in tools/). No build.

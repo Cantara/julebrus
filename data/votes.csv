@@ -1,0 +1,652 @@
+year,voter,weight,beer,score
+1998,Kjetil,1,Aass,5
+1998,Totto,1,Aass,3
+1998,Eirik,1,Aass,4
+1998,Bård,1,Aass,6
+1998,Arild,0.5,Aass,5
+1998,Marius,0.5,Aass,4
+1998,Odd,0.5,Aass,4
+1998,Endre,0.5,Aass,2
+1998,Stian,0.5,Aass,5
+1998,Totto,1,Akershus,2
+1998,Eirik,1,Akershus,3
+1998,Bård,1,Akershus,1
+1998,Marius,0.5,Akershus,3
+1998,Odd,0.5,Akershus,3
+1998,Endre,0.5,Akershus,3
+1998,Kjetil,1,Borg,4
+1998,Totto,1,Borg,5
+1998,Eirik,1,Borg,5
+1998,Bård,1,Borg,3
+1998,Arild,0.5,Borg,3
+1998,Marius,0.5,Borg,4
+1998,Odd,0.5,Borg,4
+1998,Endre,0.5,Borg,4
+1998,Stian,0.5,Borg,4
+1998,Kjetil,1,CB,2
+1998,Totto,1,CB,2
+1998,Eirik,1,CB,3
+1998,Bård,1,CB,2
+1998,Marius,0.5,CB,4
+1998,Odd,0.5,CB,3
+1998,Endre,0.5,CB,2
+1998,Kjetil,1,Dahls,3
+1998,Totto,1,Dahls,4
+1998,Eirik,1,Dahls,4
+1998,Bård,1,Dahls,4
+1998,Arild,0.5,Dahls,2
+1998,Marius,0.5,Dahls,4
+1998,Odd,0.5,Dahls,3
+1998,Endre,0.5,Dahls,3
+1998,Stian,0.5,Dahls,2
+1998,Kjetil,1,Frydenlund,3
+1998,Totto,1,Frydenlund,4
+1998,Eirik,1,Frydenlund,3
+1998,Bård,1,Frydenlund,5
+1998,Marius,0.5,Frydenlund,5
+1998,Odd,0.5,Frydenlund,3
+1998,Endre,0.5,Frydenlund,4
+1998,Kjetil,1,Hansa,5
+1998,Totto,1,Hansa,5
+1998,Eirik,1,Hansa,5
+1998,Bård,1,Hansa,5
+1998,Arild,0.5,Hansa,5
+1998,Marius,0.5,Hansa,5
+1998,Odd,0.5,Hansa,5
+1998,Endre,0.5,Hansa,5
+1998,Stian,0.5,Hansa,5
+1998,Totto,1,Låret,4
+1998,Eirik,1,Låret,4
+1998,Bård,1,Låret,4
+1998,Marius,0.5,Låret,5
+1998,Endre,0.5,Låret,4
+1998,Kjetil,1,Mack,4
+1998,Totto,1,Mack,5
+1998,Eirik,1,Mack,4
+1998,Bård,1,Mack,4
+1998,Arild,0.5,Mack,4
+1998,Marius,0.5,Mack,4
+1998,Odd,0.5,Mack,2
+1998,Endre,0.5,Mack,3
+1998,Stian,0.5,Mack,3
+1998,Kjetil,1,Ringnes,3
+1998,Totto,1,Ringnes,3
+1998,Eirik,1,Ringnes,2
+1998,Bård,1,Ringnes,4
+1998,Arild,0.5,Ringnes,3
+1998,Marius,0.5,Ringnes,5
+1998,Odd,0.5,Ringnes,4
+1998,Endre,0.5,Ringnes,4
+1998,Stian,0.5,Ringnes,3
+1998,Kjetil,1,Fredrikstad,2
+1998,Arild,0.5,Fredrikstad,2
+1998,Stian,0.5,Fredrikstad,2
+1998,Kjetil,1,Schous,5
+1998,Totto,1,Schous,4
+1998,Eirik,1,Schous,4
+1998,Arild,0.5,Schous,4
+1998,Marius,0.5,Schous,4
+1998,Stian,0.5,Schous,5
+1998,Kjetil,1,Tuborg,3
+1998,Arild,0.5,Tuborg,4
+1998,Stian,0.5,Tuborg,3
+1998,Kjetil,1,Carlsberg,4
+1998,Arild,0.5,Carlsberg,5
+1998,Stian,0.5,Carlsberg,3
+2003,Alvin,1,Julebokk,5
+2003,Alvin,1,CB,2
+2003,Alvin,1,Schous,4
+2003,Alvin,1,Ringnes,1
+2003,Alvin,1,Frydenlund,5
+2003,Alvin,1,Aas,5
+2003,Alvin,1,Lervig,3
+2003,Alvin,1,Borg,5
+2003,Alvin,1,Nøgne ø,2
+2003,Alvin,1,Mack,4
+2003,Alvin,1,Dahls,3
+2003,Alvin,1,Fredrikstad,4
+2003,Alvin,1,Hansa,5
+2003,Alvin,1,Fenalår P,4
+2003,Alvin,1,Fenalår M,5
+2003,Andre,0.5,CB,2
+2003,Andre,0.5,Schous,2
+2003,Andre,0.5,Aas,4
+2003,Andre,0.5,Mack,4
+2003,Andre,0.5,Dahls,5
+2003,Andre,0.5,Hansa,3
+2003,Andre,0.5,Fenalår P,3
+2003,Andre,0.5,Fenalår M,4
+2003,Arnie,1,Julebokk,4
+2003,Arnie,1,CB,2
+2003,Arnie,1,Schous,4
+2003,Arnie,1,Ringnes,3
+2003,Arnie,1,Frydenlund,3
+2003,Arnie,1,Lervig,3
+2003,Arnie,1,Borg,4
+2003,Arnie,1,Mack,4
+2003,Arnie,1,Dahls,2
+2003,Arnie,1,Fredrikstad,5
+2003,Arnie,1,Hansa,4
+2003,Arnie,1,Fenalår P,4
+2003,Arnie,1,Fenalår M,5
+2003,Arvid,0.5,Julebokk,5
+2003,Arvid,0.5,CB,4
+2003,Arvid,0.5,Schous,4
+2003,Arvid,0.5,Ringnes,2
+2003,Arvid,0.5,Frydenlund,6
+2003,Arvid,0.5,Borg,3
+2003,Arvid,0.5,Mack,4
+2003,Arvid,0.5,Fredrikstad,3
+2003,Arvid,0.5,Hansa,3
+2003,Arvid,0.5,Fenalår P,3
+2003,Arvid,0.5,Fenalår M,3
+2003,Bård,1,Julebokk,1
+2003,Bård,1,Schous,4
+2003,Bård,1,Ringnes,2
+2003,Bård,1,Frydenlund,5
+2003,Bård,1,Borg,4
+2003,Bård,1,Nøgne ø,5
+2003,Bård,1,Mack,2
+2003,Bård,1,Dahls,4
+2003,Bård,1,Fredrikstad,5
+2003,Bård,1,Hansa,2
+2003,Bård,1,Fenalår P,4
+2003,Bård,1,Fenalår M,5
+2003,Cynthia,1,CB,2
+2003,Cynthia,1,Schous,3
+2003,Cynthia,1,Ringnes,4
+2003,Cynthia,1,Frydenlund,2
+2003,Cynthia,1,Aas,5
+2003,Cynthia,1,Lervig,5
+2003,Cynthia,1,Borg,2
+2003,Cynthia,1,Nøgne ø,2
+2003,Cynthia,1,Mack,3
+2003,Cynthia,1,Dahls,1
+2003,Cynthia,1,Fredrikstad,5
+2003,Cynthia,1,Hansa,5
+2003,Cynthia,1,Fenalår P,4
+2003,Cynthia,1,Fenalår M,4
+2003,Dyveke,1,Julebokk,4
+2003,Dyveke,1,Schous,4
+2003,Dyveke,1,Frydenlund,5
+2003,Dyveke,1,Lervig,2
+2003,Dyveke,1,Dahls,5
+2003,Dyveke,1,Hansa,4
+2003,Dyveke,1,Fenalår P,4
+2003,Dyveke,1,Fenalår M,4
+2003,Eirik L,1,Julebokk,5
+2003,Eirik L,1,CB,3
+2003,Eirik L,1,Schous,3
+2003,Eirik L,1,Ringnes,3
+2003,Eirik L,1,Frydenlund,5
+2003,Eirik L,1,Lervig,3
+2003,Eirik L,1,Borg,4
+2003,Eirik L,1,Nøgne ø,4
+2003,Eirik L,1,Mack,5
+2003,Eirik L,1,Dahls,4
+2003,Eirik L,1,Fredrikstad,4
+2003,Eirik L,1,Hansa,5
+2003,Eirik L,1,Tou,3
+2003,Eirik L,1,Fenalår P,4
+2003,Eirik L,1,Fenalår M,3
+2003,Eirik T,0.5,Julebokk,5
+2003,Eirik T,0.5,Schous,4
+2003,Eirik T,0.5,Ringnes,4
+2003,Eirik T,0.5,Frydenlund,4
+2003,Eirik T,0.5,Aas,4
+2003,Eirik T,0.5,Lervig,4
+2003,Eirik T,0.5,Borg,5
+2003,Eirik T,0.5,Fenalår P,5
+2003,Eirik T,0.5,Fenalår M,5
+2003,Erik,0.5,Aas,5
+2003,Erik B,0.5,CB,2
+2003,Erik B,0.5,Schous,4
+2003,Erik B,0.5,Ringnes,4
+2003,Erik B,0.5,Frydenlund,4
+2003,Erik B,0.5,Aas,5
+2003,Erik B,0.5,Mack,3
+2003,Erik B,0.5,Fredrikstad,2
+2003,Erik B,0.5,Hansa,2
+2003,Erik B,0.5,Fenalår P,3
+2003,Erik B,0.5,Fenalår M,5
+2003,Gjertrud,1,Julebokk,3
+2003,Gjertrud,1,CB,4
+2003,Gjertrud,1,Aas,4
+2003,Gjertrud,1,Borg,4
+2003,Gjertrud,1,Mack,4
+2003,Gjertrud,1,Fenalår P,5
+2003,Gjertrud,1,Fenalår M,5
+2003,Harald Ø,0.5,CB,5
+2003,Harald Ø,0.5,Schous,4
+2003,Harald,0.5,Julebokk,3
+2003,Harald,0.5,CB,3
+2003,Harald,0.5,Schous,4
+2003,Harald,0.5,Ringnes,3
+2003,Harald,0.5,Frydenlund,4
+2003,Harald,0.5,Aas,5
+2003,Harald,0.5,Borg,4
+2003,Harald,0.5,Mack,4
+2003,Harald,0.5,Hansa,3
+2003,Janken,1,Julebokk,4
+2003,Janken,1,CB,3
+2003,Janken,1,Schous,4
+2003,Janken,1,Ringnes,4
+2003,Janken,1,Lervig,3
+2003,Janken,1,Borg,3
+2003,Janken,1,Mack,5
+2003,Janken,1,Fredrikstad,3
+2003,Janken,1,Fenalår P,4
+2003,Janken,1,Fenalår M,5
+2003,Jarle,1,CB,3
+2003,Jarle,1,Schous,4
+2003,Jarle,1,Ringnes,3
+2003,Jarle,1,Frydenlund,5
+2003,Jarle,1,Lervig,3
+2003,Jarle,1,Borg,5
+2003,Jarle,1,Mack,4
+2003,Jarle,1,Dahls,4
+2003,Jarle,1,Fredrikstad,5
+2003,Jarle,1,Tou,5
+2003,Jarle,1,Fenalår P,4
+2003,Jarle,1,Fenalår M,4
+2003,Kenneth,1,CB,2
+2003,Kenneth,1,Ringnes,2
+2003,Kenneth,1,Frydenlund,3
+2003,Kenneth,1,Lervig,3
+2003,Kenneth,1,Borg,4
+2003,Kenneth,1,Nøgne ø,3
+2003,Kenneth,1,Mack,3
+2003,Kenneth,1,Dahls,4
+2003,Kenneth,1,Fredrikstad,4
+2003,Kenneth,1,Hansa,3
+2003,Kenneth,1,Fenalår P,4
+2003,Kenneth,1,Fenalår M,4
+2003,Knut Håkon,1,Julebokk,5
+2003,Knut Håkon,1,CB,3
+2003,Knut Håkon,1,Schous,4
+2003,Knut Håkon,1,Ringnes,4
+2003,Knut Håkon,1,Frydenlund,5
+2003,Knut Håkon,1,Borg,4
+2003,Knut Håkon,1,Mack,5
+2003,Knut Håkon,1,Dahls,4
+2003,Knut Håkon,1,Fredrikstad,3
+2003,Knut Håkon,1,Hansa,5
+2003,Knut Håkon,1,Tou,5
+2003,Knut Håkon,1,Fenalår P,4
+2003,Knut Håkon,1,Fenalår M,3
+2003,Marianne,0.5,CB,3
+2003,Marianne,0.5,Aas,5
+2003,Marianne,0.5,Mack,5
+2003,Marianne,0.5,Dahls,4
+2003,Marianne,0.5,Hansa,4
+2003,Marianne,0.5,Fenalår P,4
+2003,Marianne,0.5,Fenalår M,4
+2003,Morten,1,CB,3
+2003,Morten,1,Schous,4
+2003,Morten,1,Ringnes,4
+2003,Morten,1,Frydenlund,4
+2003,Morten,1,Aas,4
+2003,Morten,1,Borg,3
+2003,Morten,1,Nøgne ø,3
+2003,Morten,1,Dahls,3
+2003,Morten,1,Fredrikstad,3
+2003,Morten,1,Fenalår P,4
+2003,Morten,1,Fenalår M,5
+2003,Petter,1,Julebokk,4
+2003,Petter,1,CB,4
+2003,Petter,1,Schous,5
+2003,Petter,1,Ringnes,3
+2003,Petter,1,Frydenlund,4
+2003,Petter,1,Aas,4
+2003,Petter,1,Lervig,4
+2003,Petter,1,Borg,4
+2003,Petter,1,Mack,5
+2003,Petter,1,Dahls,5
+2003,Petter,1,Fredrikstad,5
+2003,Petter,1,Hansa,5
+2003,Petter,1,Fenalår P,5
+2003,Petter,1,Fenalår M,5
+2003,Silje,0.5,Ringnes,3
+2003,Silje,0.5,Frydenlund,3
+2003,Silje,0.5,Lervig,4
+2003,Silje,0.5,Borg,4
+2003,Silje,0.5,Mack,4
+2003,Silje,0.5,Dahls,5
+2003,Silje,0.5,Fredrikstad,5
+2003,Tom,0.5,Lervig,3
+2003,Tom,0.5,Nøgne ø,3
+2003,Tom,0.5,Fenalår P,5
+2003,Tom,0.5,Fenalår M,5
+2003,Totto,1,Julebokk,4
+2003,Totto,1,CB,2
+2003,Totto,1,Schous,4
+2003,Totto,1,Ringnes,4
+2003,Totto,1,Frydenlund,4
+2003,Totto,1,Aas,4
+2003,Totto,1,Lervig,3
+2003,Totto,1,Borg,3
+2003,Totto,1,Nøgne ø,4
+2003,Totto,1,Mack,5
+2003,Totto,1,Dahls,5
+2003,Totto,1,Fredrikstad,2
+2003,Totto,1,Hansa,2
+2003,Totto,1,Tou,4
+2003,Totto,1,Fenalår P,4
+2003,Totto,1,Fenalår M,3
+2003,X - Lars,1,Julebokk,2
+2003,X - Lars,1,CB,3
+2003,X - Lars,1,Schous,4
+2003,X - Lars,1,Frydenlund,3
+2003,X - Lars,1,Aas,5
+2003,X - Lars,1,Borg,4
+2003,X - Lars,1,Mack,4
+2003,Øyvind,0.5,Julebokk,4
+2003,Øyvind,0.5,CB,2
+2003,Øyvind,0.5,Ringnes,3
+2003,Øyvind,0.5,Frydenlund,4
+2003,Øyvind,0.5,Lervig,2
+2003,Øyvind,0.5,Borg,5
+2003,Øyvind,0.5,Nøgne ø,4
+2003,Øyvind,0.5,Mack,3
+2003,Øyvind,0.5,Fenalår P,4
+2003,Øyvind,0.5,Fenalår M,5
+2003,X-Arild,1,Julebokk,5
+2003,X-Arild,1,CB,5
+2003,X-Arild,1,Ringnes,4
+2003,X-Arild,1,Aas,3
+2003,X-Arild,1,Borg,4
+2003,X-Arild,1,Mack,4
+2003,X-Arild,1,Fredrikstad,2
+2003,X-Arild,1,Tou,3
+2004,Alvin,1,Julebokk,4
+2004,Alvin,1,CB,3
+2004,Alvin,1,Lervig,3
+2004,Alvin,1,Ringnes,4
+2004,Alvin,1,Frydenlund,5
+2004,Alvin,1,Aas,4
+2004,Alvin,1,Mack,6
+2004,Alvin,1,Borg,2
+2004,Alvin,1,Dahls,4
+2004,Alvin,1,Fredrikstad,4
+2004,Alvin,1,Hansa,4
+2004,Alvin,1,Fenalår A,5
+2004,Alvin,1,Fenalår B,3
+2004,Alvin,1,Fenalår C,4
+2004,Arnie,1,Julebokk,5
+2004,Arnie,1,CB,3
+2004,Arnie,1,Ringnes,4
+2004,Arnie,1,Aas,3
+2004,Arnie,1,Mack,4
+2004,Arnie,1,Borg,3
+2004,Arnie,1,Hansa,4
+2004,Bård,1,Lervig,2
+2004,Bård,1,Frydenlund,4
+2004,Bård,1,Mack,4
+2004,Bård,1,Borg,5
+2004,Bård,1,Nøgne Ø Underlig Jul,3
+2004,Bård,1,Dahls,4
+2004,Bård,1,Fredrikstad,3
+2004,Bård,1,Fenalår A,4
+2004,Bård,1,Fenalår B,5
+2004,Bård,1,Fenalår C,4
+2004,Cynthia,1,Julebokk,4
+2004,Cynthia,1,CB,2
+2004,Cynthia,1,Lervig,3
+2004,Cynthia,1,Ringnes,4
+2004,Cynthia,1,Frydenlund,6
+2004,Cynthia,1,Aas,4
+2004,Cynthia,1,Mack,6
+2004,Cynthia,1,Borg,3
+2004,Cynthia,1,Dahls,4
+2004,Cynthia,1,Fredrikstad,3
+2004,Cynthia,1,Hansa,5
+2004,Cynthia,1,Fenalår A,5
+2004,Cynthia,1,Fenalår B,3
+2004,Cynthia,1,Fenalår C,4
+2004,Dyveke,1,CB,3
+2004,Dyveke,1,Aas,3
+2004,Dyveke,1,Mack,4
+2004,Dyveke,1,Nøgne Ø God Jul,3
+2004,Dyveke,1,Dahls,4
+2004,Dyveke,1,Fredrikstad,3
+2004,Dyveke,1,Hansa,5
+2004,Dyveke,1,Fenalår A,4
+2004,Dyveke,1,Fenalår B,5
+2004,Dyveke,1,Fenalår C,4
+2004,Hein H,0.5,CB,4
+2004,Hein H,0.5,Lervig,5
+2004,Hein H,0.5,Nøgne Ø Underlig Jul,1
+2004,Hein H,0.5,Dahls,3
+2004,Hein H,0.5,Fredrikstad,5
+2004,Hein H,0.5,Hansa,5
+2004,Eirik T,0,Ringnes,5
+2004,Eirik T,0,Mack,3
+2004,Eirik T,0,Nøgne Ø Julenatt,4
+2004,Eirik T,0,Fredrikstad,5
+2004,Eirik T,0,Fenalår A,2
+2004,Eirik T,0,Fenalår B,4
+2004,Eirik T,0,Fenalår C,5
+2004,Hasse,0.5,Hansa,5
+2004,Lars G,1,Julebokk,4
+2004,Lars G,1,CB,4
+2004,Lars G,1,Ringnes,4
+2004,Lars G,1,Aas,5
+2004,Lars G,1,Borg,4
+2004,Lars G,1,Nøgne Ø Julenatt,2
+2004,Lars G,1,Dahls,3
+2004,Gjertrud,1,Ringnes,5
+2004,Gjertrud,1,Mack,4
+2004,Gjertrud,1,Nøgne Ø Underlig Jul,2
+2004,Gjertrud,1,Dahls,4
+2004,Gjertrud,1,Fenalår A,6
+2004,Gjertrud,1,Fenalår B,5
+2004,Gjertrud,1,Fenalår C,5
+2004,Hanne Therese,1,Ringnes,6
+2004,Hanne Therese,1,Aas,2
+2004,Hanne Therese,1,Borg,4
+2004,Hanne Therese,1,Nøgne Ø God Jul,2
+2004,Hanne Therese,1,Fredrikstad,4
+2004,Hanne Therese,1,Hansa,4
+2004,Hanne Therese,1,Fenalår A,2
+2004,Hanne Therese,1,Fenalår B,5
+2004,Hanne Therese,1,Fenalår C,4
+2004,Harald Ø,1,Ringnes,4
+2004,Harald Ø,1,Aas,2
+2004,Harald Ø,1,Mack,5
+2004,Harald Ø,1,Dahls,4
+2004,Harald Ø,1,Hansa,3
+2004,Harald,1,Aas,5
+2004,Harald,1,Mack,4
+2004,Harald,1,Borg,3
+2004,Harald,1,Nøgne Ø God Jul,2
+2004,Harald,1,Dahls,2
+2004,Harald,1,Hansa,4
+2004,Janken,1,Lervig,2
+2004,Janken,1,Ringnes,4
+2004,Janken,1,Frydenlund,5
+2004,Janken,1,Aas,4
+2004,Janken,1,Mack,5
+2004,Janken,1,Borg,5
+2004,Janken,1,Nøgne Ø God Jul,1
+2004,Janken,1,Nøgne Ø Julenatt,1
+2004,Janken,1,Nøgne Ø Underlig Jul,1
+2004,Janken,1,Dahls,4
+2004,Janken,1,Fenalår A,2
+2004,Janken,1,Fenalår B,5
+2004,Janken,1,Fenalår C,3
+2004,Kjetil JD,0.5,Julebokk,5
+2004,Kjetil JD,0.5,Aas,4
+2004,Kjetil JD,0.5,Borg,4
+2004,Kjetil JD,0.5,Nøgne Ø God Jul,5
+2004,Kjetil JD,0.5,Hansa,4
+2004,Eva,0.5,Ringnes,3
+2004,Eva,0.5,Dahls,2
+2004,Eva,0.5,Hansa,3
+2004,Nils-H,1,Julebokk,3
+2004,Nils-H,1,CB,3
+2004,Nils-H,1,Ringnes,4
+2004,Nils-H,1,Frydenlund,3
+2004,Nils-H,1,Aas,3
+2004,Nils-H,1,Mack,3
+2004,Nils-H,1,Borg,3
+2004,Nils-H,1,Nøgne Ø God Jul,2
+2004,Nils-H,1,Dahls,4
+2004,Nils-H,1,Fredrikstad,3
+2004,Nils-H,1,Hansa,3
+2004,Nils-H,1,Fenalår A,5
+2004,Nils-H,1,Fenalår B,4
+2004,Nils-H,1,Fenalår C,4
+2004,Petter,1,Julebokk,4
+2004,Petter,1,CB,4
+2004,Petter,1,Ringnes,6
+2004,Petter,1,Frydenlund,5
+2004,Petter,1,Aas,4
+2004,Petter,1,Mack,5
+2004,Petter,1,Borg,4
+2004,Petter,1,Nøgne Ø Julenatt,3
+2004,Petter,1,Nøgne Ø Underlig Jul,2
+2004,Petter,1,Dahls,4
+2004,Petter,1,Fredrikstad,4
+2004,Petter,1,Hansa,4
+2004,Petter,1,Fenalår A,4
+2004,Petter,1,Fenalår B,1
+2004,Petter,1,Fenalår C,5
+2004,Trygve,0.5,CB,3
+2004,Trygve,0.5,Borg,4
+2004,Trygve,0.5,Hansa,4
+2004,Totto,1,Julebokk,4
+2004,Totto,1,CB,3
+2004,Totto,1,Lervig,2
+2004,Totto,1,Ringnes,5
+2004,Totto,1,Frydenlund,6
+2004,Totto,1,Aas,3
+2004,Totto,1,Mack,4
+2004,Totto,1,Borg,4
+2004,Totto,1,Nøgne Ø God Jul,3
+2004,Totto,1,Nøgne Ø Julenatt,3
+2004,Totto,1,Nøgne Ø Underlig Jul,2
+2004,Totto,1,Dahls,4
+2004,Totto,1,Fredrikstad,4
+2004,Totto,1,Hansa,5
+2004,Totto,1,Fenalår A,4
+2004,Totto,1,Fenalår B,5
+2004,Totto,1,Fenalår C,3
+2004,Tobias,0.5,Julebokk,6
+2004,Tobias,0.5,CB,3
+2004,Tobias,0.5,Ringnes,5
+2004,Tobias,0.5,Frydenlund,4
+2004,Tobias,0.5,Aas,4
+2004,Tobias,0.5,Mack,4
+2004,Tobias,0.5,Borg,4
+2004,Tobias,0.5,Nøgne Ø God Jul,1
+2004,Tobias,0.5,Dahls,5
+2004,Tobias,0.5,Fredrikstad,5
+2004,Tobias,0.5,Fenalår A,4
+2004,Tobias,0.5,Fenalår B,6
+2004,Tobias,0.5,Fenalår C,3
+2004,Øyvind,1,CB,2
+2004,Øyvind,1,Ringnes,3
+2004,Øyvind,1,Borg,4
+2004,Øyvind,1,Nøgne Ø Julenatt,4
+2004,Øyvind,1,Hansa,3
+2004,Verinoca,0.5,Aas,5
+2004,Verinoca,0.5,Mack,3
+2007,Totto,1,Fenalår 1,4
+2007,Totto,1,Fenalår 2,6
+2007,Totto,1,Ringnes,3
+2007,Totto,1,Hansa,4
+2007,Totto,1,Nissefar,2
+2007,Totto,1,Mack Juleøl,3
+2007,Totto,1,Dahls,5
+2007,Totto,1,Hansa Julebrygg,5
+2007,Totto,1,Borg,4
+2007,Totto,1,Aass,4
+2007,Totto,1,CB,3
+2007,Totto,1,Underlig Jul,2
+2007,Totto,1,God jul,3
+2007,Totto,1,Nissemor,2
+2007,Totto,1,Julebukk,6
+2007,Totto,1,Mack,3
+2007,Totto,1,Fredrikstad,2
+2007,Totto,1,Levig,5
+2007,Ole-Martin,0.5,Fenalår 1,5
+2007,Ole-Martin,0.5,Fenalår 2,4
+2007,Ole-Martin,0.5,Hansa,4
+2007,Ole-Martin,0.5,Mack Juleøl,4
+2007,Ole-Martin,0.5,Dahls,3
+2007,Ole-Martin,0.5,Hansa Julebrygg,5
+2007,Ole-Martin,0.5,Borg,5
+2007,Ole-Martin,0.5,CB,4
+2007,Ole-Martin,0.5,Underlig Jul,4
+2007,Ole-Martin,0.5,God jul,6
+2007,Ole-Martin,0.5,Julebukk,2
+2007,Ole-Martin,0.5,Fredrikstad,2
+2007,Hein,1,Fenalår 1,3
+2007,Hein,1,Fenalår 2,5
+2007,Hein,1,Ringnes,2
+2007,Hein,1,Mack Juleøl,3
+2007,Hein,1,Hansa Julebrygg,5
+2007,Hein,1,Borg,4
+2007,Hein,1,Aass,3
+2007,Hein,1,CB,4
+2007,Hein,1,Julebukk,3
+2007,Hein,1,Fredrikstad,5
+2007,Petroman,1,Fenalår 1,6
+2007,Petroman,1,Fenalår 2,5
+2007,Petroman,1,Hansa,3
+2007,Petroman,1,Mack Juleøl,4
+2007,Petroman,1,Dahls,5
+2007,Petroman,1,Hansa Julebrygg,5
+2007,Petroman,1,Borg,4
+2007,Petroman,1,Aass,5
+2007,Petroman,1,CB,3
+2007,Petroman,1,God jul,4
+2007,Petroman,1,Julefnugg,3
+2007,Petroman,1,Julebukk,4
+2007,Petroman,1,Fredrikstad,3
+2007,Tor,1,Mack Juleøl,4
+2007,Tor,1,Dahls,4
+2007,Tor,1,Hansa Julebrygg,4
+2007,Tor,1,Borg,3
+2007,Tor,1,CB,4
+2007,Tor,1,Julebukk,2
+2007,Gullik,1,Hansa,3
+2007,Gullik,1,Hansa Julebrygg,5
+2007,Gullik,1,Borg,4
+2007,Gullik,1,Aass,4
+2007,Gullik,1,Julebukk,4
+2007,Alvin,1,Fenalår 1,4
+2007,Alvin,1,Fenalår 2,5
+2007,Alvin,1,Hansa,4
+2007,Alvin,1,Mack Juleøl,6
+2007,Alvin,1,Dahls,3
+2007,Alvin,1,Aass,5
+2007,Alvin,1,Julebukk,6
+2007,Bård,1,Fenalår 1,4
+2007,Bård,1,Fenalår 2,5
+2007,Bård,1,Hansa,2
+2007,Bård,1,Mack Juleøl,2
+2007,Bård,1,Dahls,4
+2007,Bård,1,Borg,4
+2007,Bård,1,Aass,4
+2007,Bård,1,Julebukk,3
+2007,Bård,1,Fredrikstad,2
+2007,Bård,1,Levig,5
+2007,Morten m.fl..,2.5,Ringnes,4.25
+2007,Morten m.fl..,2.5,Hansa,3.25
+2007,Morten m.fl..,2.5,Aass,3.25
+2007,Morten m.fl..,2.5,God jul,3
+2007,Cynthia,1,Fenalår 1,5
+2007,Cynthia,1,Fenalår 2,3
+2007,Gjertud,1,Fenalår 1,5
+2007,Gjertud,1,Fenalår 2,3
+2007,Harald,1,Fenalår 1,3
+2007,Harald,1,Fenalår 2,5
+2007,Harald,1,Ringnes,3
+2007,Harald,1,Hansa,4
+2007,Harald,1,Hansa Julebrygg,5
+2007,Harald,1,Borg,3
+2007,Harald,1,CB,3
+2007,Harald,1,Underlig Jul,5
+2007,Harald,1,God jul,2
+2007,Christian B,0.5,Hansa,6
