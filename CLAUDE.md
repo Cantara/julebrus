@@ -18,8 +18,8 @@ badges, and imported historic seasons. See DESIGN.md for rules and decisions.
   - `duel/BradleyTerry`, `stats/BayesianAverage` — pure ranking math.
   - `badge/BadgeEvaluator` — pure badge rules over a tasting log.
   - `history/` — CSV import of earlier seasons and their weighting.
-  - `consent/` — versioned consent; `ConsentInterceptor` answers 403 `CONSENT_REQUIRED` on all `/api/**` except `/api/me`, `/api/consent*`, `/api/config`. Texts in `resources/consent/`.
-  - `history/ClaimService`, `RaterNameSuggester` (pure) — claim-your-history on `rater_key`; admin decisions in `admin/AdminClaimsController`.
+  - `consent/` — versioned consent (current state in `user_consents`, append-only `consent_events`); `ConsentInterceptor` answers 403 `CONSENT_REQUIRED` on all `/api/**` except `/api/me`, `/api/consent*`, `/api/config`, `/api/privacy` (public texts for the `/privacy` page). Texts in `resources/consent/`.
+  - `history/ClaimService`, `RaterNameSuggester` (pure) — claim-your-history on `rater_key`; admin decide/revoke in `admin/AdminClaimsController`.
   - `web/ConfigController` — public `/api/config` (sponsor line).
   - `config/SecurityConfig` — Google chain (`!dev`) and dev chain with `X-Dev-User` impersonation.
 - `frontend/src/views/` — one view per screen; `api/client.ts` handles CSRF, 401 redirect and dev user.
@@ -34,7 +34,7 @@ cd frontend && npm run build
 ```
 
 ## Conventions
-- Rule violations are HTTP 422 with a stable `code` (`OUTSIDE_SEASON`, `DAILY_LIMIT`, `SOLO_DAYS_EXHAUSTED`, `ALREADY_RATED`). Other errors carry their own codes too: `CONSENT_REQUIRED`, `CONSENT_VERSION_MISMATCH`, `RATER_NOT_FOUND`, `CLAIM_EXISTS`, `RATER_TAKEN`, `CLAIM_LIMIT`, `CLAIM_NOT_PENDING`, `CLAIM_NOT_FOUND`.
+- Rule violations are HTTP 422 with a stable `code` (`OUTSIDE_SEASON`, `DAILY_LIMIT`, `SOLO_DAYS_EXHAUSTED`, `ALREADY_RATED`). Other errors carry their own codes too: `CONSENT_REQUIRED`, `CONSENT_VERSION_MISMATCH`, `RATER_NOT_FOUND`, `CLAIM_EXISTS`, `RATER_TAKEN`, `CLAIM_LIMIT`, `CLAIM_NOT_PENDING`, `CLAIM_NOT_APPROVED`, `CLAIM_NOT_FOUND`, `RATER_LINKED`, and `CONFLICT` for a lost unique-constraint race.
 - Days are Europe/Oslo. Scores are integers 1–6.
 - Schema changes go in a new Flyway migration; Hibernate runs with `ddl-auto: validate`.
 - UI copy is Norwegian (bokmål); code and comments are English.
