@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed, onMounted, ref } from 'vue'
+import { useRouter } from 'vue-router'
 import { get } from '../api/client'
 import type { Beer, Session, Tasting } from '../api/types'
 import AdventCalendar, { type DayEntry } from '../components/AdventCalendar.vue'
@@ -8,6 +9,7 @@ import Snow from '../components/Snow.vue'
 import { useMe } from '../stores/me'
 
 const store = useMe()
+const router = useRouter()
 const leastTasted = ref<Beer[]>([])
 const mine = ref<Tasting[]>([])
 const beerName = ref<Record<string, string>>({})
@@ -97,9 +99,17 @@ const dayOfSeason = computed(() => {
 
   <h2>Kalenderen</h2>
   <div v-if="season" class="card">
-    <AdventCalendar :start="season.start" :end="season.end" :today="today" :days="days" />
-    <p class="muted" style="margin: 10px 0 0">Én luke per dag. Trykk på en åpnet luke for å se hva som sto på bordet.</p>
+    <AdventCalendar :start="season.start" :end="season.end" :today="today" :days="days" @finale="router.push('/finale')" />
+    <p class="muted" style="margin: 10px 0 0">Én luke per dag. Trykk på en åpnet luke for å se hva som sto på bordet. Stjernen er finalen.</p>
   </div>
+
+  <router-link class="card row" to="/finale" style="text-decoration: none">
+    <div>
+      <strong class="display">★ Finalen</strong>
+      <div class="muted">Resultatet avsløres {{ season ? new Date(season.end + 'T00:00:00').toLocaleDateString('nb-NO', { day: 'numeric', month: 'long' }) : '' }}</div>
+    </div>
+    <span class="muted">›</span>
+  </router-link>
 
   <h2>Minst smakt</h2>
   <p class="muted">Disse trenger kjærlighet. Explorer-merket venter.</p>

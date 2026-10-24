@@ -237,3 +237,26 @@ th { font-size: 0.8rem; color: var(--muted); font-weight: 600; }
   .reveal.unwrap .paper, .reveal.unwrap .burst { display: none; }
   .reveal.unwrap .scores .score, .reveal.unwrap .average { animation: none; }
 }
+
+/* Finale */
+.finale-hero { text-align: center; padding: 18px 0 6px; }
+.finale-hero .star { font-size: 3rem; color: var(--brass); line-height: 1; }
+.finale-hero .star.lit { color: var(--candle); text-shadow: 0 0 18px var(--glow), 0 0 40px var(--glow); }
+.finale-hero h1 { margin: 6px 0 4px; }
+.finale-hero .winner { font-size: 1.6rem; font-weight: 700; margin: 10px 0 2px; }
+.countdown { display: flex; justify-content: center; gap: 18px; margin: 14px 0 6px; }
+.countdown div { display: grid; justify-items: center; min-width: 64px; }
+.countdown strong { font-family: Fraunces, Georgia, serif; font-size: 2.4rem; line-height: 1; font-variant-numeric: tabular-nums; }
+.countdown span { font-size: 0.75rem; color: var(--muted); }
+.podium { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; align-items: end; margin: 10px 0 12px; }
+.podium .step { display: grid; justify-items: center; gap: 6px; }
+.podium .label { text-align: center; font-size: 0.85rem; min-height: 2.6em; }
+.podium .block {
+  width: 100%; border-radius: 10px 10px 0 0; display: grid; place-items: center;
+  background: var(--line); color: var(--ink); font-size: 1.6rem; font-weight: 700;
+}
+.podium .p1 .block { height: 110px; background: var(--candle); color: #2b1a14; box-shadow: 0 0 16px var(--glow); }
+.podium .p2 .block { height: 80px; }
+.podium .p3 .block { height: 60px; background: #c99a6b; color: #2b1a14; }
+.award .who { margin-top: 8px; padding-top: 8px; border-top: 1px dashed var(--line); }
+.award.none { opacity: 0.7; }

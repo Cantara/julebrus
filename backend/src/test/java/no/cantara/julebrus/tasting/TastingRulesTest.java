@@ -15,7 +15,7 @@ class TastingRulesTest {
 
     private static final ZoneId OSLO = ZoneId.of("Europe/Oslo");
     private final SeasonProperties season = new SeasonProperties(
-            2026, LocalDate.of(2026, 11, 1), LocalDate.of(2026, 12, 23), OSLO, 5, 5);
+            2026, LocalDate.of(2026, 11, 1), LocalDate.of(2026, 12, 23), OSLO, 5, 5, null);
     private final TastingRules rules = new TastingRules(season);
 
     private static Instant at(String osloLocal) {

@@ -26,6 +26,8 @@ julebrus:
     zone: Europe/Oslo
     max-tastings-per-day: 5
     max-solo-days: 5
+    # Local time on the last day when the finale page reveals the result.
+    finale-time: "18:00"
   auth:
     # Comma separated. Empty means any Google account may log in.
     allowed-domains: ${JULEBRUS_ALLOWED_DOMAINS:}

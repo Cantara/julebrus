@@ -21,6 +21,7 @@ const props = defineProps<{
 const WEEKDAYS = ['ma', 'ti', 'on', 'to', 'fr', 'lø', 'sø']
 const MONTHS = ['jan', 'feb', 'mar', 'apr', 'mai', 'jun', 'jul', 'aug', 'sep', 'okt', 'nov', 'des']
 
+const emit = defineEmits<{ finale: [] }>()
 const selected = ref<string | null>(null)
 
 function iso(d: Date) {
@@ -60,12 +61,17 @@ function classes(date: string) {
 
 function title(date: string) {
   const entry = props.days[date]
+  if (date === props.end && !entry) return 'Finalen'
   if (date > props.today) return 'Ikke ennå'
   if (!entry) return 'Ingen smaking'
   return entry.beers.map((b) => `${b.name} (${b.score})`).join(', ')
 }
 
 function toggle(date: string) {
+  if (date === props.end && !props.days[date]) {
+    emit('finale')
+    return
+  }
   if (!props.days[date]) return
   selected.value = selected.value === date ? null : date
 }
@@ -92,7 +98,7 @@ const detailDate = computed(() => {
         :data-month="c.month ?? ''"
         :title="title(c.date)"
         :aria-label="`${c.dom}. ${c.month ?? ''}: ${title(c.date)}`"
-        :tabindex="days[c.date] ? 0 : -1"
+        :tabindex="days[c.date] || c.date === end ? 0 : -1"
         @click="toggle(c.date)"
       >
         {{ c.dom }}

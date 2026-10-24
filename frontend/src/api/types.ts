@@ -134,6 +134,25 @@ export interface HistoricRating {
   notes?: string
 }
 
+export interface Award {
+  id: string
+  title: string
+  description: string
+  winnerName?: string
+  detail: string
+}
+
+export interface Finale {
+  year: number
+  revealAt: string
+  revealed: boolean
+  preview: boolean
+  totals: { tastings: number; beers: number; people: number; sessions: number }
+  podium?: BeerRank[]
+  duelPodium?: DuelRank[]
+  awards?: Award[]
+}
+
 export interface ConsentView {
   version: string
   accepted: boolean
