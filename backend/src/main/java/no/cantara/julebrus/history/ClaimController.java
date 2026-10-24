@@ -23,7 +23,7 @@ import java.util.UUID;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-/** Claim your history: find the old rater names that are yours and ask an admin to link them. */
+/** Claim your history: find the historic people (rater keys) that are you and ask an admin to link them. */
 @RestController
 @RequestMapping("/api/history")
 public class ClaimController {
@@ -32,23 +32,25 @@ public class ClaimController {
     }
 
     /**
-     * One historic rater name. Only the name, the years and a count: never scores or
-     * beers, because anyone logged in can read this list.
+     * One historic person (key). Only the key, the years and a count: never scores, beers,
+     * breweries, notes or emails, because anyone logged in can read this list.
      */
-    public record RaterView(String raterName, List<Integer> years, long ratingCount,
-                            /** false when the name is approved for another person */ boolean available,
-                            /** looks like the caller's first name */ boolean suggested,
-                            MyClaim myClaim) {
+    public record CandidateView(String raterKey, List<Integer> years, long ratingCount,
+                                /** false when approved for another person or linked to a login */ boolean available,
+                                /** raters.csv already ties this person to a login: no claim possible or needed */ boolean linkedByEmail,
+                                /** the linked login is the caller's own */ boolean linkedToYou,
+                                /** looks like the caller's first name */ boolean suggested,
+                                MyClaim myClaim) {
     }
 
-    public record ClaimView(UUID id, String raterName, HistoricRaterClaim.Status status, Instant createdAt,
+    public record ClaimView(UUID id, String raterKey, HistoricRaterClaim.Status status, Instant createdAt,
                             Instant decidedAt) {
         static ClaimView of(HistoricRaterClaim c) {
-            return new ClaimView(c.getId(), c.getRaterName(), c.getStatus(), c.getCreatedAt(), c.getDecidedAt());
+            return new ClaimView(c.getId(), c.getRaterKey(), c.getStatus(), c.getCreatedAt(), c.getDecidedAt());
         }
     }
 
-    public record ClaimRequest(@NotBlank @Size(max = 255) String raterName) {
+    public record ClaimRequest(@NotBlank @Size(max = 255) String raterKey) {
     }
 
     private final ClaimService claims;
@@ -59,22 +61,24 @@ public class ClaimController {
         this.currentUser = currentUser;
     }
 
-    /** Suggested names first (exact first-name match before prefix match), then alphabetical. */
-    @GetMapping("/raters")
-    public List<RaterView> raters() {
+    /** Suggested people first (exact first-name match before prefix match), then alphabetical. */
+    @GetMapping("/claim-candidates")
+    public List<CandidateView> candidates() {
         User me = currentUser.get();
         Map<String, UUID> owners = claims.approvedOwners();
         Map<String, HistoricRaterClaim> mine = claims.mine(me.getId()).stream()
-                .collect(Collectors.toMap(HistoricRaterClaim::getRaterName, Function.identity()));
-        return claims.raters().values().stream()
-                .sorted(Comparator.<ClaimService.RaterInfo>comparingInt(r -> RaterNameSuggester.rank(me.getDisplayName(), r.raterName()))
-                        .thenComparing(ClaimService.RaterInfo::raterName, String.CASE_INSENSITIVE_ORDER))
+                .collect(Collectors.toMap(HistoricRaterClaim::getRaterKey, Function.identity()));
+        return claims.candidates().values().stream()
+                .sorted(Comparator.<ClaimService.Candidate>comparingInt(r -> RaterNameSuggester.rank(me.getDisplayName(), r.raterKey()))
+                        .thenComparing(ClaimService.Candidate::raterKey, String.CASE_INSENSITIVE_ORDER))
                 .map(r -> {
-                    UUID owner = owners.get(r.raterName());
-                    HistoricRaterClaim c = mine.get(r.raterName());
-                    return new RaterView(r.raterName(), r.years(), r.ratingCount(),
-                            owner == null || owner.equals(me.getId()),
-                            RaterNameSuggester.suggested(me.getDisplayName(), r.raterName()),
+                    UUID owner = owners.get(r.raterKey());
+                    HistoricRaterClaim c = mine.get(r.raterKey());
+                    boolean toYou = r.linkedByEmail() && r.loginEmail().equalsIgnoreCase(me.getEmail());
+                    return new CandidateView(r.raterKey(), r.years(), r.ratingCount(),
+                            !r.linkedByEmail() && (owner == null || owner.equals(me.getId())),
+                            r.linkedByEmail(), toYou,
+                            !r.linkedByEmail() && RaterNameSuggester.suggested(me.getDisplayName(), r.raterKey()),
                             c == null ? null : new MyClaim(c.getId(), c.getStatus()));
                 }).toList();
     }
@@ -82,7 +86,8 @@ public class ClaimController {
     @PostMapping("/claims")
     @ResponseStatus(HttpStatus.CREATED)
     public ClaimView create(@Valid @RequestBody ClaimRequest in) {
-        return ClaimView.of(claims.create(currentUser.get().getId(), in.raterName()));
+        User me = currentUser.get();
+        return ClaimView.of(claims.create(me.getId(), me.getEmail(), in.raterKey()));
     }
 
     @GetMapping("/claims/me")

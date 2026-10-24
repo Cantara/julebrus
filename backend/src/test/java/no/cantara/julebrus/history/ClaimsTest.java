@@ -11,7 +11,11 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import java.math.BigDecimal;
 
+import static org.hamcrest.Matchers.contains;
+import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.everyItem;
+import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.not;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
@@ -43,32 +47,40 @@ class ClaimsTest {
 
     @BeforeEach
     void history() throws Exception {
-        if (!seasons.existsById(2001)) {
-            seasons.save(new HistoricSeason(2001, "Test 2001", new BigDecimal("1"), new BigDecimal("6"), null, null));
+        for (int year : new int[]{2001, 2002}) {
+            if (!seasons.existsById(year)) {
+                seasons.save(new HistoricSeason(year, "Test " + year, new BigDecimal("1"), new BigDecimal("6"), null, null));
+            }
         }
-        // Rater names are unique to this test class so they cannot collide with the bundled history.
+        // Keys are unique to this test class so they cannot collide with the real history.
         if (ratings.findByBeerNameIgnoreCaseOrderBySeasonYearDesc("Claimtest Stout").isEmpty()) {
-            row("Zqeirik", null, "5");
-            row("Zqeirik L", null, "3");
-            row("Zqtotto", null, "4");
-            row("Zqola", "zqola@cantara.no", "2");
-            row("Zqpair", null, "6");
-            row("Zqpair", null, "1");
+            // One person, three spellings in two seasons (what raters.csv joins).
+            row(2001, "Zqeirik", "Zqeirik Litangen", null, "5");
+            row(2002, "Zqeirik L", "Zqeirik Litangen", null, "3");
+            row(2002, "Zqeirik Litangen", "Zqeirik Litangen", null, "4");
+            row(2001, "Zqtotto", "Zqtotto", null, "4");
+            row(2001, "Zqpair", "Zqpair", null, "6");
+            row(2001, "Zqpair", "Zqpair", null, "1");
+            // raters.csv already tied this person to a login.
+            row(2001, "Zqlinked", "Zqlinked Person", "zqlinked@cantara.no", "2");
         }
         ConsentSupport.accept(mvc, ADMIN);
-        for (String u : new String[]{"zqeirik@cantara.no", "zqkari@cantara.no", "zqola@cantara.no", "zqmany@cantara.no"}) {
+        for (String u : new String[]{"zqeirik@cantara.no", "zqkari@cantara.no", "zqola@cantara.no", "zqmany@cantara.no",
+                "zqlinked@cantara.no"}) {
             ConsentSupport.accept(mvc, u);
         }
     }
 
-    private void row(String rater, String email, String score) {
-        ratings.save(new HistoricRating(2001, "Claimtest Stout", "Testbryggeri", rater, email, new BigDecimal(score),
-                BigDecimal.ONE, "secret note"));
+    private void row(int year, String name, String key, String email, String score) {
+        var r = new HistoricRating(year, "Claimtest Stout", "Testbryggeri", name, null, new BigDecimal(score),
+                BigDecimal.ONE, "secret note");
+        r.applyMapping(key, email);
+        ratings.save(r);
     }
 
-    private String claim(String user, String raterName) throws Exception {
+    private String claim(String user, String raterKey) throws Exception {
         return mvc.perform(post("/api/history/claims").header("X-Dev-User", user).contentType(APPLICATION_JSON)
-                        .content("{\"raterName\":\"%s\"}".formatted(raterName)))
+                        .content("{\"raterKey\":\"%s\"}".formatted(raterKey)))
                 .andExpect(status().isCreated()).andReturn().getResponse().getContentAsString()
                 .replaceAll(".*\"id\":\"([^\"]+)\".*", "$1");
     }
@@ -79,26 +91,38 @@ class ClaimsTest {
     }
 
     @Test
-    void lifecycleApprovedClaimAddsRatingsToHistoryMe() throws Exception {
+    void lifecycleOneApprovalReturnsEverySpellingOfThePerson() throws Exception {
         String me = "zqeirik@cantara.no";
         mvc.perform(get("/api/history/me").header("X-Dev-User", me)).andExpect(jsonPath("$", hasSize(0)));
 
-        String id = claim(me, "Zqeirik");
+        // Three spellings, one key: one candidate with both seasons and all three ratings.
+        mvc.perform(get("/api/history/claim-candidates").header("X-Dev-User", me))
+                .andExpect(jsonPath("$[?(@.raterKey=='Zqeirik Litangen')]", hasSize(1)))
+                .andExpect(jsonPath("$[?(@.raterKey=='Zqeirik Litangen')].ratingCount").value(3))
+                .andExpect(jsonPath("$[?(@.raterKey=='Zqeirik Litangen')].years", contains(contains(2001, 2002))))
+                .andExpect(jsonPath("$[?(@.raterKey=='Zqeirik')]", hasSize(0)));
+
+        String id = claim(me, "Zqeirik Litangen");
         mvc.perform(get("/api/history/claims/me").header("X-Dev-User", me)).andExpect(jsonPath("$", hasSize(1)))
-                .andExpect(jsonPath("$[0].status").value("PENDING")).andExpect(jsonPath("$[0].raterName").value("Zqeirik"));
+                .andExpect(jsonPath("$[0].status").value("PENDING"))
+                .andExpect(jsonPath("$[0].raterKey").value("Zqeirik Litangen"));
         // Pending links nothing.
         mvc.perform(get("/api/history/me").header("X-Dev-User", me)).andExpect(jsonPath("$", hasSize(0)));
 
         mvc.perform(get("/api/admin/history/claims?status=PENDING").header("X-Dev-User", ADMIN))
                 .andExpect(jsonPath("$[?(@.id=='%s')].email".formatted(id)).value(me))
                 .andExpect(jsonPath("$[?(@.id=='%s')].displayName".formatted(id)).value("zqeirik"))
-                .andExpect(jsonPath("$[?(@.id=='%s')].ratingCount".formatted(id)).value(1))
-                .andExpect(jsonPath("$[?(@.id=='%s')].years[0]".formatted(id)).value(2001));
+                .andExpect(jsonPath("$[?(@.id=='%s')].raterKey".formatted(id)).value("Zqeirik Litangen"))
+                .andExpect(jsonPath("$[?(@.id=='%s')].ratingCount".formatted(id)).value(3))
+                .andExpect(jsonPath("$[?(@.id=='%s')].years".formatted(id), contains(contains(2001, 2002))));
 
         decide(id, "APPROVE", 200);
 
-        mvc.perform(get("/api/history/me").header("X-Dev-User", me)).andExpect(jsonPath("$", hasSize(1)))
-                .andExpect(jsonPath("$[0].beerName").value("Claimtest Stout"));
+        // Each rating once, from both seasons and all three spellings.
+        mvc.perform(get("/api/history/me").header("X-Dev-User", me)).andExpect(jsonPath("$", hasSize(3)))
+                .andExpect(jsonPath("$[*].raterName", containsInAnyOrder("Zqeirik", "Zqeirik L", "Zqeirik Litangen")))
+                .andExpect(jsonPath("$[*].raterKey", everyItem(is("Zqeirik Litangen"))))
+                .andExpect(jsonPath("$[*].year", containsInAnyOrder(2001, 2002, 2002)));
         mvc.perform(get("/api/history/claims/me").header("X-Dev-User", me)).andExpect(jsonPath("$[0].status").value("APPROVED"));
         // Deciding twice is refused; an approved claim cannot be withdrawn.
         decide(id, "REJECT", 409);
@@ -107,44 +131,59 @@ class ClaimsTest {
     }
 
     @Test
-    void emailMatchAndApprovedNameGiveNoDuplicates() throws Exception {
-        // zqola has one row by email under "Zqola"; claiming the same name must not double it.
-        String me = "zqola@cantara.no";
-        mvc.perform(get("/api/history/me").header("X-Dev-User", me)).andExpect(jsonPath("$", hasSize(1)));
-        decide(claim(me, "Zqola"), "APPROVE", 200);
-        mvc.perform(get("/api/history/me").header("X-Dev-User", me)).andExpect(jsonPath("$", hasSize(1)));
+    void personLinkedByEmailIsNotClaimableAndNeedsNoClaim() throws Exception {
+        String other = "zqkari@cantara.no", owner = "zqlinked@cantara.no";
+        mvc.perform(post("/api/history/claims").header("X-Dev-User", other).contentType(APPLICATION_JSON)
+                        .content("{\"raterKey\":\"Zqlinked Person\"}"))
+                .andExpect(status().isConflict()).andExpect(jsonPath("$.code").value("RATER_LINKED"));
+        mvc.perform(get("/api/history/claim-candidates").header("X-Dev-User", other))
+                .andExpect(jsonPath("$[?(@.raterKey=='Zqlinked Person')].available").value(false))
+                .andExpect(jsonPath("$[?(@.raterKey=='Zqlinked Person')].linkedByEmail").value(true))
+                .andExpect(jsonPath("$[?(@.raterKey=='Zqlinked Person')].linkedToYou").value(false))
+                .andExpect(content().string(not(containsString(owner))));
+        // The owner is covered by the email match; the candidate says so and a claim is refused too.
+        mvc.perform(get("/api/history/claim-candidates").header("X-Dev-User", owner))
+                .andExpect(jsonPath("$[?(@.raterKey=='Zqlinked Person')].linkedToYou").value(true));
+        mvc.perform(get("/api/history/me").header("X-Dev-User", owner)).andExpect(jsonPath("$", hasSize(1)));
+        mvc.perform(post("/api/history/claims").header("X-Dev-User", owner).contentType(APPLICATION_JSON)
+                        .content("{\"raterKey\":\"Zqlinked Person\"}"))
+                .andExpect(status().isConflict()).andExpect(jsonPath("$.code").value("RATER_LINKED"));
     }
 
     @Test
-    void duplicateUnknownAndTakenNames() throws Exception {
+    void duplicateUnknownAndTakenKeys() throws Exception {
         String a = "zqkari@cantara.no", b = "zqeirik@cantara.no";
         String id = claim(a, "Zqtotto");
 
         mvc.perform(post("/api/history/claims").header("X-Dev-User", a).contentType(APPLICATION_JSON)
-                        .content("{\"raterName\":\"Zqtotto\"}"))
+                        .content("{\"raterKey\":\"Zqtotto\"}"))
                 .andExpect(status().isConflict()).andExpect(jsonPath("$.code").value("CLAIM_EXISTS"));
+        // A source spelling that raters.csv joined into a key is not a candidate of its own.
         mvc.perform(post("/api/history/claims").header("X-Dev-User", a).contentType(APPLICATION_JSON)
-                        .content("{\"raterName\":\"Nobody Ever Rated\"}"))
+                        .content("{\"raterKey\":\"Zqeirik L\"}"))
                 .andExpect(status().isNotFound()).andExpect(jsonPath("$.code").value("RATER_NOT_FOUND"));
         mvc.perform(post("/api/history/claims").header("X-Dev-User", a).contentType(APPLICATION_JSON)
-                        .content("{\"raterName\":\"  \"}"))
+                        .content("{\"raterKey\":\"Nobody Ever Rated\"}"))
+                .andExpect(status().isNotFound()).andExpect(jsonPath("$.code").value("RATER_NOT_FOUND"));
+        mvc.perform(post("/api/history/claims").header("X-Dev-User", a).contentType(APPLICATION_JSON)
+                        .content("{\"raterKey\":\"  \"}"))
                 .andExpect(status().isBadRequest());
 
         decide(id, "APPROVE", 200);
 
         // Approved for a: unavailable to b in the list, and refused when b tries.
-        mvc.perform(get("/api/history/raters").header("X-Dev-User", b))
-                .andExpect(jsonPath("$[?(@.raterName=='Zqtotto')].available").value(false));
-        mvc.perform(get("/api/history/raters").header("X-Dev-User", a))
-                .andExpect(jsonPath("$[?(@.raterName=='Zqtotto')].available").value(true))
-                .andExpect(jsonPath("$[?(@.raterName=='Zqtotto')].myClaim.status").value("APPROVED"));
+        mvc.perform(get("/api/history/claim-candidates").header("X-Dev-User", b))
+                .andExpect(jsonPath("$[?(@.raterKey=='Zqtotto')].available").value(false));
+        mvc.perform(get("/api/history/claim-candidates").header("X-Dev-User", a))
+                .andExpect(jsonPath("$[?(@.raterKey=='Zqtotto')].available").value(true))
+                .andExpect(jsonPath("$[?(@.raterKey=='Zqtotto')].myClaim.status").value("APPROVED"));
         mvc.perform(post("/api/history/claims").header("X-Dev-User", b).contentType(APPLICATION_JSON)
-                        .content("{\"raterName\":\"Zqtotto\"}"))
+                        .content("{\"raterKey\":\"Zqtotto\"}"))
                 .andExpect(status().isConflict()).andExpect(jsonPath("$.code").value("RATER_TAKEN"));
     }
 
     @Test
-    void secondPendingClaimForTheSameNameCannotBeApprovedOnceTaken() throws Exception {
+    void secondPendingClaimForTheSameKeyCannotBeApprovedOnceTaken() throws Exception {
         String a = "zqkari@cantara.no", b = "zqeirik@cantara.no";
         String first = claim(a, "Zqpair");
         String second = claim(b, "Zqpair"); // both pending: allowed
@@ -157,13 +196,13 @@ class ClaimsTest {
     void atMostFivePendingClaims() throws Exception {
         String me = "zqmany@cantara.no";
         for (int i = 0; i < 5; i++) {
-            String name = "Zqmany" + i;
-            row(name, null, "3");
-            claim(me, name);
+            String key = "Zqmany" + i;
+            row(2001, key, key, null, "3");
+            claim(me, key);
         }
-        row("Zqmany5", null, "3");
+        row(2001, "Zqmany5", "Zqmany5", null, "3");
         mvc.perform(post("/api/history/claims").header("X-Dev-User", me).contentType(APPLICATION_JSON)
-                        .content("{\"raterName\":\"Zqmany5\"}"))
+                        .content("{\"raterKey\":\"Zqmany5\"}"))
                 .andExpect(status().isUnprocessableEntity()).andExpect(jsonPath("$.code").value("CLAIM_LIMIT"));
 
         // Withdrawing one frees a slot; nobody else can withdraw it.
@@ -178,7 +217,7 @@ class ClaimsTest {
     @Test
     void adminEndpointsAreForAdminsOnly() throws Exception {
         String user = "zqkari@cantara.no";
-        String id = claim("zqola@cantara.no", "Zqeirik L");
+        String id = claim("zqola@cantara.no", "Zqpair");
         mvc.perform(get("/api/admin/history/claims").header("X-Dev-User", user)).andExpect(status().isForbidden());
         mvc.perform(post("/api/admin/history/claims/" + id + "/decision").header("X-Dev-User", user)
                 .contentType(APPLICATION_JSON).content("{\"decision\":\"APPROVE\"}")).andExpect(status().isForbidden());
@@ -191,35 +230,36 @@ class ClaimsTest {
     }
 
     @Test
-    void nameListSuggestsFirstAndLeaksNoScoresOrBeers() throws Exception {
-        String body = mvc.perform(get("/api/history/raters").header("X-Dev-User", "zqeirik@cantara.no"))
+    void candidateListSuggestsFirstAndLeaksOnlyKeyYearsAndCount() throws Exception {
+        String me = "zqeirik@cantara.no";
+        String body = mvc.perform(get("/api/history/claim-candidates").header("X-Dev-User", me))
                 .andExpect(status().isOk())
-                // Display name of this dev user is "zqeirik": the exact name, then the prefix match, lead the list.
-                .andExpect(jsonPath("$[0].raterName").value("Zqeirik"))
+                // The dev user's display name is "zqeirik": "Zqeirik Litangen" leads the list.
+                .andExpect(jsonPath("$[0].raterKey").value("Zqeirik Litangen"))
                 .andExpect(jsonPath("$[0].suggested").value(true))
-                .andExpect(jsonPath("$[1].raterName").value("Zqeirik L"))
-                .andExpect(jsonPath("$[1].suggested").value(true))
-                .andExpect(jsonPath("$[2].suggested").value(false))
-                .andExpect(jsonPath("$[?(@.raterName=='Zqpair')].ratingCount").value(2))
+                .andExpect(jsonPath("$[1].suggested").value(false))
+                .andExpect(jsonPath("$[?(@.raterKey=='Zqpair')].ratingCount").value(2))
                 .andExpect(content().string(not(containsString("Claimtest Stout"))))
                 .andExpect(content().string(not(containsString("Testbryggeri"))))
                 .andExpect(content().string(not(containsString("secret note"))))
                 .andReturn().getResponse().getContentAsString();
-        // Only these keys may ever appear per entry.
+        // Only these keys may ever appear.
         org.assertj.core.api.Assertions.assertThat(body.replaceAll("\"[a-zA-Z]+\":", "\n$0").lines()
                         .map(String::trim).filter(l -> l.startsWith("\"")).map(l -> l.substring(0, l.indexOf(':')))
                         .collect(java.util.stream.Collectors.toSet()))
-                .containsOnly("\"raterName\"", "\"years\"", "\"ratingCount\"", "\"available\"", "\"suggested\"", "\"myClaim\"",
-                        "\"id\"", "\"status\"");
-        // The email of a historic rater is not exposed either.
-        org.assertj.core.api.Assertions.assertThat(body).doesNotContain("zqola@cantara.no").doesNotContain("score");
+                .isSubsetOf("\"raterKey\"", "\"years\"", "\"ratingCount\"", "\"available\"", "\"linkedByEmail\"",
+                        "\"linkedToYou\"", "\"suggested\"", "\"myClaim\"", "\"id\"", "\"status\"");
+        // No email of a linked person, no scores. Main's own /api/history/raters is untouched.
+        org.assertj.core.api.Assertions.assertThat(body).doesNotContain("@cantara.no").doesNotContain("score");
+        mvc.perform(get("/api/history/raters").header("X-Dev-User", me)).andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].name").exists());
     }
 
     @Test
     void databaseRefusesTwoApprovedClaimsForOneName() {
         var admin = users.upsert(ADMIN, "Dev Tester").getId();
-        var one = new HistoricRaterClaim(users.upsert("zqdb1@cantara.no", "a").getId(), "Zqdbname");
-        var two = new HistoricRaterClaim(users.upsert("zqdb2@cantara.no", "b").getId(), "Zqdbname");
+        var one = new HistoricRaterClaim(users.upsert("zqdb1@cantara.no", "a").getId(), "Zqdbkey");
+        var two = new HistoricRaterClaim(users.upsert("zqdb2@cantara.no", "b").getId(), "Zqdbkey");
         one.approve(admin);
         two.approve(admin);
         claimRepo.saveAndFlush(one);

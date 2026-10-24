@@ -50,7 +50,7 @@ Everyone must accept the consent notice (`CONSENT_VERSION` in `ConsentService`, 
 `backend/src/main/resources/consent/`, currently a draft for the organisers to approve)
 before any API call except `/api/me`, `/api/consent*` and `/api/config` works; the server
 answers 403 `CONSENT_REQUIRED`. Bump the version to ask everyone again. Under *Meg* people
-can ask to link their old rater names to their login; an admin approves each claim.
+can ask to link the historic people (`rater_key`, the canonical names from `history/raters.csv`) that are them to their login; an admin approves each claim. People raters.csv already ties to an email are not claimable. Candidates: `GET /api/history/claim-candidates`.
 
 ## Historic seasons
 

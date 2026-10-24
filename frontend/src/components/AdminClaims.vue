@@ -22,7 +22,7 @@ async function decide(id: string, decision: 'APPROVE' | 'REJECT') {
   <h2>{{ t('adminTitle') }}</h2>
   <p v-if="!pending.length" class="muted">{{ t('adminNone') }}</p>
   <div v-for="c in pending" :key="c.id" class="card">
-    <strong>{{ c.raterName }}</strong>
+    <strong>{{ c.raterKey }}</strong>
     <div class="muted">{{ c.years.join(', ') }} · {{ c.ratingCount }} {{ t('claimRatings') }}</div>
     <div>{{ c.displayName }} · {{ c.email }}</div>
     <div class="row" style="margin-top: 8px; justify-content: flex-start">

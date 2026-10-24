@@ -12,6 +12,7 @@ class RaterNameSuggesterTest {
     void exactFirstNameRanksBeforePrefixAndNoMatchLast() {
         assertThat(RaterNameSuggester.rank("Eirik Larsen", "Eirik")).isEqualTo(0);
         assertThat(RaterNameSuggester.rank("Eirik Larsen", "Eirik L")).isEqualTo(1);
+        assertThat(RaterNameSuggester.rank("Eirik Larsen", "Eirik Litangen")).isEqualTo(1);
         assertThat(RaterNameSuggester.rank("Eirik Larsen", "Totto")).isEqualTo(2);
     }
 

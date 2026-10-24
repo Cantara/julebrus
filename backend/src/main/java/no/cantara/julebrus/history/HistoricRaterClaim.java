@@ -11,9 +11,9 @@ import java.time.Instant;
 import java.util.UUID;
 
 /**
- * A person's request to be linked to a historic rater name. Only an admin decision
- * turns it into a link; see {@code approved_name} in the V2 migration for how "one
- * name, one person" is enforced by the database.
+ * A person's request to be linked to a historic person (rater_key). Only an admin decision
+ * turns it into a link; see {@code approved_key} in the V3 migration for how "one
+ * key, one person" is enforced by the database.
  */
 @Entity
 @Table(name = "historic_rater_claims")
@@ -27,8 +27,8 @@ public class HistoricRaterClaim {
     @Column(name = "user_id", nullable = false)
     private UUID userId;
 
-    @Column(name = "rater_name", nullable = false)
-    private String raterName;
+    @Column(name = "rater_key", nullable = false)
+    private String raterKey;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
@@ -43,23 +43,23 @@ public class HistoricRaterClaim {
     @Column(name = "decided_at")
     private Instant decidedAt;
 
-    @Column(name = "approved_name")
-    private String approvedName;
+    @Column(name = "approved_key")
+    private String approvedKey;
 
     protected HistoricRaterClaim() {
     }
 
-    public HistoricRaterClaim(UUID userId, String raterName) {
+    public HistoricRaterClaim(UUID userId, String raterKey) {
         this.id = UUID.randomUUID();
         this.userId = userId;
-        this.raterName = raterName;
+        this.raterKey = raterKey;
         this.status = Status.PENDING;
         this.createdAt = Instant.now();
     }
 
     public void approve(UUID adminId) {
         this.status = Status.APPROVED;
-        this.approvedName = raterName;
+        this.approvedKey = raterKey;
         decide(adminId);
     }
 
@@ -75,7 +75,7 @@ public class HistoricRaterClaim {
 
     public UUID getId() { return id; }
     public UUID getUserId() { return userId; }
-    public String getRaterName() { return raterName; }
+    public String getRaterKey() { return raterKey; }
     public Status getStatus() { return status; }
     public Instant getCreatedAt() { return createdAt; }
     public UUID getDecidedBy() { return decidedBy; }

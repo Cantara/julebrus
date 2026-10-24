@@ -37,7 +37,7 @@ public class AdminClaimsController {
 
     public enum Choice { APPROVE, REJECT }
 
-    public record AdminClaimView(UUID id, HistoricRaterClaim.Status status, String raterName, List<Integer> years,
+    public record AdminClaimView(UUID id, HistoricRaterClaim.Status status, String raterKey, List<Integer> years,
                                  long ratingCount, UUID userId, String displayName, String email, Instant createdAt,
                                  Instant decidedAt) {
     }
@@ -82,11 +82,11 @@ public class AdminClaimsController {
 
     private List<AdminClaimView> views(List<HistoricRaterClaim> list) {
         Map<UUID, User> byId = claims.usersById(list.stream().map(HistoricRaterClaim::getUserId).collect(Collectors.toSet()));
-        Map<String, ClaimService.RaterInfo> raters = claims.raters();
+        Map<String, ClaimService.Candidate> raters = claims.candidates();
         return list.stream().map(c -> {
             User u = byId.get(c.getUserId());
-            ClaimService.RaterInfo r = raters.get(c.getRaterName());
-            return new AdminClaimView(c.getId(), c.getStatus(), c.getRaterName(),
+            ClaimService.Candidate r = raters.get(c.getRaterKey());
+            return new AdminClaimView(c.getId(), c.getStatus(), c.getRaterKey(),
                     r == null ? List.of() : r.years(), r == null ? 0 : r.ratingCount(), c.getUserId(),
                     u == null ? null : u.getDisplayName(), u == null ? null : u.getEmail(), c.getCreatedAt(), c.getDecidedAt());
         }).toList();

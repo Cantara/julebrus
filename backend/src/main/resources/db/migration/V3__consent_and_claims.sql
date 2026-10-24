@@ -9,25 +9,24 @@ create table user_consents (
   constraint uq_user_consent unique (user_id, consent_version)
 );
 
--- A logged-in person asks to be linked to a historic rater name (first names as typed
--- in the old spreadsheets). Nothing is linked until an admin approves.
+-- A logged-in person asks to be linked to a historic person, identified by rater_key (the
+-- canonical name from raters.csv that joins "Eirik", "Eirik L", ...). Nothing is linked until an admin approves.
 --
--- approved_name is rater_name while the claim is APPROVED and NULL otherwise. Its unique
--- constraint means one rater name can be approved for at most one user. A partial unique
+-- approved_key is rater_key while the claim is APPROVED and NULL otherwise. Its unique
+-- constraint means one person (key) can be approved for at most one user. A partial unique
 -- index would say the same, but H2 (dev/test) has none; NULLs never collide, so this
 -- works on PostgreSQL and H2 alike.
 create table historic_rater_claims (
   id             uuid primary key,
   user_id        uuid not null references users(id),
-  rater_name     varchar(255) not null,
+  rater_key      varchar(255) not null,
   status         varchar(16) not null check (status in ('PENDING', 'APPROVED', 'REJECTED')),
   created_at     timestamp with time zone not null,
   decided_by     uuid references users(id),
   decided_at     timestamp with time zone,
-  approved_name  varchar(255),
-  constraint uq_claim_user_name unique (user_id, rater_name),
-  constraint uq_claim_approved_name unique (approved_name),
-  constraint ck_claim_approved_name check ((status = 'APPROVED') = (approved_name is not null))
+  approved_key   varchar(255),
+  constraint uq_claim_user_key unique (user_id, rater_key),
+  constraint uq_claim_approved_key unique (approved_key),
+  constraint ck_claim_approved_key check ((status = 'APPROVED') = (approved_key is not null))
 );
 create index ix_claims_status on historic_rater_claims(status);
-create index ix_historic_ratings_rater_name on historic_ratings(rater_name);

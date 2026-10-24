@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Comparator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
@@ -29,8 +30,15 @@ public class ClaimService {
 
     public static final int MAX_PENDING_PER_USER = 5;
 
-    /** Where a historic rater name appears. Counts only, deliberately no scores or beers. */
-    public record RaterInfo(String raterName, List<Integer> years, long ratingCount) {
+    /**
+     * One historic person (key). Counts only, deliberately no scores or beers. {@code loginEmail}
+     * is the lower-cased email raters.csv attached to the person, or null; it is used on the
+     * server and never serialised.
+     */
+    public record Candidate(String raterKey, List<Integer> years, long ratingCount, String loginEmail) {
+        public boolean linkedByEmail() {
+            return loginEmail != null;
+        }
     }
 
     private final HistoricRatingRepository ratings;
@@ -43,18 +51,20 @@ public class ClaimService {
         this.users = users;
     }
 
-    /** Every distinct historic rater name with its years and rating count, by name. */
+    /** Every historic person (key) with years and rating count. */
     @Transactional(readOnly = true)
-    public Map<String, RaterInfo> raters() {
+    public Map<String, Candidate> candidates() {
         Map<String, TreeSet<Integer>> years = new TreeMap<>();
         Map<String, Long> counts = new TreeMap<>();
-        for (Object[] row : ratings.countByRaterNameAndSeason()) {
-            String name = (String) row[0];
-            years.computeIfAbsent(name, k -> new TreeSet<>()).add(((Number) row[1]).intValue());
-            counts.merge(name, ((Number) row[2]).longValue(), Long::sum);
+        Map<String, String> emails = new TreeMap<>();
+        for (Object[] row : ratings.countByKeyAndSeason()) {
+            String key = (String) row[0];
+            years.computeIfAbsent(key, k -> new TreeSet<>()).add(((Number) row[1]).intValue());
+            counts.merge(key, ((Number) row[2]).longValue(), Long::sum);
+            if (row[3] != null) emails.putIfAbsent(key, ((String) row[3]).toLowerCase(Locale.ROOT));
         }
-        Map<String, RaterInfo> out = new TreeMap<>(String.CASE_INSENSITIVE_ORDER.thenComparing(Comparator.naturalOrder()));
-        years.forEach((name, ys) -> out.put(name, new RaterInfo(name, List.copyOf(ys), counts.get(name))));
+        Map<String, Candidate> out = new TreeMap<>();
+        years.forEach((key, ys) -> out.put(key, new Candidate(key, List.copyOf(ys), counts.get(key), emails.get(key))));
         return out;
     }
 
@@ -63,36 +73,43 @@ public class ClaimService {
         return claims.findByUserIdOrderByCreatedAtAsc(userId);
     }
 
-    /** Names that are approved for someone, mapped to that someone. */
+    /** Keys that are approved for someone, mapped to that someone. */
     @Transactional(readOnly = true)
     public Map<String, UUID> approvedOwners() {
         return claims.findByStatusOrderByCreatedAtAsc(APPROVED).stream()
-                .collect(Collectors.toMap(HistoricRaterClaim::getRaterName, HistoricRaterClaim::getUserId));
+                .collect(Collectors.toMap(HistoricRaterClaim::getRaterKey, HistoricRaterClaim::getUserId));
     }
 
     @Transactional(readOnly = true)
-    public Set<String> approvedNamesOf(UUID userId) {
+    public Set<String> approvedKeysOf(UUID userId) {
         return claims.findByUserIdOrderByCreatedAtAsc(userId).stream()
-                .filter(c -> c.getStatus() == APPROVED).map(HistoricRaterClaim::getRaterName).collect(Collectors.toSet());
+                .filter(c -> c.getStatus() == APPROVED).map(HistoricRaterClaim::getRaterKey).collect(Collectors.toSet());
     }
 
     @Transactional
-    public HistoricRaterClaim create(UUID userId, String rawName) {
-        String name = rawName == null ? "" : rawName.trim();
-        if (!raters().containsKey(name)) {
+    public HistoricRaterClaim create(UUID userId, String userEmail, String rawKey) {
+        String key = rawKey == null ? "" : rawKey.trim();
+        Candidate c = candidates().get(key);
+        if (c == null) {
             throw new ApiException(HttpStatus.NOT_FOUND, "RATER_NOT_FOUND", "No earlier rater with that name");
         }
-        if (claims.findByUserIdAndRaterName(userId, name).isPresent()) {
+        if (c.linkedByEmail()) {
+            // raters.csv already ties this person to a Google login; the email match covers it.
+            throw new ApiException(HttpStatus.CONFLICT, "RATER_LINKED",
+                    c.loginEmail().equalsIgnoreCase(userEmail) ? "Already linked to your login, no claim needed"
+                            : "That person is already linked to a login");
+        }
+        if (claims.findByUserIdAndRaterKey(userId, key).isPresent()) {
             throw new ApiException(HttpStatus.CONFLICT, "CLAIM_EXISTS", "You have already claimed that name");
         }
-        if (claims.findByRaterNameAndStatus(name, APPROVED).isPresent()) {
+        if (claims.findByRaterKeyAndStatus(key, APPROVED).isPresent()) {
             throw new ApiException(HttpStatus.CONFLICT, "RATER_TAKEN", "That name is already linked to someone");
         }
         if (claims.countByUserIdAndStatus(userId, PENDING) >= MAX_PENDING_PER_USER) {
             throw new ApiException(HttpStatus.UNPROCESSABLE_ENTITY, "CLAIM_LIMIT",
                     "At most " + MAX_PENDING_PER_USER + " claims can wait for approval at once");
         }
-        return claims.save(new HistoricRaterClaim(userId, name));
+        return claims.save(new HistoricRaterClaim(userId, key));
     }
 
     /** A person withdraws their own pending claim. Someone else's claim looks like it does not exist. */
@@ -127,7 +144,7 @@ public class ClaimService {
             c.reject(adminId);
             return c;
         }
-        if (claims.findByRaterNameAndStatus(c.getRaterName(), APPROVED).isPresent()) {
+        if (claims.findByRaterKeyAndStatus(c.getRaterKey(), APPROVED).isPresent()) {
             throw new ApiException(HttpStatus.CONFLICT, "RATER_TAKEN", "That name is already linked to someone else");
         }
         c.approve(adminId);

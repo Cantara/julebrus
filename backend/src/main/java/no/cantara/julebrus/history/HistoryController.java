@@ -62,16 +62,16 @@ public class HistoryController {
 
     /**
      * The logged-in person's own ratings from earlier years: matched on email, plus the
-     * ratings under any rater name an admin has approved for them. One query, so no duplicates.
+     * every rating of any person (rater_key) an admin has approved for them. One query, so each rating appears once.
      */
     @GetMapping("/me")
     public List<RatingView> mine() {
         User me = currentUser.get();
         Map<Integer, HistoricSeason> byYear = seasonIndex();
-        Set<String> names = claims.approvedNamesOf(me.getId());
-        List<HistoricRating> found = names.isEmpty()
+        Set<String> keys = claims.approvedKeysOf(me.getId());
+        List<HistoricRating> found = keys.isEmpty()
                 ? ratings.findByRaterEmailIgnoreCaseOrderBySeasonYearDescBeerNameAsc(me.getEmail())
-                : ratings.findMineByEmailOrApprovedNames(me.getEmail(), names);
+                : ratings.findMineByEmailOrApprovedKeys(me.getEmail(), keys);
         return found.stream().map(r -> view(r, byYear)).toList();
     }
 

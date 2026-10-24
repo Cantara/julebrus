@@ -144,18 +144,20 @@ export interface PublicConfig {
 
 export type ClaimStatus = 'PENDING' | 'APPROVED' | 'REJECTED'
 
-export interface RaterView {
-  raterName: string
+export interface ClaimCandidate {
+  raterKey: string
   years: number[]
   ratingCount: number
   available: boolean
+  linkedByEmail: boolean
+  linkedToYou: boolean
   suggested: boolean
   myClaim: { id: string; status: ClaimStatus } | null
 }
 
 export interface ClaimView {
   id: string
-  raterName: string
+  raterKey: string
   status: ClaimStatus
   createdAt: string
   decidedAt?: string
@@ -164,7 +166,7 @@ export interface ClaimView {
 export interface AdminClaimView {
   id: string
   status: ClaimStatus
-  raterName: string
+  raterKey: string
   years: number[]
   ratingCount: number
   userId: string
