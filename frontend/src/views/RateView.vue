@@ -74,7 +74,7 @@ async function save() {
       <thead><tr><th>År</th><th>Hvem</th><th>Score</th><th>Vekt</th><th>På 1–6</th></tr></thead>
       <tbody>
         <tr v-for="h in history" :key="h.year + h.raterName">
-          <td>{{ h.year }}</td><td>{{ h.raterName }}</td><td>{{ h.score }}</td><td>{{ h.weight }}</td><td>{{ h.normalised.toFixed(1) }}</td>
+          <td>{{ h.year }}</td><td>{{ h.raterKey }}</td><td>{{ h.score }}</td><td>{{ h.weight }}</td><td>{{ h.normalised.toFixed(1) }}</td>
         </tr>
       </tbody>
     </table>

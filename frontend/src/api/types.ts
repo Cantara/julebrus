@@ -123,6 +123,7 @@ export interface HistoricRating {
   beerName: string
   brewery?: string
   raterName: string
+  raterKey: string
   score: number
   weight: number
   normalised: number

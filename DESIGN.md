@@ -55,7 +55,9 @@ badges like everyone else. Their scores are simply left out of the averages and
 the ranking. After a normal season they are back at 1.0.
 
 Weights are keyed by email so seasons before the app count: the historic import
-carries each rater's weight for that year in its `weight` column.
+carries each rater's weight for that year in its `weight` column, and
+`history/raters.csv` joins the name variants of one person ("Eirik", "Eirik L")
+and attaches their login email.
 
 - Official ranking uses weighted means. `ratings` counts people, `effectiveVotes`
   is the sum of their weights.
@@ -186,3 +188,5 @@ Today is 24 Oct. Phase 1 must be live by 1 Nov.
 - Should half points (4.5) be allowed? Current answer: no, stay with the dice.
 - Allowed email domains: cantara.no only, or also partner domains?
 - Vinmonopolet API key for the catalogue import, or a one-off CSV?
+- Emails for the historic raters in `history/raters.csv`, so people see their own
+  history. Only the names are mapped so far.
