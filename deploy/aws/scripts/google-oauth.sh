@@ -2,11 +2,12 @@
 # The Google OAuth client of Julebrus, kept in Secrets Manager as julebrus/google-oauth {client-id, client-secret}.
 # Run on the OPERATOR's laptop. The values are typed at a hidden prompt (read -rs): never echoed, never in shell
 # history, never in a command line, never printed.
-#   PROFILE=neuron bash google-oauth.sh create    store the client id and secret (asks to replace if the secret exists)
-#   PROFILE=neuron bash google-oauth.sh status    only says whether the secret exists and when it was last changed
+#   PROFILE=<aws-profile> bash google-oauth.sh create    store the client id and secret (asks to replace if the secret exists)
+#   PROFILE=<aws-profile> bash google-oauth.sh status    only says whether the secret exists and when it was last changed
 # The app fetches the values at every start: after a change, restart it (julebrus.sh env set ... restarts it too).
 set -euo pipefail
-PROFILE="${PROFILE:-${AWS_PROFILE:-neuron}}"; REGION="${REGION:-eu-north-1}"; NAME="${SECRET_NAME:-julebrus/google-oauth}"
+PROFILE="${PROFILE:-${AWS_PROFILE:-}}"; [ -n "$PROFILE" ] || { echo "Set PROFILE (or AWS_PROFILE) to the AWS CLI profile to use."; exit 1; }
+REGION="${REGION:-eu-north-1}"; NAME="${SECRET_NAME:-julebrus/google-oauth}"
 A=(aws --profile "$PROFILE" --region "$REGION")
 exists() {
   local err
@@ -38,6 +39,7 @@ case "${1:-help}" in
         --tags Key=Project,Value=julebrus --secret-string file:///dev/stdin --query Name --output text
     fi
     unset CID CSEC
-    echo "Stored. Redirect URI to register at Google: https://xmas.cantara.no/login/oauth2/code/google" ;;
+    host="$("${A[@]}" cloudformation describe-stacks --stack-name "${STACK:-julebrus}" --query "Stacks[0].Outputs[?OutputKey=='AppHostName'].OutputValue" --output text 2>/dev/null || true)"
+    echo "Stored. Redirect URI to register at Google: https://${host:-<AppHostName of the stack>}/login/oauth2/code/google" ;;
   *) sed -n 2,8p "$0"; exit 1 ;;
 esac

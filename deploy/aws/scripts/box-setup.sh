@@ -11,9 +11,17 @@ HERE="$(cd "$(dirname "$0")" && pwd)"
 if [ "${1:-}" = tls ]; then
   EMAIL="${2:?usage: box-setup.sh tls EMAIL}"
   IP="$(curl -fsS -m 3 -H "X-aws-ec2-metadata-token: $(curl -fsS -X PUT -m 3 -H 'X-aws-ec2-metadata-token-ttl-seconds: 60' http://169.254.169.254/latest/api/token)" http://169.254.169.254/latest/meta-data/public-ipv4)"
-  getent hosts "$PUBLIC_HOST" | grep -q "$IP" || { echo "STOPPED: $PUBLIC_HOST does not resolve to $IP yet."; exit 1; }
+  getent hosts "$PUBLIC_HOST" | awk -v ip="$IP" '$1 == ip { found = 1 } END { exit !found }' || { echo "STOPPED: $PUBLIC_HOST does not resolve to $IP yet."; exit 1; }
   certbot --nginx -d "$PUBLIC_HOST" --agree-tos -m "$EMAIL" --redirect --non-interactive
   systemctl enable --now certbot-renew.timer   # AL2023 ships the timer disabled: without this the certificate never renews
+  # Hardening, applied now that certbot has written the 443 block: HSTS in that block, no nginx version in headers.
+  CONF=/etc/nginx/conf.d/julebrus.conf
+  printf 'server_tokens off;\n' > /etc/nginx/conf.d/julebrus-hardening.conf
+  if ! grep -q Strict-Transport-Security "$CONF"; then
+    cp "$CONF" "$CONF.bak"
+    sed -i '/listen 443/a\    add_header Strict-Transport-Security "max-age=31536000" always;' "$CONF"
+    nginx -t || { cp "$CONF.bak" "$CONF"; echo "nginx -t failed after adding HSTS; reverted that change"; exit 1; }
+  fi
   systemctl reload nginx; echo "TLS done: https://$PUBLIC_HOST"; exit 0
 fi
 install -m 0755 "$HERE/julebrus-update.sh" /opt/julebrus/julebrus-update.sh

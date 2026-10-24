@@ -2,6 +2,9 @@
 Description=Julebrus, the Cantara Christmas beer tasting (Spring Boot)
 After=network-online.target
 Wants=network-online.target
+# Not a tight crash loop: a failing start (for example a missing secret) is retried every 30 s, at most 5 times in 10 minutes.
+StartLimitIntervalSec=600
+StartLimitBurst=5
 
 [Service]
 User=julebrus
@@ -13,7 +16,7 @@ ExecStartPre=+/opt/julebrus/julebrus-prestart.sh
 WorkingDirectory=/opt/julebrus/current
 ExecStart=/usr/bin/java -XX:MaxRAMPercentage=60 -jar /opt/julebrus/current/app.jar --server.port=8080 --server.address=127.0.0.1
 Restart=on-failure
-RestartSec=5
+RestartSec=30
 NoNewPrivileges=true
 ProtectSystem=strict
 ProtectHome=true
