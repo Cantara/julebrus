@@ -32,6 +32,10 @@ public class HistoricRating {
     @Column(name = "rater_email")
     private String raterEmail;
 
+    /** Canonical name from raters.csv, or the source name when unmapped. */
+    @Column(name = "rater_key")
+    private String raterKey;
+
     @Column(nullable = false)
     private BigDecimal score;
 
@@ -64,6 +68,17 @@ public class HistoricRating {
     public void setBeerId(UUID beerId) { this.beerId = beerId; }
     public String getRaterName() { return raterName; }
     public String getRaterEmail() { return raterEmail; }
+    public String getRaterKey() { return raterKey; }
+
+    /** Applies a raters.csv row. Returns true when anything changed. */
+    public boolean applyMapping(String canonicalName, String email) {
+        String key = (canonicalName == null || canonicalName.isBlank()) ? raterName : canonicalName.trim();
+        String mail = (email == null || email.isBlank()) ? raterEmail : email.trim().toLowerCase();
+        boolean changed = !key.equals(raterKey) || !java.util.Objects.equals(mail, raterEmail);
+        raterKey = key;
+        raterEmail = mail;
+        return changed;
+    }
     public BigDecimal getScore() { return score; }
     public BigDecimal getWeight() { return weight; }
     public String getNotes() { return notes; }

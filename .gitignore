@@ -20,7 +20,4 @@ backend/src/main/resources/static/
 frontend/node_modules/
 frontend/dist/
 frontend/dev-dist/
-
-# Python bytecode (tools/)
-__pycache__/
-*.pyc
+*.tsbuildinfo

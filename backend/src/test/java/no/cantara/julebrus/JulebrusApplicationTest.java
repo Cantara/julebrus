@@ -135,6 +135,15 @@ class JulebrusApplicationTest {
         mvc.perform(get("/api/history/seasons")).andExpect(status().isOk())
                 .andExpect(jsonPath("$.length()").value(greaterThanOrEqualTo(12)))
                 .andExpect(jsonPath("$[0].year").value(2019));
+        // ...and so are the ratings: 2019 has 39 votes over 26 beers in the bundled file.
+        mvc.perform(get("/api/history/seasons/2019")).andExpect(status().isOk())
+                .andExpect(jsonPath("$.length()").value(26));
+        // raters.csv joins "Eirik" (1998) into Eirik Litangen; unmapped names keep their own.
+        mvc.perform(get("/api/history/beers?name=Aass"))
+                .andExpect(jsonPath("$[?(@.year==1998 && @.raterName=='Eirik')].raterKey").value("Eirik Litangen"))
+                .andExpect(jsonPath("$[?(@.year==1998 && @.raterName=='Totto')].raterKey").value("Totto"));
+        mvc.perform(get("/api/history/raters")).andExpect(status().isOk())
+                .andExpect(jsonPath("$[?(@.name=='Eirik Litangen')].lastYear").value(2017));
         mvc.perform(get("/api/tastings/tags")).andExpect(content().string(containsString("liquorice")));
     }
 

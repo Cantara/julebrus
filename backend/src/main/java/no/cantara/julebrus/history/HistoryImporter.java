@@ -15,7 +15,10 @@ import java.io.InputStreamReader;
 import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 
 /**
  * Loads earlier seasons from CSV files on the classpath at startup, once per season.
@@ -52,10 +55,11 @@ public class HistoryImporter implements ApplicationRunner {
             log.info("Imported historic season {}", year);
         }
 
-        for (Resource csv : resolver.getResources("classpath:history/[0-9]*.csv")) {
+        // Ant-style patterns have no character classes, so match *.csv and filter on the name.
+        for (Resource csv : resolver.getResources("classpath:history/*.csv")) {
             String name = csv.getFilename();
-            if (name == null) continue;
-            int year = Integer.parseInt(name.substring(0, name.indexOf('.')));
+            if (name == null || !name.matches("\\d{4}\\.csv")) continue;
+            int year = Integer.parseInt(name.substring(0, 4));
             if (ratings.existsBySeasonYear(year)) continue;
             if (!seasons.existsById(year)) {
                 log.warn("history/{} has no row in seasons.csv, skipping", name);
@@ -70,6 +74,28 @@ public class HistoryImporter implements ApplicationRunner {
             ratings.saveAll(batch);
             log.info("Imported {} historic ratings for {}", batch.size(), year);
         }
+
+        applyRaterMapping(resolver.getResource("classpath:history/raters.csv"));
+    }
+
+    /**
+     * Joins name variants and attaches emails. Runs on every startup so an edit to
+     * raters.csv needs only a restart; rows without a mapping keep their source name.
+     */
+    private void applyRaterMapping(Resource ratersCsv) throws IOException {
+        Map<String, List<String>> mapping = new HashMap<>();
+        if (ratersCsv.exists()) {
+            for (List<String> row : Csv.read(ratersCsv)) {
+                mapping.put(row.get(0).toLowerCase(Locale.ROOT), row);
+            }
+        }
+        int changed = 0;
+        for (HistoricRating r : ratings.findAll()) {
+            List<String> row = mapping.get(r.getRaterName().trim().toLowerCase(Locale.ROOT));
+            boolean c = row == null ? r.applyMapping(null, null) : r.applyMapping(row.get(1), row.get(2));
+            if (c) changed++;
+        }
+        if (changed > 0) log.info("Applied rater mapping to {} historic ratings", changed);
     }
 
     private static String nullIfBlank(String s) {
