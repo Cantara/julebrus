@@ -86,7 +86,7 @@
    "meanScore": 3.82,
    "top": [
     {
-     "beer": "Aass Juleøl Orginal",
+     "beer": "Aass Juleøl Original",
      "mean": 5.0,
      "votes": 4
     }
@@ -110,7 +110,7 @@
   {
    "year": 2014,
    "source": "votes",
-   "beers": 37,
+   "beers": 36,
    "voters": 17,
    "votes": 145,
    "meanScore": 3.45,
@@ -232,21 +232,6 @@
    ]
   },
   {
-   "beer": "Dahls",
-   "seasons": 8,
-   "votes": 65,
-   "years": [
-    1998,
-    2003,
-    2004,
-    2007,
-    2011,
-    2012,
-    2013,
-    2015
-   ]
-  },
-  {
    "beer": "CB",
    "seasons": 8,
    "votes": 63,
@@ -277,6 +262,35 @@
    ]
   },
   {
+   "beer": "Dahls Juleøl",
+   "seasons": 8,
+   "votes": 30,
+   "years": [
+    2011,
+    2012,
+    2013,
+    2014,
+    2015,
+    2017,
+    2018,
+    2019
+   ]
+  },
+  {
+   "beer": "Ringnes Julebokk",
+   "seasons": 7,
+   "votes": 18,
+   "years": [
+    2011,
+    2012,
+    2013,
+    2014,
+    2015,
+    2017,
+    2019
+   ]
+  },
+  {
    "beer": "Mack",
    "seasons": 6,
    "votes": 60,
@@ -290,41 +304,29 @@
    ]
   },
   {
-   "beer": "Hansa Julebrygg",
+   "beer": "Nøgne Ø God Jul",
    "seasons": 6,
-   "votes": 18,
+   "votes": 25,
    "years": [
-    2007,
-    2011,
-    2012,
-    2015,
-    2017,
-    2018
-   ]
-  },
-  {
-   "beer": "Hansa Juleøl",
-   "seasons": 6,
-   "votes": 18,
-   "years": [
-    2011,
-    2012,
-    2014,
-    2015,
-    2017,
-    2018
-   ]
-  },
-  {
-   "beer": "Hansa",
-   "seasons": 5,
-   "votes": 58,
-   "years": [
-    1998,
-    2003,
     2004,
-    2007,
-    2013
+    2011,
+    2012,
+    2013,
+    2014,
+    2015
+   ]
+  },
+  {
+   "beer": "Nøgne Ø Underlig Jul",
+   "seasons": 6,
+   "votes": 21,
+   "years": [
+    2004,
+    2011,
+    2012,
+    2013,
+    2014,
+    2015
    ]
   }
  ],

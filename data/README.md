@@ -15,7 +15,7 @@ and from the Internet Archive.
 - `../source/google-sheets/<year>.csv`: the raw exports of the Google Sheets (2016 and 2019 via the `gviz` CSV form).
 
 Voters appear under the names used on the wiki pages and in the sheets.
-Beer names are as written in each source and are not normalised across years.
+Beer names retain source wording except for confirmed spelling and diacritic fixes and the approved Dahls normalization; separate Vinmonopolet reference listings retain their official product names.
 
 ## Coverage
 
