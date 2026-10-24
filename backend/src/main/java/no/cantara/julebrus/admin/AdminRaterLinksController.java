@@ -4,6 +4,7 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import no.cantara.julebrus.config.AuthProperties;
+import no.cantara.julebrus.consent.ConsentService;
 import no.cantara.julebrus.history.ClaimService;
 import no.cantara.julebrus.history.HistoricRaterClaim;
 import no.cantara.julebrus.user.CurrentUser;
@@ -52,8 +53,11 @@ public class AdminRaterLinksController {
     private final AuthProperties auth;
     private final ClaimService claims;
     private final UserRepository users;
+    private final ConsentService consents;
 
-    public AdminRaterLinksController(CurrentUser currentUser, AuthProperties auth, ClaimService claims, UserRepository users) {
+    public AdminRaterLinksController(CurrentUser currentUser, AuthProperties auth, ClaimService claims, UserRepository users,
+                                     ConsentService consents) {
+        this.consents = consents;
         this.currentUser = currentUser;
         this.auth = auth;
         this.claims = claims;
@@ -81,11 +85,13 @@ public class AdminRaterLinksController {
                 .toList();
     }
 
-    /** Everyone who has logged in, for the dropdown. */
+    /** Everyone with active consent, for the dropdown: nobody who never consented, declined or withdrew is listed. */
     @GetMapping("/logins")
     public List<Login> logins() {
         admin();
+        var active = consents.activeUserIds();
         return users.findAll().stream()
+                .filter(u -> active.contains(u.getId()))
                 .map(u -> new Login(u.getId(), u.getDisplayName(), u.getEmail()))
                 .sorted(Comparator.comparing(l -> l.displayName().toLowerCase()))
                 .toList();
@@ -94,6 +100,9 @@ public class AdminRaterLinksController {
     @PostMapping("/link")
     public RaterRow link(@Valid @RequestBody LinkRequest in) {
         User me = admin();
+        if (!consents.activeUserIds().contains(in.userId())) {
+            throw new ApiException(HttpStatus.CONFLICT, "NO_ACTIVE_CONSENT", "That person has no active consent");
+        }
         claims.adminLink(me.getId(), in.userId(), in.raterKey());
         return row(in.raterKey());
     }

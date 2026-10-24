@@ -75,6 +75,8 @@ export const post = <T>(path: string, body?: unknown) =>
 /** POST a raw text body (CSV upload); the content type is passed through as given. */
 export const postText = <T>(path: string, text: string, contentType = 'text/csv') =>
   api<T>(path, { method: 'POST', body: text, headers: { 'Content-Type': contentType } })
+export const put = <T>(path: string, body?: unknown) =>
+  api<T>(path, { method: 'PUT', body: body === undefined ? undefined : JSON.stringify(body) })
 export const del = <T>(path: string) => api<T>(path, { method: 'DELETE' })
 
 /** Ends the session. The server answers with a redirect to "/", so the body is ignored. */
@@ -85,4 +87,40 @@ export async function logout(): Promise<void> {
     /* the redirect target is HTML, and the dev profile has no logout: either way we leave */
   }
   window.location.href = '/'
+}
+
+/**
+ * Multipart upload of one file (part "file") with progress. fetch cannot report upload progress, so this uses XHR.
+ * Resolves with the parsed JSON; rejects with an ApiFailure carrying the server's stable code.
+ */
+export function upload<T>(path: string, file: Blob, filename: string, onProgress?: (fraction: number) => void): Promise<T> {
+  return new Promise((resolve, reject) => {
+    const xhr = new XMLHttpRequest()
+    xhr.open('POST', path)
+    xhr.setRequestHeader('Accept', 'application/json')
+    const xsrf = csrfToken()
+    if (xsrf) xhr.setRequestHeader('X-XSRF-TOKEN', decodeURIComponent(xsrf))
+    const dev = devUser()
+    if (dev) xhr.setRequestHeader('X-Dev-User', dev)
+    xhr.upload.onprogress = (e) => {
+      if (e.lengthComputable && onProgress) onProgress(e.loaded / e.total)
+    }
+    xhr.onerror = () => reject(new ApiFailure(0, 'NETWORK', 'Network error'))
+    xhr.onload = () => {
+      let body: { code?: string; message?: string } = {}
+      try {
+        body = JSON.parse(xhr.responseText)
+      } catch {
+        /* no body */
+      }
+      if (xhr.status >= 200 && xhr.status < 300) return resolve(body as T)
+      if (xhr.status === 403 && body.code === 'CONSENT_REQUIRED' && window.location.pathname !== '/consent') {
+        window.location.href = '/consent'
+      }
+      reject(new ApiFailure(xhr.status, body.code ?? String(xhr.status), body.message ?? xhr.statusText))
+    }
+    const form = new FormData()
+    form.append('file', file, filename)
+    xhr.send(form)
+  })
 }

@@ -8,6 +8,7 @@ import no.cantara.julebrus.beer.BeerRepository;
 import no.cantara.julebrus.blind.BlindService;
 import no.cantara.julebrus.tasting.Tasting;
 import no.cantara.julebrus.tasting.TastingRepository;
+import no.cantara.julebrus.team.TeamService;
 import no.cantara.julebrus.user.CurrentUser;
 import no.cantara.julebrus.user.User;
 import no.cantara.julebrus.user.UserRepository;
@@ -31,7 +32,7 @@ import java.util.stream.Collectors;
 @RequestMapping("/api/sessions")
 public class SessionController {
 
-    public record MemberView(UUID userId, String displayName) {
+    public record MemberView(UUID userId, String displayName, List<String> teams) {
     }
 
     /**
@@ -58,15 +59,17 @@ public class SessionController {
     private final BeerRepository beers;
     private final TastingRepository tastings;
     private final BlindService blind;
+    private final TeamService teams;
 
     public SessionController(SessionService service, CurrentUser currentUser, UserRepository users,
-                             BeerRepository beers, TastingRepository tastings, BlindService blind) {
+                             BeerRepository beers, TastingRepository tastings, BlindService blind, TeamService teams) {
         this.service = service;
         this.currentUser = currentUser;
         this.users = users;
         this.beers = beers;
         this.tastings = tastings;
         this.blind = blind;
+        this.teams = teams;
     }
 
     @PostMapping
@@ -87,7 +90,12 @@ public class SessionController {
 
     @PostMapping("/{id}/beers")
     public SessionView addBeer(@PathVariable UUID id, @Valid @RequestBody AddBeerRequest in) {
-        if (!beers.existsById(in.beerId())) throw new org.springframework.web.server.ResponseStatusException(HttpStatus.NOT_FOUND, "Unknown beer");
+        Beer beer = beers.findById(in.beerId())
+                .orElseThrow(() -> new org.springframework.web.server.ResponseStatusException(HttpStatus.NOT_FOUND, "Unknown beer"));
+        // A rejected beer is not part of the tasting, not even for the person who added it. Pending ones stay usable.
+        if (beer.getStatus() == Beer.Status.REJECTED) {
+            throw new no.cantara.julebrus.web.ApiException(HttpStatus.UNPROCESSABLE_ENTITY, "BEER_REJECTED", "That beer was rejected by the organisers");
+        }
         return view(service.addBeer(id, currentUser.get().getId(), in.beerId()));
     }
 
@@ -102,8 +110,10 @@ public class SessionController {
         List<UUID> memberIds = s.getMembers().stream().map(TastingSession.Member::userId).toList();
         Map<UUID, User> userById = users.findAllById(memberIds).stream()
                 .collect(Collectors.toMap(User::getId, Function.identity()));
+        Map<UUID, List<String>> teamsOf = teams.slugsOf(memberIds);
         List<MemberView> members = memberIds.stream()
-                .map(id -> new MemberView(id, userById.containsKey(id) ? userById.get(id).getDisplayName() : "?"))
+                .map(id -> new MemberView(id, userById.containsKey(id) ? userById.get(id).getDisplayName() : "?",
+                        teamsOf.getOrDefault(id, List.of())))
                 .toList();
 
         List<UUID> beerIds = s.getBeers().stream().map(TastingSession.SessionBeer::beerId).toList();

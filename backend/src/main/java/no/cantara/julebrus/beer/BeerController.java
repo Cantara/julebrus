@@ -1,8 +1,14 @@
 package no.cantara.julebrus.beer;
 
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.DecimalMax;
+import jakarta.validation.constraints.DecimalMin;
+import jakarta.validation.constraints.Digits;
 import jakarta.validation.constraints.NotBlank;
-import no.cantara.julebrus.config.AuthProperties;
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
+import no.cantara.julebrus.photo.BeerPhoto;
+import no.cantara.julebrus.photo.PhotoService;
 import no.cantara.julebrus.tasting.TastingRepository;
 import no.cantara.julebrus.user.CurrentUser;
 import no.cantara.julebrus.user.User;
@@ -28,50 +34,74 @@ public class BeerController {
     /** {@code status} is PENDING for a beer someone added that an admin has not approved yet. */
     public record BeerView(UUID id, String name, String brewery, String style, BigDecimal abv,
                            String vinmonopoletId, String imageUrl, long ratingCount, Beer.Status status, boolean mine,
-                           boolean homebrew) {
-        static BeerView of(Beer b, long ratingCount, UUID me) {
+                           /** a cover is available to this caller at /api/beers/{id}/photo (approved, or their own pending one) */
+                           boolean hasPhoto,
+                           /** the caller's own newest photo of this beer, so they can see its state or delete it; never anybody else's */
+                           UUID myPhotoId, BeerPhoto.Status myPhotoStatus,
+                           boolean homebrew,
+                           /** approved and Vinmonopolet strength: in the ranking and tippable */ boolean counts) {
+        static BeerView of(Beer b, long ratingCount, UUID me, PhotoService.Covers covers) {
+            BeerPhoto mine = covers.mine().get(b.getId());
             return new BeerView(b.getId(), b.getName(), b.getBrewery(), b.getStyle(), b.getAbv(),
                     b.getVinmonopoletId(), b.getImageUrl(), ratingCount, b.getStatus(),
-                    me != null && me.equals(b.getCreatedBy()), b.isHomebrew());
+                    me != null && me.equals(b.getCreatedBy()),
+                    covers.beersWithCover().contains(b.getId()),
+                    mine == null ? null : mine.getId(), mine == null ? null : mine.getStatus(), b.isHomebrew(), b.counts());
         }
     }
 
-    public record NewBeer(@NotBlank String name, String brewery, String style, BigDecimal abv,
-                          String vinmonopoletId, String imageUrl, boolean homebrew) {
+    /** Bounds match the columns in V1__init.sql (name/brewery 255, style 100, Polet number 32, image url 1024). */
+    public record NewBeer(@NotBlank @Size(max = 255) @Pattern(regexp = NO_CONTROL, message = "must not contain control characters") String name,
+                          @Size(max = 255) @Pattern(regexp = NO_CONTROL, message = "must not contain control characters") String brewery,
+                          @Size(max = 100) @Pattern(regexp = NO_CONTROL, message = "must not contain control characters") String style,
+                          @DecimalMin("0") @DecimalMax("20") @Digits(integer = 2, fraction = 1) BigDecimal abv,
+                          @Size(max = 32) @Pattern(regexp = NO_CONTROL, message = "must not contain control characters") String vinmonopoletId,
+                          @Size(max = 1024) @Pattern(regexp = "^(https?://\\S*)?$", message = "must be an http(s) link") String imageUrl,
+                          boolean homebrew) {
     }
 
+    /** No Unicode control characters (C0, DEL, C1) and no line or paragraph separators. */
+    static final String NO_CONTROL = "^[^\\p{Cc}\\p{Zl}\\p{Zp}]*$";
+
     private final BeerRepository beers;
+    private final BeerService beerService;
+    private final PhotoService photos;
     private final TastingRepository tastings;
     private final CurrentUser currentUser;
-    private final AuthProperties auth;
 
-    public BeerController(BeerRepository beers, TastingRepository tastings, CurrentUser currentUser, AuthProperties auth) {
+    public BeerController(BeerRepository beers, BeerService beerService, PhotoService photos, TastingRepository tastings,
+                          CurrentUser currentUser) {
+        this.photos = photos;
         this.beers = beers;
+        this.beerService = beerService;
         this.tastings = tastings;
         this.currentUser = currentUser;
-        this.auth = auth;
     }
 
     /** Approved and pending beers for everyone; a rejected beer only for the person who added it. */
     @GetMapping
     public List<BeerView> list(@RequestParam(required = false) String q) {
-        UUID me = currentUser.get().getId();
+        User user = currentUser.get();
+        UUID me = user.getId();
+        PhotoService.Covers covers = photos.covers(user);
         Map<UUID, Long> counts = tastings.countPerBeer().stream()
                 .collect(Collectors.toMap(TastingRepository.BeerCount::beerId, TastingRepository.BeerCount::count));
         return beers.search(q).stream()
                 .filter(b -> b.getStatus() != Beer.Status.REJECTED || me.equals(b.getCreatedBy()))
-                .map(b -> BeerView.of(b, counts.getOrDefault(b.getId(), 0L), me))
+                .map(b -> BeerView.of(b, counts.getOrDefault(b.getId(), 0L), me, covers))
                 .toList();
     }
 
     /** The long tail: approved beers with the fewest ratings first, for the home screen. */
     @GetMapping("/least-tasted")
     public List<BeerView> leastTasted(@RequestParam(defaultValue = "5") int limit) {
-        UUID me = currentUser.get().getId();
+        User user = currentUser.get();
+        UUID me = user.getId();
+        PhotoService.Covers covers = photos.covers(user);
         Map<UUID, Long> counts = tastings.countPerBeer().stream()
                 .collect(Collectors.toMap(TastingRepository.BeerCount::beerId, TastingRepository.BeerCount::count));
         return beers.findByStatus(Beer.Status.APPROVED).stream()
-                .map(b -> BeerView.of(b, counts.getOrDefault(b.getId(), 0L), me))
+                .map(b -> BeerView.of(b, counts.getOrDefault(b.getId(), 0L), me, covers))
                 .sorted(java.util.Comparator.comparingLong(BeerView::ratingCount).thenComparing(BeerView::name))
                 .limit(limit)
                 .toList();
@@ -82,22 +112,7 @@ public class BeerController {
     @ResponseStatus(HttpStatus.CREATED)
     public BeerView create(@Valid @RequestBody NewBeer in) {
         User me = currentUser.get();
-        if (Beer.isGroceryStrength(in.abv())) {
-            throw new no.cantara.julebrus.web.ApiException(HttpStatus.UNPROCESSABLE_ENTITY, "BEER_GROCERY_STRENGTH",
-                    "Only Vinmonopolet juleøl counts: above %s %%".formatted(Beer.GROCERY_MAX_ABV));
-        }
-        if (in.homebrew() && in.abv() == null) {
-            // Homebrew has no Polet listing to vouch for its strength, so the brewer states it.
-            throw new no.cantara.julebrus.web.ApiException(HttpStatus.UNPROCESSABLE_ENTITY, "BEER_HOMEBREW_NEEDS_ABV",
-                    "State the ABV of a homebrew; it must be above %s %%".formatted(Beer.GROCERY_MAX_ABV));
-        }
-        Beer.Status status = auth.isAdmin(me.getEmail()) ? Beer.Status.APPROVED : Beer.Status.PENDING;
-        Beer saved = beers.save(new Beer(in.name().trim(), in.brewery(), in.style(), in.abv(),
-                blankToNull(in.vinmonopoletId()), blankToNull(in.imageUrl()), me.getId(), status, in.homebrew()));
-        return BeerView.of(saved, 0, me.getId());
-    }
-
-    private static String blankToNull(String s) {
-        return (s == null || s.isBlank()) ? null : s.trim();
+        Beer saved = beerService.create(me, in);
+        return BeerView.of(saved, 0, me.getId(), photos.covers(me));
     }
 }
