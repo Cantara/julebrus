@@ -1,57 +1,102 @@
+/* Julestue: a warm cabin in December. Light = daytime by the window, dark = evening by the fire. */
 :root {
-  --bg: #faf6f0;
-  --card: #ffffff;
-  --ink: #241a1a;
-  --muted: #7a6f6a;
-  --brand: #7a1f1f;
-  --brand-ink: #ffffff;
-  --gold: #c9961a;
-  --line: #e7ddd2;
-  --danger: #b3261e;
-  --ok: #2e7d4f;
+  --bg: #f4ebdc;
+  --card: #fffaf1;
+  --ink: #2b1a14;
+  --muted: #7d665a;
+  --brand: #7a1f2b;
+  --brand-ink: #fff6e8;
+  --pine: #234b36;
+  --brass: #a8762a;
+  --candle: #f0b45a;
+  --line: #e3d3bb;
+  --danger: #a3281c;
+  --ok: #2f6b45;
+  /* Sequential door fill, 1..5 tastings, one hue light -> dark. Text on doors uses ink tokens. */
+  --door-0: #ece0cc;
+  --door-1: #f1e2c4;
+  --door-2: #e5c98f;
+  --door-3: #d4ad5e;
+  --door-4: #b98836;
+  --door-5: #8e6320;
+  --door-shut: #eadfcd;
+  --snow: rgba(255, 255, 255, 0.95);
+  --snow-edge: 0 0 2px rgba(43, 26, 20, 0.25);
+  --glow: rgba(240, 180, 90, 0.55);
   color-scheme: light dark;
 }
 @media (prefers-color-scheme: dark) {
   :root {
-    --bg: #171212;
-    --card: #221a1a;
-    --ink: #f3ece6;
-    --muted: #b7aaa2;
-    --brand: #c0392b;
-    --gold: #e0b04a;
-    --line: #3a2e2e;
+    --bg: #1b120e;
+    --card: #271b16;
+    --ink: #f1e6d4;
+    --muted: #b39d8a;
+    --brand: #c2484f;
+    --brand-ink: #fff6e8;
+    --pine: #4f8a66;
+    --brass: #d4a04f;
+    --candle: #f5c87a;
+    --line: #3d2c24;
+    --danger: #e0695c;
+    --ok: #6fb98c;
+    --door-0: #2f211b;
+    --door-1: #4a3418;
+    --door-2: #6b4a1f;
+    --door-3: #8f6427;
+    --door-4: #b8862f;
+    --door-5: #dcae4c;
+    --door-shut: #2a1d18;
+    --snow: rgba(255, 250, 240, 0.8);
+    --snow-edge: none;
+    --glow: rgba(245, 200, 122, 0.5);
   }
 }
+
 * { box-sizing: border-box; }
-html, body { margin: 0; background: var(--bg); color: var(--ink); font: 16px/1.45 system-ui, -apple-system, "Segoe UI", sans-serif; }
+html, body {
+  margin: 0; background: var(--bg); color: var(--ink);
+  font: 16px/1.45 system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+body {
+  background-image:
+    radial-gradient(1200px 600px at 50% -200px, var(--glow), transparent 70%);
+  background-repeat: no-repeat;
+}
 a { color: inherit; }
-main { max-width: 640px; margin: 0 auto; padding: 16px 16px calc(80px + env(safe-area-inset-bottom)); }
-h1 { font-size: 1.5rem; margin: 8px 0 16px; }
-h2 { font-size: 1.1rem; margin: 20px 0 8px; }
-.card { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 14px 16px; margin-bottom: 12px; }
+main { position: relative; z-index: 1; max-width: 640px; margin: 0 auto; padding: 16px 16px calc(80px + env(safe-area-inset-bottom)); }
+h1, h2, .display {
+  font-family: Fraunces, Georgia, "Times New Roman", serif;
+  font-variation-settings: "opsz" 72;
+  letter-spacing: -0.01em;
+}
+h1 { font-size: 1.6rem; font-weight: 700; margin: 8px 0 14px; }
+h2 { font-size: 1.15rem; font-weight: 600; margin: 22px 0 8px; }
+.card {
+  background: var(--card); border: 1px solid var(--line); border-radius: 16px;
+  padding: 14px 16px; margin-bottom: 12px;
+  box-shadow: 0 1px 0 rgba(43, 26, 20, 0.04), 0 8px 24px -18px rgba(43, 26, 20, 0.35);
+}
 .muted { color: var(--muted); font-size: 0.9rem; }
 .row { display: flex; gap: 10px; align-items: center; justify-content: space-between; }
 button, .btn {
-  font: inherit; border: 0; border-radius: 10px; padding: 12px 16px; cursor: pointer;
+  font: inherit; border: 0; border-radius: 12px; padding: 12px 16px; cursor: pointer;
   background: var(--brand); color: var(--brand-ink); text-decoration: none; display: inline-block;
 }
 button.secondary, .btn.secondary { background: transparent; color: var(--ink); border: 1px solid var(--line); }
 button:disabled { opacity: 0.5; cursor: default; }
 input, textarea, select {
-  font: inherit; width: 100%; padding: 10px 12px; border: 1px solid var(--line); border-radius: 10px;
+  font: inherit; width: 100%; padding: 10px 12px; border: 1px solid var(--line); border-radius: 12px;
   background: var(--card); color: var(--ink);
 }
 label { display: block; margin: 10px 0 4px; font-size: 0.9rem; color: var(--muted); }
-.dice { display: grid; grid-template-columns: repeat(6, 1fr); gap: 8px; }
-.dice button { padding: 14px 0; font-size: 1.25rem; font-weight: 600; background: var(--card); color: var(--ink); border: 2px solid var(--line); }
-.dice button.on { border-color: var(--brand); background: var(--brand); color: var(--brand-ink); }
 .pill { display: inline-block; padding: 3px 10px; border-radius: 999px; background: var(--line); font-size: 0.8rem; margin: 2px 4px 2px 0; }
-.pill.on { background: var(--gold); color: #241a1a; }
+.pill.on { background: var(--candle); color: #2b1a14; }
 .error { color: var(--danger); }
 .ok { color: var(--ok); }
 nav.tabs {
-  position: fixed; left: 0; right: 0; bottom: 0; display: flex; justify-content: space-around;
-  background: var(--card); border-top: 1px solid var(--line); padding: 8px 0 calc(8px + env(safe-area-inset-bottom));
+  position: fixed; left: 0; right: 0; bottom: 0; z-index: 2; display: flex; justify-content: space-around;
+  background: var(--card); border-top: 1px solid var(--line);
+  padding: 8px 0 calc(8px + env(safe-area-inset-bottom));
 }
 nav.tabs a { text-decoration: none; font-size: 0.8rem; color: var(--muted); text-align: center; min-width: 64px; }
 nav.tabs a.router-link-active { color: var(--brand); font-weight: 600; }
@@ -60,4 +105,81 @@ td, th { text-align: left; padding: 8px 6px; border-bottom: 1px solid var(--line
 th { font-size: 0.8rem; color: var(--muted); font-weight: 600; }
 .code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 2rem; letter-spacing: 0.3em; text-align: center; }
 .meter { height: 8px; background: var(--line); border-radius: 999px; overflow: hidden; }
-.meter > span { display: block; height: 100%; background: var(--gold); }
+.meter > span { display: block; height: 100%; background: var(--candle); }
+
+/* Dice 1..6 as real faces */
+.dice { display: grid; grid-template-columns: repeat(6, 1fr); gap: 8px; }
+.die {
+  aspect-ratio: 1; padding: 0; border-radius: 22%; cursor: pointer;
+  background: var(--card); border: 2px solid var(--line); color: var(--ink);
+  display: grid; place-items: center;
+}
+.die svg { width: 70%; height: 70%; display: block; }
+.die .pip { fill: currentColor; }
+.die.on { background: var(--brand); border-color: var(--brand); color: var(--brand-ink); }
+.die.roll { animation: roll 420ms cubic-bezier(0.2, 0.8, 0.2, 1); }
+@keyframes roll {
+  0% { transform: rotate(-16deg) scale(0.92); }
+  50% { transform: rotate(10deg) scale(1.06); }
+  100% { transform: rotate(0) scale(1); }
+}
+
+/* A string of lights: one bulb per allowed tasting / solo day */
+.lights { display: flex; align-items: center; gap: 10px; margin: 6px 0 2px; }
+.lights .wire { flex: 1; height: 2px; background: var(--line); min-width: 6px; }
+.bulb { width: 18px; height: 24px; position: relative; flex: none; }
+.bulb::before {
+  content: ""; position: absolute; left: 6px; top: 0; width: 6px; height: 5px; border-radius: 2px 2px 0 0;
+  background: var(--muted); opacity: 0.6;
+}
+.bulb::after {
+  content: ""; position: absolute; left: 0; top: 5px; width: 18px; height: 19px;
+  border-radius: 50% 50% 50% 50% / 40% 40% 60% 60%;
+  background: var(--line); border: 1px solid var(--line);
+}
+.bulb.lit::after { background: var(--bulb, var(--candle)); border-color: var(--bulb, var(--candle)); box-shadow: 0 0 10px 2px var(--glow); }
+.bulb.lit.warm { --bulb: var(--candle); }
+.bulb.lit.solo { --bulb: var(--brand); }
+
+/* Advent calendar */
+.advent { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; }
+.advent .wd { text-align: center; font-size: 0.7rem; color: var(--muted); padding-bottom: 2px; }
+.door {
+  aspect-ratio: 1; border-radius: 10px; border: 1px solid var(--line); position: relative;
+  display: grid; place-items: center; font-variant-numeric: tabular-nums; font-size: 0.95rem;
+  background: var(--door-0); color: var(--ink); cursor: default; padding: 0;
+}
+.door.month::before {
+  content: attr(data-month); position: absolute; top: 2px; left: 4px; font-size: 0.55rem; letter-spacing: 0.06em;
+  text-transform: uppercase; color: var(--muted);
+}
+.door.shut { background: var(--door-shut); color: var(--muted); }
+.door.shut::after {
+  content: ""; position: absolute; inset: 0; border-radius: 10px;
+  background: repeating-linear-gradient(135deg, transparent 0 6px, rgba(43, 26, 20, 0.05) 6px 7px);
+}
+.door.tasted { cursor: pointer; border-color: transparent; font-weight: 600; }
+.door.c1 { background: var(--door-1); }
+.door.c2 { background: var(--door-2); }
+.door.c3 { background: var(--door-3); }
+.door.c4 { background: var(--door-4); color: #fff6e8; }
+.door.c5 { background: var(--door-5); color: #fff6e8; }
+.door.today { box-shadow: 0 0 0 2px var(--brand), 0 0 14px 2px var(--glow); }
+.door.selected { outline: 2px solid var(--pine); outline-offset: 1px; }
+.door.finale::after { content: "★"; position: absolute; right: 4px; top: 1px; font-size: 0.6rem; color: var(--brass); }
+.door .n { position: absolute; bottom: 3px; right: 5px; font-size: 0.6rem; font-weight: 600; opacity: 0.8; }
+.door:focus-visible { outline: 2px solid var(--pine); outline-offset: 1px; }
+
+/* Snow: fixed layer behind content, CSS only, off under reduced motion */
+.snow { position: fixed; inset: 0; pointer-events: none; overflow: hidden; z-index: 0; }
+.snow i {
+  position: absolute; top: -12px; display: block; border-radius: 50%; background: var(--snow);
+  box-shadow: var(--snow-edge); animation: fall linear infinite;
+}
+@keyframes fall {
+  to { transform: translate3d(var(--drift, 0px), 110vh, 0); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .snow { display: none; }
+  .die.roll { animation: none; }
+}

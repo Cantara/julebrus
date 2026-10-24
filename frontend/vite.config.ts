@@ -14,8 +14,8 @@ export default defineConfig({
         name: 'Cantaras juleølsmaking',
         short_name: 'Juleøl',
         description: 'Cantaras digitale juleølsmaking',
-        theme_color: '#7a1f1f',
-        background_color: '#faf6f0',
+        theme_color: '#7a1f2b',
+        background_color: '#f4ebdc',
         display: 'standalone',
         start_url: '/',
         icons: [
