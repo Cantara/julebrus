@@ -1,0 +1,39 @@
+spring:
+  application:
+    name: julebrus
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: validate
+  datasource:
+    url: ${JULEBRUS_DB_URL:jdbc:postgresql://localhost:5432/julebrus}
+    username: ${JULEBRUS_DB_USER:julebrus}
+    password: ${JULEBRUS_DB_PASSWORD:julebrus}
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: ${GOOGLE_CLIENT_ID:}
+            client-secret: ${GOOGLE_CLIENT_SECRET:}
+            scope: openid,email,profile
+
+julebrus:
+  season:
+    year: 2026
+    start: 2026-11-01
+    end: 2026-12-23
+    zone: Europe/Oslo
+    max-tastings-per-day: 5
+    max-solo-days: 5
+  auth:
+    # Comma separated. Empty means any Google account may log in.
+    allowed-domains: ${JULEBRUS_ALLOWED_DOMAINS:}
+    # Comma separated emails that may flag raters and override weights.
+    admins: ${JULEBRUS_ADMINS:}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info

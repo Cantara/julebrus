@@ -1,7 +1,7 @@
 kcp_version: "0.26"
 project: julebrus
 version: "0.1.0"
-updated: "2026-03-19"
+updated: "2026-10-24"
 
 units:
   - id: readme
@@ -15,12 +15,21 @@ units:
 
   - id: claude
     path: CLAUDE.md
-    intent: "julebrus"
+    intent: "Repository map, stack and conventions for agents"
     scope: global
     audience: [human, agent]
-    validated: "2026-03-15"
+    validated: "2026-10-24"
     hints:
-      token_estimate: 100
+      token_estimate: 500
+
+  - id: design
+    path: DESIGN.md
+    intent: "Rules, decisions and architecture of the digital Christmas beer tasting"
+    scope: global
+    audience: [human, agent]
+    validated: "2026-10-24"
+    hints:
+      token_estimate: 1500
 
 signing:
   scheme: ed25519
