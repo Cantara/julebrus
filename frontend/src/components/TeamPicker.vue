@@ -84,7 +84,7 @@ async function save(ids: string[]) {
   <div class="row">
     <button v-if="allowLater" class="secondary" :disabled="busy" @click="save([])">Velg senere</button>
     <span v-else />
-    <button :disabled="busy" @click="save([...picked])">{{ picked.size ? 'Lagre' : 'Ingen lag' }}</button>
+    <button :disabled="busy || !picked.size" @click="save([...picked])">Lagre</button>
   </div>
 </template>
 

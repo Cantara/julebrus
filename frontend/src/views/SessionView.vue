@@ -19,6 +19,9 @@ const pending = ref<DuelPair[]>([])
 const rounds = ref<BlindRound[]>([])
 const error = ref('')
 const live = ref<LiveStatus>('connecting')
+/** The gift tag with the QR stays up while the host is alone; once there is company it folds to a line. */
+const showQr = ref<boolean | null>(null)
+const qrOpen = computed(() => showQr.value ?? (session.value ? session.value.members.length < 2 : true))
 
 const isHost = computed(() => session.value && store.me && session.value.hostId === store.me.id)
 const joinUrl = computed(() => `${location.origin}/join/${session.value?.joinCode ?? ''}`)
@@ -130,13 +133,18 @@ onUnmounted(() => {
   <template v-if="session">
     <h1>Smaking {{ session.closedAt ? '(avsluttet)' : '' }}</h1>
 
-    <div v-if="!session.closedAt" class="card gift-tag" style="text-align: center">
+    <div v-if="!session.closedAt && qrOpen" class="card gift-tag" style="text-align: center">
       <span class="string" aria-hidden="true" />
       <span class="hole" aria-hidden="true" />
       <p class="muted" style="margin: 0 0 8px">Til: alle rundt bordet</p>
       <QrCode :value="joinUrl" :size="220" />
       <p class="code" style="margin: 10px 0 0">{{ session.joinCode }}</p>
       <p class="muted">Skann eller skriv inn koden for å bli med</p>
+      <button v-if="session.members.length >= 2" class="secondary" style="margin-top: 4px" @click="showQr = false">Skjul</button>
+    </div>
+    <div v-else-if="!session.closedAt" class="card row">
+      <span class="muted">Flere til bordet? Kode <strong class="display" style="letter-spacing: 0.2em">{{ session.joinCode }}</strong></span>
+      <button class="secondary" @click="showQr = true">Vis QR</button>
     </div>
 
     <div class="card">

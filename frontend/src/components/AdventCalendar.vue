@@ -16,6 +16,8 @@ const props = defineProps<{
   end: string
   today: string
   days: Record<string, DayEntry>
+  /** only the week that holds today (Monday to Sunday), still on the 7-column grid */
+  compact?: boolean
 }>()
 
 const WEEKDAYS = ['ma', 'ti', 'on', 'to', 'fr', 'lø', 'sø']
@@ -32,6 +34,19 @@ const cells = computed(() => {
   const out: ({ kind: 'pad' } | { kind: 'day'; date: string; dom: number; month: string | null })[] = []
   const start = new Date(props.start + 'T00:00:00Z')
   const end = new Date(props.end + 'T00:00:00Z')
+  if (props.compact) {
+    // The week around today, clipped to the season; pads keep the weekday columns.
+    const anchor = new Date((props.today < props.start ? props.start : props.today > props.end ? props.end : props.today) + 'T00:00:00Z')
+    const monday = new Date(anchor)
+    monday.setUTCDate(anchor.getUTCDate() - ((anchor.getUTCDay() + 6) % 7))
+    for (let i = 0; i < 7; i++) {
+      const d = new Date(monday)
+      d.setUTCDate(monday.getUTCDate() + i)
+      if (d < start || d > end) out.push({ kind: 'pad' })
+      else out.push({ kind: 'day', date: iso(d), dom: d.getUTCDate(), month: i === 0 || d.getUTCDate() === 1 ? MONTHS[d.getUTCMonth()] : null })
+    }
+    return out
+  }
   const lead = (start.getUTCDay() + 6) % 7 // Monday first
   for (let i = 0; i < lead; i++) out.push({ kind: 'pad' })
   for (let d = new Date(start); d <= end; d.setUTCDate(d.getUTCDate() + 1)) {
