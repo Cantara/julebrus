@@ -650,3 +650,799 @@ year,voter,weight,beer,score
 2007,Harald,1,Underlig Jul,5
 2007,Harald,1,God jul,2
 2007,Christian B,0.5,Hansa,6
+2011,Totto,1,Dahls,4
+2011,Totto,1,Aass Juleøl,4
+2011,Totto,1,Hansa Julebrygg,4
+2011,Totto,1,Borg,4
+2011,Totto,1,Hansa juleøl,4
+2011,Totto,1,Lervig Juleøl,4
+2011,Totto,1,Aass Juleøl premium,5
+2011,Totto,1,CB,4
+2011,Totto,1,Fredrikstad,4
+2011,Totto,1,Berentsen Julefnugg,5
+2011,Totto,1,Ægir julebrygg,5
+2011,Totto,1,Lade Gaards Sterk Juleøl,2
+2011,Totto,1,Berentsen Juleavec,3
+2011,Totto,1,Mack Juleøl,4
+2011,Totto,1,NøgneØ God Jul,5
+2011,Totto,1,fenalår Tind (rød),4
+2011,Totto,1,Fenalår Meny (grønn),4
+2011,Totto,1,fenalår Rema (hvit),5
+2011,Bård,1,Dahls,3
+2011,Bård,1,Aass Juleøl,3
+2011,Bård,1,Hansa Julebrygg,5
+2011,Bård,1,Borg,3
+2011,Bård,1,NøgneØ Underlig jul,3
+2011,Bård,1,Ringnes julebokk,4
+2011,Bård,1,Berentsen Julefnugg,5
+2011,Bård,1,Ægir julebrygg,5
+2011,Bård,1,Lade Gaards Sterk Juleøl,3
+2011,Bård,1,Ringnes Juleøl Sterk,3
+2011,Bård,1,Mack Juleøl,5
+2011,Bård,1,fenalår Tind (rød),5
+2011,Bård,1,Fenalår Meny (grønn),6
+2011,Bård,1,fenalår Rema (hvit),5
+2011,Gjertrud,1,Aass Juleøl,2
+2011,Gjertrud,1,Ringnes julebokk,3
+2011,Gjertrud,1,Håndbryggeriet Nissemor,4
+2011,Gjertrud,1,fenalår Tind (rød),3
+2011,Gjertrud,1,Fenalår Meny (grønn),4
+2011,Gjertrud,1,fenalår Rema (hvit),5
+2011,Alvin,1,Aass Juleøl,4
+2011,Alvin,1,Hansa juleøl,2
+2011,Alvin,1,Mack Juleøl,3
+2011,Per Ottar Pahr,0.5,Dahls,3
+2011,Per Ottar Pahr,0.5,Aass Juleøl,5
+2011,Per Ottar Pahr,0.5,Ægir julebrygg,5
+2011,Per Ottar Pahr,0.5,Lade Gaards Sterk Juleøl,3
+2011,Per Ottar Pahr,0.5,Ringnes Juleøl Sterk,2
+2011,Per Ottar Pahr,0.5,NøgneØ God Jul,6
+2011,Per Ottar Pahr,0.5,fenalår Tind (rød),5
+2011,Per Ottar Pahr,0.5,Fenalår Meny (grønn),5
+2011,Per Ottar Pahr,0.5,fenalår Rema (hvit),4
+2011,Eirik,1,Dahls,3
+2011,Eirik,1,Hansa Julebrygg,5
+2011,Eirik,1,Hansa juleøl,4
+2011,Eirik,1,Aass Juleøl premium,4
+2011,Eirik,1,CB,4
+2011,Eirik,1,Berentsen Julefnugg,5
+2011,Eirik,1,Lade Gaards Sterk Juleøl,2
+2011,Eirik,1,Berentsen Juleavec,5
+2011,Eirik,1,Ringnes Juleøl Sterk,2
+2011,Eirik,1,Mack Juleøl,4
+2011,Eirik,1,fenalår Tind (rød),5
+2011,Lars G,1,Aass Juleøl,5
+2011,Lars G,1,Hansa Julebrygg,3
+2011,Lars G,1,Ringnes julebokk,3
+2011,Lars G,1,Ringnes Juleøl Sterk,3
+2011,Hein,1,Dahls,2
+2011,Hein,1,Hansa juleøl,4
+2011,Hein,1,Ringnes julebokk,4
+2011,Hein,1,CB,5
+2011,Hein,1,Fredrikstad,4
+2011,Hein,1,Ringnes Juleøl Sterk,4
+2011,Hein,1,NøgneØ God Jul,5
+2011,Petter,1,Dahls,3
+2011,Petter,1,Aass Juleøl,3
+2011,Petter,1,Hansa Julebrygg,5
+2011,Petter,1,Borg,4
+2011,Petter,1,Hansa juleøl,3
+2011,Petter,1,Ringnes julebokk,4
+2011,Petter,1,Aass Juleøl premium,4
+2011,Petter,1,CB,4
+2011,Petter,1,Fredrikstad,4
+2011,Petter,1,Berentsen Julefnugg,4
+2011,Petter,1,Ringnes Juleøl Sterk,4
+2011,Petter,1,Mack Juleøl,3
+2011,Erik D,1,Aass Juleøl,4
+2011,Erik D,1,NøgneØ Underlig jul,4
+2011,Erik D,1,"Hansddbrygggirier, nissefar",5
+2011,Erik D,1,Ægir julebrygg,5
+2011,Erik D,1,Håndbryggeriet Nissemor,4
+2011,Erik D,1,Mack Juleøl,3
+2011,Erik D,1,NøgneØ God Jul,6
+2011,Erik D,1,fenalår Tind (rød),5
+2011,Erik D,1,Fenalår Meny (grønn),6
+2011,Erik D,1,fenalår Rema (hvit),5
+2011,Erik D,1,Vertskapet,6
+2011,Sara Ekman,0.5,Dahls,5
+2011,Sara Ekman,0.5,Aass Juleøl,5
+2011,Sara Ekman,0.5,Aass Juleøl premium,2
+2011,Sara Ekman,0.5,fenalår Tind (rød),6
+2011,Sara Ekman,0.5,Fenalår Meny (grønn),5
+2011,Sara Ekman,0.5,fenalår Rema (hvit),2
+2011,Sara Ekman,0.5,Vertskapet,6
+2011,Karen,0.5,fenalår Tind (rød),4
+2011,Karen,0.5,Fenalår Meny (grønn),3
+2011,Karen,0.5,fenalår Rema (hvit),5
+2011,Karen,0.5,Vertskapet,6
+2011,Håkon,0.5,Aass Juleøl,4
+2011,Håkon,0.5,Borg,4
+2011,Håkon,0.5,NøgneØ Underlig jul,3
+2011,Håkon,0.5,NøgneØ God Jul,5
+2012,Totto,1,Atna Julenisjeøl,5
+2012,Totto,1,Aass Juleøl Orginal,5
+2012,Totto,1,Ringnes sterk,3
+2012,Totto,1,Hansa Julebrygg,4
+2012,Totto,1,Borg,4
+2012,Totto,1,Julefnugg,3
+2012,Totto,1,Lervig,2
+2012,Totto,1,Dahls,3
+2012,Totto,1,CB,2
+2012,Totto,1,Ægir julebrygg,3
+2012,Totto,1,Fredrikstad,3
+2012,Totto,1,Ringnes Juleøl Sterk,3
+2012,Totto,1,NøgneØ God Jul,3
+2012,Totto,1,hansa juleøl,4
+2012,Totto,1,tomasmesse,2
+2012,Totto,1,Smedstuen,4
+2012,Totto,1,Finsbråten,5
+2012,Totto,1,Vertskapet,5
+2012,Bård,1,Aass Juleøl Orginal,5
+2012,Bård,1,Ringnes sterk,5
+2012,Bård,1,Hansa Julebrygg,4
+2012,Bård,1,Dahls,3
+2012,Gjertrud,1,Aass Juleøl Orginal,5
+2012,Gjertrud,1,Aass Premium,4
+2012,Gjertrud,1,nissefar,3
+2012,Gjertrud,1,Smedstuen,5
+2012,Gjertrud,1,Finsbråten,5
+2012,Eirik,1,Atna Julenisjeøl,4
+2012,Eirik,1,Ringnes sterk,3
+2012,Eirik,1,Borg,4
+2012,Eirik,1,NøgneØ Underlig jul,4
+2012,Eirik,1,Aass Premium,4
+2012,Eirik,1,CB,2
+2012,Eirik,1,NøgneØ God Jul,5
+2012,Eirik,1,grans lade gaards,4
+2012,Eirik,1,hansa juleøl,4
+2012,Eirik,1,Smedstuen,3
+2012,Eirik,1,Finsbråten,4
+2012,Lars G,1,Aass Juleøl Orginal,5
+2012,Lars G,1,Ringnes sterk,4
+2012,Lars G,1,Aass Premium,3
+2012,Lars G,1,Ringnes julebokk,5
+2012,Lars G,1,Dahls,4
+2012,Lars G,1,Berentsen Juleavec,5
+2012,Hein,1,Ringnes sterk,3
+2012,Hein,1,Borg,5
+2012,Hein,1,Bestefar,3
+2012,Hein,1,nissefar,2
+2012,Hein,1,bestefar,3
+2012,Hein,1,Smedstuen,5
+2012,Hein,1,Finsbråten,5
+2012,Petter,1,Hansa Julebrygg,5
+2012,Petter,1,Aass Premium,3
+2012,Petter,1,Ringnes julebokk,4
+2012,Petter,1,Lervig,2
+2012,Petter,1,Dahls,4
+2012,Petter,1,CB,4
+2012,Petter,1,Ægir julebrygg,2
+2012,Petter,1,Fredrikstad,4
+2012,Petter,1,grans lade gaards,4
+2012,Petter,1,hansa juleøl,4
+2012,Petter,1,Smedstuen,4
+2012,Petter,1,Finsbråten,4
+2012,Sara Ekman,1,Borg,3
+2012,Sara Ekman,1,Aass Premium,4
+2012,Sara Ekman,1,Julefnugg,5
+2012,Sara Ekman,1,Dahls,5
+2012,Sara Ekman,1,Berentsen Juleavec,4
+2013,Bård,1,Aass Premium,5
+2013,Bård,1,Atna Julenisjeøl,3
+2013,Bård,1,Berentsens Jule-Avec,2
+2013,Bård,1,CB,1
+2013,Bård,1,Haandbryggeriet Bestefar,3
+2013,Bård,1,Hansa,5
+2013,Bård,1,Lade Gaards,5
+2013,Bård,1,Mack,4
+2013,Bård,1,Ringnes Julebokk,4
+2013,Bård,1,Ringnes Juleøl,4
+2013,Bård,1,Nils og Eriks hjemmebrygg,4
+2013,Bård,1,Finsbråten,5
+2013,Bård,1,Vossakjøt (spesialmodna),5
+2013,Bård,1,Smedstuen gård (røkt),4
+2013,Totto,1,Aass Premium,5
+2013,Totto,1,Atna Julenisjeøl,3
+2013,Totto,1,Berentsens Jule-Avec,2
+2013,Totto,1,Berentsens Julefnugg,5
+2013,Totto,1,Borg,4
+2013,Totto,1,CB,2
+2013,Totto,1,Dahls,4
+2013,Totto,1,Fredrikstad,3
+2013,Totto,1,Haandbryggeriet Nissemor,4
+2013,Totto,1,Hansa Ekstra Vellagret Julebrygg,4
+2013,Totto,1,Hansa,5
+2013,Totto,1,Kinn Julefred,4
+2013,Totto,1,Lade Gaards,4
+2013,Totto,1,Lervig's jul,3
+2013,Totto,1,Ringnes Juleøl,5
+2013,Totto,1,Ægir Ylir Julebrygg,5
+2013,Totto,1,Nils og Eriks hjemmebrygg,4
+2013,Totto,1,Smedstuen gård (røkt),4
+2013,Ane,0.5,Atna Julenisjeøl,3
+2013,Ane,0.5,Austmann Jingle Beer,2
+2013,Ane,0.5,Hansa,4
+2013,Ane,0.5,Nils og Eriks hjemmebrygg,4
+2013,Ane,0.5,Finsbråten,3
+2013,Ane,0.5,Vossakjøt (spesialmodna),5
+2013,Ane,0.5,Smedstuen gård (røkt),2
+2013,Erik D.,1,Aass,3
+2013,Erik D.,1,Fredrikstad,2
+2013,Erik D.,1,Haandbryggeriet Nissemor,5
+2013,Erik D.,1,Hansa Ekstra Vellagret Julebrygg,3
+2013,Erik D.,1,Nøgne Ø God Jul,4
+2013,Erik D.,1,Nøgne Ø Special Holiday Ale,6
+2013,Erik D.,1,Ægir Ylir Julebrygg,5
+2013,Erik D.,1,Finsbråten,3
+2013,Erik D.,1,Vossakjøt (spesialmodna),6
+2013,Erik D.,1,Smedstuen gård (røkt),4
+2013,Erik I,0.5,Aass Premium,4
+2013,Erik I,0.5,Berentsens Julefnugg,3
+2013,Erik I,0.5,CB,3
+2013,Erik I,0.5,Haandbryggeriet Bestefar,5
+2013,Erik I,0.5,Hansa Ekstra Vellagret Julebrygg,3
+2013,Erik I,0.5,Hansa,3
+2013,Erik I,0.5,Lervig's jul,5
+2013,Erik I,0.5,Mack,3
+2013,Erik I,0.5,Nøgne Ø Special Holiday Ale,4
+2013,Erik I,0.5,Ringnes Superior Polaris,4
+2013,Erik I,0.5,Ægir Ylir Julebrygg,5
+2013,Eirik L,1,Aass,4
+2013,Eirik L,1,Berentsens Julefnugg,5
+2013,Eirik L,1,CB,4
+2013,Eirik L,1,Fredrikstad,4
+2013,Eirik L,1,Haandbryggeriet Nissefar,4
+2013,Eirik L,1,Hansa Ekstra Vellagret Julebrygg,5
+2013,Eirik L,1,Lervig's jul,5
+2013,Eirik L,1,Mack,3
+2013,Eirik L,1,Ringnes Julebokk,5
+2013,Eirik L,1,Ringnes Juleøl,2
+2013,Eirik L,1,Ægir Ylir Julebrygg,6
+2013,Eirik Ø,0.5,Berentsens Julefnugg,2
+2013,Eirik Ø,0.5,Haandbryggeriet Bestefar,3
+2013,Eirik Ø,0.5,Haandbryggeriet Nissefar,4
+2013,Eirik Ø,0.5,Hansa,3
+2013,Eirik Ø,0.5,Lade Gaards,4
+2013,Eirik Ø,0.5,Ringnes Superior Polaris,2
+2013,Eirik Ø,0.5,Ægir Ylir Julebrygg,5
+2013,Gjertrud,1,Aass,4
+2013,Gjertrud,1,Mack,5
+2013,Gjertrud,1,Ringnes Julebokk,3
+2013,Laila,1,Aass,3
+2013,Laila,1,CB,4
+2013,Laila,1,Fredrikstad,5
+2013,Laila,1,Haandbryggeriet Nissemor,5
+2013,Laila,1,Hansa,4
+2013,Laila,1,Ringnes Juleøl,3
+2013,Petter,1,Aass,4
+2013,Petter,1,Atna Julenisjeøl,5
+2013,Petter,1,Borg,4
+2013,Petter,1,CB,3
+2013,Petter,1,Fredrikstad,3
+2013,Petter,1,Hansa,5
+2013,Petter,1,Mack,4
+2013,Petter,1,Ringnes Juleøl,5
+2013,Petter,1,Ægir Ylir Julebrygg,5
+2013,Alvin,1,Atna Julenisjeøl,5
+2013,Alvin,1,Haandbryggeriet Bestefar,5
+2013,Alvin,1,Mack,4
+2013,Alvin,1,Nøgne Ø Underlig Jul,4
+2013,Ørjan,0.5,Aass,4
+2013,Ørjan,0.5,Berentsens Julefnugg,3
+2013,Ørjan,0.5,Borg,3
+2013,Ørjan,0.5,Dahls,3
+2013,Ørjan,0.5,Fredrikstad,2
+2013,Ørjan,0.5,Hansa,4
+2013,Ørjan,0.5,Lervig's jul,2
+2013,Ørjan,0.5,Mack,5
+2013,Ørjan,0.5,Ringnes Juleøl,3
+2013,Per Ottar,1,Aass,4
+2013,Per Ottar,1,Atna Julenisjeøl,4
+2013,Per Ottar,1,Berentsens Julefnugg,3
+2013,Per Ottar,1,Borg,2
+2013,Per Ottar,1,CB,3
+2013,Per Ottar,1,Dahls,3
+2013,Per Ottar,1,Lade Gaards,3
+2013,Per Ottar,1,Nøgne Ø God Jul,4
+2013,Per Ottar,1,Nøgne Ø Underlig Jul,5
+2013,Per Ottar,1,Nils og Eriks hjemmebrygg,4
+2013,Svein-Magnus,0.5,Atna Julenisjeøl,3
+2013,Svein-Magnus,0.5,Austmann Jingle Beer,2
+2013,Svein-Magnus,0.5,Berentsens Jule-Avec,3
+2013,Svein-Magnus,0.5,Berentsens Julefnugg,4
+2013,Svein-Magnus,0.5,Kinn Julefred,2
+2013,Svein-Magnus,0.5,Lervig's jul,4
+2013,Svein-Magnus,0.5,Mack,3
+2013,Svein-Magnus,0.5,Nøgne Ø God Jul,4
+2013,Svein-Magnus,0.5,Nøgne Ø Special Holiday Ale,5
+2013,Svein-Magnus,0.5,Nøgne Ø Underlig Jul,6
+2013,Svein-Magnus,0.5,Ægir Ylir Julebrygg,4
+2013,Svein-Magnus,0.5,Nils og Eriks hjemmebrygg,5
+2013,Svein-Magnus,0.5,Finsbråten,3
+2013,Svein-Magnus,0.5,Vossakjøt (spesialmodna),6
+2013,Svein-Magnus,0.5,Smedstuen gård (røkt),5
+2013,Stig,1,Aass,2.5
+2013,Stig,1,Haandbryggeriet Bestefar,5
+2013,Stig,1,Haandbryggeriet Nissefar,4
+2013,Stig,1,Haandbryggeriet Nissemor,5
+2013,Stig,1,Lade Gaards,3.1
+2013,Stig,1,Nøgne Ø God Jul,4.6
+2013,Stig,1,Ægir Ylir Julebrygg,5
+2013,Stig,1,Nils og Eriks hjemmebrygg,5
+2013,Stig,1,Finsbråten,4
+2013,Stig,1,Vossakjøt (spesialmodna),5
+2013,Stig,1,Smedstuen gård (røkt),3
+2013,Stig,1,Vertskapet,5.5
+2013,Nils,0.5,Haandbryggeriet Nissefar,2
+2013,Nils,0.5,Hansa,3
+2013,Nils,0.5,Ægir Ylir Julebrygg,5
+2013,Nils,0.5,Nils og Eriks hjemmebrygg,3
+2013,Nils,0.5,Finsbråten,5
+2013,Nils,0.5,Vossakjøt (spesialmodna),4
+2013,Nils,0.5,Smedstuen gård (røkt),3
+2013,Harald,0.5,Haandbryggeriet Bestefar,5
+2013,Harald,0.5,Haandbryggeriet Nissemor,3
+2013,Harald,0.5,Nøgne Ø God Jul,4
+2013,Harald,0.5,Ægir Ylir Julebrygg,4
+2013,Ingvild,1,Atna Julenisjeøl,3
+2013,Ingvild,1,Kinn Julefred,5
+2013,Ingvild,1,Ægir Ylir Julebrygg,3
+2013,Ingvild,1,Finsbråten,2
+2013,Ingvild,1,Vossakjøt (spesialmodna),5
+2013,Ingvild,1,Smedstuen gård (røkt),4
+2013,Tone,0.5,Dahls,4
+2013,Tone,0.5,Haandbryggeriet Nissefar,4
+2013,Tone,0.5,Haandbryggeriet Nissemor,4
+2013,Tone,0.5,Lade Gaards,4
+2013,Tone,0.5,Mack,4
+2013,Tone,0.5,Nøgne Ø Underlig Jul,1
+2013,tobiast,,CB,3
+2013,tobiast,,Fredrikstad,4
+2013,tobiast,,Hansa Ekstra Vellagret Julebrygg,5
+2013,tobiast,,Ringnes Juleøl,6
+2013,tobiast,,Finsbråten,5
+2013,tobiast,,Vossakjøt (spesialmodna),4
+2013,tobiast,,Smedstuen gård (røkt),5
+2013,Hein,,Aass,3
+2013,Hein,,Aass Premium,2
+2013,Hein,,Hansa Ekstra Vellagret Julebrygg,4
+2013,Hein,,Mack,6
+2013,Hein,,Nøgne Ø God Jul,2
+2013,Hvem?,,Berentsens Julefnugg,4
+2014,Jan Helge,0.5,7 Fjell 7 Sorter,3
+2014,Stig,1,7 Fjell 7 Sorter,3
+2014,Svein Magnus,1,7 Fjell 7 Sorter,2
+2014,Per Ottar,1,Ægir Julebrygg,3
+2014,Lars Gullik,1,Ægir Julebrygg,4
+2014,Petter,1,Ægir Julebrygg,4
+2014,Jan Helge,0.5,Amundsens Jól,3
+2014,Stig,1,Amundsens Jól,3
+2014,Eirik Averøya,1,Amundsens Jól,4
+2014,Svein Magnus,1,Amundsens Jól,3
+2014,Christian Nesmark,0.5,Amundsens Jól,3
+2014,Erik,1,Arendals 1839,4
+2014,Totto,1,Arendals 1839,3
+2014,Oddbjørn,0.5,Arendals 1839,3
+2014,Bård,1,Arendals 1839,6
+2014,Eirik hordaland,1,Arendals 1839,4
+2014,Eirik Averøya,1,Arendals 1839,2
+2014,Per Ottar,1,Arendals 1839,4
+2014,Christian Nesmark,0.5,Arendals 1839,2
+2014,Bård,1,Atna Julenisje,5
+2014,Eirik Averøya,1,Atna Julenisje,3
+2014,Svein Magnus,1,Atna Julenisje,3
+2014,Christian Nesmark,0.5,Atna Julenisje,3
+2014,Eirik hordaland,1,Austmann Stille Natt,4
+2014,Jan Helge,0.5,Austmann Stille Natt,5
+2014,Stig,1,Austmann Stille Natt,4
+2014,Lars Gullik,1,Austmann Stille Natt,3
+2014,Christian Nesmark,0.5,Austmann Stille Natt,3
+2014,Per Ottar,1,Balder Julebukk,4
+2014,Svein Magnus,1,Balder Julebukk,4
+2014,Erik,1,Berentsen Julefnugg,4
+2014,Totto,1,Berentsen Julefnugg,4
+2014,Oddbjørn,0.5,Berentsen Julefnugg,6
+2014,Eirik hordaland,1,Berentsen Julefnugg,4
+2014,Eirik Averøya,1,Berentsen Julefnugg,3
+2014,Per Ottar,1,Berentsen Julefnugg,3
+2014,Svein Magnus,1,Berentsen Julefnugg,5
+2014,Petter,1,Berentsen Julefnugg,3
+2014,Christian Nesmark,0.5,Berentsen Julefnugg,3
+2014,Totto,1,Berentsen Stelliger Divum,2
+2014,Oddbjørn,0.5,Berentsen Stelliger Divum,4
+2014,Bård,1,Berentsen Stelliger Divum,3
+2014,Erik,1,Borg Juleøl,3
+2014,Totto,1,Borg Juleøl,4
+2014,Eirik hordaland,1,Borg Juleøl,3
+2014,Petter,1,Borg Juleøl,2
+2014,Lars Gullik,1,CB Juleøl,2
+2014,Petter,1,CB Juleøl,3
+2014,Totto,1,Dahls Juleøl,3
+2014,Bård,1,Dahls Juleøl,3
+2014,Eirik hordaland,1,EC Dahls Juleøl,3
+2014,Petter,1,EC Dahls Juleøl,4
+2014,Erik,1,Fredrikstad Juleøl,2
+2014,Totto,1,Fredrikstad Juleøl,3
+2014,Ane,1,Fredrikstad Juleøl,3
+2014,Eirik hordaland,1,Fredrikstad Juleøl,4
+2014,Per Ottar,1,Fredrikstad Juleøl,2
+2014,Jan Helge,0.5,Haandbryggeriets Bestefar,4
+2014,Stig,1,Haandbryggeriets Bestefar,4
+2014,Eirik Averøya,1,Haandbryggeriets Bestefar,3
+2014,Per Ottar,1,Haandbryggeriets Bestefar,4
+2014,Svein Magnus,1,Haandbryggeriets Bestefar,4
+2014,Christian Nesmark,0.5,Haandbryggeriets Bestefar,4
+2014,Erik,1,Hansa Juleale,4
+2014,Bård,1,Hansa Juleale,3
+2014,Eirik hordaland,1,Hansa Juleale,6
+2014,Totto,1,Hansa Juleøl,3
+2014,Bård,1,Hansa Juleøl,3
+2014,Eirik hordaland,1,Hansa Juleøl,4
+2014,Lars Gullik,1,Hansa Juleøl,4
+2014,Petter,1,Hansa Juleøl,4
+2014,Erik,1,Hansa Vellagret Julebrygg,3
+2014,Per Ottar,1,Hansa Vellagret Julebrygg,3
+2014,Svein Magnus,1,Hansa Vellagret Julebrygg,1
+2014,Petter,1,Hansa Vellagret Julebrygg,5
+2014,Totto,1,Kinn Julefred,3
+2014,Eirik hordaland,1,Kinn Julefred,3
+2014,Eirik Averøya,1,Kinn Solsnu,4
+2014,Christian Nesmark,0.5,Kinn Solsnu,4
+2014,Lars Gullik,1,Kloster. G. Juleøl,4
+2014,Totto,1,Ladegaards Juleøl,3
+2014,Bård,1,Ladegaards Juleøl,2
+2014,Svein Magnus,1,Ladegaards Juleøl,4
+2014,Erik,1,Lervig Jul,4
+2014,Totto,1,Lervig Jul,3
+2014,Eirik hordaland,1,Lervig Jul,4
+2014,Per Ottar,1,Lervig Jul,3
+2014,Petter,1,Lervig Jul,4
+2014,Erik,1,Løkka Jul,3
+2014,Ane,1,Løkka Jul,3
+2014,Svein Magnus,1,Løkka Jul,2
+2014,Totto,1,Mack Juleøl,5
+2014,Bård,1,Mack Juleøl,4
+2014,Jan Helge,0.5,Mack Juleøl,4
+2014,Per Ottar,1,Mack Juleøl,2
+2014,Petter,1,Mack Juleøl,5
+2014,Jan Helge,0.5,Nøgne Ø God Jul,2
+2014,Stig,1,Nøgne Ø God Jul,5
+2014,Hanne Therese,1,Nøgne Ø God Jul,3
+2014,Jan Helge,0.5,Nøgne Ø Special Holiday Ale,4
+2014,Per Ottar,1,Nøgne Ø Special Holiday Ale,4
+2014,Oddbjørn,0.5,Nøgne Ø Underlig Jul,4
+2014,Jan Helge,0.5,Nøgne Ø Underlig Jul,5
+2014,Stig,1,Nøgne Ø Underlig Jul,3
+2014,Eirik Averøya,1,Nøgne Ø Underlig Jul,3
+2014,Svein Magnus,1,Nøgne Ø Underlig Jul,3
+2014,Christian Nesmark,0.5,Nøgne Ø Underlig Jul,4
+2014,Bård,1,Ringnes Juleøl,4
+2014,Eirik hordaland,1,Ringnes Juleøl,3
+2014,Petter,1,Ringnes Juleøl,4
+2014,Totto,1,Sagene sterk jul,5
+2014,Bård,1,Sagene sterk jul,4
+2014,Eirik hordaland,1,Sagene sterk jul,4
+2014,Stig,1,Sagene sterk jul,3
+2014,Eirik Averøya,1,Sagene sterk jul,4
+2014,Per Ottar,1,Sagene sterk jul,2
+2014,Lars Gullik,1,Sagene sterk jul,3
+2014,Christian Nesmark,0.5,Sagene sterk jul,2
+2014,Erik,1,Schouskjelleren Juleøl,3
+2014,Ane,1,Schouskjelleren Juleøl,2
+2014,Jan Helge,0.5,Schouskjelleren Juleøl,4
+2014,Stig,1,Schouskjelleren Juleøl,3
+2014,Erik,1,Smedstuen gård (fenalår),4
+2014,Totto,1,Smedstuen gård (fenalår),3
+2014,Dyveke,1,Smedstuen gård (fenalår),2
+2014,Ane,1,Smedstuen gård (fenalår),3
+2014,Jan Helge,0.5,Smedstuen gård (fenalår),4
+2014,Stig,1,Smedstuen gård (fenalår),5
+2014,Bård,1,Aass  Normal,4
+2014,Totto,1,Aass Vellagert,4
+2014,Bård,1,Aass Vellagert,4
+2014,Per Ottar,1,Aass Vellagert,4
+2014,Elin,1,Aass Vellagert,4
+2014,Erik,1,Vossakjøtt (fenalår),3
+2014,Dyveke,1,Vossakjøtt (fenalår),2
+2014,Ane,1,Vossakjøtt (fenalår),4
+2014,Bård,1,Vossakjøtt (fenalår),3
+2014,Jan Helge,0.5,Vossakjøtt (fenalår),3
+2014,Stig,1,Vossakjøtt (fenalår),4
+2014,Erik,1,Ylir,4
+2014,Totto,1,Ylir,3
+2014,Ane,1,Ylir,3
+2014,Christian Nesmark,0.5,Ylir,4
+2014,Elin,1,Ylir,3
+2014,Lars Gullik,1,Rignes Julebokk,4
+2015,Totto,1,Hansa Julebrygg,3
+2015,Totto,1,Eiker God Jul,2
+2015,Totto,1,Sagene,3
+2015,Totto,1,Færder,2
+2015,Totto,1,Julefnugg,4
+2015,Totto,1,7F 7 Sorter,3
+2015,Totto,1,Lervigs Jul,5
+2015,Totto,1,Rignes Julebokk,4
+2015,Totto,1,Nøgne Rød Jul,4
+2015,Totto,1,Schou Juleøl,4
+2015,Erik,1,Fredrikstad,4
+2015,Erik,1,Dahls,3
+2015,Erik,1,Ringnes Sterk,2
+2015,Erik,1,Austmann Vintersolverv,4
+2015,Erik,1,Julefnugg,4
+2015,Erik,1,Aass Premium,3
+2015,Erik,1,Nissefar,4
+2015,Erik,1,Klostergaarden 7 Sorter,4
+2015,Petter,1,Sagene,3
+2015,Petter,1,Dahls,4
+2015,Petter,1,Ringnes Sterk,5
+2015,Petter,1,Mack,5
+2015,Petter,1,Lade Gaard,3
+2015,Petter,1,Aass Premium,4
+2015,Petter,1,Aass Vellagret,5
+2015,Petter,1,Rignes Julebokk,4
+2015,Håkon,0.5,Dahls,4
+2015,Håkon,0.5,Ringnes Sterk,5
+2015,Håkon,0.5,Mack,5
+2015,Håkon,0.5,Færder,2
+2015,Håkon,0.5,7F 7 Sorter,4
+2015,Håkon,0.5,Nøgne God Jul Whisky,3
+2015,Håkon,0.5,Aass Vellagret,5
+2015,Eirik,1,Fredrikstad,4
+2015,Eirik,1,Dahls,3
+2015,Eirik,1,Ringnes Sterk,3
+2015,Eirik,1,Julefnugg,5
+2015,Eirik,1,Hansa Juleale,5
+2015,Eirik,1,Aass Premium,4
+2015,Eirik,1,CB,4
+2015,Eirik,1,Aass Vellagret,4
+2015,Eirik,1,Klostergaarden 7 Sorter,5
+2015,Eirik,1,Schou Juleøl,4
+2015,Stig,1,Eiker God Jul,1
+2015,Stig,1,Telemark,4
+2015,Stig,1,Nøgne God Jul Whisky,6
+2015,Stig,1,Aass Vellagret,5
+2015,Stig,1,Nøgne Rød Jul,4
+2015,Stig,1,Smestadstuen,5
+2015,Stig,1,Nordfjord,3
+2015,Stig,1,Vetikke,2
+2015,Dyveke,1,Julepynt,2
+2015,Dyveke,1,Smestadstuen,3
+2015,Dyveke,1,Nordfjord,5
+2015,Dyveke,1,Vetikke,2
+2015,Hein,1,Sagene,4
+2015,Hein,1,Mack,5
+2015,Hein,1,Amundsen Jol,2
+2015,Hein,1,Borg,3
+2015,Hein,1,Aass Premium,3
+2015,Hein,1,Hansa Juleøl,3
+2015,Hein,1,Nøgne God Jul,4
+2015,Jan Helge,1,Rignes Julebokk,4
+2015,Jan Helge,1,Nissefar,5
+2015,Jan Helge,1,Nøisom,4
+2015,Svein Magnus,1,Sagene,4
+2015,Svein Magnus,1,Mack,2
+2015,Svein Magnus,1,Amundsen Jol,3
+2015,Svein Magnus,1,Nøgne Underlig,4
+2015,Svein Magnus,1,Bad Santa,1
+2015,Svein Magnus,1,Ylir 2015,5
+2015,Svein Magnus,1,Rignes Julebokk,4
+2015,Svein Magnus,1,Nissefar,4
+2015,Elin,1,Fredrikstad,5
+2015,Elin,1,Færder,2
+2015,Elin,1,Hansa Juleale,5
+2015,Elin,1,CB,4
+2015,Elin,1,Stjerneskudd Krydret Juleale,5
+2017,Totto,1,Spekeskinke 1 (Voss røkt),5
+2017,Jan Helge,1,Spekeskinke 1 (Voss røkt),5
+2017,Eirik,1,Spekeskinke 1 (Voss røkt),4
+2017,Bård,1,Spekeskinke 1 (Voss røkt),5
+2017,Gjertrud,1,Spekeskinke 1 (Voss røkt),3
+2017,Erik,1,Spekeskinke 1 (Voss røkt),5
+2017,Olve,0.5,Spekeskinke 1 (Voss røkt),5
+2017,Totto,1,Spekeskinke 2 (Finsbråten),3
+2017,Jan Helge,1,Spekeskinke 2 (Finsbråten),3
+2017,Eirik,1,Spekeskinke 2 (Finsbråten),2
+2017,Bård,1,Spekeskinke 2 (Finsbråten),2
+2017,Gjertrud,1,Spekeskinke 2 (Finsbråten),4
+2017,Erik,1,Spekeskinke 2 (Finsbråten),3
+2017,Olve,0.5,Spekeskinke 2 (Finsbråten),3
+2017,Totto,1,Spekeskinke 3 (Voss urøkt),4
+2017,Jan Helge,1,Spekeskinke 3 (Voss urøkt),4
+2017,Eirik,1,Spekeskinke 3 (Voss urøkt),3
+2017,Bård,1,Spekeskinke 3 (Voss urøkt),4
+2017,Gjertrud,1,Spekeskinke 3 (Voss urøkt),2
+2017,Erik,1,Spekeskinke 3 (Voss urøkt),4
+2017,Olve,0.5,Spekeskinke 3 (Voss urøkt),4
+2017,Niclas,0.5,7 Fjell Sinterklaas,4
+2017,Jan Helge,1,Aja Julekvad,5
+2017,Totto,1,Aass Juleøl Vellagret,3
+2017,Bård,1,Aass Juleøl Vellagret,4
+2017,Erik,1,Aass Juleøl Vellagret,4
+2017,Olve,0.5,Aass Juleøl Vellagret,4
+2017,Knut,0.5,Aass Juleøl Vellagret,3
+2017,Totto,1,Aass Premium Juleøl,5
+2017,Eirik,1,Aass Premium Juleøl,4
+2017,Bård,1,Aass Premium Juleøl,3
+2017,Jesper,0.5,Aass Premium Juleøl,4
+2017,Gjertrud,1,Aass Premium Juleøl,3
+2017,Petter,1,Aass Premium Juleøl,4
+2017,Olve,0.5,Aass Premium Juleøl,3
+2017,Erik,1,Ægir Eldir,4
+2017,Øystein,1,Ægir Eldir,3
+2017,Gjertrud,1,Amundsen Rebel King Christmas,4
+2017,Jan Helge,1,Bådom Tussvatnet,4
+2017,Svein Magnus,1,Bådom Tussvatnet,4
+2017,Eirik,1,Berntsens Julefnugg,5
+2017,Bård,1,Berntsens Julefnugg,3
+2017,Jesper,0.5,Berntsens Julefnugg,3
+2017,Totto,1,Borg Juleøl,4
+2017,Olve,0.5,Borg Juleøl,4
+2017,Knut,0.5,Bryggerhuset Kokosmakronstout,4
+2017,Jesper,0.5,Bryggerhuset Lussekat-Trippel,2
+2017,Totto,1,CB Juleøl,4
+2017,Eirik,1,CB Juleøl,4
+2017,Michael,0.5,CB Juleøl,4
+2017,Petter,1,CB Juleøl,4
+2017,Stig,1,Cervisiam Chocoloate Salty Christmas  Balls,6
+2017,Eirik,1,Dahls Juleøl,4
+2017,Øystein,1,Dragur Sur Jul,5
+2017,Bård,1,C Dahls store bjørn juleøl,1
+2017,Jan Helge,1,Eiker God Jul,4
+2017,Niclas,0.5,Eiker God Jul,5
+2017,Erik,1,ELØ Julebokk,4
+2017,Michael,0.5,Erdinger Schneeweiss,4.5
+2017,Totto,1,Fredrikstad Juleøl,3
+2017,Eirik,1,Fredrikstad Juleøl,4
+2017,Jesper,0.5,Fredrikstad Juleøl,3
+2017,Petter,1,Fredrikstad Juleøl,3
+2017,Olve,0.5,Fredrikstad Juleøl,4
+2017,Øystein,1,Fredrikstad Juleøl,3
+2017,Knut,0.5,Grim & Fryt Vinternatt,4
+2017,Totto,1,Haandbryggeriet Fatlagret Nissemor,3
+2017,Jan Helge,1,Håndbryggeriet Bestefar,4
+2017,Stig,1,Håndbryggeriet Bestefar,4
+2017,Bård,1,Håndbryggeriet Bestefar,2
+2017,Petter,1,Hansa Julebrygg,4
+2017,Eirik,1,Hansa Juleøl,4
+2017,Petter,1,Hansa Juleøl,3
+2017,Olve,0.5,Hansa Juleøl,5
+2017,Jan Helge,1,Harstad Jul,4
+2017,Svein Magnus,1,Harstad Jul,5
+2017,Øystein,1,Harstad Jul,4
+2017,Michael,0.5,Hornbeer Helge,5
+2017,Bård,1,Julekula,6
+2017,Jesper,0.5,Kinn Tomasmesse,6
+2017,Hein,1,Kinn Tomasmesse,4
+2017,Knut,0.5,Krampus,5
+2017,Jan Helge,1,Lervig Christmas Shake,1
+2017,Gjertrud,1,Lervig Christmas Shake,1
+2017,Svein Magnus,1,Lervig Christmas Shake,2
+2017,Eirik,1,Little Brother Brewery - Hvor er nisselua mi,5
+2017,Totto,1,Mack Juleøl,4
+2017,Bård,1,Mack Juleøl,5
+2017,Petter,1,Mack Juleøl,4
+2017,Olve,0.5,Mack Juleøl,4
+2017,Michael,0.5,Mikeller Juleøl IPA,3
+2017,Stig,1,h,4
+2017,Svein Magnus,1,Nøgne Ø Rød Jul,4
+2017,Totto,1,Nøgne Ø Tradisjon 2017,2
+2017,Jan Helge,1,Nøgne Ø Tradisjon 2017,2
+2017,Eirik,1,Nøgne Ø Tradisjon 2017,4
+2017,Svein Magnus,1,Nøisom Juleøl 2017,3
+2017,Øystein,1,Nøisom Juleøl 2017,4
+2017,Svein Magnus,1,Oslo Mikrobryggeri Red & Wheat,2
+2017,Hein,1,Qvart Julekjesk,3
+2017,Gjertrud,1,Ringnes Julebokk,4
+2017,Petter,1,Ringnes Julebokk,5
+2017,Eirik,1,Ringnes Juleøl,3
+2017,Bård,1,Ringnes Juleøl,3
+2017,Petter,1,Ringnes Juleøl,5
+2017,Svein Magnus,1,Røros Mørk Lager,5
+2017,Totto,1,Schaus Juleøl,3
+2017,Hein,1,Schaus Juleøl,3
+2017,Erik,1,Små Vesen Jolereia Joleøl frå Valdres,2
+2017,Totto,1,St. Halvard Forjul,3
+2017,Øystein,1,St. Halvard Forjul,4
+2017,Stig,1,St. Halvard Reservejul,3
+2017,Jan Helge,1,Telemark Juleøl,5
+2017,Michael,0.5,Telemark Juleøl,6
+2017,Svein Magnus,1,Telemark Juleøl,5
+2017,Hein,1,Telemark Juleøl,6
+2017,Totto,1,Test,2
+2017,Niclas,0.5,Ugly Duck Brewing Company Happy Christmas,3
+2017,Michael,0.5,Vintersolverv,3.5
+2017,Jan Helge,1,Voss Jolabrygg,5
+2017,Jan Helge,1,Håndbryggeriet fatlagret Bestefar,4
+2017,Jan Helge,1,Dronebygg Kirsebærakvarell,5
+2017,Erik,1,AJA Bryggeri Juovla-Stout,4
+2017,Svein Magnus,1,Berntsens The Holy Book,3
+2017,Totto,1,Grunerløkkas Julebokk,4
+2018,Bård,1,Harstad,5
+2018,Gjertrud,1,Harstad,5
+2018,Totto,1,Fimafeng,4
+2018,Bård,1,Fimafeng,3
+2018,Svein Magnus,1,Fimafeng,1
+2018,Totto,1,Evens More XMas,2
+2018,Bård,1,Eldir,6
+2018,Totto,1,St. Hallvard For Jul,4
+2018,Svein Magnus,1,St. Hallvard For Jul,3
+2018,Gunnar,0.5,Advent Julelager,4
+2018,Gjertrud,1,Harstad Trippel,5
+2018,Totto,1,Berentsen Julefnugg,3
+2018,Totto,1,Aas Premium,3
+2018,Bård,1,Aas Premium,3
+2018,Erik,1,Aas Premium,5
+2018,Petter,1,Aas Premium,4
+2018,Totto,1,Dalhs,5
+2018,Petter,1,Dalhs,5
+2018,Olve,0.5,Dalhs,4
+2018,Petter,1,Hansa Juleøl,3
+2018,Erik,1,Ego Pale Ale Juleøl,2
+2018,Svein Magnus,1,Haand Nissefar,3
+2018,Totto,1,Løkka Julebrokk,3
+2018,Michael,1,Løkka Julebrokk,6
+2018,Dervis,0.5,Ægir Kveite Witbier,5
+2018,Erik,1,Hansa Julebrygg,4
+2018,Bård,1,Mack Juleøl,4
+2018,Petter,1,Mack Juleøl,4
+2018,Petter,1,Ringnes juleøl sterk,4
+2018,Totto,1,CB Juleøl,4
+2018,Michael,1,CB Juleøl,4
+2018,Bård,1,CB Juleøl,6
+2018,Jesper,1,Inderøy Gårdsbryggeri Musemor Old Ale,5
+2018,Michael,1,Oslo Brewing Company,6
+2018,Bård,1,Oslo Brewing Company,6
+2018,Erik,1,Oslo Brewing Company,6
+2018,Petter,1,Oslo Brewing Company,5
+2018,Olve,0.5,Oslo Brewing Company,5
+2018,Svein Magnus,1,Holy bock,4
+2018,Svein Magnus,1,Julemjød,4
+2018,Jesper,1,Nøisom Dobbelbock Juleøl,3
+2018,Svein Magnus,1,7 sorter,4
+2018,Svein Magnus,1,Nissefar,3
+2018,Hein,1,Tomasmesse,5
+2018,Hein,1,Haand Nissemor,3
+2018,Hein,1,Sagene sterk jul,3
+2018,Jesper,1,Ølkymisten Gingerbread Maniac,6
+2018,Totto,1,Scours Juleøl,3
+2018,Olve,0.5,CB Juleøl,2
+2019,Jesper,1,Berentsens Julefnugg,3
+2019,Jesper,1,Frederikstad Juleøl,3
+2019,Dervis,1,Frederikstad Juleøl,3
+2019,Jesper,1,Lervig Naughty & Nice,5
+2019,Elin,1,Ægir Fimafeng,4
+2019,Elin,1,Kinn Tomasmesse,3
+2019,Stig,1,Kinn Tomasmesse,3
+2019,Elin,1,Løkka Jul,4
+2019,Dervis,1,Løkka Jul,3
+2019,Totto,1,Kvit Jul,2
+2019,Michael,1,Kvit Jul,4
+2019,Michael,1,Red & Wheat X-mas,4
+2019,Totto,1,Mack julobok,5
+2019,Dervis,1,Mack julobok,1
+2019,Totto,1,Direktørens jul,2
+2019,Totto,1,Ringnes julebokk,4
+2019,Totto,1,Aass juleøl,3
+2019,Totto,1,Borg Juleøl,4
+2019,Michael,1,Dahls Juløl,4
+2019,Dervis,1,Dahls Juløl,5
+2019,Totto,1,Christmas Crush,3
+2019,Michael,1,Christmas Crush,5
+2019,Michael,1,Hansa Juløl,3
+2019,Jesper,1,Fjord Folk Julelager,3
+2019,Rønnaug,0.5,Fjord Folk Julelager,5
+2019,Totto,1,OMA Juleøl,4
+2019,Jesper,1,OMA Juleøl,4
+2019,Rønnaug,0.5,OMA Juleøl,4
+2019,Totto,1,7 sorter chritmas ale - 7 fjell,3
+2019,Rønnaug,0.5,7 sorter chritmas ale - 7 fjell,4
+2019,Stig,1,7 sorter chritmas ale - 7 fjell,4
+2019,Totto,1,Ringnes juleøl,4
+2019,Jesper,1,Cervisiam C.H.U.D,6
+2019,Stig,1,Cervisiam C.H.U.D,6
+2019,Totto,1,Halvard Klapp på vogna,3
+2019,Stig,1,Sagene Sterk Jul,5
+2019,Stig,1,Aass vellagret,4
+2019,Dervis,1,Kraftig Juling,1
+2019,Dervis,1,BrewDog Punk IPA,5

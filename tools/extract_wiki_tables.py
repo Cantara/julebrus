@@ -1,17 +1,11 @@
 #!/usr/bin/env python3
 """Extract juleøl test scores from the Cantara wiki pages (docs/puben/*.md in Cantara/wiki).
 
-Usage: extract_wiki_tables.py WIKI_PUBEN_DIR OUT_DIR
-
-Writes OUT_DIR/votes.csv (year, voter, weight, beer, score) and OUT_DIR/results.csv
-(year, beer, n_votes, mean_unweighted, mean_weighted, rank), taking the values the
-wiki page states. Nothing is recomputed. Only years whose page holds a readable table
-are handled here; other years are added by hand from the sources named in SOURCES.md.
+Used by build_data.py. extract(WIKI_PUBEN_DIR) returns (votes, results) with the values the wiki
+pages state; nothing is recomputed. Only years whose page holds a readable table are handled here.
 """
-import csv
 import os
 import re
-import sys
 from html.parser import HTMLParser
 
 
@@ -90,7 +84,7 @@ def voters_as_rows(grid, label_col, year, votes, results):
         def at(key):
             row = summary.get(key)
             return fmt(num(row[j])) if row and j < len(row) and num(row[j]) is not None else ""
-        results.append((year, beer, at("Antall stemmer"), at("Uvektet"), at("Vektet"), at("Plassering")))
+        results.append((year, beer, at("Antall stemmer"), at("Uvektet"), at("Vektet"), at("Plassering"), ""))
 
 
 def voters_as_columns(grid, year, votes, results):
@@ -108,26 +102,13 @@ def voters_as_columns(grid, year, votes, results):
             score = num(row[j]) if j < len(row) else None
             if score is not None:
                 votes.append((year, voter, fmt(num(weights[j])), beer, fmt(score)))
-        results.append((year, beer, fmt(num(row[count_col])), "", fmt(num(row[mean_col])), ""))
+        results.append((year, beer, fmt(num(row[count_col])), "", fmt(num(row[mean_col])), "", ""))
 
 
-def main(src, out):
+def extract(src):
     votes, results = [], []
     voters_as_columns(tables(os.path.join(src, "Juleøltesten-1998.md"))[0], 1998, votes, results)
     voters_as_rows(tables(os.path.join(src, "Juleøltesten-2003.md"))[0], 0, 2003, votes, results)
     voters_as_rows(tables(os.path.join(src, "Juleøltesten-2004.md"))[0], 0, 2004, votes, results)
     voters_as_rows(tables(os.path.join(src, "Juleøltesten-2007.md"))[0], 1, 2007, votes, results)
-    os.makedirs(out, exist_ok=True)
-    with open(os.path.join(out, "votes.csv"), "w", newline="", encoding="utf-8") as fh:
-        w = csv.writer(fh, lineterminator="\n")
-        w.writerow(["year", "voter", "weight", "beer", "score"])
-        w.writerows(votes)
-    with open(os.path.join(out, "results.csv"), "w", newline="", encoding="utf-8") as fh:
-        w = csv.writer(fh, lineterminator="\n")
-        w.writerow(["year", "beer", "n_votes", "mean_unweighted", "mean_weighted", "rank"])
-        w.writerows(results)
-    print(f"{len(votes)} votes, {len(results)} result rows")
-
-
-if __name__ == "__main__":
-    main(sys.argv[1], sys.argv[2])
+    return votes, results
