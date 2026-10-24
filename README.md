@@ -31,8 +31,11 @@ Beer names are as written in each source and are not normalised across years.
 
 See [SOURCES.md](SOURCES.md) for where each year comes from and the known quirks in the sources.
 
-## Rebuild
+## Rebuild and app import
 
 `python3 tools/build_data.py <Cantara/wiki clone>/docs/puben` rewrites the CSV files in `data/` from the wiki pages
 and `source/google-sheets/` (standard library only) and prints every place where a stated mean or vote count
 differs from the votes listed in the same source.
+
+`python3 tools/to_app_history.py <app>/backend/src/main/resources/history` writes the files the tasting app's
+`HistoryImporter` loads (`seasons.csv` and one `<year>.csv` per season) from `data/votes.csv`.
