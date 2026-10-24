@@ -8,6 +8,9 @@ import no.cantara.julebrus.session.TastingSession;
 import no.cantara.julebrus.stats.RankingService;
 import no.cantara.julebrus.team.Team;
 import no.cantara.julebrus.team.TeamService;
+import no.cantara.julebrus.tip.Tip;
+import no.cantara.julebrus.tip.TipScoring;
+import no.cantara.julebrus.tip.TipService;
 import no.cantara.julebrus.tasting.Tasting;
 import no.cantara.julebrus.tasting.TastingRepository;
 import no.cantara.julebrus.user.User;
@@ -47,9 +50,15 @@ public class FinaleService {
                              long ratings) {
     }
 
+    /** One person's podium tip, scored against the official podium. Names only. */
+    public record TipResult(UUID userId, String name, List<String> tip, int points, Instant createdAt) {
+    }
+
     public record FinaleView(int year, Instant revealAt, boolean revealed, boolean preview, Totals totals,
                              List<RankingService.BeerRank> podium, List<RankingService.DuelRank> duelPodium,
-                             List<Award> awards, List<TeamWinner> teamWinners) {
+                             List<Award> awards, List<TeamWinner> teamWinners,
+                             /** the tipping league, best first; before the reveal only how many tipped */
+                             List<TipResult> tips, long tipped) {
     }
 
     static final int MIN_RATED_FOR_OFFSET_AWARDS = 10;
@@ -63,11 +72,12 @@ public class FinaleService {
     private final UserRepository users;
     private final BlindService blind;
     private final TeamService teams;
+    private final TipService tips;
     private final Clock clock;
 
     public FinaleService(SeasonProperties season, RankingService ranking, TastingRepository tastings,
                          SessionRepository sessions, UserRepository users, BlindService blind, TeamService teams,
-                         Clock clock) {
+                         TipService tips, Clock clock) {
         this.season = season;
         this.ranking = ranking;
         this.tastings = tastings;
@@ -75,6 +85,7 @@ public class FinaleService {
         this.users = users;
         this.blind = blind;
         this.teams = teams;
+        this.tips = tips;
         this.clock = clock;
     }
 
@@ -88,12 +99,47 @@ public class FinaleService {
                 all.stream().map(Tasting::getUserId).distinct().count(),
                 all.stream().map(Tasting::getSessionId).filter(java.util.Objects::nonNull).distinct().count());
         if (!revealed && !preview) {
-            return new FinaleView(season.year(), revealAt, false, false, totals, null, null, null, null);
+            return new FinaleView(season.year(), revealAt, false, false, totals, null, null, null, null, null, tips.count());
         }
+        List<RankingService.BeerRank> podium = ranking.beerRanking().stream().limit(3).toList();
+        Map<UUID, String> nameOf = users.findAll().stream().collect(Collectors.toMap(User::getId, User::getDisplayName));
+        List<TipResult> league = tipLeague(podium, nameOf);
+        List<Award> awards = awards(all);
+        awards.add(tipster(league));
         return new FinaleView(season.year(), revealAt, revealed, preview && !revealed, totals,
-                ranking.beerRanking().stream().limit(3).toList(),
+                podium,
                 ranking.duelRanking().stream().limit(3).toList(),
-                awards(all), teamWinners());
+                awards, teamWinners(), league, league.size());
+    }
+
+    /** Everyone's tip scored against the podium: most points first, earlier tip wins a tie. */
+    List<TipResult> tipLeague(List<RankingService.BeerRank> podium, Map<UUID, String> nameOf) {
+        List<UUID> official = podium.stream().map(RankingService.BeerRank::beerId).toList();
+        Map<UUID, String> beerName = new java.util.HashMap<>();
+        podium.forEach(b -> beerName.put(b.beerId(), b.name()));
+        List<Tip> all = tips.all();
+        all.stream().flatMap(t -> t.podium().stream()).distinct().filter(id -> !beerName.containsKey(id))
+                .forEach(id -> beerName.put(id, ranking.nameOf(id)));
+        return all.stream()
+                .map(t -> new TipResult(t.getUserId(), nameOf.getOrDefault(t.getUserId(), "?"),
+                        t.podium().stream().map(id -> beerName.getOrDefault(id, "?")).toList(),
+                        TipScoring.points(t.podium(), official), t.getCreatedAt()))
+                .sorted(Comparator.comparingInt(TipResult::points).reversed().thenComparing(TipResult::createdAt))
+                .toList();
+    }
+
+    /** "Årets tipper": most points, the earlier tip on a tie, at least one point. */
+    static Award tipster(List<TipResult> league) {
+        String id = "TIPSTER", title = "Årets tipper", description = "Tippet pallen best før siste dag";
+        List<TipResult> scoring = league.stream().filter(r -> r.points() > 0).toList();
+        if (scoring.isEmpty()) return new Award(id, title, description, null, "Ingen traff pallen i år");
+        TipResult top = scoring.get(0);
+        List<TipResult> winners = scoring.stream()
+                .filter(r -> r.points() == top.points() && r.createdAt().equals(top.createdAt()))
+                .sorted(Comparator.comparing(TipResult::name)).toList();
+        String names = winners.stream().map(TipResult::name).collect(Collectors.joining(", "))
+                .replaceFirst(", ([^,]+)$", " og $1");
+        return new Award(id, title, description, names, "%d av %d poeng".formatted(top.points(), TipScoring.MAX));
     }
 
     /** Teams with at least one ranked beer, in name order. */

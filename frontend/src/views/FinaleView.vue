@@ -176,6 +176,13 @@ function fit(ctx: CanvasRenderingContext2D, text: string, max: number) {
       </table>
       <p class="muted" style="margin: 10px 0 0">Den løpende listen ligger under <router-link to="/stats">Resultater</router-link>. Stjernen her er for seremonien.</p>
     </div>
+    <router-link class="card row" to="/tipp" style="text-decoration: none">
+      <div>
+        <strong class="display">🥇 Tipp pallen</strong>
+        <div class="muted">{{ finale.tipped }} har tippet. Fristen er natten før finalen.</div>
+      </div>
+      <span class="muted">›</span>
+    </router-link>
     <p v-if="store.me?.admin && !wantPreview" class="muted" style="text-align: center">
       <router-link to="/finale?preview=true">Forhåndsvis finalen (kun admin)</router-link>
     </p>
@@ -233,6 +240,24 @@ function fit(ctx: CanvasRenderingContext2D, text: string, max: number) {
             <tr v-for="p in pairs.opposites" :key="'o' + p.a + p.b"><td>⚡ {{ p.a }} mot {{ p.b }}</td><td style="text-align: right">{{ p.similarity.toFixed(2) }} · {{ p.common }} øl</td></tr>
           </tbody>
         </table>
+      </div>
+    </template>
+
+    <template v-if="finale.tips?.length">
+      <h2>Tippeligaen</h2>
+      <div class="card">
+        <table>
+          <thead><tr><th>#</th><th>Tipper</th><th>Tipset</th><th style="text-align: right">Poeng</th></tr></thead>
+          <tbody>
+            <tr v-for="(t, i) in finale.tips" :key="t.userId">
+              <td>{{ i + 1 }}</td>
+              <td>{{ t.name }}</td>
+              <td class="muted">{{ t.tip.join(' · ') }}</td>
+              <td style="text-align: right"><strong>{{ t.points }}</strong></td>
+            </tr>
+          </tbody>
+        </table>
+        <p class="muted" style="margin: 8px 0 0">Tre poeng for rett øl på rett plass, ett for et øl på pallen på feil plass.</p>
       </div>
     </template>
 

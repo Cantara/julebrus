@@ -15,6 +15,7 @@ import no.cantara.julebrus.tasting.Tasting;
 import no.cantara.julebrus.tasting.TastingRepository;
 import no.cantara.julebrus.team.Team;
 import no.cantara.julebrus.team.TeamService;
+import no.cantara.julebrus.tip.TipService;
 import org.springframework.stereotype.Component;
 
 import java.time.Clock;
@@ -42,12 +43,14 @@ public class McpTools {
     private final TastingRepository tastings;
     private final SeasonProperties season;
     private final TeamService teams;
+    private final TipService tips;
     private final Clock clock;
 
     public McpTools(ObjectMapper json, HistoryController history, HistoricSeasonRepository seasons,
                     HistoricRatingRepository ratings, RankingService ranking, FinaleService finale,
-                    TastingRepository tastings, SeasonProperties season, TeamService teams, Clock clock) {
+                    TastingRepository tastings, SeasonProperties season, TeamService teams, TipService tips, Clock clock) {
         this.teams = teams;
+        this.tips = tips;
         this.json = json;
         this.history = history;
         this.seasons = seasons;
@@ -112,6 +115,8 @@ public class McpTools {
         out.put("inSeason", !today.isBefore(season.start()) && !today.isAfter(season.end()));
         out.put("daysLeft", Math.max(0, java.time.temporal.ChronoUnit.DAYS.between(today, season.end())));
         out.put("revealAt", season.revealAt().toString());
+        out.put("tipDeadline", season.tipDeadline().toString());
+        out.put("tipped", tips.count());
         out.put("rules", Map.of(
                 "maxTastingsPerDay", season.maxTastingsPerDay(),
                 "maxSoloDays", season.maxSoloDays(),
