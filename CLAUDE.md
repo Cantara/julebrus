@@ -18,6 +18,9 @@ badges, and imported historic seasons. See DESIGN.md for rules and decisions.
   - `duel/BradleyTerry`, `stats/BayesianAverage` — pure ranking math.
   - `badge/BadgeEvaluator` — pure badge rules over a tasting log.
   - `history/` — CSV import of earlier seasons and their weighting.
+  - `consent/` — versioned consent; `ConsentInterceptor` answers 403 `CONSENT_REQUIRED` on all `/api/**` except `/api/me`, `/api/consent*`, `/api/config`. Texts in `resources/consent/`.
+  - `history/ClaimService`, `RaterNameSuggester` (pure) — claim-your-history; admin decisions in `admin/AdminClaimsController`.
+  - `web/ConfigController` — public `/api/config` (sponsor line).
   - `config/SecurityConfig` — Google chain (`!dev`) and dev chain with `X-Dev-User` impersonation.
 - `frontend/src/views/` — one view per screen; `api/client.ts` handles CSRF, 401 redirect and dev user.
 - Frontend production build lands in `backend/src/main/resources/static` and is served by the jar.
@@ -31,7 +34,7 @@ cd frontend && npm run build
 ```
 
 ## Conventions
-- Rule violations are HTTP 422 with a stable `code` (`OUTSIDE_SEASON`, `DAILY_LIMIT`, `SOLO_DAYS_EXHAUSTED`, `ALREADY_RATED`).
+- Rule violations are HTTP 422 with a stable `code` (`OUTSIDE_SEASON`, `DAILY_LIMIT`, `SOLO_DAYS_EXHAUSTED`, `ALREADY_RATED`). Other errors carry their own codes too: `CONSENT_REQUIRED`, `CONSENT_VERSION_MISMATCH`, `RATER_NOT_FOUND`, `CLAIM_EXISTS`, `RATER_TAKEN`, `CLAIM_LIMIT`, `CLAIM_NOT_PENDING`, `CLAIM_NOT_FOUND`.
 - Days are Europe/Oslo. Scores are integers 1–6.
 - Schema changes go in a new Flyway migration; Hibernate runs with `ddl-auto: validate`.
 - UI copy is Norwegian (bokmål); code and comments are English.
