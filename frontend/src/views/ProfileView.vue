@@ -2,6 +2,7 @@
 import { onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { get, logout, post } from '../api/client'
+import AdminBeerImport from '../components/AdminBeerImport.vue'
 import AdminBeers from '../components/AdminBeers.vue'
 import AdminClaims from '../components/AdminClaims.vue'
 import AdminRaterLinks from '../components/AdminRaterLinks.vue'
@@ -123,6 +124,7 @@ const byYear = () => {
   <AdminClaims v-if="store.me?.admin" />
   <AdminRaterLinks v-if="store.me?.admin" />
   <AdminBeers v-if="store.me?.admin" />
+  <AdminBeerImport v-if="store.me?.admin" />
 
   <h2>{{ t('withdrawTitle') }}</h2>
   <div class="card">

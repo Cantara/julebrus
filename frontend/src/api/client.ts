@@ -21,7 +21,7 @@ function devUser(): string | null {
 
 export async function api<T>(path: string, init: RequestInit = {}, retried = false): Promise<T> {
   const headers: Record<string, string> = { Accept: 'application/json', ...(init.headers as Record<string, string>) }
-  if (init.body) headers['Content-Type'] = 'application/json'
+  if (init.body && !headers['Content-Type']) headers['Content-Type'] = 'application/json'
   const xsrf = csrfToken()
   if (xsrf && init.method && init.method !== 'GET') headers['X-XSRF-TOKEN'] = decodeURIComponent(xsrf)
   const dev = devUser()
@@ -60,6 +60,9 @@ export async function api<T>(path: string, init: RequestInit = {}, retried = fal
 export const get = <T>(path: string) => api<T>(path)
 export const post = <T>(path: string, body?: unknown) =>
   api<T>(path, { method: 'POST', body: body === undefined ? undefined : JSON.stringify(body) })
+/** POST a raw text body (CSV upload); the content type is passed through as given. */
+export const postText = <T>(path: string, text: string, contentType = 'text/csv') =>
+  api<T>(path, { method: 'POST', body: text, headers: { 'Content-Type': contentType } })
 export const del = <T>(path: string) => api<T>(path, { method: 'DELETE' })
 
 /** Ends the session. The server answers with a redirect to "/", so the body is ignored. */

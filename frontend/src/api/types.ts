@@ -255,3 +255,20 @@ export interface MySeason {
   myMean: number
   crowdMean: number
 }
+
+export interface ImportRow {
+  line: number
+  name: string
+  brewery?: string
+  style?: string
+  abv?: number
+  vinmonopoletId?: string
+  action: 'NEW' | 'DUPLICATE' | 'INVALID'
+  reason?: string
+}
+
+export interface ImportResult {
+  dryRun: boolean
+  created: number
+  rows: ImportRow[]
+}

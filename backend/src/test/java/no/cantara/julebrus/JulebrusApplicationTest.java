@@ -229,6 +229,52 @@ class JulebrusApplicationTest {
                 .andExpect(jsonPath("$[?(@.year==2019)].winnerName").isNotEmpty());
     }
 
+    @Test
+    void perennialsAreSeededAndCsvImportPreviewsThenCreates() throws Exception {
+        ConsentSupport.accept(mvc, null);
+        ConsentSupport.accept(mvc, "guest@cantara.no");
+
+        // The seed put the grocery shelf in place, approved.
+        mvc.perform(get("/api/beers").param("q", "Aass Jule"))
+                .andExpect(jsonPath("$[?(@.name=='Aass Juleøl')].status").value("APPROVED"));
+
+        String csv = """
+                name;brewery;style;abv;vinmonopolet_id
+                Nøgne Ø God Jul;Nøgne Ø;Juleøl, sterk;8,5;1234501
+                Aass Juleøl;Aass;Juleøl;4,7;
+                ;Ukjent;;;
+                Lervig Juleøl;Lervig;Juleøl;abc;
+                """;
+        mvc.perform(post("/api/admin/beers/import?dryRun=true").header("X-Dev-User", "guest@cantara.no")
+                        .contentType("text/csv").content(csv))
+                .andExpect(status().isForbidden());
+
+        mvc.perform(post("/api/admin/beers/import?dryRun=true").contentType("text/csv").content(csv))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.dryRun").value(true))
+                .andExpect(jsonPath("$.created").value(0))
+                .andExpect(jsonPath("$.rows", hasSize(4)))
+                .andExpect(jsonPath("$.rows[0].action").value("NEW"))
+                .andExpect(jsonPath("$.rows[0].abv").value(8.5))
+                .andExpect(jsonPath("$.rows[1].action").value("DUPLICATE"))
+                .andExpect(jsonPath("$.rows[2].action").value("INVALID"))
+                .andExpect(jsonPath("$.rows[3].action").value("INVALID"));
+        mvc.perform(get("/api/beers").param("q", "God Jul")).andExpect(jsonPath("$", hasSize(0)));
+
+        mvc.perform(post("/api/admin/beers/import?dryRun=false").contentType("text/csv").content(csv))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.created").value(1));
+        mvc.perform(get("/api/beers").param("q", "God Jul"))
+                .andExpect(jsonPath("$[0].name").value("Nøgne Ø God Jul"))
+                .andExpect(jsonPath("$[0].vinmonopoletId").value("1234501"))
+                .andExpect(jsonPath("$[0].status").value("APPROVED"));
+
+        // Running the same file again finds nothing new.
+        mvc.perform(post("/api/admin/beers/import?dryRun=false").contentType("text/csv").content(csv))
+                .andExpect(jsonPath("$.created").value(0))
+                .andExpect(jsonPath("$.rows[0].action").value("DUPLICATE"));
+    }
+
     private static org.springframework.test.web.servlet.result.ContentResultMatchers content() {
         return org.springframework.test.web.servlet.result.MockMvcResultMatchers.content();
     }

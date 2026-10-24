@@ -1,0 +1,19 @@
+name,brewery,style,abv,vinmonopolet_id
+# The grocery-shelf juleøl that come back every year, so the catalogue is not empty
+# on 1 November while Vinmonopolet's list is still a few days away. Imported at
+# startup when the name is not already there; approved. ABV left blank where the
+# year's figure is not known, fill it in when the bottles are on the table.
+Aass Juleøl,Aass,Juleøl,,
+Ringnes Juleøl,Ringnes,Juleøl,,
+Hansa Juleøl,Hansa Borg,Juleøl,,
+Borg Juleøl,Hansa Borg,Juleøl,,
+CB Juleøl,Hansa Borg,Juleøl,,
+Mack Juleøl,Mack,Juleøl,,
+Frydenlund Juleøl,Ringnes,Juleøl,,
+E.C. Dahls Juleøl,E.C. Dahls,Juleøl,,
+Arendals Juleøl,Arendals,Juleøl,,
+Grans Juleøl,Grans,Juleøl,,
+Lundetangen Juleøl,Hansa Borg,Juleøl,,
+Berentsens Juleøl,Berentsens,Juleøl,,
+Tuborg Julebryg,Tuborg,Julebryg,,
+Aass Juleøl Alkoholfri,Aass,Alkoholfri juleøl,,
