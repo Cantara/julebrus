@@ -13,7 +13,8 @@ export interface Me {
   displayName: string
   status: Status
   season: { year: number; start: string; end: string; maxTastingsPerDay: number; maxSoloDays: number }
-  weight: { weight: number; reason: string }
+  /** absent until the person has consented */
+  weight: { weight: number; reason: string } | null
   admin: boolean
   consentRequired: boolean
   consentVersion: string
@@ -171,6 +172,7 @@ export interface AdminClaimView {
   raterKey: string
   years: number[]
   ratingCount: number
+  linkedByEmail: boolean
   userId: string
   displayName?: string
   email?: string

@@ -49,13 +49,14 @@ async function act(c: AdminClaimView, action: 'APPROVE' | 'REJECT' | 'REVOKE') {
     <p v-if="claimants.length > 1" class="muted" role="note">{{ t('adminCompeting') }}</p>
     <div v-for="c in claimants" :key="c.id" style="padding: 6px 0; border-top: 1px solid var(--line)">
       <div>{{ c.displayName }} · {{ c.email }}</div>
+      <p v-if="c.linkedByEmail" class="error" role="note">{{ t('adminLinked') }}</p>
       <div v-if="confirming === c.id + ':APPROVE'" class="row" style="margin-top: 8px; justify-content: flex-start">
         <span>{{ t('confirmApprove') }}</span>
         <button @click="act(c, 'APPROVE')">{{ t('confirmYes') }}</button>
         <button class="secondary" @click="confirming = null">{{ t('cancel') }}</button>
       </div>
       <div v-else class="row" style="margin-top: 8px; justify-content: flex-start">
-        <button @click="confirming = c.id + ':APPROVE'">{{ t('approve') }}</button>
+        <button :disabled="c.linkedByEmail" @click="confirming = c.id + ':APPROVE'">{{ t('approve') }}</button>
         <button class="secondary" @click="act(c, 'REJECT')">{{ t('reject') }}</button>
       </div>
     </div>

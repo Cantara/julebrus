@@ -57,7 +57,7 @@ const byYear = () => {
   <h1>{{ store.me?.displayName ?? 'Meg' }}</h1>
   <p class="muted">{{ store.me?.email }} · <a href="#" @click.prevent="logout()">Logg ut</a></p>
 
-  <div v-if="store.me" class="card">
+  <div v-if="store.me?.weight" class="card">
     <div class="row">
       <strong>Din vekt i år</strong>
       <span class="pill on">{{ store.me.weight.weight }}</span>
