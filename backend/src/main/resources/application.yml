@@ -1,6 +1,11 @@
 spring:
   application:
     name: julebrus
+  servlet:
+    multipart:
+      # Label photos: hard limit before anything is decoded. Larger requests are answered 413 PHOTO_TOO_LARGE.
+      max-file-size: 6MB
+      max-request-size: 7MB
   jpa:
     open-in-view: false
     hibernate:
@@ -41,6 +46,11 @@ julebrus:
   contact:
     # Named in the consent text as where to ask for deletion. Blank means "contact the organisers".
     email: ${JULEBRUS_CONTACT_EMAIL:}
+
+server:
+  tomcat:
+    # Read (and discard) up to this much of a refused upload so the client gets the 413 instead of a reset connection.
+    max-swallow-size: 16MB
 
 management:
   endpoints:

@@ -12,6 +12,7 @@ Julebrus is Cantara's Christmas beer tasting. It is run by the Cantara community
 - Links to earlier seasons, the decisions about them and consent events, with timestamps
 - Earlier seasons' ratings, imported from the public pages on wiki.cantara.no, with the names as written in the old spreadsheets, sometimes with an initial or surname
 - Where the organisers have linked earlier ratings to an email address, that address is stored with them
+- Pictures of beer labels that you choose to upload, with the time and the beer they belong to
 - Preferences (language and snow), kept in your browser's local storage
 
 ## Before you have answered
@@ -28,7 +29,17 @@ To run the tasting and show results and history.
 - Season statistics are shown per beer
 - The history shows the names of the people who tasted in earlier years, as written in the old spreadsheets
 - Administrators see the name and email address of people who ask to link themselves to earlier seasons, in the approval queue
+- Pictures you upload are seen only by you and the administrators until an administrator has approved them. After approval all participants can see them
+- Administrators see every picture that is uploaded, and the name and email address of the person who uploaded it
 - Administrators see every participant's name, email address, number of scores, weight and statistics on how they score (for example brewery preferences), to detect rigging
+
+## Pictures of the label
+
+- Pictures are optional. Photograph the label only, with no people in it
+- You keep the copyright in your picture. You allow the tasting to show it to the other participants after an administrator has approved it
+- Pictures are stored in our database, never as public links. Metadata such as location and camera is removed, and the picture is made smaller
+- The label artwork in a picture belongs to the producer
+- You can delete your own picture. You can also ask {contact} to delete it
 
 ## Earlier seasons
 

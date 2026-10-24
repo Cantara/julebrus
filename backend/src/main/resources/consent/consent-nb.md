@@ -12,6 +12,7 @@ Julebrus er Cantaras juleølsmaking. Den drives av Cantara-miljøet.
 - Koblinger til tidligere år, beslutninger om dem og samtykkehendelser, med tidspunkt
 - Tidligere års scorer, importert fra de offentlige sidene på wiki.cantara.no, med navnene slik de står i de gamle regnearkene, noen ganger med initial eller etternavn
 - Der arrangørene har koblet tidligere års scorer til en e-postadresse, lagres adressen sammen med dem
+- Bilder av øletiketter som du selv velger å laste opp, med tidspunkt og hvilket øl de gjelder
 - Innstillinger (språk og snø), som ligger i lokal lagring i nettleseren din
 
 ## Før du har svart
@@ -28,7 +29,17 @@ For å kjøre smakingen og vise resultater og historikk.
 - Sesongstatistikken vises per øl
 - Historikken viser navnene til dem som smakte i tidligere år, slik de står i de gamle regnearkene
 - Administratorer ser navn og e-postadresse til dem som ber om å koble seg til tidligere år, i godkjenningskøen
+- Bilder du laster opp, ser bare du og administratorene til en administrator har godkjent dem. Etter godkjenning kan alle deltakerne se dem
+- Administratorer ser hvert bilde som lastes opp, og navnet og e-postadressen til den som lastet det opp
 - Administratorer ser hver deltakers navn, e-postadresse, antall scorer, vekt og statistikk over hvordan vedkommende scorer (for eksempel bryggeripreferanser), for å oppdage juks
+
+## Bilder av etiketten
+
+- Bilder er valgfritt. Ta bare bilde av etiketten, uten personer
+- Du beholder opphavsretten til bildet ditt. Du lar smakingen vise det til de andre deltakerne etter at en administrator har godkjent det
+- Bildene lagres i databasen vår, aldri som offentlige lenker. Metadata som sted og kamera fjernes, og bildet gjøres mindre
+- Etikettens grafikk i bildet tilhører produsenten
+- Du kan slette bildet ditt selv. Du kan også be om sletting hos {contact}
 
 ## Tidligere år
 

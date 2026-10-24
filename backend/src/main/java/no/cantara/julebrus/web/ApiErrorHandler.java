@@ -60,6 +60,20 @@ public class ApiErrorHandler {
         return false;
     }
 
+    /** Spring's multipart limit (server.tomcat / spring.servlet.multipart.*) tripped: a clean 413, not a 500. */
+    @ExceptionHandler(org.springframework.web.multipart.MaxUploadSizeExceededException.class)
+    public ResponseEntity<ApiError> tooLarge(org.springframework.web.multipart.MaxUploadSizeExceededException e) {
+        return ResponseEntity.status(HttpStatus.PAYLOAD_TOO_LARGE)
+                .body(new ApiError("PHOTO_TOO_LARGE", "The picture is too large (at most 6 MB)"));
+    }
+
+    /** No "file" part, or the request is not multipart at all. */
+    @ExceptionHandler({org.springframework.web.multipart.support.MissingServletRequestPartException.class,
+            org.springframework.web.multipart.MultipartException.class})
+    public ResponseEntity<ApiError> badMultipart(Exception e) {
+        return ResponseEntity.badRequest().body(new ApiError("PHOTO_MISSING", "No picture was sent"));
+    }
+
     @ExceptionHandler(ResponseStatusException.class)
     public ResponseEntity<ApiError> status(ResponseStatusException e) {
         return ResponseEntity.status(e.getStatusCode())
