@@ -20,11 +20,12 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
         "spring.datasource.username=sa", "spring.datasource.password=",
         "spring.datasource.driver-class-name=org.h2.Driver",
         "spring.security.oauth2.client.registration.google.client-id=fake",
-        "spring.security.oauth2.client.registration.google.client-secret=fake"})
+        "spring.security.oauth2.client.registration.google.client-secret=fake",
+        "julebrus.auth.admins=totto@exoreaction.com"})
 @AutoConfigureMockMvc
 class MatchesProdChainTest {
 
-    static final String ADMIN = "totto@exoreaction.com"; // the default in application.yml
+    static final String ADMIN = "totto@exoreaction.com"; // set above: application.yml has no default admin
     static final String BULK = "{\"action\":\"CONFIRM\",\"year\":1998,\"status\":\"likely\"}";
 
     @Autowired
