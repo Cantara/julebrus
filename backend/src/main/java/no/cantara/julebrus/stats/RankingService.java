@@ -110,6 +110,11 @@ public class RankingService {
         return withRank(ranked, (r, i) -> new DuelRank(i, r.beerId(), r.name(), r.brewery(), r.strength()));
     }
 
+    /** A beer's name by id, "?" when unknown. */
+    public String nameOf(UUID beerId) {
+        return beers.findById(beerId).map(Beer::getName).orElse("?");
+    }
+
     private Map<UUID, Beer> beerIndex() {
         return beers.findAll().stream().collect(Collectors.toMap(Beer::getId, Function.identity()));
     }

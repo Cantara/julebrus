@@ -83,7 +83,7 @@ optimistic lock, so two admins deciding at once get 409 `CONFLICT`.
 ## Label photos
 
 Optional photo of a beer's label (`BeerPhotoBox` on the beer card and the rating page). Stored in PostgreSQL in
-`beer_photos` (migration `V8__beer_photos.sql`, `data` is a `bytea`), never as a file or a public link. Nothing that
+`beer_photos` (migration `V9__beer_photos.sql`, `data` is a `bytea`), never as a file or a public link. Nothing that
 lists beers reads the bytes: the JPA entity `BeerPhoto` does not map the `data` column, and only `PhotoStore` (plain
 JDBC) writes the row or selects `data`.
 
@@ -129,7 +129,7 @@ orientation (JPEG only; PNG has none). Wide-gamut colour profiles are dropped.
 ### Deleting a person's data by hand (procedure to review before use)
 
 Deletion requests go to `JULEBRUS_CONTACT_EMAIL` and are done by an organiser. Recipe 1 was run
-(2026-10-24, schema V1 to V8) on a throwaway PostgreSQL 16 with seeded data, once as an admin (who had decided
+(2026-10-24, schema V1 to V9) on a throwaway PostgreSQL 16 with seeded data, once as an admin (who had decided
 beers, photos and claims and uploaded a photo) and once as a normal user (tastings, duels, a hosted session with
 a handed-over member, blind-pour rounds and guesses, photos, an approved claim): both ran to the end and the
 other people's rows were left alone. It has never been run on a real database, and Recipe 2 was not part of that test.

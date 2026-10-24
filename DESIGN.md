@@ -110,6 +110,16 @@ team's own number one and the award "Årets lag" (most tastings per member, so a
 an MCP tool `team_ranking`. Membership is visible to other tasters like the display name; the consent
 text gets that line at the next version bump.
 
+## Tipping the podium (decided 24 Oct)
+
+Everyone may tip the season's podium (gold, silver, bronze among the beers that count), one tip
+per person, changeable or withdrawable until the last day begins (midnight before the reveal,
+Oslo time: `SeasonProperties.tipDeadline()`). Scoring at the reveal against the official podium:
+3 points for a beer in its right spot, 1 for a beer on the podium in the wrong spot, 9 is perfect
+(`TipScoring`, pure). Before the reveal the finale only says how many have tipped; after it the
+whole league is shown, best first, earlier tip ahead on a tie, and "Årets tipper" joins the
+awards (at least one point).
+
 ## Statistics
 
 - **Beers:** weighted Bayesian average (prior = weighted global mean, prior weight

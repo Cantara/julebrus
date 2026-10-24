@@ -63,6 +63,29 @@ export interface Beer {
   /** the caller's own newest photo of the beer */
   myPhotoId?: string | null
   myPhotoStatus?: 'PENDING' | 'APPROVED' | 'REJECTED' | null
+  /** approved and Vinmonopolet strength: in the ranking and tippable */
+  counts: boolean
+}
+
+export interface TipPick {
+  beerId: string
+  name: string
+  brewery?: string
+}
+
+export interface MyTip {
+  tip: { podium: TipPick[]; createdAt: string; updatedAt: string } | null
+  deadline: string
+  closed: boolean
+  tipped: number
+}
+
+export interface TipResult {
+  userId: string
+  name: string
+  tip: string[]
+  points: number
+  createdAt: string
 }
 
 export interface StructuredNotes {
@@ -186,6 +209,9 @@ export interface Finale {
   duelPodium?: DuelRank[]
   awards?: Award[]
   teamWinners?: TeamWinner[]
+  /** the tipping league, best first; only after the reveal */
+  tips?: TipResult[]
+  tipped: number
 }
 
 export interface TeamWinner {

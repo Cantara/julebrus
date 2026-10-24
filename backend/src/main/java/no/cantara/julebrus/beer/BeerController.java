@@ -38,14 +38,15 @@ public class BeerController {
                            boolean hasPhoto,
                            /** the caller's own newest photo of this beer, so they can see its state or delete it; never anybody else's */
                            UUID myPhotoId, BeerPhoto.Status myPhotoStatus,
-                           boolean homebrew) {
+                           boolean homebrew,
+                           /** approved and Vinmonopolet strength: in the ranking and tippable */ boolean counts) {
         static BeerView of(Beer b, long ratingCount, UUID me, PhotoService.Covers covers) {
             BeerPhoto mine = covers.mine().get(b.getId());
             return new BeerView(b.getId(), b.getName(), b.getBrewery(), b.getStyle(), b.getAbv(),
                     b.getVinmonopoletId(), b.getImageUrl(), ratingCount, b.getStatus(),
                     me != null && me.equals(b.getCreatedBy()),
                     covers.beersWithCover().contains(b.getId()),
-                    mine == null ? null : mine.getId(), mine == null ? null : mine.getStatus(), b.isHomebrew());
+                    mine == null ? null : mine.getId(), mine == null ? null : mine.getStatus(), b.isHomebrew(), b.counts());
         }
     }
 

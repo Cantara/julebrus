@@ -2,7 +2,7 @@
 import { computed, onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { get } from '../api/client'
-import type { Beer, Session, Tasting } from '../api/types'
+import type { Beer, MyTip, Session, Tasting } from '../api/types'
 import AdventCalendar, { type DayEntry } from '../components/AdventCalendar.vue'
 import LightsMeter from '../components/LightsMeter.vue'
 import Snow from '../components/Snow.vue'
@@ -12,6 +12,7 @@ const store = useMe()
 const router = useRouter()
 const leastTasted = ref<Beer[]>([])
 const mine = ref<Tasting[]>([])
+const tip = ref<MyTip | null>(null)
 const beerName = ref<Record<string, string>>({})
 const soloSessions = ref<Set<string>>(new Set())
 
@@ -31,6 +32,7 @@ function toggleSnow() {
 }
 
 onMounted(async () => {
+  get<MyTip>('/api/tips/me').then((t) => (tip.value = t)).catch(() => {})
   const [least, tastings, beers] = await Promise.all([
     get<Beer[]>('/api/beers/least-tasted?limit=5').catch(() => []),
     get<Tasting[]>('/api/tastings/mine').catch(() => []),
@@ -110,6 +112,15 @@ const dayOfSeason = computed(() => {
     <AdventCalendar :start="season.start" :end="season.end" :today="today" :days="days" @finale="router.push('/finale')" />
     <p class="muted" style="margin: 10px 0 0">Én luke per dag. Trykk på en åpnet luke for å se hva som sto på bordet. Stjernen er finalen.</p>
   </div>
+
+  <router-link v-if="tip && !tip.closed" class="card row" to="/tipp" style="text-decoration: none">
+    <div>
+      <strong class="display">🥇 Tipp pallen</strong>
+      <div v-if="tip.tip" class="muted">Du tipper {{ tip.tip.podium.map((p) => p.name).join(', ') }}</div>
+      <div v-else class="muted">Hvem vinner i år? {{ tip.tipped }} har tippet.</div>
+    </div>
+    <span class="muted">›</span>
+  </router-link>
 
   <router-link class="card row" to="/finale" style="text-decoration: none">
     <div>
