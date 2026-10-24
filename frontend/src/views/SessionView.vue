@@ -2,7 +2,8 @@
 import { computed, onMounted, onUnmounted, ref } from 'vue'
 import { useRoute } from 'vue-router'
 import { get, post } from '../api/client'
-import type { Beer, DuelPair, Session } from '../api/types'
+import type { Beer, BlindRound, DuelPair, Session } from '../api/types'
+import BlindPour from '../components/BlindPour.vue'
 import QrCode from '../components/QrCode.vue'
 import { useMe } from '../stores/me'
 
@@ -14,6 +15,7 @@ const session = ref<Session | null>(null)
 const catalogue = ref<Beer[]>([])
 const q = ref('')
 const pending = ref<DuelPair[]>([])
+const rounds = ref<BlindRound[]>([])
 const error = ref('')
 
 const isHost = computed(() => session.value && store.me && session.value.hostId === store.me.id)
@@ -49,6 +51,7 @@ function unwrap(beerId: string) {
 async function refresh() {
   session.value = await get<Session>(`/api/sessions/${props.id}`)
   pending.value = await get<DuelPair[]>(`/api/duels/pending/${props.id}`).catch(() => [])
+  rounds.value = await get<BlindRound[]>(`/api/sessions/${props.id}/blind`).catch(() => [])
   const revealedNow = new Set(session.value.beers.filter((b) => b.revealed && b.scores).map((b) => b.beerId))
   if (firstLoad) {
     // Coming back from the rating page as the last to rate: unwrap that one beer.
@@ -140,6 +143,8 @@ onUnmounted(() => clearInterval(timer))
       </div>
       <p class="muted" style="margin-top: 8px">Mangler ølet? <router-link to="/beers">Legg det til i katalogen.</router-link></p>
     </div>
+
+    <BlindPour v-if="myId" :session="session" :rounds="rounds" :my-id="myId" :is-host="!!isHost" @changed="refresh" />
 
     <template v-if="pending.length">
       <h2>Duell</h2>
