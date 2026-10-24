@@ -28,8 +28,12 @@ public class HistoryController {
     }
 
     /** Original score and weight, plus the score mapped onto 1–6 for comparison. */
-    public record RatingView(int year, String beerName, String brewery, String raterName, BigDecimal score,
-                             BigDecimal weight, double normalised, String notes) {
+    public record RatingView(int year, String beerName, String brewery, String raterName, String raterKey,
+                             BigDecimal score, BigDecimal weight, double normalised, String notes) {
+    }
+
+    /** One historic person after name joining, with whether a login is attached. */
+    public record RaterView(String name, boolean linked, long ratings, int firstYear, int lastYear) {
     }
 
     /** One beer in one season: weighted mean on the original scale and on 1–6. */
@@ -95,6 +99,14 @@ public class HistoryController {
         }).sorted((a, b) -> Double.compare(b.weightedMean(), a.weightedMean())).toList();
     }
 
+    /** Who has tasted over the years, joined by raters.csv. Emails are not exposed. */
+    @GetMapping("/raters")
+    public List<RaterView> raters() {
+        return ratings.summariseRaters().stream()
+                .map(r -> new RaterView(r.raterKey(), r.raterEmail() != null, r.ratings(), r.firstYear(), r.lastYear()))
+                .toList();
+    }
+
     private Map<Integer, HistoricSeason> seasonIndex() {
         return seasons.findAll().stream().collect(Collectors.toMap(HistoricSeason::getYear, Function.identity()));
     }
@@ -102,7 +114,8 @@ public class HistoryController {
     private static RatingView view(HistoricRating r, Map<Integer, HistoricSeason> byYear) {
         HistoricSeason s = byYear.get(r.getSeasonYear());
         double normalised = s == null ? r.getScore().doubleValue() : s.normalise(r.getScore());
-        return new RatingView(r.getSeasonYear(), r.getBeerName(), r.getBrewery(), r.getRaterName(), r.getScore(),
+        return new RatingView(r.getSeasonYear(), r.getBeerName(), r.getBrewery(), r.getRaterName(),
+                r.getRaterKey() == null ? r.getRaterName() : r.getRaterKey(), r.getScore(),
                 r.getWeight(), normalised, r.getNotes());
     }
 }

@@ -54,8 +54,15 @@ can ask to link their old rater names to their login; an admin approves each cla
 
 ## Historic seasons
 
-Earlier years are imported from CSV at startup. Put the wiki export in
-`backend/src/main/resources/history/`, format described in the README there.
+The juleøl test history 1998–2019 is in the repository and is imported at startup
+from `backend/src/main/resources/history/`. The source of truth is `data/votes.csv`
+(one row per vote, with each voter's weight that year); `data/README.md` describes
+the files and `data/SOURCES.md` where every year comes from. Regenerate the app's
+history files with:
+
+```bash
+python3 tools/to_app_history.py backend/src/main/resources/history
+```
 
 ## Tests
 

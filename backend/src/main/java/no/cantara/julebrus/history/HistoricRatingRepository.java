@@ -14,6 +14,16 @@ public interface HistoricRatingRepository extends JpaRepository<HistoricRating, 
 
     boolean existsBySeasonYear(int year);
 
+    record RaterSummary(String raterKey, String raterEmail, long ratings, int firstYear, int lastYear) {
+    }
+
+    @org.springframework.data.jpa.repository.Query("""
+            select new no.cantara.julebrus.history.HistoricRatingRepository$RaterSummary(
+                r.raterKey, min(r.raterEmail), count(r), min(r.seasonYear), max(r.seasonYear))
+            from HistoricRating r group by r.raterKey order by count(r) desc
+            """)
+    List<RaterSummary> summariseRaters();
+
     int countBySeasonYearAndRaterEmailIgnoreCase(int year, String email);
 
     @org.springframework.data.jpa.repository.Query("select distinct r.seasonYear from HistoricRating r where lower(r.raterEmail) = lower(:email)")
