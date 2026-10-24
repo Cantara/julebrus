@@ -83,6 +83,14 @@ const dayOfSeason = computed(() => {
     <template v-else>Dag {{ dayOfSeason.n }} av {{ dayOfSeason.total }}.</template>
   </p>
 
+  <router-link v-if="store.me && store.me.status.tastingsToday === 0 && !mine.length" class="card row" to="/historien" style="text-decoration: none">
+    <div>
+      <strong class="display">Ny her?</strong>
+      <div class="muted">Les historien om juleølsmakingen, og hvorfor den varer hele adventstiden.</div>
+    </div>
+    <span class="muted">›</span>
+  </router-link>
+
   <div v-if="store.me" class="card">
     <strong class="display">Hei, {{ store.me.displayName }}</strong>
     <p class="muted" style="margin: 8px 0 0">I dag</p>

@@ -260,3 +260,9 @@ th { font-size: 0.8rem; color: var(--muted); font-weight: 600; }
 .podium .p3 .block { height: 60px; background: #c99a6b; color: #2b1a14; }
 .award .who { margin-top: 8px; padding-top: 8px; border-top: 1px dashed var(--line); }
 .award.none { opacity: 0.7; }
+
+/* Story page */
+.lead { font-size: 1.1rem; line-height: 1.5; margin: 6px 0 16px; }
+.story h2 { margin-top: 2px; }
+.story p { margin: 8px 0; line-height: 1.55; }
+.closing { text-align: center; font-size: 1.4rem; margin: 18px 0 12px; }
