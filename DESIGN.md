@@ -17,6 +17,7 @@ small. Three rules do that:
 | Season window | 1 Nov – 23 Dec | Follows the Vinmonopolet juleøl release; final reveal 23 Dec |
 | Max tastings per person per day | 5 | Real pours, fresh palate |
 | Max solo tasting days per person | 5 | Pushes tasting into groups, which is the point |
+| What counts as a juleøl | From Vinmonopolet, above grocery strength (4.7 %) | Butikkøl is refused on add and import, and never ranked |
 
 ## Decisions
 

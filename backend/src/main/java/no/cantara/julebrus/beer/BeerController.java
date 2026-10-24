@@ -81,6 +81,10 @@ public class BeerController {
     @ResponseStatus(HttpStatus.CREATED)
     public BeerView create(@Valid @RequestBody NewBeer in) {
         User me = currentUser.get();
+        if (Beer.isGroceryStrength(in.abv())) {
+            throw new no.cantara.julebrus.web.ApiException(HttpStatus.UNPROCESSABLE_ENTITY, "BEER_GROCERY_STRENGTH",
+                    "Only Vinmonopolet juleøl counts: above %s %%".formatted(Beer.GROCERY_MAX_ABV));
+        }
         Beer.Status status = auth.isAdmin(me.getEmail()) ? Beer.Status.APPROVED : Beer.Status.PENDING;
         Beer saved = beers.save(new Beer(in.name().trim(), in.brewery(), in.style(), in.abv(),
                 blankToNull(in.vinmonopoletId()), blankToNull(in.imageUrl()), me.getId(), status));

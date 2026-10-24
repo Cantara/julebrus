@@ -231,20 +231,26 @@ class JulebrusApplicationTest {
     }
 
     @Test
-    void perennialsAreSeededAndCsvImportPreviewsThenCreates() throws Exception {
+    void csvImportPreviewsThenCreatesAndOnlyPoletStrengthCounts() throws Exception {
         ConsentSupport.accept(mvc, null);
         ConsentSupport.accept(mvc, "guest@cantara.no");
 
-        // The seed put the grocery shelf in place, approved.
-        mvc.perform(get("/api/beers").param("q", "Aass Jule"))
-                .andExpect(jsonPath("$[?(@.name=='Aass Juleøl')].status").value("APPROVED"));
+        // Grocery-strength juleøl is not a Christmas beer here, however it is added.
+        mvc.perform(post("/api/beers").contentType(APPLICATION_JSON)
+                        .content("{\"name\":\"Aass Juleøl\",\"brewery\":\"Aass\",\"abv\":4.7}"))
+                .andExpect(status().isUnprocessableEntity())
+                .andExpect(jsonPath("$.code").value("BEER_GROCERY_STRENGTH"));
+        mvc.perform(post("/api/beers").contentType(APPLICATION_JSON)
+                        .content("{\"name\":\"Aass Julebokk\",\"brewery\":\"Aass\",\"abv\":6.5}"))
+                .andExpect(status().isCreated());
 
         String csv = """
                 name;brewery;style;abv;vinmonopolet_id
                 Nøgne Ø God Jul;Nøgne Ø;Juleøl, sterk;8,5;1234501
-                Aass Juleøl;Aass;Juleøl;4,7;
+                Aass Julebokk;Aass;Julebokk;6,5;
                 ;Ukjent;;;
                 Lervig Juleøl;Lervig;Juleøl;abc;
+                Ringnes Juleøl;Ringnes;Juleøl;4,5;
                 """;
         mvc.perform(post("/api/admin/beers/import?dryRun=true").header("X-Dev-User", "guest@cantara.no")
                         .contentType("text/csv").content(csv))
@@ -254,12 +260,14 @@ class JulebrusApplicationTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.dryRun").value(true))
                 .andExpect(jsonPath("$.created").value(0))
-                .andExpect(jsonPath("$.rows", hasSize(4)))
+                .andExpect(jsonPath("$.rows", hasSize(5)))
                 .andExpect(jsonPath("$.rows[0].action").value("NEW"))
                 .andExpect(jsonPath("$.rows[0].abv").value(8.5))
                 .andExpect(jsonPath("$.rows[1].action").value("DUPLICATE"))
                 .andExpect(jsonPath("$.rows[2].action").value("INVALID"))
-                .andExpect(jsonPath("$.rows[3].action").value("INVALID"));
+                .andExpect(jsonPath("$.rows[3].action").value("INVALID"))
+                .andExpect(jsonPath("$.rows[4].action").value("INVALID"))
+                .andExpect(jsonPath("$.rows[4].reason").value(containsString("Butikkstyrke")));
         mvc.perform(get("/api/beers").param("q", "God Jul")).andExpect(jsonPath("$", hasSize(0)));
 
         mvc.perform(post("/api/admin/beers/import?dryRun=false").contentType("text/csv").content(csv))

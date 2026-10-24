@@ -34,6 +34,16 @@ public class Beer {
 
     public enum Status { PENDING, APPROVED, REJECTED }
 
+    /**
+     * What counts as a Norwegian Christmas beer here: sold at Vinmonopolet, which means
+     * stronger than the grocery-shelf limit. Anything at or under this ABV is butikkøl.
+     */
+    public static final BigDecimal GROCERY_MAX_ABV = new BigDecimal("4.7");
+
+    public static boolean isGroceryStrength(BigDecimal abv) {
+        return abv != null && abv.compareTo(GROCERY_MAX_ABV) <= 0;
+    }
+
     @jakarta.persistence.Enumerated(jakarta.persistence.EnumType.STRING)
     @Column(nullable = false)
     private Status status = Status.APPROVED;
@@ -76,6 +86,8 @@ public class Beer {
 
     public Instant getCreatedAt() { return createdAt; }
     public boolean isApproved() { return status == Status.APPROVED; }
+    /** Approved and not grocery strength: the only beers the rankings count. */
+    public boolean counts() { return isApproved() && !isGroceryStrength(abv); }
     public Status getStatus() { return status; }
     public UUID getCreatedBy() { return createdBy; }
     public Instant getDecidedAt() { return decidedAt; }

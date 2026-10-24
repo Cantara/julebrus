@@ -36,6 +36,7 @@ cd frontend && npm run build
 ## Conventions
 - Rule violations are HTTP 422 with a stable `code` (`OUTSIDE_SEASON`, `DAILY_LIMIT`, `SOLO_DAYS_EXHAUSTED`, `ALREADY_RATED`). Other errors carry their own codes too: `CONSENT_REQUIRED`, `CONSENT_VERSION_MISMATCH`, `RATER_NOT_FOUND`, `CLAIM_EXISTS`, `RATER_TAKEN`, `CLAIM_LIMIT`, `CLAIM_NOT_PENDING`, `CLAIM_NOT_APPROVED`, `CLAIM_DAILY_LIMIT`, `CLAIM_REVOKED`, `CLAIM_NOT_FOUND`, `RATER_LINKED`, and `CONFLICT` for a lost unique-constraint race.
 - Days are Europe/Oslo. Scores are integers 1–6.
+- A beer counts only if it is from Vinmonopolet, i.e. above grocery strength (`Beer.GROCERY_MAX_ABV` = 4.7 %); `Beer.counts()` is what the rankings use. Non-admin additions are PENDING until approved.
 - Schema changes go in a new Flyway migration; Hibernate runs with `ddl-auto: validate`.
 - UI copy is Norwegian (bokmål); code and comments are English.
 
