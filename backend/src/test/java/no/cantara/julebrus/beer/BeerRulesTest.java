@@ -129,7 +129,7 @@ class BeerRulesTest {
         String user = person();
         addBeer(user, "{\"name\":\"" + "n".repeat(255) + "\",\"brewery\":\"" + "b".repeat(255) + "\",\"style\":\""
                 + "s".repeat(100) + "\",\"abv\":20,\"vinmonopoletId\":\"" + "9".repeat(32) + "\"}").andExpect(status().isCreated());
-        addBeer(user, "{\"name\":\"Zero abv " + N.incrementAndGet() + "\",\"abv\":0,\"brewery\":\"  \"}")
+        addBeer(user, "{\"name\":\"Low abv " + N.incrementAndGet() + "\",\"abv\":4.8,\"brewery\":\"  \"}")
                 .andExpect(status().isCreated()).andExpect(jsonPath("$.brewery").doesNotExist());
         addBeer(user, "{\"name\":\"Null abv " + N.incrementAndGet() + "\"}").andExpect(status().isCreated());
     }

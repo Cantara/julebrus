@@ -30,6 +30,15 @@ public class BeerService {
     public Beer create(User me, BeerController.NewBeer in) {
         // One person's additions run one at a time, so parallel requests cannot pass the cap or the duplicate check together.
         users.lockById(me.getId()).orElseThrow(() -> new ApiException(HttpStatus.UNAUTHORIZED, "UNAUTHORIZED", "Unknown user"));
+        if (Beer.isGroceryStrength(in.abv())) {
+            throw new ApiException(HttpStatus.UNPROCESSABLE_ENTITY, "BEER_GROCERY_STRENGTH",
+                    "Only Vinmonopolet juleøl counts: above %s %%".formatted(Beer.GROCERY_MAX_ABV));
+        }
+        if (in.homebrew() && in.abv() == null) {
+            // Homebrew has no Polet listing to vouch for its strength, so the brewer states it.
+            throw new ApiException(HttpStatus.UNPROCESSABLE_ENTITY, "BEER_HOMEBREW_NEEDS_ABV",
+                    "State the ABV of a homebrew; it must be above %s %%".formatted(Beer.GROCERY_MAX_ABV));
+        }
         String name = in.name().trim();
         String key = BeerCsv.key(name);
         if (beers.findByCreatedBy(me.getId()).stream().anyMatch(b -> BeerCsv.key(b.getName()).equals(key))) {
@@ -42,7 +51,7 @@ public class BeerService {
         }
         return beers.save(new Beer(name, blankToNull(in.brewery()), blankToNull(in.style()), in.abv(),
                 blankToNull(in.vinmonopoletId()), blankToNull(in.imageUrl()), me.getId(),
-                admin ? Beer.Status.APPROVED : Beer.Status.PENDING));
+                admin ? Beer.Status.APPROVED : Beer.Status.PENDING, in.homebrew()));
     }
 
     private static String blankToNull(String s) {

@@ -111,6 +111,9 @@ public class AdminBeersController {
             if (!r.valid()) {
                 action = ImportAction.INVALID;
                 reason = r.error();
+            } else if (Beer.isGroceryStrength(r.abv())) {
+                action = ImportAction.INVALID;
+                reason = "Butikkstyrke (%s %% eller under), teller ikke".formatted(Beer.GROCERY_MAX_ABV);
             } else if (r.vinmonopoletId() != null && polet.contains(r.vinmonopoletId())) {
                 action = ImportAction.DUPLICATE;
                 reason = "Samme Polet-nummer finnes";

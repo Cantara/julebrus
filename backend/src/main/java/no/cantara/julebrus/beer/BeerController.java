@@ -37,14 +37,15 @@ public class BeerController {
                            /** a cover is available to this caller at /api/beers/{id}/photo (approved, or their own pending one) */
                            boolean hasPhoto,
                            /** the caller's own newest photo of this beer, so they can see its state or delete it; never anybody else's */
-                           UUID myPhotoId, BeerPhoto.Status myPhotoStatus) {
+                           UUID myPhotoId, BeerPhoto.Status myPhotoStatus,
+                           boolean homebrew) {
         static BeerView of(Beer b, long ratingCount, UUID me, PhotoService.Covers covers) {
             BeerPhoto mine = covers.mine().get(b.getId());
             return new BeerView(b.getId(), b.getName(), b.getBrewery(), b.getStyle(), b.getAbv(),
                     b.getVinmonopoletId(), b.getImageUrl(), ratingCount, b.getStatus(),
                     me != null && me.equals(b.getCreatedBy()),
                     covers.beersWithCover().contains(b.getId()),
-                    mine == null ? null : mine.getId(), mine == null ? null : mine.getStatus());
+                    mine == null ? null : mine.getId(), mine == null ? null : mine.getStatus(), b.isHomebrew());
         }
     }
 
@@ -54,7 +55,8 @@ public class BeerController {
                           @Size(max = 100) @Pattern(regexp = NO_CONTROL, message = "must not contain control characters") String style,
                           @DecimalMin("0") @DecimalMax("20") @Digits(integer = 2, fraction = 1) BigDecimal abv,
                           @Size(max = 32) @Pattern(regexp = NO_CONTROL, message = "must not contain control characters") String vinmonopoletId,
-                          @Size(max = 1024) @Pattern(regexp = "^(https?://\\S*)?$", message = "must be an http(s) link") String imageUrl) {
+                          @Size(max = 1024) @Pattern(regexp = "^(https?://\\S*)?$", message = "must be an http(s) link") String imageUrl,
+                          boolean homebrew) {
     }
 
     /** No Unicode control characters (C0, DEL, C1) and no line or paragraph separators. */
