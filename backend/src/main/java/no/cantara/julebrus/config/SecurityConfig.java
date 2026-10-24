@@ -32,7 +32,7 @@ public class SecurityConfig {
         http
                 .authorizeHttpRequests(a -> a
                         .requestMatchers("/", "/index.html", "/assets/**", "/manifest.webmanifest", "/sw.js",
-                                "/workbox-*.js", "/icons/**", "/favicon.ico", "/actuator/health").permitAll()
+                                "/workbox-*.js", "/icons/**", "/favicon.ico", "/actuator/health", "/api/config", "/api/privacy", "/privacy", "/privacy/").permitAll()
                         .requestMatchers("/api/**").authenticated()
                         .anyRequest().permitAll())
                 .oauth2Login(o -> o
@@ -86,6 +86,12 @@ public class SecurityConfig {
             // X-Dev-User lets you impersonate a second person from another browser tab
             // when testing group sessions locally.
             String email = req.getHeader("X-Dev-User");
+            if (email != null && email.indexOf('@') < 1) {
+                res.setStatus(400);
+                res.setContentType("application/json");
+                res.getWriter().write("{\"code\":\"VALIDATION\",\"message\":\"X-Dev-User must be an email address\"}");
+                return;
+            }
             String name = email == null ? dev.name() : email.substring(0, email.indexOf('@'));
             var principal = new CurrentUser.DevPrincipal(email == null ? dev.email() : email, name);
             var token = new org.springframework.security.authentication.UsernamePasswordAuthenticationToken(

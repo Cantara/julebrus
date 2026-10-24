@@ -28,4 +28,22 @@ public interface HistoricRatingRepository extends JpaRepository<HistoricRating, 
 
     @org.springframework.data.jpa.repository.Query("select distinct r.seasonYear from HistoricRating r where lower(r.raterEmail) = lower(:email)")
     List<Integer> findSeasonYearsByEmail(@org.springframework.data.repository.query.Param("email") String email);
+
+    /**
+     * Per person (key) and season: the rating count and one rater_email if any row has one. Only
+     * feeds the claim-candidate list, so no scores, beers, breweries or notes are selected.
+     * A row without a key counts under its source name, as the main history views do.
+     */
+    @org.springframework.data.jpa.repository.Query("""
+            select coalesce(r.raterKey, r.raterName), r.seasonYear, count(r), min(r.raterEmail)
+            from HistoricRating r group by coalesce(r.raterKey, r.raterName), r.seasonYear""")
+    List<Object[]> countByKeyAndSeason();
+
+    /** Rows matched on email, plus every row of a person (key) whose claim an admin approved. */
+    @org.springframework.data.jpa.repository.Query("""
+            select r from HistoricRating r
+            where lower(r.raterEmail) = lower(:email) or coalesce(r.raterKey, r.raterName) in :keys
+            order by r.seasonYear desc, r.beerName asc""")
+    List<HistoricRating> findMineByEmailOrApprovedKeys(@org.springframework.data.repository.query.Param("email") String email,
+                                                       @org.springframework.data.repository.query.Param("keys") java.util.Collection<String> keys);
 }

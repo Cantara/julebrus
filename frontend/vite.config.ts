@@ -24,7 +24,7 @@ export default defineConfig({
         ],
       },
       workbox: {
-        navigateFallbackDenylist: [/^\/api/, /^\/oauth2/, /^\/login/],
+        navigateFallbackDenylist: [/^\/api/, /^\/oauth2/, /^\/login/, /^\/privacy/],
         runtimeCaching: [{ urlPattern: /^\/api\//, handler: 'NetworkOnly' }],
       },
     }),
