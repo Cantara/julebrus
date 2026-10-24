@@ -1,16 +1,25 @@
 # Release: push a tag like v1.2.0 on a commit that is on the default branch (main).
 #
-# 1. Builds the frontend (npm ci, npm run build writes into backend/src/main/resources/static).
-# 2. Sets the jar version to the tag, runs the backend tests and packages ONE runnable jar (mvn package).
-# 3. Attaches the jar and its SHA-256 to a GitHub release.
-# 4. When the AWS release variables are set, uploads the jar to the artifacts bucket through GitHub OIDC and
-#    points latest.json at it. The server pulls it from there (deploy/aws/scripts/julebrus-update.sh); nothing
-#    reaches into the server.
+# Three jobs, each with only the permissions it needs:
+#   build    (contents: read)               checks the tag, builds the frontend, runs the backend tests, packages ONE jar
+#   release  (contents: write)              attaches the jar and its SHA-256 to a GitHub release
+#   upload   (id-token: write, contents: read, Environment "production")
+#                                           uploads the jar to the artifacts bucket through GitHub OIDC and points
+#                                           latest.json at it. The server pulls it from there
+#                                           (deploy/aws/scripts/julebrus-update.sh); nothing reaches into the server.
 #
-# Repository variables for step 4 (Settings > Secrets and variables > Actions > Variables), see deploy/aws/README.md:
+# The AWS role trusts only jobs that run in the GitHub Environment "production" (subject
+# repo:Cantara/julebrus:environment:production). Configure that Environment with a required reviewer and allow
+# deployments only from main and v* tags; see deploy/aws/README.md. The code that builds the jar never holds AWS credentials.
+#
+# Repository variables for the upload job (Settings > Secrets and variables > Actions > Variables):
 #   AWS_RELEASE_ROLE_ARN   stack output ReleaseUploaderRoleArn
 #   AWS_ARTIFACTS_BUCKET   stack output ArtifactsBucketName
-# Until both are set, step 4 is skipped and the release only goes to GitHub.
+# Until both are set, the upload job is skipped and the release only goes to GitHub.
+#
+# Actions are pinned by tag, not by commit SHA: actions/checkout@v7, actions/setup-node@v4, actions/setup-java@v4,
+# actions/upload-artifact@v4, actions/download-artifact@v4, softprops/action-gh-release@v2,
+# aws-actions/configure-aws-credentials@v4.
 name: Release
 
 on:
@@ -27,15 +36,17 @@ env:
   AWS_REGION: eu-north-1
 
 jobs:
-  release:
+  build:
     runs-on: ubuntu-latest
     permissions:
-      contents: write   # create the GitHub release
-      id-token: write   # GitHub OIDC for the AWS upload role
+      contents: read
+    outputs:
+      version: ${{ steps.version.outputs.version }}
     steps:
       - uses: actions/checkout@v7
         with:
           fetch-depth: 0
+          persist-credentials: false
 
       - name: Version, and check that the tag is on the default branch
         id: version
@@ -72,17 +83,35 @@ jobs:
           VERSION: ${{ steps.version.outputs.version }}
         run: |
           # The pom carries a SNAPSHOT version; the jar is versioned from the tag on this checkout only.
-          mvn -B -ntp -f backend/pom.xml versions:set -DnewVersion="$VERSION" -DgenerateBackupPoms=false
+          mvn -B -ntp -f backend/pom.xml org.codehaus.mojo:versions-maven-plugin:2.18.0:set -DnewVersion="$VERSION" -DgenerateBackupPoms=false
           # package runs the unit tests first, as ci.yml does.
           mvn -B -ntp -f backend/pom.xml package
           jar="backend/target/julebrus-$VERSION.jar"
           test -f "$jar"
-          # The app must serve its own frontend.
-          unzip -l "$jar" | grep -q "BOOT-INF/classes/static/index.html"
+          # The app must serve its own frontend. (Listing to a file first: grep -q closing the pipe early would fail unzip under pipefail.)
+          unzip -l "$jar" > jar-listing.txt
+          grep -q "BOOT-INF/classes/static/index.html" jar-listing.txt
           mkdir dist
           cp "$jar" "dist/julebrus-$VERSION.jar"
           (cd dist && sha256sum "julebrus-$VERSION.jar" > "julebrus-$VERSION.jar.sha256")
 
+      - uses: actions/upload-artifact@v4
+        with:
+          name: dist
+          path: dist/
+          if-no-files-found: error
+          retention-days: 7
+
+  release:
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write   # create the GitHub release
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: dist
+          path: dist
       - name: GitHub release
         uses: softprops/action-gh-release@v2
         with:
@@ -90,21 +119,31 @@ jobs:
           name: ${{ github.ref_name }}
           generate_release_notes: true
           files: |
-            dist/julebrus-${{ steps.version.outputs.version }}.jar
-            dist/julebrus-${{ steps.version.outputs.version }}.jar.sha256
+            dist/julebrus-${{ needs.build.outputs.version }}.jar
+            dist/julebrus-${{ needs.build.outputs.version }}.jar.sha256
 
+  upload:
+    needs: build
+    if: ${{ vars.AWS_RELEASE_ROLE_ARN != '' && vars.AWS_ARTIFACTS_BUCKET != '' }}
+    runs-on: ubuntu-latest
+    environment: production   # the AWS role trusts this Environment only; it can require a reviewer
+    permissions:
+      id-token: write   # GitHub OIDC for the AWS upload role
+      contents: read
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: dist
+          path: dist
       - name: AWS credentials (GitHub OIDC)
-        if: ${{ vars.AWS_RELEASE_ROLE_ARN != '' && vars.AWS_ARTIFACTS_BUCKET != '' }}
         uses: aws-actions/configure-aws-credentials@v4
         with:
           role-to-assume: ${{ vars.AWS_RELEASE_ROLE_ARN }}
           aws-region: ${{ env.AWS_REGION }}
-
       - name: Upload to the artifacts bucket and point latest.json at it
-        if: ${{ vars.AWS_RELEASE_ROLE_ARN != '' && vars.AWS_ARTIFACTS_BUCKET != '' }}
         env:
           BUCKET: ${{ vars.AWS_ARTIFACTS_BUCKET }}
-          VERSION: ${{ steps.version.outputs.version }}
+          VERSION: ${{ needs.build.outputs.version }}
         run: |
           jar="dist/julebrus-$VERSION.jar"
           sha="$(cut -d' ' -f1 "$jar.sha256")"
@@ -114,6 +153,10 @@ jobs:
           aws s3 cp latest.json "s3://$BUCKET/latest.json"
           echo "::notice::Published $VERSION to s3://$BUCKET; the server picks it up on its next update check."
 
-      - name: Note when AWS publishing is not set up
-        if: ${{ vars.AWS_RELEASE_ROLE_ARN == '' || vars.AWS_ARTIFACTS_BUCKET == '' }}
-        run: echo "::notice::AWS_RELEASE_ROLE_ARN or AWS_ARTIFACTS_BUCKET is not set; the release went to GitHub only."
+  note-no-aws:
+    needs: build
+    if: ${{ vars.AWS_RELEASE_ROLE_ARN == '' || vars.AWS_ARTIFACTS_BUCKET == '' }}
+    runs-on: ubuntu-latest
+    permissions: {}
+    steps:
+      - run: echo "::notice::AWS_RELEASE_ROLE_ARN or AWS_ARTIFACTS_BUCKET is not set; the release went to GitHub only."

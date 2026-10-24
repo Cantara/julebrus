@@ -19,6 +19,10 @@ Parameters:
       The prefix of the GitHub OIDC subject claim. Organisations that use GitHub's immutable subject format
       (owner and repository ids included) need that form instead. Read it with:
       gh api repos/Cantara/julebrus/actions/oidc/customization/sub  (the sub_claim_prefix field, if use_default is false).
+  GitHubEnvironment:
+    Type: String
+    Default: production
+    Description: The GitHub Environment the release workflow's upload job runs in. Only jobs in this Environment can assume the upload role.
   GitHubOidcProviderArn:
     Type: String
     Description: ARN of the account's existing GitHub OIDC provider (token.actions.githubusercontent.com). scripts/00-provision.sh derives it from the account id.
@@ -46,16 +50,26 @@ Parameters:
   DbBackupRetentionDays:
     Type: Number
     Default: 14
+  DbDeletionProtection:
+    Type: String
+    AllowedValues: ["true", "false"]
+    Default: "false"
+    Description: >
+      False for the first create, so that a failed create can roll back and be retried; set to true through an update
+      as the last runbook step (DB_DELETION_PROTECTION=true bash scripts/00-provision.sh).
   UseElasticIp:
     Type: String
     AllowedValues: ["true", "false"]
     Default: "true"
     Description: >
-      Allocate an Elastic IP for a fixed address. If the allocation is refused (account quota), deploy again with false to
+      FIRST CREATE ONLY: allocate an Elastic IP for a fixed address. If the allocation is refused (account quota), create with false to
       use the instance's own public IP; it changes if the instance is stopped and started, and the DNS A record must then be updated.
-  LatestAmiId:
-    Type: AWS::SSM::Parameter::Value<AWS::EC2::Image::Id>
-    Default: /aws/service/ami-amazon-linux-latest/al2023-ami-kernel-default-arm64
+      Changing it on an existing stack adds or removes the address.
+  AmiId:
+    Type: AWS::EC2::Image::Id
+    Description: >
+      Image id of the instance, resolved by scripts/00-provision.sh at create time from the latest AL2023 arm64 AMI and kept
+      afterwards (UsePreviousValue), so a routine update never proposes replacing the instance. A deliberate AMI roll replaces it.
 
 Conditions:
   CreateEip: !Equals [!Ref UseElasticIp, "true"]
@@ -101,6 +115,8 @@ Resources:
       LifecycleConfiguration:
         Rules:
           - { Id: expire-old-releases, Status: Enabled, Prefix: releases/, ExpirationInDays: 180, NoncurrentVersionExpiration: { NoncurrentDays: 30 } }
+          - { Id: expire-old-deploy-versions, Status: Enabled, Prefix: deploy/, NoncurrentVersionExpiration: { NoncurrentDays: 30 } }
+          - { Id: expire-old-latest-versions, Status: Enabled, Prefix: latest.json, NoncurrentVersionExpiration: { NoncurrentDays: 30 } }
       Tags: [{ Key: Project, Value: !Ref ProjectName }]
 
   ArtifactsBucketPolicy:
@@ -116,7 +132,25 @@ Resources:
             Resource: [!GetAtt ArtifactsBucket.Arn, !Sub "${ArtifactsBucket.Arn}/*"]
             Condition: { Bool: { "aws:SecureTransport": "false" } }
 
-  # ---------- database: private, encrypted, RDS-managed master secret (no password in this template) ----------
+  # ---------- database: private, encrypted; the master password is generated once into a stable secret ----------
+  # The RDS-managed master secret rotates every 7 days, but the app reads its password only at start, so the app would
+  # lose its connection a week after each start. This secret has no rotation. Alphanumeric only, so it needs no quoting
+  # in a URL, an env file or a shell. CloudFormation resolves it with a dynamic reference: the password is not in the
+  # template, and an unchanged secret value never changes the database. Retained so that a stack mishap cannot lose the password.
+  DbSecret:
+    Type: AWS::SecretsManager::Secret
+    DeletionPolicy: Retain
+    UpdateReplacePolicy: Retain
+    Properties:
+      Name: !Sub "${ProjectName}/db"
+      Description: Julebrus database master user (the app uses it too; a least-privilege role is a later hardening step)
+      GenerateSecretString:
+        SecretStringTemplate: '{"username": "julebrus_admin"}'
+        GenerateStringKey: password
+        PasswordLength: 32
+        ExcludePunctuation: true
+      Tags: [{ Key: Project, Value: !Ref ProjectName }]
+
   DbSubnetGroup:
     Type: AWS::RDS::DBSubnetGroup
     Properties:
@@ -139,14 +173,14 @@ Resources:
       MultiAZ: false
       DBName: julebrus
       MasterUsername: julebrus_admin
-      ManageMasterUserPassword: true
+      MasterUserPassword: !Sub "{{resolve:secretsmanager:${DbSecret}:SecretString:password}}"
       DBSubnetGroupName: !Ref DbSubnetGroup
       VPCSecurityGroups: [!Ref DbSecurityGroup]
       PubliclyAccessible: false
       BackupRetentionPeriod: !Ref DbBackupRetentionDays
       PreferredBackupWindow: "01:00-02:00"
       PreferredMaintenanceWindow: "sun:02:30-sun:03:30"
-      DeletionProtection: true
+      DeletionProtection: !Ref DbDeletionProtection
       CopyTagsToSnapshot: true
       EnablePerformanceInsights: false
       AutoMinorVersionUpgrade: true
@@ -170,11 +204,7 @@ Resources:
                 Effect: Allow
                 Action: ["s3:GetObject", "s3:ListBucket"]
                 Resource: [!GetAtt ArtifactsBucket.Arn, !Sub "${ArtifactsBucket.Arn}/*"]
-              - Sid: ReadOwnDbSecret
-                Effect: Allow
-                Action: ["secretsmanager:GetSecretValue", "secretsmanager:DescribeSecret"]
-                Resource: !GetAtt Database.MasterUserSecret.SecretArn
-              - Sid: ReadOwnAppSecrets
+              - Sid: ReadOwnSecrets
                 Effect: Allow
                 Action: ["secretsmanager:GetSecretValue"]
                 Resource: !Sub "arn:aws:secretsmanager:${AWS::Region}:${AWS::AccountId}:secret:${ProjectName}/*"
@@ -190,7 +220,7 @@ Resources:
   AppInstance:
     Type: AWS::EC2::Instance
     Properties:
-      ImageId: !Ref LatestAmiId
+      ImageId: !Ref AmiId
       InstanceType: !Ref InstanceType
       IamInstanceProfile: !Ref InstanceProfile
       SubnetId: !Ref AppSubnetId
@@ -212,7 +242,9 @@ Resources:
           dnf install -y java-21-amazon-corretto-headless jq nginx certbot python3-certbot-nginx
           useradd --system --home /opt/julebrus --shell /sbin/nologin julebrus || true
           mkdir -p /opt/julebrus/releases /etc/julebrus /var/lib/julebrus
-          chown -R julebrus:julebrus /opt/julebrus
+          # Everything is root-owned: the service user only needs to read the jar. The root-run scripts must not be writable by it.
+          chown root:root /opt/julebrus /opt/julebrus/releases /etc/julebrus /var/lib/julebrus
+          chmod 0755 /opt/julebrus /opt/julebrus/releases /etc/julebrus /var/lib/julebrus
           cat > /etc/julebrus/app.env <<'EOF'
           AWS_REGION=${AWS::Region}
           JULEBRUS_DB_URL=jdbc:postgresql://${Database.Endpoint.Address}:5432/julebrus?sslmode=require
@@ -222,12 +254,12 @@ Resources:
           JULEBRUS_CONTACT_EMAIL=
           EOF
           cat > /etc/julebrus/secrets.conf <<'EOF'
-          DB_SECRET_ARN=${Database.MasterUserSecret.SecretArn}
+          DB_SECRET_ID=${ProjectName}/db
           GOOGLE_SECRET_ID=${ProjectName}/google-oauth
           PUBLIC_HOST=${AppHostName}
           EOF
-          chmod 0640 /etc/julebrus/app.env /etc/julebrus/secrets.conf
-          chgrp julebrus /etc/julebrus/app.env /etc/julebrus/secrets.conf
+          chown root:root /etc/julebrus/app.env /etc/julebrus/secrets.conf
+          chmod 0644 /etc/julebrus/app.env /etc/julebrus/secrets.conf
           echo "${ArtifactsBucket}" > /etc/julebrus/artifacts-bucket
 
   AppElasticIp:
@@ -240,7 +272,10 @@ Resources:
         - { Key: Name, Value: !Sub "${ProjectName}-eip" }
         - { Key: Project, Value: !Ref ProjectName }
 
-  # ---------- CI: may only upload releases, only from a version tag of the repository ----------
+  # ---------- CI: may only upload releases, and only from the upload job that runs in the GitHub Environment ----------
+  # A job in an Environment gets the subject <prefix>:environment:<name>; the ref (tag or branch) is NOT part of that
+  # subject, so a tag condition cannot be combined with it here. The restriction to main / v* tags is therefore set on the
+  # Environment itself (deployment branch and tag rules, required reviewer), see the README.
   GitHubDeployRole:
     Type: AWS::IAM::Role
     Properties:
@@ -253,7 +288,7 @@ Resources:
             Condition:
               StringEquals: { "token.actions.githubusercontent.com:aud": "sts.amazonaws.com" }
               StringLike:
-                "token.actions.githubusercontent.com:sub": !Sub "${GitHubSubjectPrefix}:ref:refs/tags/v*"
+                "token.actions.githubusercontent.com:sub": !Sub "${GitHubSubjectPrefix}:environment:${GitHubEnvironment}"
       Policies:
         - PolicyName: upload-releases
           PolicyDocument:
@@ -283,7 +318,7 @@ Resources:
       Threshold: 1
       ComparisonOperator: GreaterThanOrEqualToThreshold
       AlarmActions: [!Ref AlarmTopic]
-      TreatMissingData: breaching
+      TreatMissingData: notBreaching
 
   DbFreeStorageAlarm:
     Type: AWS::CloudWatch::Alarm
@@ -324,5 +359,6 @@ Outputs:
   ReleaseUploaderRoleArn:
     Description: Set as the repository variable AWS_RELEASE_ROLE_ARN
     Value: !GetAtt GitHubDeployRole.Arn
+  AppHostName: { Description: The host name the Google redirect URI and the DNS A record use, Value: !Ref AppHostName }
   DbEndpoint: { Value: !GetAtt Database.Endpoint.Address }
-  DbSecretArn: { Value: !GetAtt Database.MasterUserSecret.SecretArn }
+  DbSecretName: { Description: The generated database master secret (read by the box at every start), Value: !Sub "${ProjectName}/db" }
