@@ -19,7 +19,7 @@ function devUser(): string | null {
   }
 }
 
-export async function api<T>(path: string, init: RequestInit = {}): Promise<T> {
+export async function api<T>(path: string, init: RequestInit = {}, retried = false): Promise<T> {
   const headers: Record<string, string> = { Accept: 'application/json', ...(init.headers as Record<string, string>) }
   if (init.body) headers['Content-Type'] = 'application/json'
   const xsrf = csrfToken()
@@ -32,6 +32,12 @@ export async function api<T>(path: string, init: RequestInit = {}): Promise<T> {
   if (res.status === 401 && window.location.pathname !== '/privacy') {
     window.location.href = '/oauth2/authorization/google'
     throw new ApiFailure(401, 'UNAUTHORIZED', 'Logging in')
+  }
+  // A mutating call without an XSRF cookie yet (fresh login, cookies cleared): the server has
+  // issued one on this very response, so fetch once and try again rather than show a 403.
+  if (res.status === 403 && !retried && init.method && init.method !== 'GET' && !xsrf) {
+    await fetch('/api/me', { credentials: 'same-origin' }).catch(() => {})
+    if (csrfToken()) return api<T>(path, init, true)
   }
   if (!res.ok) {
     let err: ApiError = { code: String(res.status), message: res.statusText }
