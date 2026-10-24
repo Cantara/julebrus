@@ -2,6 +2,7 @@
 import { computed, onMounted, onUnmounted, ref } from 'vue'
 import { useRoute } from 'vue-router'
 import { get, post } from '../api/client'
+import { subscribeSession, type LiveStatus } from '../api/live'
 import type { Beer, BlindRound, DuelPair, Session } from '../api/types'
 import BlindPour from '../components/BlindPour.vue'
 import QrCode from '../components/QrCode.vue'
@@ -17,6 +18,7 @@ const q = ref('')
 const pending = ref<DuelPair[]>([])
 const rounds = ref<BlindRound[]>([])
 const error = ref('')
+const live = ref<LiveStatus>('connecting')
 
 const isHost = computed(() => session.value && store.me && session.value.hostId === store.me.id)
 const joinUrl = computed(() => `${location.origin}/join/${session.value?.joinCode ?? ''}`)
@@ -81,6 +83,22 @@ async function close() {
 }
 
 let timer: number | undefined
+let unsubscribe: (() => void) | undefined
+let refreshQueued: number | undefined
+
+/** Several events can land within a few ms (the last score reveals and closes a round); one refetch is enough. */
+function refreshSoon() {
+  if (refreshQueued) return
+  refreshQueued = window.setTimeout(() => {
+    refreshQueued = undefined
+    refresh().catch(() => {})
+  }, 120)
+}
+
+function onVisible() {
+  if (document.visibilityState === 'visible') refreshSoon()
+}
+
 onMounted(async () => {
   try {
     await refresh()
@@ -88,10 +106,23 @@ onMounted(async () => {
   } catch (e) {
     error.value = (e as Error).message
   }
-  // Cheap polling keeps everyone's reveal state in sync around the table.
-  timer = window.setInterval(() => refresh().catch(() => {}), 5000)
+  // Live: every write at the table pushes an event, and every phone refetches at once.
+  unsubscribe = subscribeSession(props.id, refreshSoon, (s) => (live.value = s))
+  // Fallback for a stream that silently died (a proxy, a sleeping phone): every 5 s while
+  // not connected, every 30 s while live, and a refetch when the tab comes back.
+  let tick = 0
+  timer = window.setInterval(() => {
+    tick += 1
+    if (live.value !== 'live' || tick % 6 === 0) refresh().catch(() => {})
+  }, 5000)
+  document.addEventListener('visibilitychange', onVisible)
 })
-onUnmounted(() => clearInterval(timer))
+onUnmounted(() => {
+  clearInterval(timer)
+  clearTimeout(refreshQueued)
+  unsubscribe?.()
+  document.removeEventListener('visibilitychange', onVisible)
+})
 </script>
 
 <template>
@@ -109,7 +140,12 @@ onUnmounted(() => clearInterval(timer))
     </div>
 
     <div class="card">
-      <strong>Rundt bordet</strong>
+      <div class="row">
+        <strong>Rundt bordet</strong>
+        <span class="live" :class="live" :title="live === 'live' ? 'Direkte: alle ser avsløringen samtidig' : live === 'connecting' ? 'Kobler til' : 'Frakoblet, oppdaterer hvert 5. sekund'">
+          <i aria-hidden="true" />{{ live === 'live' ? 'direkte' : live === 'connecting' ? 'kobler til' : 'frakoblet' }}
+        </span>
+      </div>
       <div><span v-for="m in session.members" :key="m.userId" class="pill" :class="{ on: m.userId === myId }">{{ m.displayName }}<span v-if="m.teams.length" class="muted"> · {{ m.teams.join(' · ') }}</span></span></div>
       <p v-if="session.solo" class="muted">Du er alene. Dette teller som en solo-dag til noen blir med.</p>
     </div>
@@ -159,3 +195,11 @@ onUnmounted(() => clearInterval(timer))
     <button v-if="isHost && !session.closedAt" class="secondary" style="width: 100%; margin-top: 12px" @click="close">Avslutt smakingen</button>
   </template>
 </template>
+
+<style scoped>
+.live { font-size: 0.75rem; color: var(--muted); display: inline-flex; align-items: center; gap: 5px; }
+.live i { width: 8px; height: 8px; border-radius: 50%; background: var(--muted); opacity: 0.5; }
+.live.live i { background: #3c8a4f; opacity: 1; box-shadow: 0 0 6px #3c8a4f88; }
+.live.connecting i { animation: blink 1.2s ease-in-out infinite; }
+@keyframes blink { 50% { opacity: 0.15; } }
+</style>

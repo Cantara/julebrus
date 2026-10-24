@@ -1,5 +1,6 @@
 package no.cantara.julebrus.session;
 
+import no.cantara.julebrus.live.SessionEvents;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,9 +17,11 @@ public class SessionService {
     private static final SecureRandom RANDOM = new SecureRandom();
 
     private final SessionRepository sessions;
+    private final SessionEvents events;
 
-    public SessionService(SessionRepository sessions) {
+    public SessionService(SessionRepository sessions, SessionEvents events) {
         this.sessions = sessions;
+        this.events = events;
     }
 
     @Transactional
@@ -40,6 +43,7 @@ public class SessionService {
             throw new ResponseStatusException(HttpStatus.GONE, "That session is closed");
         }
         session.join(userId);
+        events.publish(session.getId(), SessionEvents.Kind.SESSION);
         return session;
     }
 
@@ -58,6 +62,7 @@ public class SessionService {
         TastingSession session = getForMember(sessionId, userId);
         if (!session.isOpen()) throw new ResponseStatusException(HttpStatus.GONE, "That session is closed");
         session.addBeer(beerId);
+        events.publish(sessionId, SessionEvents.Kind.SESSION);
         return session;
     }
 
@@ -68,6 +73,7 @@ public class SessionService {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Only the host can close a session");
         }
         session.close();
+        events.publish(sessionId, SessionEvents.Kind.SESSION);
         return session;
     }
 

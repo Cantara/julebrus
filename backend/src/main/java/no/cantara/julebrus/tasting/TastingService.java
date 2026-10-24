@@ -2,6 +2,7 @@ package no.cantara.julebrus.tasting;
 
 import no.cantara.julebrus.beer.Beer;
 import no.cantara.julebrus.beer.BeerRepository;
+import no.cantara.julebrus.live.SessionEvents;
 import no.cantara.julebrus.config.SeasonProperties;
 import no.cantara.julebrus.web.ApiException;
 import no.cantara.julebrus.session.SessionRepository;
@@ -33,8 +34,11 @@ public class TastingService {
     private final SeasonProperties season;
     private final Clock clock;
 
+    private final SessionEvents events;
+
     public TastingService(TastingRepository tastings, SessionRepository sessions, BeerRepository beers,
-                          SeasonProperties season, Clock clock) {
+                          SeasonProperties season, Clock clock, SessionEvents events) {
+        this.events = events;
         this.tastings = tastings;
         this.sessions = sessions;
         this.beers = beers;
@@ -72,7 +76,9 @@ public class TastingService {
                 tastings.existsByUserIdAndBeerId(userId, beerId));
         rules.check(now, solo, ledger);
 
-        return tastings.save(new Tasting(userId, beerId, sessionId, score, prediction, notes, structured, tags, now, day));
+        Tasting saved = tastings.save(new Tasting(userId, beerId, sessionId, score, prediction, notes, structured, tags, now, day));
+        events.publish(sessionId, SessionEvents.Kind.TASTING);
+        return saved;
     }
 
     @Transactional(readOnly = true)

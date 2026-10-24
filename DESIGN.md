@@ -80,6 +80,10 @@ and attaches their login email.
    device, within their own per-day cap.
 4. **Locked blind reveal:** scores in a session are hidden until every member has
    rated that beer. Then they are revealed together. No anchoring on the loudest voice.
+   Together means together: every write at the table (a score, a duel, a join, a beer, a
+   blind guess) is pushed to the members over server-sent events (`/api/sessions/{id}/events`),
+   and every phone refetches at once, so the paper tears off on all of them in the same
+   second. A slow poll and a refetch when the tab comes back cover a stream that died.
 5. After two or more beers, each member answers duel questions: "A or B?". Duels
    feed a Bradley–Terry ranking that ignores how generous or stingy each rater is.
 6. Optional prediction step: guess the group average before the reveal. Accuracy
