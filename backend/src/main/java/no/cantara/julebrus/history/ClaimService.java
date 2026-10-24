@@ -8,7 +8,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Comparator;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -20,6 +21,7 @@ import java.util.stream.Collectors;
 
 import static no.cantara.julebrus.history.HistoricRaterClaim.Status.APPROVED;
 import static no.cantara.julebrus.history.HistoricRaterClaim.Status.PENDING;
+import static no.cantara.julebrus.history.HistoricRaterClaim.Status.REJECTED;
 
 /**
  * Claim-your-history: a person asks to be linked to the historic rater names that are
@@ -29,6 +31,8 @@ import static no.cantara.julebrus.history.HistoricRaterClaim.Status.PENDING;
 public class ClaimService {
 
     public static final int MAX_PENDING_PER_USER = 5;
+    /** Every claim created or reopened counts, whatever its status, so a rejection is not a free retry. */
+    public static final int MAX_CLAIMS_PER_DAY = 10;
 
     /**
      * One historic person (key). Counts only, deliberately no scores or beers. {@code loginEmail}
@@ -99,7 +103,8 @@ public class ClaimService {
                     c.loginEmail().equalsIgnoreCase(userEmail) ? "Already linked to your login, no claim needed"
                             : "That person is already linked to a login");
         }
-        if (claims.findByUserIdAndRaterKey(userId, key).isPresent()) {
+        var existing = claims.findByUserIdAndRaterKey(userId, key);
+        if (existing.isPresent() && existing.get().getStatus() != REJECTED) {
             throw new ApiException(HttpStatus.CONFLICT, "CLAIM_EXISTS", "You have already claimed that name");
         }
         if (claims.findByRaterKeyAndStatus(key, APPROVED).isPresent()) {
@@ -108,6 +113,16 @@ public class ClaimService {
         if (claims.countByUserIdAndStatus(userId, PENDING) >= MAX_PENDING_PER_USER) {
             throw new ApiException(HttpStatus.UNPROCESSABLE_ENTITY, "CLAIM_LIMIT",
                     "At most " + MAX_PENDING_PER_USER + " claims can wait for approval at once");
+        }
+        if (claims.countByUserIdAndCreatedAtAfter(userId, Instant.now().minus(24, ChronoUnit.HOURS)) >= MAX_CLAIMS_PER_DAY) {
+            throw new ApiException(HttpStatus.UNPROCESSABLE_ENTITY, "CLAIM_LIMIT",
+                    "At most " + MAX_CLAIMS_PER_DAY + " claims can be made in 24 hours");
+        }
+        if (existing.isPresent()) {
+            // Asking again after a rejection reopens the old row (kept for audit).
+            HistoricRaterClaim again = existing.get();
+            again.reopen();
+            return claims.save(again);
         }
         return claims.save(new HistoricRaterClaim(userId, key));
     }
@@ -125,12 +140,25 @@ public class ClaimService {
 
     @Transactional(readOnly = true)
     public List<HistoricRaterClaim> byStatus(HistoricRaterClaim.Status status) {
-        return claims.findByStatusOrderByCreatedAtAsc(status);
+        // Grouped by key so competing claimants for one person sit next to each other.
+        return claims.findByStatusOrderByRaterKeyAscCreatedAtAsc(status);
     }
 
     @Transactional(readOnly = true)
     public Map<UUID, User> usersById(Set<UUID> ids) {
         return users.findAllById(ids).stream().collect(Collectors.toMap(User::getId, u -> u));
+    }
+
+    /** An admin takes back an approval. Only APPROVED claims can be revoked. */
+    @Transactional
+    public HistoricRaterClaim revoke(UUID adminId, UUID claimId) {
+        HistoricRaterClaim c = claims.findById(claimId)
+                .orElseThrow(() -> new ApiException(HttpStatus.NOT_FOUND, "CLAIM_NOT_FOUND", "No such claim"));
+        if (c.getStatus() != APPROVED) {
+            throw new ApiException(HttpStatus.CONFLICT, "CLAIM_NOT_APPROVED", "Only an approved claim can be revoked");
+        }
+        c.revoke(adminId);
+        return c;
     }
 
     @Transactional
@@ -149,7 +177,7 @@ public class ClaimService {
         }
         c.approve(adminId);
         try {
-            // Flush now so the unique constraint on approved_name decides a race here, not at commit.
+            // Flush now so the unique constraint on approved_key decides a race here, not at commit.
             claims.saveAndFlush(c);
         } catch (DataIntegrityViolationException e) {
             throw new ApiException(HttpStatus.CONFLICT, "RATER_TAKEN", "That name is already linked to someone else");

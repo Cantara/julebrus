@@ -11,7 +11,6 @@ import no.cantara.julebrus.config.SeasonProperties;
 import no.cantara.julebrus.tasting.Tasting;
 import no.cantara.julebrus.tasting.TastingRepository;
 import no.cantara.julebrus.user.CurrentUser;
-import no.cantara.julebrus.user.User;
 import no.cantara.julebrus.user.UserRepository;
 import no.cantara.julebrus.weight.RaterWeight;
 import no.cantara.julebrus.weight.RaterWeightService;

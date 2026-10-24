@@ -117,4 +117,82 @@ class ConsentTest {
                 .andExpect(jsonPath("$.sponsor.url").value("https://exoreaction.com"))
                 .andExpect(content().string(not(containsString("secret"))));
     }
+
+    @Autowired
+    jakarta.persistence.EntityManager em;
+    @Autowired
+    no.cantara.julebrus.consent.ConsentEventRepository events;
+
+    @Test
+    void privacyTextsArePublicWithoutLoginOrConsent() throws Exception {
+        // A person who has never accepted anything: 200 with both texts and the version.
+        mvc.perform(get("/api/privacy").header("X-Dev-User", "privacy-visitor@cantara.no")).andExpect(status().isOk())
+                .andExpect(jsonPath("$.version").value(ConsentService.CONSENT_VERSION))
+                .andExpect(jsonPath("$.texts.nb").value(containsString("Personvern")))
+                .andExpect(jsonPath("$.texts.en").value(containsString("Privacy")))
+                .andExpect(content().string(not(containsString("privacy-visitor"))));
+        // No identity at all (no X-Dev-User; the dev chain still supplies the default dev user, which has not consented either in this test).
+        mvc.perform(get("/api/privacy")).andExpect(status().isOk());
+        mvc.perform(get("/api/config")).andExpect(jsonPath("$.contactEmail").doesNotExist());
+    }
+
+    @Test
+    void acceptWithdrawAcceptLeavesOneRowAndThreeEvents() throws Exception {
+        String who = "consent-audit@cantara.no";
+        ConsentSupport.accept(mvc, who);
+        mvc.perform(post("/api/consent/withdraw").header("X-Dev-User", who)).andExpect(status().isOk());
+        ConsentSupport.accept(mvc, who);
+
+        var id = users.upsert(who, "x").getId();
+        org.assertj.core.api.Assertions.assertThat(consents.findAll().stream().filter(c -> c.getUserId().equals(id))).hasSize(1);
+        org.assertj.core.api.Assertions.assertThat(consents.findAll().stream().filter(c -> c.getUserId().equals(id)).findFirst().get().active()).isTrue();
+        org.assertj.core.api.Assertions.assertThat(events.findByUserIdOrderByAtAsc(id))
+                .extracting(e -> e.getKind().name()).containsExactly("ACCEPT", "WITHDRAW", "ACCEPT");
+    }
+
+    @Test
+    void interceptorAppliesToPathVariantsAndUnknownApiPaths() throws Exception {
+        String who = "consent-variants@cantara.no";
+        for (String path : new String[]{"/api/beers/", "/api/beers.json", "/api/nope", "/api/history/me/", "/api/admin/history/claims/"}) {
+            var r = mvc.perform(get(path).header("X-Dev-User", who)).andReturn().getResponse();
+            org.assertj.core.api.Assertions.assertThat(r.getStatus()).as(path).isNotEqualTo(200);
+            org.assertj.core.api.Assertions.assertThat(r.getContentAsString()).as(path).doesNotContain("\"name\"");
+        }
+        mvc.perform(get("/api/beers").header("X-Dev-User", who)).andExpect(status().isForbidden());
+        mvc.perform(org.springframework.test.web.servlet.request.MockMvcRequestBuilders.head("/api/beers").header("X-Dev-User", who))
+                .andExpect(status().isForbidden());
+        mvc.perform(org.springframework.test.web.servlet.request.MockMvcRequestBuilders.options("/api/beers").header("X-Dev-User", who))
+                .andExpect(result -> org.assertj.core.api.Assertions.assertThat(result.getResponse().getContentAsString()).isEmpty());
+        // A path that is not an exact exempt one is not exempt: a sibling of /api/consent.
+        mvc.perform(get("/api/consentx").header("X-Dev-User", who)).andExpect(status().is4xxClientError());
+        mvc.perform(get("/api/me/x").header("X-Dev-User", who)).andExpect(status().is4xxClientError());
+    }
+
+    @Test
+    void devUserHeaderWithoutAtSignIsRefusedNotACrash() throws Exception {
+        mvc.perform(get("/api/me").header("X-Dev-User", "nobody")).andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.code").value("VALIDATION"));
+        mvc.perform(get("/api/me").header("X-Dev-User", "@x.no")).andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void parallelFirstRequestsFromOneNewPersonAllSucceed() throws Exception {
+        String who = "parallel-" + System.nanoTime() + "@cantara.no";
+        int n = 8;
+        var pool = java.util.concurrent.Executors.newFixedThreadPool(n);
+        var start = new java.util.concurrent.CountDownLatch(1);
+        try {
+            var futures = new java.util.ArrayList<java.util.concurrent.Future<Integer>>();
+            for (int i = 0; i < n; i++) {
+                futures.add(pool.submit(() -> {
+                    start.await();
+                    return mvc.perform(get("/api/me").header("X-Dev-User", who)).andReturn().getResponse().getStatus();
+                }));
+            }
+            start.countDown();
+            for (var f : futures) org.assertj.core.api.Assertions.assertThat(f.get(30, java.util.concurrent.TimeUnit.SECONDS)).isEqualTo(200);
+        } finally {
+            pool.shutdownNow();
+        }
+    }
 }

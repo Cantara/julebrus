@@ -68,6 +68,21 @@ public class HistoricRaterClaim {
         decide(adminId);
     }
 
+    /** An admin takes an approval back: the key becomes claimable again and the link disappears. */
+    public void revoke(UUID adminId) {
+        this.status = Status.REJECTED;
+        this.approvedKey = null;
+        decide(adminId);
+    }
+
+    /** A rejected claim asked for again: the old row is reused so the audit trail stays one row per (user, key). */
+    public void reopen() {
+        this.status = Status.PENDING;
+        this.createdAt = Instant.now();
+        this.decidedBy = null;
+        this.decidedAt = null;
+    }
+
     private void decide(UUID adminId) {
         this.decidedBy = adminId;
         this.decidedAt = Instant.now();

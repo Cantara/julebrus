@@ -20,7 +20,6 @@ import org.springframework.web.bind.annotation.RestController;
 import java.time.Instant;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -78,6 +77,13 @@ public class AdminClaimsController {
         User admin = requireAdmin();
         HistoricRaterClaim c = claims.decide(admin.getId(), id, in.decision() == Choice.APPROVE);
         return views(List.of(c)).get(0);
+    }
+
+    /** Takes an approval back: the ratings leave the person's history and the key can be claimed again. */
+    @PostMapping("/{id}/revoke")
+    public AdminClaimView revoke(@PathVariable UUID id) {
+        User admin = requireAdmin();
+        return views(List.of(claims.revoke(admin.getId(), id))).get(0);
     }
 
     private List<AdminClaimView> views(List<HistoricRaterClaim> list) {

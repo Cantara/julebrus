@@ -9,6 +9,16 @@ create table user_consents (
   constraint uq_user_consent unique (user_id, consent_version)
 );
 
+-- Append-only audit trail: one row per accept or withdraw, never updated or deleted by the app.
+create table consent_events (
+  id               uuid primary key,
+  user_id          uuid not null references users(id),
+  consent_version  varchar(32) not null,
+  event            varchar(16) not null check (event in ('ACCEPT', 'WITHDRAW')),
+  at               timestamp with time zone not null
+);
+create index ix_consent_events_user on consent_events(user_id, at);
+
 -- A logged-in person asks to be linked to a historic person, identified by rater_key (the
 -- canonical name from raters.csv that joins "Eirik", "Eirik L", ...). Nothing is linked until an admin approves.
 --

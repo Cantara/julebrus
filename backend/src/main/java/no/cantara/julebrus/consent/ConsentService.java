@@ -30,16 +30,19 @@ public class ConsentService {
     }
 
     private final UserConsentRepository consents;
+    private final ConsentEventRepository events;
     private final Texts texts;
 
-    public ConsentService(UserConsentRepository consents, SponsorProperties sponsor, ContactProperties contact) {
+    public ConsentService(UserConsentRepository consents, ConsentEventRepository events, SponsorProperties sponsor,
+                          ContactProperties contact) {
         this.consents = consents;
+        this.events = events;
         this.texts = new Texts(
                 render("consent/consent-nb.md", sponsor, contact, "kontakt arrangørene"),
                 render("consent/consent-en.md", sponsor, contact, "contact the organisers"));
     }
 
-    /** Fills {sponsor} and {contact} in a text. Without a sponsor the sentence about it is dropped. */
+    /** Fills {sponsor} and {contact} in a text. Without a sponsor only the line that carries {sponsor} is dropped. */
     private static String render(String path, SponsorProperties sponsor, ContactProperties contact, String noContact) {
         String raw;
         try {
@@ -73,11 +76,15 @@ public class ConsentService {
         consents.findByUserIdAndConsentVersion(userId, CONSENT_VERSION)
                 .ifPresentOrElse(UserConsent::accept,
                         () -> consents.save(new UserConsent(userId, CONSENT_VERSION)));
+        events.save(new ConsentEvent(userId, CONSENT_VERSION, ConsentEvent.Kind.ACCEPT));
     }
 
     /** Withdraws every active consent the user has given, whatever its version. */
     @Transactional
     public void withdraw(UUID userId) {
-        consents.findByUserIdAndWithdrawnAtIsNull(userId).forEach(UserConsent::withdraw);
+        consents.findByUserIdAndWithdrawnAtIsNull(userId).forEach(c -> {
+            c.withdraw();
+            events.save(new ConsentEvent(userId, c.getConsentVersion(), ConsentEvent.Kind.WITHDRAW));
+        });
     }
 }

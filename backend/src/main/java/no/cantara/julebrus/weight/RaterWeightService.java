@@ -38,17 +38,24 @@ public class RaterWeightService {
         this.season = season;
     }
 
-    @Transactional
+    /**
+     * Deliberately not transactional: a person's first requests can arrive together, the
+     * losing insert hits the unique (season, email) and must not poison a surrounding
+     * transaction. The loser re-reads the winner's row.
+     */
     public RaterWeight current(User user) {
         return weights.findBySeasonYearAndEmailIgnoreCase(season.year(), user.getEmail())
                 .orElseGet(() -> {
                     RaterWeightPolicy.Decision d = RaterWeightPolicy.decide(mostRecentPreviousSeason(user));
-                    return weights.save(new RaterWeight(season.year(), user.getEmail(), d.weight(), d.reason()));
+                    try {
+                        return weights.saveAndFlush(new RaterWeight(season.year(), user.getEmail(), d.weight(), d.reason()));
+                    } catch (org.springframework.dao.DataIntegrityViolationException raced) {
+                        return weights.findBySeasonYearAndEmailIgnoreCase(season.year(), user.getEmail()).orElseThrow(() -> raced);
+                    }
                 });
     }
 
     /** Weights by user id for this season's averages. Users without a stored row get one. */
-    @Transactional
     public Map<UUID, Double> weightsByUserId() {
         Map<UUID, Double> out = new HashMap<>();
         for (User u : users.findAll()) out.put(u.getId(), current(u).weight());

@@ -26,6 +26,13 @@ public class ApiErrorHandler {
         return ResponseEntity.status(e.status()).body(new ApiError(e.code(), e.getMessage()));
     }
 
+    /** A unique constraint lost a race (double click, two tabs): the client sees a plain conflict, not a 500. */
+    @ExceptionHandler(org.springframework.dao.DataIntegrityViolationException.class)
+    public ResponseEntity<ApiError> conflict(org.springframework.dao.DataIntegrityViolationException e) {
+        return ResponseEntity.status(HttpStatus.CONFLICT)
+                .body(new ApiError("CONFLICT", "The request conflicts with the current state; reload and try again"));
+    }
+
     @ExceptionHandler(ResponseStatusException.class)
     public ResponseEntity<ApiError> status(ResponseStatusException e) {
         return ResponseEntity.status(e.getStatusCode())

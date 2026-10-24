@@ -16,4 +16,8 @@ public interface HistoricRaterClaimRepository extends JpaRepository<HistoricRate
     Optional<HistoricRaterClaim> findByRaterKeyAndStatus(String raterKey, HistoricRaterClaim.Status status);
 
     long countByUserIdAndStatus(UUID userId, HistoricRaterClaim.Status status);
+
+    long countByUserIdAndCreatedAtAfter(UUID userId, java.time.Instant since);
+
+    List<HistoricRaterClaim> findByStatusOrderByRaterKeyAscCreatedAtAsc(HistoricRaterClaim.Status status);
 }
