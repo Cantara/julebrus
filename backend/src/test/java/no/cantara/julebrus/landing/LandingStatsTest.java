@@ -52,7 +52,11 @@ class LandingStatsTest {
     @Test
     void perSeasonCountsMatchTheVotes() {
         Map<Integer, List<Map<String, String>>> byYear = votesByYear();
-        assertThat(STATS.totals().seasonsWithVotes()).isEqualTo(byYear.size()).isEqualTo(12);
+        // Every season the app imports (history/seasons.csv) has single votes, and the other way round.
+        List<Integer> imported = RepoData.csv(Path.of("src", "main", "resources", "history", "seasons.csv")).stream()
+                .map(r -> Integer.parseInt(r.get("year"))).toList();
+        assertThat(STATS.totals().seasonsWithVotes()).isEqualTo(byYear.size()).isEqualTo(imported.size());
+        assertThat(byYear.keySet()).containsExactlyElementsOf(imported);
         assertThat(STATS.totals().votes()).isEqualTo(RepoData.votes().size());
         byYear.forEach((year, rows) -> {
             HistoryStats.Season s = season(year);

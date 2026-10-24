@@ -443,8 +443,8 @@ public final class LandingPage {
                         "The source is Cantara's wiki and the spreadsheets it links to. Every year and every known quirk is in <code>data/SOURCES.md</code>.")).append("</li>\n")
                 .append("<li>").append(l(agg + " finnes bare som en rangert liste med vektet score per øl og antall stemmer per person, uten enkeltstemmer.",
                         agg + " exists only as a ranked list with a weighted score per beer and the number of votes per person, no single votes.")).append("</li>\n")
-                .append("<li>").append(l("2008 og 2010 kan ikke leses ut av wikisidene, 1997 har bare vinneren, og for mange år er ingenting funnet.",
-                        "2008 and 2010 cannot be read out of the wiki pages, 1997 has only the winner, and for many years nothing was found.")).append("</li>\n")
+                .append("<li>").append(l("1997 har bare vinneren, og for mange år er ingenting funnet.",
+                        "1997 has only the winner, and for many years nothing was found.")).append("</li>\n")
                 .append("<li>").append(l("Vektene varierte (nye teller 0,5, en gruppeoppføring i 2007 teller 2,5, stemmer uten oppgitt vekt teller 1), og både lag og utvalg skiftet fra år til år. Tallene sier noe om hvert år, men er ikke direkte sammenlignbare mellom årene.",
                         "Weights varied (newcomers count 0.5, a group entry in 2007 counts 2.5, votes without a stated weight count 1), and both the panel and the selection changed every year. The numbers describe each year, but are not directly comparable between years.")).append("</li>\n")
                 .append("<li>").append(l("Ølnavn står slik de er skrevet hvert år, og er ikke slått sammen.",

@@ -11,8 +11,11 @@ import csv
 import os
 import sys
 
-import extract_google_sheets
-import extract_wiki_tables
+# python3 -I leaves the script's own folder off sys.path; the two extractors live next to this file.
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+sys.dont_write_bytecode = True
+import extract_google_sheets  # noqa: E402
+import extract_wiki_tables  # noqa: E402
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 FILES = {
@@ -49,8 +52,25 @@ def compare(votes, results):
             print(f"differs {year} {beer}: stated vote weight {weight_sum}, listed {sum(w for _, w in scores):g}")
 
 
+def compare_voters(votes, voter_checks):
+    """The per-voter numbers a sheet states (2008: beer votes and their mean; 2010: Antall) against the votes."""
+    by = collections.defaultdict(list)
+    for year, voter, _weight, beer, score in votes:
+        by[(int(year), voter)].append((beer, float(score)))
+    for year, voter, n, mean, covered in voter_checks:
+        scores = [s for b, s in by.get((year, voter), []) if b in covered]
+        if n and int(float(n)) != len(scores):
+            print(f"differs {year} {voter}: stated {n} votes, listed {len(scores)}")
+        stated = extract_wiki_tables.num(mean) if mean else None
+        if stated is not None and scores and abs(stated - sum(scores) / len(scores)) > 0.02:
+            print(f"differs {year} {voter}: stated mean {mean}, from votes {sum(scores) / len(scores):.2f}")
+
+
 def main(wiki_dir):
-    wiki_votes, wiki_results = extract_wiki_tables.extract(wiki_dir)
+    voter_checks, notes = [], []
+    wiki_votes, wiki_results = extract_wiki_tables.extract(wiki_dir, voter_checks, notes)
+    for note in notes:
+        print(note)
     sheet_votes, sheet_results, participation = extract_google_sheets.extract(os.path.join(ROOT, "source", "google-sheets"))
     votes, results = wiki_votes + sheet_votes, wiki_results + sheet_results
     write("votes.csv", votes)
@@ -58,6 +78,7 @@ def main(wiki_dir):
     write("participation.csv", participation)
     print(f"{len(votes)} votes, {len(results)} result rows, {len(participation)} participation rows")
     compare(votes, results)
+    compare_voters(votes, voter_checks)
 
 
 if __name__ == "__main__":

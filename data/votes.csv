@@ -650,6 +650,321 @@ year,voter,weight,beer,score
 2007,Harald,1,Underlig Jul,5
 2007,Harald,1,God jul,2
 2007,Christian B,0.5,Hansa,6
+2008,Totto,1,Aass,4
+2008,Totto,1,Aass Premium,3
+2008,Totto,1,Dahl,5
+2008,Totto,1,Fredrikstad,3
+2008,Totto,1,Grans,1
+2008,Totto,1,Lervik,5
+2008,Totto,1,Nøgne Ø - Underlig jul,2
+2008,Totto,1,Ringnes Julebokk,3
+2008,Totto,1,Berentsen Julefnugg,4
+2008,Totto,1,Fenalår Tinde,5
+2008,Totto,1,Fenalår Bjorli,5
+2008,Totto,1,Fenalår Grillstad,6
+2008,Dyveke,1,Aass Premium,3
+2008,Dyveke,1,Hansa,3
+2008,Dyveke,1,Lervik,4
+2008,Bård,1,Aass,4
+2008,Bård,1,CB,3
+2008,Bård,1,Fredrikstad,4
+2008,Bård,1,Hansa,4
+2008,Bård,1,Hansa Vellagret,2
+2008,Bård,1,Mack Juleøl,5
+2008,Bård,1,Ringnes,3
+2008,Bård,1,Ringnes Julebokk,5
+2008,Bård,1,Fenalår Tinde,4
+2008,Bård,1,Fenalår Bjorli,6
+2008,Bård,1,Fenalår Grillstad,5
+2008,Erik D,0.5,Aass,4
+2008,Erik D,0.5,Fredrikstad,2
+2008,Erik D,0.5,Nøgne Ø - Underlig jul,5
+2008,Erik D,0.5,Nøgne Ø - God Jul,6
+2008,Erik D,0.5,Borg,3
+2008,Tobias,1,Aass Premium,4
+2008,Tobias,1,CB,2
+2008,Tobias,1,Fredrikstad,4
+2008,Tobias,1,Hansa,5
+2008,Tobias,1,Mack Juleøl,4
+2008,Tobias,1,Nøgne Ø - Underlig jul,4
+2008,Tobias,1,Ringnes,5
+2008,Tobias,1,Ringnes Julebokk,6
+2008,Morten,1,Aass,4
+2008,Morten,1,Aass Premium,4
+2008,Morten,1,Dahl,3
+2008,Morten,1,Fredrikstad,4
+2008,Morten,1,Hansa,3
+2008,Morten,1,Hansa Vellagret,5
+2008,Morten,1,Mack Juleøl,4
+2008,Morten,1,Ringnes,4
+2008,Morten,1,Borg,4
+2008,Morten,1,Fenalår Tinde,4
+2008,Morten,1,Fenalår Bjorli,5
+2008,Morten,1,Fenalår Grillstad,6
+2008,Alvin,1,Aass,3
+2008,Alvin,1,Aass Premium,5
+2008,Alvin,1,Dahl,2
+2008,Alvin,1,Hansa,2
+2008,Alvin,1,Hansa Vellagret,3
+2008,Alvin,1,Mack Juleøl,5
+2008,Alvin,1,Nøgne Ø - Underlig jul,3
+2008,Alvin,1,Ringnes,3
+2008,Alvin,1,Ringnes Julebokk,3
+2008,Alvin,1,Berentsen Julefnugg,3
+2008,Alvin,1,Berentsen Jule Avec,4
+2008,Alvin,1,Fenalår Tinde,4
+2008,Alvin,1,Fenalår Bjorli,5
+2008,Alvin,1,Fenalår Grillstad,3
+2008,Cynthia,1,Aass,3
+2008,Cynthia,1,Aass Premium,5
+2008,Cynthia,1,Hansa,3
+2008,Cynthia,1,Hansa Vellagret,3
+2008,Cynthia,1,Mack Juleøl,6
+2008,Cynthia,1,Ringnes Julebokk,3
+2008,Cynthia,1,Berentsen Jule Avec,3
+2008,Stig L,0.5,Aass Premium,5
+2008,Stig L,0.5,CB,5
+2008,Stig L,0.5,Dahl,4
+2008,Stig L,0.5,Hansa Vellagret,3
+2008,Stig L,0.5,Mack Juleøl,3
+2008,Stig L,0.5,Nøgne Ø - Underlig jul,5
+2008,Stig L,0.5,Nøgne Ø - God Jul,6
+2008,Stig L,0.5,Ringnes,3
+2008,Stig L,0.5,Ringnes Julebokk,5
+2008,Stig L,0.5,Fenalår Tinde,6
+2008,Stig L,0.5,Fenalår Bjorli,5
+2008,Stig L,0.5,Fenalår Grillstad,2
+2008,Gjertrud,1,Grans,4
+2008,Gjertrud,1,Mack Juleøl,5
+2008,Gjertrud,1,Ringnes Julebokk,4
+2008,Eirik,1,Aass Premium,3
+2008,Eirik,1,Dahl,4
+2008,Eirik,1,Hansa,4
+2008,Eirik,1,Hansa Vellagret,5
+2008,Eirik,1,Mack Juleøl,4
+2008,Eirik,1,Nøgne Ø - God Jul,5
+2008,Eirik,1,Nissemor,5
+2008,Eirik,1,Nissefar,4
+2008,Eirik,1,Ringnes,3
+2008,Eirik,1,Berentsen Julefnugg,4
+2008,Eirik,1,Fenalår Grillstad,5
+2008,Agnes,0.5,Fenalår Tinde,2
+2008,Agnes,0.5,Fenalår Bjorli,4
+2008,Agnes,0.5,Fenalår Grillstad,3
+2008,Mads,0.5,Aass,1
+2008,Mads,0.5,Aass Premium,4
+2008,Mads,0.5,CB,2
+2008,Mads,0.5,Dahl,3
+2008,Mads,0.5,Hansa Vellagret,1
+2008,Mads,0.5,Mack Juleøl,4
+2008,Mads,0.5,Nøgne Ø - Underlig jul,5
+2008,Mads,0.5,Nøgne Ø - God Jul,4
+2008,Mads,0.5,Nissemor,5
+2008,Mads,0.5,Ringnes,5
+2008,Mads,0.5,Ringnes Julebokk,3
+2008,Mads,0.5,Fenalår Tinde,6
+2008,Mads,0.5,Fenalår Bjorli,4
+2008,Mads,0.5,Fenalår Grillstad,2
+2008,Petter,1,Aass,4
+2008,Petter,1,Aass Premium,3
+2008,Petter,1,CB,5
+2008,Petter,1,Dahl,4
+2008,Petter,1,Fredrikstad,5
+2008,Petter,1,Grans,3
+2008,Petter,1,Hansa Vellagret,4
+2008,Petter,1,Mack Juleøl,5
+2008,Petter,1,Nøgne Ø - God Jul,4
+2008,Petter,1,Ringnes Julebokk,5
+2008,Petter,1,Berentsen Julefnugg,3
+2008,Petter,1,Borg,4
+2008,Petter,1,Fenalår Tinde,3
+2008,Petter,1,Fenalår Bjorli,5
+2008,Petter,1,Fenalår Grillstad,5
+2008,Lars G,1,Aass,4
+2008,Lars G,1,Aass Premium,3
+2008,Lars G,1,Hansa,1
+2008,Lars G,1,Ringnes,4
+2008,Lars G,1,Ringnes Julebokk,5
+2008,Tor,1,Dahl,3
+2008,Tor,1,Fredrikstad,4
+2008,Tor,1,Hansa,4
+2008,Tor,1,Hansa Vellagret,3
+2008,Tor,1,Ringnes Julebokk,5
+2008,Elin,1,Aass,6
+2008,Elin,1,Aass Premium,5
+2008,Elin,1,Mack Juleøl,4
+2008,Elin,1,Borg,4
+2010,Redhead,1,Dahls,2
+2010,Redhead,1,Aas Juleøl,4
+2010,Redhead,1,Hansa Julebrygg,4
+2010,Redhead,1,Borg,3
+2010,Redhead,1,NøgneØ Underlig jul,1
+2010,Redhead,1,Hansa juleøl,3
+2010,Redhead,1,Ringnes julebokk,6
+2010,Redhead,1,Borg Juleøl,3
+2010,Redhead,1,Aass Juleøl premium,5
+2010,Redhead,1,CB,3
+2010,Redhead,1,Fredrikstad,4
+2010,Redhead,1,Berentsen Julefnugg,5
+2010,Redhead,1,Haandbryggeriet Nissefar,4
+2010,Redhead,1,Berentsen Juleavec,5
+2010,Redhead,1,Håndbryggeriet Nissemor,5
+2010,Redhead,1,Ringnes Juleøl Sterk,3
+2010,Redhead,1,Mack Juleøl,4
+2010,Redhead,1,NøgneØ God Jul,3
+2010,Redhead,1,Grans Juleøl,4
+2010,Redhead,1,fenalår Ringdal,1
+2010,Kjetil,1,Dahls,2
+2010,Kjetil,1,Aas Juleøl,4
+2010,Kjetil,1,Hansa Julebrygg,3
+2010,Kjetil,1,Borg,3
+2010,Kjetil,1,NøgneØ Underlig jul,1
+2010,Kjetil,1,Hansa juleøl,3
+2010,Kjetil,1,Ringnes julebokk,4
+2010,Kjetil,1,Borg Juleøl,3
+2010,Kjetil,1,Aass Juleøl premium,4
+2010,Kjetil,1,CB,2
+2010,Kjetil,1,Fredrikstad,4
+2010,Kjetil,1,Berentsen Julefnugg,5
+2010,Kjetil,1,Haandbryggeriet Nissefar,4
+2010,Kjetil,1,Berentsen Juleavec,4
+2010,Kjetil,1,Håndbryggeriet Nissemor,4
+2010,Kjetil,1,Ringnes Juleøl Sterk,4
+2010,Kjetil,1,Mack Juleøl,4
+2010,Kjetil,1,NøgneØ God Jul,2
+2010,Kjetil,1,Grans Juleøl,4
+2010,Kjetil,1,fenalår Smedstuen,5
+2010,Kjetil,1,Fenalår Aronmat,3
+2010,Kjetil,1,fenalår Ringdal,1
+2010,Dyveke,1,Hansa Julebrygg,3
+2010,Dyveke,1,Hansa juleøl,4
+2010,Dyveke,1,Ringnes julebokk,4
+2010,Dyveke,1,Aass Juleøl premium,4
+2010,Dyveke,1,CB,3
+2010,Dyveke,1,Fredrikstad,3
+2010,Dyveke,1,Berentsen Julefnugg,3
+2010,Totto,1,Dahls,4
+2010,Totto,1,Aas Juleøl,3
+2010,Totto,1,Hansa Julebrygg,3
+2010,Totto,1,Borg,3
+2010,Totto,1,NøgneØ Underlig jul,2
+2010,Totto,1,Hansa juleøl,4
+2010,Totto,1,Ringnes julebokk,5
+2010,Totto,1,Borg Juleøl,4
+2010,Totto,1,Aass Juleøl premium,5
+2010,Totto,1,Nøgne Ø Special Holiday Ale,4
+2010,Totto,1,CB,2
+2010,Totto,1,Fredrikstad,3
+2010,Totto,1,Berentsen Julefnugg,4
+2010,Totto,1,Ægir julebrygg,2
+2010,Totto,1,Haandbryggeriet Nissefar,3
+2010,Totto,1,Berentsen Juleavec,4
+2010,Totto,1,Håndbryggeriet Nissemor,3
+2010,Totto,1,Ringnes Juleøl Sterk,5
+2010,Totto,1,Mack Juleøl,4
+2010,Totto,1,NøgneØ God Jul,5
+2010,Totto,1,Grans Juleøl,4
+2010,Totto,1,fenalår Smedstuen,4
+2010,Totto,1,Fenalår Aronmat,4
+2010,Totto,1,fenalår Ringdal,6
+2010,Bård,1,Dahls,2
+2010,Bård,1,Aas Juleøl,5
+2010,Bård,1,Hansa Julebrygg,4
+2010,Bård,1,Hansa juleøl,4
+2010,Bård,1,Ringnes julebokk,5
+2010,Bård,1,Aass Juleøl premium,6
+2010,Bård,1,CB,3
+2010,Bård,1,Ringnes Juleøl Sterk,5
+2010,Bård,1,Mack Juleøl,4
+2010,Bård,1,fenalår Smedstuen,4
+2010,Bård,1,Fenalår Aronmat,3
+2010,Bård,1,fenalår Ringdal,3
+2010,Gjertrud,1,Hansa juleøl,3
+2010,Gjertrud,1,Ringnes julebokk,4
+2010,Gjertrud,1,Fredrikstad,4
+2010,Gjertrud,1,fenalår Smedstuen,5
+2010,Gjertrud,1,Fenalår Aronmat,5
+2010,Gjertrud,1,fenalår Ringdal,6
+2010,Alvin,1,NøgneØ Underlig jul,3
+2010,Alvin,1,Hansa juleøl,4
+2010,Alvin,1,Nøgne Ø Special Holiday Ale,6
+2010,Alvin,1,Ægir julebrygg,5
+2010,Alvin,1,Berentsen Juleavec,5
+2010,Alvin,1,fenalår Smedstuen,4
+2010,Alvin,1,Fenalår Aronmat,5
+2010,Alvin,1,fenalår Ringdal,3
+2010,Eirik,1,Dahls,3
+2010,Eirik,1,Borg,3
+2010,Eirik,1,Hansa juleøl,4
+2010,Eirik,1,Ringnes julebokk,3
+2010,Eirik,1,Borg Juleøl,3
+2010,Eirik,1,Fredrikstad,4
+2010,Eirik,1,Berentsen Juleavec,6
+2010,Eirik,1,Mack Juleøl,3
+2010,Eirik,1,Grans Juleøl,4
+2010,Lars G,1,Dahls,3
+2010,Lars G,1,CB,2
+2010,Lars G,1,Fredrikstad,4
+2010,Lars G,1,Mack Juleøl,4
+2010,Tor,1,Dahls,3
+2010,Tor,1,Aas Juleøl,5
+2010,Tor,1,Hansa Julebrygg,4
+2010,Tor,1,Hansa juleøl,3
+2010,Tor,1,CB,4
+2010,Tor,1,Fredrikstad,3
+2010,Tor,1,Berentsen Juleavec,2
+2010,Tor,1,Ringnes Juleøl Sterk,3
+2010,Tor,1,fenalår Smedstuen,5
+2010,Tor,1,Fenalår Aronmat,4
+2010,Tor,1,fenalår Ringdal,5
+2010,Hein,1,Dahls,2
+2010,Hein,1,Hansa Julebrygg,4
+2010,Hein,1,Borg,3
+2010,Hein,1,Hansa juleøl,3
+2010,Hein,1,CB,5
+2010,Hein,1,Mack Juleøl,5
+2010,Petter,1,Dahls,4
+2010,Petter,1,Aas Juleøl,4
+2010,Petter,1,Hansa Julebrygg,4
+2010,Petter,1,Hansa juleøl,5
+2010,Petter,1,Ringnes julebokk,3
+2010,Petter,1,Borg Juleøl,3
+2010,Petter,1,Aass Juleøl premium,5
+2010,Petter,1,CB,4
+2010,Petter,1,Fredrikstad,4
+2010,Petter,1,Haandbryggeriet Nissefar,3
+2010,Petter,1,Ringnes Juleøl Sterk,3
+2010,Petter,1,Grans Juleøl,4
+2010,Petter,1,fenalår Smedstuen,5
+2010,Petter,1,Fenalår Aronmat,2
+2010,Petter,1,fenalår Ringdal,4
+2010,Ingvild,0.5,Dahls,3
+2010,Ingvild,0.5,Hansa Julebrygg,4
+2010,Ingvild,0.5,CB,2
+2010,Ingvild,0.5,Berentsen Julefnugg,3
+2010,Kjetil J. D.,0,Dahls,4
+2010,Kjetil J. D.,0,NøgneØ Underlig jul,3
+2010,Kjetil J. D.,0,Ringnes julebokk,3
+2010,Kjetil J. D.,0,CB,2
+2010,Kjetil J. D.,0,Mack Juleøl,2
+2010,Kjetil J. D.,0,fenalår Smedstuen,5
+2010,Kjetil J. D.,0,Fenalår Aronmat,2
+2010,Kjetil J. D.,0,fenalår Ringdal,3
+2010,Karl Inge,1,Dahls,3
+2010,Karl Inge,1,NøgneØ Underlig jul,1
+2010,Karl Inge,1,CB,4
+2010,Karl Inge,1,Ringnes Juleøl Sterk,3
+2010,Karl Inge,1,Grans Juleøl,4
+2010,Stig Lau,1,Aas Juleøl,2
+2010,Stig Lau,1,NøgneØ Underlig jul,3
+2010,Stig Lau,1,Aass Juleøl premium,2
+2010,Stig Lau,1,CB,3
+2010,Stig Lau,1,Ægir julebrygg,5
+2010,Stig Lau,1,Haandbryggeriet Nissefar,4
+2010,Stig Lau,1,NøgneØ God Jul,4
+2010,Stig Lau,1,fenalår Smedstuen,4
+2010,Stig Lau,1,Fenalår Aronmat,3
+2010,Stig Lau,1,fenalår Ringdal,5
 2011,Totto,1,Dahls,4
 2011,Totto,1,Aass Juleøl,4
 2011,Totto,1,Hansa Julebrygg,4

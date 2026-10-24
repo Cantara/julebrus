@@ -63,6 +63,36 @@
    ]
   },
   {
+   "year": 2008,
+   "source": "votes",
+   "beers": 22,
+   "voters": 17,
+   "votes": 144,
+   "meanScore": 3.94,
+   "top": [
+    {
+     "beer": "Fenalår Bjorli",
+     "mean": 5.0,
+     "votes": 8
+    }
+   ]
+  },
+  {
+   "year": 2010,
+   "source": "votes",
+   "beers": 24,
+   "voters": 16,
+   "votes": 171,
+   "meanScore": 3.67,
+   "top": [
+    {
+     "beer": "fenalår Smedstuen",
+     "mean": 4.5,
+     "votes": 9
+    }
+   ]
+  },
+  {
    "year": 2011,
    "source": "votes",
    "beers": 24,
@@ -199,62 +229,51 @@
   }
  ],
  "totals": {
-  "seasonsWithVotes": 12,
-  "seasonsRecorded": 13,
+  "seasonsWithVotes": 14,
+  "seasonsRecorded": 15,
   "firstYear": 1998,
   "lastYear": 2019,
-  "votes": 1447,
-  "votesIncludingAggregate": 1547
+  "votes": 1762,
+  "votesIncludingAggregate": 1862
  },
  "dice": {
-  "1": 21,
-  "2": 149,
-  "3": 368,
-  "4": 527,
-  "5": 322,
-  "6": 51
+  "1": 30,
+  "2": 177,
+  "3": 458,
+  "4": 632,
+  "5": 389,
+  "6": 67
  },
  "nonIntegerScores": 9,
  "regulars": [
   {
-   "beer": "Borg",
-   "seasons": 8,
-   "votes": 65,
-   "years": [
-    1998,
-    2003,
-    2004,
-    2007,
-    2011,
-    2012,
-    2013,
-    2015
-   ]
-  },
-  {
-   "beer": "Dahls",
-   "seasons": 8,
-   "votes": 65,
-   "years": [
-    1998,
-    2003,
-    2004,
-    2007,
-    2011,
-    2012,
-    2013,
-    2015
-   ]
-  },
-  {
    "beer": "CB",
-   "seasons": 8,
-   "votes": 63,
+   "seasons": 10,
+   "votes": 81,
    "years": [
     1998,
     2003,
     2004,
     2007,
+    2008,
+    2010,
+    2011,
+    2012,
+    2013,
+    2015
+   ]
+  },
+  {
+   "beer": "Borg",
+   "seasons": 10,
+   "votes": 74,
+   "years": [
+    1998,
+    2003,
+    2004,
+    2007,
+    2008,
+    2010,
     2011,
     2012,
     2013,
@@ -263,13 +282,15 @@
   },
   {
    "beer": "Fredrikstad",
-   "seasons": 8,
-   "votes": 50,
+   "seasons": 10,
+   "votes": 66,
    "years": [
     1998,
     2003,
     2004,
     2007,
+    2008,
+    2010,
     2011,
     2012,
     2013,
@@ -277,36 +298,55 @@
    ]
   },
   {
-   "beer": "Mack",
-   "seasons": 6,
-   "votes": 60,
+   "beer": "Dahls",
+   "seasons": 9,
+   "votes": 77,
    "years": [
     1998,
     2003,
     2004,
     2007,
+    2010,
+    2011,
+    2012,
     2013,
     2015
    ]
   },
   {
-   "beer": "Hansa Julebrygg",
-   "seasons": 6,
-   "votes": 18,
+   "beer": "Mack Juleøl",
+   "seasons": 7,
+   "votes": 43,
    "years": [
     2007,
+    2008,
+    2010,
     2011,
-    2012,
-    2015,
+    2014,
     2017,
     2018
    ]
   },
   {
-   "beer": "Hansa Juleøl",
-   "seasons": 6,
-   "votes": 18,
+   "beer": "Ringnes Julebokk",
+   "seasons": 7,
+   "votes": 33,
    "years": [
+    2008,
+    2010,
+    2011,
+    2012,
+    2013,
+    2017,
+    2019
+   ]
+  },
+  {
+   "beer": "Hansa juleøl",
+   "seasons": 7,
+   "votes": 29,
+   "years": [
+    2010,
     2011,
     2012,
     2014,
@@ -316,15 +356,17 @@
    ]
   },
   {
-   "beer": "Hansa",
-   "seasons": 5,
-   "votes": 58,
+   "beer": "Hansa Julebrygg",
+   "seasons": 7,
+   "votes": 27,
    "years": [
-    1998,
-    2003,
-    2004,
     2007,
-    2013
+    2010,
+    2011,
+    2012,
+    2015,
+    2017,
+    2018
    ]
   }
  ],
