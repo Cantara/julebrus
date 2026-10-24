@@ -7,6 +7,7 @@ import ClaimHistory from '../components/ClaimHistory.vue'
 import LangToggle from '../components/LangToggle.vue'
 import { t } from '../i18n'
 import type { BadgeView, Beer, HistoricRating, Tasting } from '../api/types'
+import BadgeTree from '../components/BadgeTree.vue'
 import { useMe } from '../stores/me'
 
 const store = useMe()
@@ -68,9 +69,13 @@ const byYear = () => {
 
   <h2>Merker</h2>
   <div class="card">
-    <div v-for="b in badges" :key="b.id" class="row" style="padding: 6px 0; opacity: 1" :style="{ opacity: b.earned ? 1 : 0.45 }">
-      <div><strong>{{ b.earned ? '★' : '☆' }} {{ b.title }}</strong><div class="muted">{{ b.description }}</div></div>
-    </div>
+    <BadgeTree :badges="badges" />
+    <details>
+      <summary class="muted" style="cursor: pointer">Alle merker som liste</summary>
+      <div v-for="b in badges" :key="b.id" class="row" style="padding: 6px 0" :style="{ opacity: b.earned ? 1 : 0.5 }">
+        <div><strong>{{ b.earned ? '★' : '☆' }} {{ b.title }}</strong><div class="muted">{{ b.description }}</div></div>
+      </div>
+    </details>
   </div>
 
   <h2>Mine smakinger i år</h2>

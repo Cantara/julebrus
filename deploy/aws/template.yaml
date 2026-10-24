@@ -1,0 +1,364 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: >
+  Julebrus (Cantara Christmas beer tasting): one small EC2 instance (nginx in front of the Spring Boot app,
+  SSM-only access, no port 22), RDS PostgreSQL (single-AZ), an artifacts bucket for CI releases (GitHub OIDC,
+  pull deploy) and alarms. Region eu-north-1, default VPC. The app stores nothing but database rows.
+
+Parameters:
+  ProjectName:
+    Type: String
+    Default: julebrus
+  AppHostName:
+    Type: String
+    Default: xmas.cantara.no
+    Description: "Public host name of the app. DNS is not managed by this stack, the A record is created by hand."
+  GitHubSubjectPrefix:
+    Type: String
+    Default: repo:Cantara/julebrus
+    Description: >
+      The prefix of the GitHub OIDC subject claim. Organisations that use GitHub's immutable subject format
+      (owner and repository ids included) need that form instead. Read it with:
+      gh api repos/Cantara/julebrus/actions/oidc/customization/sub  (the sub_claim_prefix field, if use_default is false).
+  GitHubEnvironment:
+    Type: String
+    Default: production
+    Description: The GitHub Environment the release workflow's upload job runs in. Only jobs in this Environment can assume the upload role.
+  GitHubOidcProviderArn:
+    Type: String
+    Description: ARN of the account's existing GitHub OIDC provider (token.actions.githubusercontent.com). scripts/00-provision.sh derives it from the account id.
+  AlarmEmail:
+    Type: String
+    Description: Where CloudWatch alarms go. Confirm the SNS subscription e-mail after the first deploy.
+  VpcId:
+    Type: AWS::EC2::VPC::Id
+    Description: The default VPC. scripts/00-provision.sh looks it up.
+  AppSubnetId:
+    Type: AWS::EC2::Subnet::Id
+    Description: Public subnet for the instance, in an availability zone that offers InstanceType.
+  DbSubnetIds:
+    Type: List<AWS::EC2::Subnet::Id>
+    Description: At least two subnets in two availability zones for the RDS subnet group
+  InstanceType:
+    Type: String
+    Default: t4g.small
+  DbInstanceClass:
+    Type: String
+    Default: db.t4g.micro
+  DbAllocatedStorageGb:
+    Type: Number
+    Default: 20
+  DbBackupRetentionDays:
+    Type: Number
+    Default: 14
+  DbDeletionProtection:
+    Type: String
+    AllowedValues: ["true", "false"]
+    Default: "false"
+    Description: >
+      False for the first create, so that a failed create can roll back and be retried; set to true through an update
+      as the last runbook step (DB_DELETION_PROTECTION=true bash scripts/00-provision.sh).
+  UseElasticIp:
+    Type: String
+    AllowedValues: ["true", "false"]
+    Default: "true"
+    Description: >
+      FIRST CREATE ONLY: allocate an Elastic IP for a fixed address. If the allocation is refused (account quota), create with false to
+      use the instance's own public IP; it changes if the instance is stopped and started, and the DNS A record must then be updated.
+      Changing it on an existing stack adds or removes the address.
+  AmiId:
+    Type: AWS::EC2::Image::Id
+    Description: >
+      Image id of the instance, resolved by scripts/00-provision.sh at create time from the latest AL2023 arm64 AMI and kept
+      afterwards (UsePreviousValue), so a routine update never proposes replacing the instance. A deliberate AMI roll replaces it.
+
+Conditions:
+  CreateEip: !Equals [!Ref UseElasticIp, "true"]
+
+Resources:
+  # ---------- network: no inbound SSH, ever; SSM Session Manager is the only way in ----------
+  AppSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Julebrus app, HTTPS and HTTP (ACME HTTP-01 and redirect) only
+      VpcId: !Ref VpcId
+      SecurityGroupIngress:
+        - { IpProtocol: tcp, FromPort: 443, ToPort: 443, CidrIp: 0.0.0.0/0, Description: HTTPS }
+        - { IpProtocol: tcp, FromPort: 80, ToPort: 80, CidrIp: 0.0.0.0/0, Description: ACME HTTP-01 and redirect to HTTPS }
+      Tags:
+        - { Key: Name, Value: !Sub "${ProjectName}-app-sg" }
+        - { Key: Project, Value: !Ref ProjectName }
+
+  DbSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Julebrus database, reachable from the app instance only
+      VpcId: !Ref VpcId
+      SecurityGroupIngress:
+        - { IpProtocol: tcp, FromPort: 5432, ToPort: 5432, SourceSecurityGroupId: !Ref AppSecurityGroup, Description: PostgreSQL from the app }
+      Tags:
+        - { Key: Name, Value: !Sub "${ProjectName}-db-sg" }
+        - { Key: Project, Value: !Ref ProjectName }
+
+  # ---------- artifacts bucket: CI uploads a release, the box pulls it ----------
+  ArtifactsBucket:
+    Type: AWS::S3::Bucket
+    DeletionPolicy: Retain
+    UpdateReplacePolicy: Retain
+    Properties:
+      BucketName: !Sub "${ProjectName}-artifacts-${AWS::AccountId}"
+      VersioningConfiguration: { Status: Enabled }
+      PublicAccessBlockConfiguration: { BlockPublicAcls: true, BlockPublicPolicy: true, IgnorePublicAcls: true, RestrictPublicBuckets: true }
+      BucketEncryption:
+        ServerSideEncryptionConfiguration:
+          - ServerSideEncryptionByDefault: { SSEAlgorithm: AES256 }
+      OwnershipControls: { Rules: [{ ObjectOwnership: BucketOwnerEnforced }] }
+      LifecycleConfiguration:
+        Rules:
+          - { Id: expire-old-release-versions, Status: Enabled, Prefix: releases/, NoncurrentVersionExpiration: { NoncurrentDays: 30 } }
+          - { Id: expire-old-deploy-versions, Status: Enabled, Prefix: deploy/, NoncurrentVersionExpiration: { NoncurrentDays: 30 } }
+          - { Id: expire-old-latest-versions, Status: Enabled, Prefix: latest.json, NoncurrentVersionExpiration: { NoncurrentDays: 30 } }
+      Tags: [{ Key: Project, Value: !Ref ProjectName }]
+
+  ArtifactsBucketPolicy:
+    Type: AWS::S3::BucketPolicy
+    Properties:
+      Bucket: !Ref ArtifactsBucket
+      PolicyDocument:
+        Statement:
+          - Sid: DenyInsecureTransport
+            Effect: Deny
+            Principal: "*"
+            Action: "s3:*"
+            Resource: [!GetAtt ArtifactsBucket.Arn, !Sub "${ArtifactsBucket.Arn}/*"]
+            Condition: { Bool: { "aws:SecureTransport": "false" } }
+
+  # ---------- database: private, encrypted; the master password is generated once into a stable secret ----------
+  # The RDS-managed master secret rotates every 7 days, but the app reads its password only at start, so the app would
+  # lose its connection a week after each start. This secret has no rotation. Alphanumeric only, so it needs no quoting
+  # in a URL, an env file or a shell. CloudFormation resolves it with a dynamic reference: the password is not in the
+  # template, and an unchanged secret value never changes the database. Retained so that a stack mishap cannot lose the password.
+  DbSecret:
+    Type: AWS::SecretsManager::Secret
+    DeletionPolicy: Retain
+    UpdateReplacePolicy: Retain
+    Properties:
+      Name: !Sub "${ProjectName}/db"
+      Description: Julebrus database master user (the app uses it too; a least-privilege role is a later hardening step)
+      GenerateSecretString:
+        SecretStringTemplate: '{"username": "julebrus_admin"}'
+        GenerateStringKey: password
+        PasswordLength: 32
+        ExcludePunctuation: true
+      Tags: [{ Key: Project, Value: !Ref ProjectName }]
+
+  DbSubnetGroup:
+    Type: AWS::RDS::DBSubnetGroup
+    Properties:
+      DBSubnetGroupDescription: Julebrus database
+      SubnetIds: !Ref DbSubnetIds
+      Tags: [{ Key: Project, Value: !Ref ProjectName }]
+
+  Database:
+    Type: AWS::RDS::DBInstance
+    DeletionPolicy: Snapshot
+    UpdateReplacePolicy: Snapshot
+    Properties:
+      DBInstanceIdentifier: !Sub "${ProjectName}-db"
+      Engine: postgres
+      EngineVersion: "16"
+      DBInstanceClass: !Ref DbInstanceClass
+      AllocatedStorage: !Ref DbAllocatedStorageGb
+      StorageType: gp3
+      StorageEncrypted: true
+      MultiAZ: false
+      DBName: julebrus
+      MasterUsername: julebrus_admin
+      MasterUserPassword: !Sub "{{resolve:secretsmanager:${DbSecret}:SecretString:password}}"
+      DBSubnetGroupName: !Ref DbSubnetGroup
+      VPCSecurityGroups: [!Ref DbSecurityGroup]
+      PubliclyAccessible: false
+      BackupRetentionPeriod: !Ref DbBackupRetentionDays
+      PreferredBackupWindow: "01:00-02:00"
+      PreferredMaintenanceWindow: "sun:02:30-sun:03:30"
+      DeletionProtection: !Ref DbDeletionProtection
+      CopyTagsToSnapshot: true
+      EnablePerformanceInsights: false
+      AutoMinorVersionUpgrade: true
+      Tags: [{ Key: Project, Value: !Ref ProjectName }]
+
+  # ---------- instance role: least privilege, SSM, the artifacts bucket (read), its own secrets ----------
+  InstanceRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: !Sub "${ProjectName}-instance-role"
+      AssumeRolePolicyDocument:
+        Statement:
+          - { Effect: Allow, Principal: { Service: ec2.amazonaws.com }, Action: "sts:AssumeRole" }
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore
+      Policies:
+        - PolicyName: app
+          PolicyDocument:
+            Statement:
+              - Sid: PullReleases
+                Effect: Allow
+                Action: ["s3:GetObject", "s3:ListBucket"]
+                Resource: [!GetAtt ArtifactsBucket.Arn, !Sub "${ArtifactsBucket.Arn}/*"]
+              - Sid: ReadOwnSecrets
+                Effect: Allow
+                Action: ["secretsmanager:GetSecretValue"]
+                Resource: !Sub "arn:aws:secretsmanager:${AWS::Region}:${AWS::AccountId}:secret:${ProjectName}/*"
+      Tags: [{ Key: Project, Value: !Ref ProjectName }]
+
+  InstanceProfile:
+    Type: AWS::IAM::InstanceProfile
+    Properties:
+      InstanceProfileName: !Sub "${ProjectName}-instance-profile"
+      Roles: [!Ref InstanceRole]
+
+  # ---------- the instance ----------
+  AppInstance:
+    Type: AWS::EC2::Instance
+    Properties:
+      ImageId: !Ref AmiId
+      InstanceType: !Ref InstanceType
+      IamInstanceProfile: !Ref InstanceProfile
+      SubnetId: !Ref AppSubnetId
+      SecurityGroupIds: [!Ref AppSecurityGroup]
+      MetadataOptions: { HttpTokens: required, HttpEndpoint: enabled }
+      BlockDeviceMappings:
+        - DeviceName: /dev/xvda
+          Ebs: { VolumeSize: 20, VolumeType: gp3, Encrypted: true, DeleteOnTermination: true }
+      Tags:
+        - { Key: Name, Value: !Sub "${ProjectName}-app" }
+        - { Key: Project, Value: !Ref ProjectName }
+      UserData:
+        Fn::Base64: !Sub |
+          #!/bin/bash
+          set -euxo pipefail
+          # Bootstrap only: packages, the service user, directories and the NON-SECRET settings. Secrets are never
+          # written here: the box fetches them from Secrets Manager at start (scripts/julebrus-prestart.sh).
+          # The app, nginx config, units and updater are installed by scripts/box-setup.sh (run once over SSM).
+          dnf install -y java-21-amazon-corretto-headless jq nginx certbot python3-certbot-nginx
+          useradd --system --home /opt/julebrus --shell /sbin/nologin julebrus || true
+          mkdir -p /opt/julebrus/releases /etc/julebrus /var/lib/julebrus
+          # Everything is root-owned: the service user only needs to read the jar. The root-run scripts must not be writable by it.
+          chown root:root /opt/julebrus /opt/julebrus/releases /etc/julebrus /var/lib/julebrus
+          chmod 0755 /opt/julebrus /opt/julebrus/releases /etc/julebrus /var/lib/julebrus
+          cat > /etc/julebrus/app.env <<'EOF'
+          AWS_REGION=${AWS::Region}
+          JULEBRUS_DB_URL=jdbc:postgresql://${Database.Endpoint.Address}:5432/julebrus?sslmode=require
+          SERVER_FORWARD_HEADERS_STRATEGY=framework
+          JULEBRUS_ALLOWED_DOMAINS=
+          JULEBRUS_ADMINS=
+          JULEBRUS_CONTACT_EMAIL=
+          EOF
+          cat > /etc/julebrus/secrets.conf <<'EOF'
+          DB_SECRET_ID=${ProjectName}/db
+          GOOGLE_SECRET_ID=${ProjectName}/google-oauth
+          PUBLIC_HOST=${AppHostName}
+          EOF
+          chown root:root /etc/julebrus/app.env /etc/julebrus/secrets.conf
+          chmod 0644 /etc/julebrus/app.env /etc/julebrus/secrets.conf
+          echo "${ArtifactsBucket}" > /etc/julebrus/artifacts-bucket
+
+  AppElasticIp:
+    Type: AWS::EC2::EIP
+    Condition: CreateEip
+    Properties:
+      Domain: vpc
+      InstanceId: !Ref AppInstance
+      Tags:
+        - { Key: Name, Value: !Sub "${ProjectName}-eip" }
+        - { Key: Project, Value: !Ref ProjectName }
+
+  # ---------- CI: may only upload releases, and only from the upload job that runs in the GitHub Environment ----------
+  # A job in an Environment gets the subject <prefix>:environment:<name>; the ref (tag or branch) is NOT part of that
+  # subject, so a tag condition cannot be combined with it here. The restriction to main / v* tags is therefore set on the
+  # Environment itself (deployment branch and tag rules, required reviewer), see the README.
+  GitHubDeployRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: !Sub "${ProjectName}-release-uploader"
+      AssumeRolePolicyDocument:
+        Statement:
+          - Effect: Allow
+            Principal: { Federated: !Ref GitHubOidcProviderArn }
+            Action: "sts:AssumeRoleWithWebIdentity"
+            Condition:
+              StringEquals: { "token.actions.githubusercontent.com:aud": "sts.amazonaws.com" }
+              StringLike:
+                "token.actions.githubusercontent.com:sub": !Sub "${GitHubSubjectPrefix}:environment:${GitHubEnvironment}"
+      Policies:
+        - PolicyName: upload-releases
+          PolicyDocument:
+            Statement:
+              - { Effect: Allow, Action: ["s3:PutObject"], Resource: !Sub "${ArtifactsBucket.Arn}/releases/*" }
+              - { Effect: Allow, Action: ["s3:PutObject"], Resource: !Sub "${ArtifactsBucket.Arn}/latest.json" }
+      Tags: [{ Key: Project, Value: !Ref ProjectName }]
+
+  # ---------- alarms ----------
+  AlarmTopic:
+    Type: AWS::SNS::Topic
+    Properties:
+      TopicName: !Sub "${ProjectName}-alarms"
+      Subscription: [{ Protocol: email, Endpoint: !Ref AlarmEmail }]
+      Tags: [{ Key: Project, Value: !Ref ProjectName }]
+
+  InstanceStatusAlarm:
+    Type: AWS::CloudWatch::Alarm
+    Properties:
+      AlarmName: !Sub "${ProjectName}-instance-status-check-failed"
+      Namespace: AWS/EC2
+      MetricName: StatusCheckFailed
+      Dimensions: [{ Name: InstanceId, Value: !Ref AppInstance }]
+      Statistic: Maximum
+      Period: 60
+      EvaluationPeriods: 3
+      Threshold: 1
+      ComparisonOperator: GreaterThanOrEqualToThreshold
+      AlarmActions: [!Ref AlarmTopic]
+      TreatMissingData: notBreaching
+
+  DbFreeStorageAlarm:
+    Type: AWS::CloudWatch::Alarm
+    Properties:
+      AlarmName: !Sub "${ProjectName}-db-free-storage-low"
+      Namespace: AWS/RDS
+      MetricName: FreeStorageSpace
+      Dimensions: [{ Name: DBInstanceIdentifier, Value: !Ref Database }]
+      Statistic: Minimum
+      Period: 300
+      EvaluationPeriods: 1
+      Threshold: 3000000000
+      ComparisonOperator: LessThanThreshold
+      AlarmActions: [!Ref AlarmTopic]
+
+  DbCpuAlarm:
+    Type: AWS::CloudWatch::Alarm
+    Properties:
+      AlarmName: !Sub "${ProjectName}-db-cpu-high"
+      Namespace: AWS/RDS
+      MetricName: CPUUtilization
+      Dimensions: [{ Name: DBInstanceIdentifier, Value: !Ref Database }]
+      Statistic: Average
+      Period: 300
+      EvaluationPeriods: 3
+      Threshold: 85
+      ComparisonOperator: GreaterThanThreshold
+      AlarmActions: [!Ref AlarmTopic]
+
+Outputs:
+  ElasticIp:
+    Description: Create the A record for AppHostName pointing here. The instance's own public IP when UseElasticIp is false.
+    Value: !If [CreateEip, !Ref AppElasticIp, !GetAtt AppInstance.PublicIp]
+  InstanceId: { Description: Connect with SSM Session Manager, Value: !Ref AppInstance }
+  ArtifactsBucketName:
+    Description: Set as the repository variable AWS_ARTIFACTS_BUCKET
+    Value: !Ref ArtifactsBucket
+  ReleaseUploaderRoleArn:
+    Description: Set as the repository variable AWS_RELEASE_ROLE_ARN
+    Value: !GetAtt GitHubDeployRole.Arn
+  AppHostName: { Description: The host name the Google redirect URI and the DNS A record use, Value: !Ref AppHostName }
+  DbEndpoint: { Value: !GetAtt Database.Endpoint.Address }
+  DbSecretName: { Description: The generated database master secret (read by the box at every start), Value: !Sub "${ProjectName}/db" }

@@ -1,0 +1,9 @@
+[Unit]
+Description=Pull and install the latest Julebrus release
+After=network-online.target
+
+[Service]
+Type=oneshot
+# A hung aws or curl must not hold the update lock forever.
+TimeoutStartSec=10min
+ExecStart=/opt/julebrus/julebrus-update.sh
