@@ -17,4 +17,8 @@ public interface BeerRepository extends JpaRepository<Beer, UUID> {
             order by b.name
             """)
     List<Beer> search(@Param("q") String q);
+
+    List<Beer> findByStatusOrderByCreatedAtAsc(Beer.Status status);
+
+    List<Beer> findByStatus(Beer.Status status);
 }

@@ -32,10 +32,30 @@ public class Beer {
     @Column(name = "created_at", nullable = false)
     private Instant createdAt;
 
+    public enum Status { PENDING, APPROVED, REJECTED }
+
+    @jakarta.persistence.Enumerated(jakarta.persistence.EnumType.STRING)
+    @Column(nullable = false)
+    private Status status = Status.APPROVED;
+
+    @Column(name = "created_by")
+    private UUID createdBy;
+
+    @Column(name = "decided_by")
+    private UUID decidedBy;
+
+    @Column(name = "decided_at")
+    private Instant decidedAt;
+
     protected Beer() {
     }
 
     public Beer(String name, String brewery, String style, BigDecimal abv, String vinmonopoletId, String imageUrl) {
+        this(name, brewery, style, abv, vinmonopoletId, imageUrl, null, Status.APPROVED);
+    }
+
+    public Beer(String name, String brewery, String style, BigDecimal abv, String vinmonopoletId, String imageUrl,
+                UUID createdBy, Status status) {
         this.id = UUID.randomUUID();
         this.name = name;
         this.brewery = brewery;
@@ -44,7 +64,21 @@ public class Beer {
         this.vinmonopoletId = vinmonopoletId;
         this.imageUrl = imageUrl;
         this.createdAt = Instant.now();
+        this.createdBy = createdBy;
+        this.status = status;
     }
+
+    public void decide(Status status, UUID adminId, Instant now) {
+        this.status = status;
+        this.decidedBy = adminId;
+        this.decidedAt = now;
+    }
+
+    public Instant getCreatedAt() { return createdAt; }
+    public boolean isApproved() { return status == Status.APPROVED; }
+    public Status getStatus() { return status; }
+    public UUID getCreatedBy() { return createdBy; }
+    public Instant getDecidedAt() { return decidedAt; }
 
     public UUID getId() { return id; }
     public String getName() { return name; }

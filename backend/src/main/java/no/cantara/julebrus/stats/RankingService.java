@@ -51,8 +51,10 @@ public class RankingService {
     /** The official ranking: weighted 1 to 6 scores, shrunk towards the season mean. */
     public List<BeerRank> beerRanking() {
         Map<UUID, Double> weightOf = weights.weightsByUserId();
-        List<Tasting> all = tastings.findAll();
         Map<UUID, Beer> beerById = beerIndex();
+        // Only approved beers count; a pending or rejected one is left out until an admin says yes.
+        List<Tasting> all = tastings.findAll().stream()
+                .filter(t -> beerById.get(t.getBeerId()) != null && beerById.get(t.getBeerId()).isApproved()).toList();
 
         double totalW = all.stream().mapToDouble(t -> weightOf.getOrDefault(t.getUserId(), 0.0)).sum();
         double globalMean = totalW == 0 ? SCALE_MIDPOINT
@@ -80,10 +82,12 @@ public class RankingService {
 
     /** The sidebar: pairwise duels, independent of how generous each rater is. */
     public List<DuelRank> duelRanking() {
+        Map<UUID, Beer> beerById = beerIndex();
         List<BradleyTerry.Outcome> outcomes = duels.findAll().stream()
+                .filter(d -> beerById.getOrDefault(d.getWinnerBeerId(), null) != null && beerById.get(d.getWinnerBeerId()).isApproved()
+                        && beerById.getOrDefault(d.getLoserBeerId(), null) != null && beerById.get(d.getLoserBeerId()).isApproved())
                 .map(d -> new BradleyTerry.Outcome(d.getWinnerBeerId(), d.getLoserBeerId()))
                 .toList();
-        Map<UUID, Beer> beerById = beerIndex();
         List<DuelRank> ranked = new BradleyTerry().fit(outcomes).entrySet().stream()
                 .map(e -> new DuelRank(0, e.getKey(), name(beerById.get(e.getKey())),
                         brewery(beerById.get(e.getKey())), e.getValue()))

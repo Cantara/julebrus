@@ -52,10 +52,11 @@ onMounted(async () => {
   </div>
 
   <h2>Tidligere år</h2>
-  <div v-for="s in seasons" :key="s.year" class="card">
-    <strong>{{ s.title }}</strong>
-    <div class="muted">Skala {{ s.scaleMin }}–{{ s.scaleMax }}<span v-if="s.weightingDescription"> · {{ s.weightingDescription }}</span></div>
-    <a v-if="s.sourceUrl" :href="s.sourceUrl" class="muted">Kilde</a>
-  </div>
-  <p v-if="!seasons.length" class="muted">Historikken importeres fra wiki-eksporten. Se backend/src/main/resources/history/README.md.</p>
+  <router-link class="card row" to="/historikk" style="text-decoration: none">
+    <div>
+      <strong class="display">{{ seasons.length }} sesonger i arkivet</strong>
+      <div class="muted">Resultatlister, vinnere og grafer fra {{ seasons.length ? Math.min(...seasons.map((s) => s.year)) : '' }} og utover.</div>
+    </div>
+    <span class="muted">›</span>
+  </router-link>
 </template>

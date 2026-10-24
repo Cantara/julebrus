@@ -164,6 +164,71 @@ class JulebrusApplicationTest {
         mvc.perform(get("/api/tastings/tags")).andExpect(content().string(containsString("liquorice")));
     }
 
+    @Test
+    void beersNeedApprovalAndAdminsLinkHistoricNames() throws Exception {
+        String guest = "per@cantara.no";
+        ConsentSupport.accept(mvc, null);
+        ConsentSupport.accept(mvc, guest);
+
+        // A non-admin's beer waits; it can be rated but stays out of the ranking until approved.
+        String pending = mvc.perform(post("/api/beers").header("X-Dev-User", guest).contentType(APPLICATION_JSON)
+                        .content("{\"name\":\"Hjemmebrygg Nisseøl\",\"brewery\":\"Per\"}"))
+                .andExpect(status().isCreated()).andExpect(jsonPath("$.status").value("PENDING"))
+                .andReturn().getResponse().getContentAsString().replaceAll(".*\"id\":\"([^\"]+)\".*", "$1");
+        mvc.perform(post("/api/tastings").header("X-Dev-User", guest).contentType(APPLICATION_JSON)
+                        .content("{\"beerId\":\"%s\",\"score\":6}".formatted(pending)))
+                .andExpect(status().isCreated());
+        mvc.perform(get("/api/stats/beers").header("X-Dev-User", guest))
+                .andExpect(jsonPath("$[?(@.beerId=='%s')]".formatted(pending)).doesNotExist());
+        mvc.perform(get("/api/beers/least-tasted").header("X-Dev-User", guest))
+                .andExpect(jsonPath("$[?(@.id=='%s')]".formatted(pending)).doesNotExist());
+
+        // Non-admins cannot decide; the admin approves and the beer enters the ranking.
+        mvc.perform(post("/api/admin/beers/" + pending + "/decision").header("X-Dev-User", guest)
+                        .contentType(APPLICATION_JSON).content("{\"decision\":\"APPROVE\"}"))
+                .andExpect(status().isForbidden());
+        mvc.perform(get("/api/admin/beers")).andExpect(status().isOk())
+                .andExpect(jsonPath("$[?(@.id=='%s')].addedBy".formatted(pending)).value("per"));
+        mvc.perform(post("/api/admin/beers/" + pending + "/decision").contentType(APPLICATION_JSON)
+                        .content("{\"decision\":\"APPROVE\"}"))
+                .andExpect(status().isOk()).andExpect(jsonPath("$.status").value("APPROVED"));
+        mvc.perform(get("/api/stats/beers"))
+                .andExpect(jsonPath("$[?(@.beerId=='%s')].ratings".formatted(pending)).value(1));
+        mvc.perform(post("/api/admin/beers/" + pending + "/decision").contentType(APPLICATION_JSON)
+                        .content("{\"decision\":\"REJECT\"}"))
+                .andExpect(status().isConflict()).andExpect(jsonPath("$.code").value("BEER_NOT_PENDING"));
+
+        // An admin links the historic "Totto" to the guest's login; the guest then sees that history.
+        mvc.perform(get("/api/history/me").header("X-Dev-User", guest)).andExpect(jsonPath("$", hasSize(0)));
+        String guestId = mvc.perform(get("/api/me").header("X-Dev-User", guest)).andReturn().getResponse()
+                .getContentAsString().replaceAll(".*\"id\":\"([^\"]+)\".*", "$1");
+        mvc.perform(post("/api/admin/history/raters/link").header("X-Dev-User", guest).contentType(APPLICATION_JSON)
+                        .content("{\"raterKey\":\"Totto\",\"userId\":\"%s\"}".formatted(guestId)))
+                .andExpect(status().isForbidden());
+        mvc.perform(post("/api/admin/history/raters/link").contentType(APPLICATION_JSON)
+                        .content("{\"raterKey\":\"Totto\",\"userId\":\"%s\"}".formatted(guestId)))
+                .andExpect(status().isOk()).andExpect(jsonPath("$.linkedTo.email").value(guest));
+        mvc.perform(get("/api/history/me").header("X-Dev-User", guest))
+                .andExpect(jsonPath("$[?(@.year==1998 && @.beerName=='Aass')].score").value(3.0));
+        mvc.perform(get("/api/history/me/summary").header("X-Dev-User", guest))
+                .andExpect(jsonPath("$.length()").value(greaterThanOrEqualTo(12)))
+                .andExpect(jsonPath("$[0].year").value(1998));
+        mvc.perform(get("/api/admin/history/raters"))
+                .andExpect(jsonPath("$[?(@.raterKey=='Totto')].linkedTo.displayName").value("per"));
+
+        // Unlink takes it back.
+        mvc.perform(post("/api/admin/history/raters/unlink").contentType(APPLICATION_JSON)
+                        .content("{\"raterKey\":\"Totto\"}"))
+                .andExpect(status().isOk()).andExpect(jsonPath("$.linkedTo").doesNotExist());
+        mvc.perform(get("/api/history/me").header("X-Dev-User", guest)).andExpect(jsonPath("$", hasSize(0)));
+
+        // The overview carries every season with its winner.
+        mvc.perform(get("/api/history/overview")).andExpect(status().isOk())
+                .andExpect(jsonPath("$.length()").value(greaterThanOrEqualTo(12)))
+                .andExpect(jsonPath("$[?(@.year==2019)].beers").value(26))
+                .andExpect(jsonPath("$[?(@.year==2019)].winnerName").isNotEmpty());
+    }
+
     private static org.springframework.test.web.servlet.result.ContentResultMatchers content() {
         return org.springframework.test.web.servlet.result.MockMvcResultMatchers.content();
     }

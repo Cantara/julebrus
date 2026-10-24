@@ -266,3 +266,22 @@ th { font-size: 0.8rem; color: var(--muted); font-weight: 600; }
 .story h2 { margin-top: 2px; }
 .story p { margin: 8px 0; line-height: 1.55; }
 .closing { text-align: center; font-size: 1.4rem; margin: 18px 0 12px; }
+
+/* Charts: thin marks, recessive axes, text in ink tokens */
+.chart { margin: 0; }
+.chart svg { width: 100%; height: auto; display: block; }
+.chart .bar { fill: var(--brass); }
+.chart .bar:hover { fill: var(--candle); }
+.chart .axis { stroke: var(--line); stroke-width: 1; }
+.chart .grid { stroke: var(--line); stroke-width: 1; }
+.chart .tick { font-size: 11px; fill: var(--muted); }
+.chart .value { font-size: 12px; fill: var(--ink); font-weight: 600; }
+.chart .join { stroke: var(--line); stroke-width: 3; stroke-linecap: round; }
+.chart .dot.a { fill: var(--brand); }
+.chart .dot.b { fill: var(--brass); }
+.chart .legend { display: flex; gap: 14px; font-size: 0.85rem; color: var(--muted); margin-bottom: 4px; }
+.chart .legend .sw { display: inline-block; width: 10px; height: 10px; border-radius: 50%; vertical-align: middle; }
+.chart .legend .sw.a { background: var(--brand); }
+.chart .legend .sw.b { background: var(--brass); }
+.chart details { margin-top: 6px; }
+select { font: inherit; width: 100%; padding: 10px 12px; border: 1px solid var(--line); border-radius: 12px; background: var(--card); color: var(--ink); }

@@ -29,6 +29,8 @@ export interface Beer {
   vinmonopoletId?: string
   imageUrl?: string
   ratingCount: number
+  status: 'PENDING' | 'APPROVED' | 'REJECTED'
+  mine: boolean
 }
 
 export interface StructuredNotes {
@@ -196,4 +198,60 @@ export interface AdminClaimView {
   displayName?: string
   email?: string
   createdAt: string
+}
+
+export interface PendingBeer {
+  id: string
+  name: string
+  brewery?: string
+  style?: string
+  abv?: number
+  vinmonopoletId?: string
+  status: 'PENDING' | 'APPROVED' | 'REJECTED'
+  createdAt: string
+  addedBy?: string
+}
+
+export interface Login {
+  id: string
+  displayName: string
+  email: string
+}
+
+export interface RaterRow {
+  raterKey: string
+  years: number[]
+  ratingCount: number
+  linkedByEmail: boolean
+  loginEmail?: string
+  linkedTo?: Login | null
+}
+
+export interface SeasonOverview {
+  year: number
+  title: string
+  raters: number
+  beers: number
+  votes: number
+  winnerName?: string
+  winnerWeightedMean?: number
+  winnerNormalisedMean?: number
+  weightingDescription?: string
+  sourceUrl?: string
+}
+
+export interface BeerSeason {
+  year: number
+  beerName: string
+  brewery?: string
+  ratings: number
+  weightedMean: number
+  normalisedMean: number
+}
+
+export interface MySeason {
+  year: number
+  myRatings: number
+  myMean: number
+  crowdMean: number
 }
