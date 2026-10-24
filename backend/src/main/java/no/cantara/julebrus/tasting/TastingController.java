@@ -49,10 +49,12 @@ public class TastingController {
     }
 
     public record TastingView(UUID id, UUID beerId, UUID sessionId, int score, BigDecimal prediction, String notes,
-                              Tasting.Notes structuredNotes, Set<String> tags, Instant tastedAt) {
+                              Tasting.Notes structuredNotes, Set<String> tags, Instant tastedAt,
+                              /** Oslo calendar day, so the advent calendar never has to guess the zone. */
+                              java.time.LocalDate tastedDay) {
         static TastingView of(Tasting t) {
             return new TastingView(t.getId(), t.getBeerId(), t.getSessionId(), t.getScore(), t.getPrediction(),
-                    t.getNotes(), t.getStructuredNotes(), t.getTags(), t.getTastedAt());
+                    t.getNotes(), t.getStructuredNotes(), t.getTags(), t.getTastedAt(), t.getTastedDay());
         }
     }
 
