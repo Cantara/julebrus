@@ -35,3 +35,8 @@ cd frontend && npm run build
 - Days are Europe/Oslo. Scores are integers 1–6.
 - Schema changes go in a new Flyway migration; Hibernate runs with `ddl-auto: validate`.
 - UI copy is Norwegian (bokmål); code and comments are English.
+
+## Historic data
+`data/` holds the juleøl test history 1998-2019 (votes, results, sources: see `data/README.md` and `data/SOURCES.md`),
+`source/google-sheets/` the raw sheet exports, `tools/` the scripts that rebuild it (`build_data.py`) and write the app's
+`history/*.csv` from it (`to_app_history.py`). Standard library Python only.
