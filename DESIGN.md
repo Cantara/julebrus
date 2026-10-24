@@ -173,6 +173,36 @@ POST /api/admin/raters/override   { email, seasonYear?, weight, reason }
 Rule violations return HTTP 422 with a machine-readable `code`:
 `OUTSIDE_SEASON`, `DAILY_LIMIT`, `SOLO_DAYS_EXHAUSTED`, `ALREADY_RATED`.
 
+## Product data, images, barcode and photos (decided 24 Oct)
+
+**Vinmonopolet lists.** The yearly juleøl lists live in `data/vinmonopolet/<year>.csv`: product facts only
+(article number, name, range, category, country, ABV, volume, price that year), each year with its source in
+`data/vinmonopolet/README.md`. 2013 is in; other years are added as they are found. Their terms of use are read
+before the lists are published, and nothing but facts is stored.
+
+**Images: link, never copy.** Product photos belong to Vinmonopolet or the producers, so the repository and the
+database never hold a copy. `beers.image_url` holds a link taken from the Vinmonopolet product API for the
+current assortment, at the 2026 catalogue import. Old lists get no image column, because an old article number is
+not a reliable key to today's picture. Loading an image from their server sends the visitor's IP address to them:
+before the first image is shown, one line goes into the consent and privacy text and `CONSENT_VERSION` is bumped.
+This is batched with other text changes so people accept once.
+
+**Matching a beer.** Today: search by name. Next: scan the barcode in the browser (the browser's own detector where
+it exists, a small library elsewhere), with nothing stored; it maps to a product when the product data carries the
+code (to be checked against the API). Recognising beers from photos is not planned: it would send users' photos to a
+third party.
+
+**User photos of the label (only if the season shows demand).** Optional per photo, never required to rate.
+Guidance "the label only, no people", and a licence line ("you allow the tasting to show it"). Stored in a private
+S3 bucket added by a CloudFormation update, served through the app and never as public links; metadata (GPS,
+device) removed by re-encoding on the server; resized, with limits on size and type; shown to others only after
+an admin approves it; used only where no official image exists. The consent and privacy text covers storage,
+visibility and deletion, and the manual deletion procedure in the README includes the photos.
+
+**Order.** Before 1 Nov: the 2026 catalogue with linked images, the small fixes from the last reviews and the
+consent-text answers from Cantara, as one consent bump. Then barcode scanning. Then label photos, if wanted. Not
+earlier: photos add storage, a new data category and a text change on a live app a week before the season.
+
 ## Plan
 
 Today is 24 Oct. Phase 1 must be live by 1 Nov.
@@ -187,6 +217,8 @@ Today is 24 Oct. Phase 1 must be live by 1 Nov.
 
 - Should half points (4.5) be allowed? Current answer: no, stay with the dice.
 - Allowed email domains: cantara.no only, or also partner domains?
-- Vinmonopolet API key for the catalogue import, or a one-off CSV?
+- Vinmonopolet API key for the catalogue import, or a one-off CSV? An API key is needed for the 2026 list and
+  its image links; the owner registers it and stores it with a script (never in chat or in the repository).
+- Does Vinmonopolet's product data carry the barcode (GTIN)? Decides whether barcode scanning can match beers.
 - Emails for the historic raters in `history/raters.csv`, so people see their own
   history. Only the names are mapped so far.
