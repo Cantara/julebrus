@@ -17,6 +17,7 @@ export const router = createRouter({
     { path: '/privacy', component: () => import('./views/PrivacyView.vue') },
     { path: '/consent', component: () => import('./views/ConsentView.vue') },
     { path: '/me', component: () => import('./views/ProfileView.vue') },
+    { path: '/lag', component: () => import('./views/TeamView.vue') },
   ],
 })
 
@@ -28,4 +29,6 @@ router.beforeEach(async (to) => {
   const store = useMe()
   if (!store.me) await store.refresh().catch(() => {})
   if (store.me?.consentRequired && to.path !== '/consent') return '/consent'
+  // Once, right after consent: which teams do you play for? "Later" answers it too.
+  if (store.me && !store.me.consentRequired && !store.me.teamsChosen && to.path !== '/lag') return '/lag'
 })

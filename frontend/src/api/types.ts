@@ -18,6 +18,32 @@ export interface Me {
   admin: boolean
   consentRequired: boolean
   consentVersion: string
+  /** the enabled teams the person plays for; empty before the choice and after "later" */
+  teams: { id: string; slug: string; name: string }[]
+  /** false until the team page has been answered, "later" included */
+  teamsChosen: boolean
+}
+
+export interface Team {
+  id: string
+  slug: string
+  name: string
+  sponsorName?: string
+  sponsorUrl?: string
+  members: number
+  suggested: boolean
+  mine: boolean
+}
+
+export interface AdminTeam {
+  id: string
+  slug: string
+  name: string
+  sponsorName?: string
+  sponsorUrl?: string
+  domains?: string
+  enabled: boolean
+  members: number
 }
 
 export interface Beer {
@@ -80,7 +106,7 @@ export interface Session {
   createdAt: string
   closedAt?: string
   solo: boolean
-  members: { userId: string; displayName: string }[]
+  members: { userId: string; displayName: string; teams: string[] }[]
   beers: SessionBeer[]
 }
 
@@ -154,6 +180,17 @@ export interface Finale {
   podium?: BeerRank[]
   duelPodium?: DuelRank[]
   awards?: Award[]
+  teamWinners?: TeamWinner[]
+}
+
+export interface TeamWinner {
+  slug: string
+  team: string
+  beerId: string
+  beerName: string
+  brewery?: string
+  bayesian: number
+  ratings: number
 }
 
 export interface ConsentView {
