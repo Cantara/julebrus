@@ -24,7 +24,8 @@ export default defineConfig({
         ],
       },
       workbox: {
-        navigateFallbackDenylist: [/^\/api/, /^\/oauth2/, /^\/login/, /^\/privacy/],
+        // /privacy and /velkommen are server-rendered public pages, never the cached app shell.
+        navigateFallbackDenylist: [/^\/api/, /^\/oauth2/, /^\/login/, /^\/privacy/, /^\/velkommen/],
         runtimeCaching: [{ urlPattern: /^\/api\//, handler: 'NetworkOnly' }],
       },
     }),
