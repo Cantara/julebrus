@@ -140,6 +140,7 @@ export interface ConsentView {
 
 export interface PublicConfig {
   sponsor: { name: string; url?: string } | null
+  contactEmail: string | null
 }
 
 export type ClaimStatus = 'PENDING' | 'APPROVED' | 'REJECTED'

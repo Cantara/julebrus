@@ -5,7 +5,7 @@ import type { PublicConfig } from '../api/types'
 
 /** Public config (no login needed): currently only the sponsor line. */
 export const useConfig = defineStore('config', () => {
-  const config = ref<PublicConfig>({ sponsor: null })
+  const config = ref<PublicConfig>({ sponsor: null, contactEmail: null })
 
   async function load() {
     try {

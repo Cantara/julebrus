@@ -1,10 +1,11 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
-import { get, post } from '../api/client'
+import { get, logout, post } from '../api/client'
 import AdminClaims from '../components/AdminClaims.vue'
 import ClaimHistory from '../components/ClaimHistory.vue'
-import { lang, setLang, t } from '../i18n'
+import LangToggle from '../components/LangToggle.vue'
+import { t } from '../i18n'
 import type { BadgeView, Beer, HistoricRating, Tasting } from '../api/types'
 import { useMe } from '../stores/me'
 
@@ -33,10 +34,16 @@ async function reloadHistory() {
   history.value = await get<HistoricRating[]>('/api/history/me').catch(() => [])
 }
 
+const withdrawFailed = ref(false)
 async function withdrawConsent() {
-  await post('/api/consent/withdraw')
-  await store.refresh()
-  router.push('/consent')
+  withdrawFailed.value = false
+  try {
+    await post('/api/consent/withdraw')
+    await store.refresh()
+    router.push('/consent')
+  } catch {
+    withdrawFailed.value = true
+  }
 }
 
 const byYear = () => {
@@ -48,7 +55,7 @@ const byYear = () => {
 
 <template>
   <h1>{{ store.me?.displayName ?? 'Meg' }}</h1>
-  <p class="muted">{{ store.me?.email }} · <a href="/api/logout">Logg ut</a></p>
+  <p class="muted">{{ store.me?.email }} · <a href="#" @click.prevent="logout()">Logg ut</a></p>
 
   <div v-if="store.me" class="card">
     <div class="row">
@@ -86,7 +93,7 @@ const byYear = () => {
     <table>
       <thead><tr><th>Øl</th><th>Score</th><th>Vekt</th><th>På 1–6</th></tr></thead>
       <tbody>
-        <tr v-for="r in rows" :key="r.beerName">
+        <tr v-for="(r, i) in rows" :key="`${r.year}-${r.beerName}-${r.raterName}-${i}`">
           <td>{{ r.beerName }}<div v-if="r.notes" class="muted">{{ r.notes }}</div></td>
           <td>{{ r.score }}</td><td>{{ r.weight }}</td><td>{{ r.normalised.toFixed(1) }}</td>
         </tr>
@@ -102,12 +109,12 @@ const byYear = () => {
   <div class="card">
     <p class="muted" style="margin-top: 0">{{ t('withdrawInfo') }}</p>
     <div class="row" style="justify-content: flex-start">
-      <button class="secondary" :class="{ on: lang === 'nb' }" :disabled="lang === 'nb'" @click="setLang('nb')">NB</button>
-      <button class="secondary" :class="{ on: lang === 'en' }" :disabled="lang === 'en'" @click="setLang('en')">EN</button>
+      <LangToggle />
     </div>
     <button v-if="!confirmingWithdraw" class="secondary" style="margin-top: 12px" @click="confirmingWithdraw = true">{{ t('withdrawButton') }}</button>
     <div v-else style="margin-top: 12px">
-      <p class="error">{{ t('withdrawConfirm') }}</p>
+      <p class="error" role="alert">{{ t('withdrawConfirm') }}</p>
+      <p v-if="withdrawFailed" class="error" role="alert">{{ t('claimError') }}</p>
       <div class="row" style="justify-content: flex-start">
         <button @click="withdrawConsent">{{ t('withdrawYes') }}</button>
         <button class="secondary" @click="confirmingWithdraw = false">{{ t('cancel') }}</button>

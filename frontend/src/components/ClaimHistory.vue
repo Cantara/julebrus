@@ -11,14 +11,15 @@ const claims = ref<ClaimView[]>([])
 const showAll = ref(false)
 const error = ref<string | null>(null)
 
-async function load() {
+async function load(notify = false) {
   ;[raters.value, claims.value] = await Promise.all([
     get<ClaimCandidate[]>('/api/history/claim-candidates'),
     get<ClaimView[]>('/api/history/claims/me'),
   ])
-  emit('changed')
+  // Only after a claim or withdrawal: the page loaded /api/history/me itself on mount.
+  if (notify) emit('changed')
 }
-onMounted(() => load().catch(() => {}))
+onMounted(() => load().catch(() => (error.value = t('claimError'))))
 
 const suggested = computed(() => raters.value.filter((r) => r.suggested))
 const others = computed(() => raters.value.filter((r) => !r.suggested))
@@ -32,13 +33,13 @@ async function claim(name: string) {
     error.value = code === 'RATER_LINKED' ? t('claimLinked') : code === 'CLAIM_LIMIT' ? t('claimLimit') : code === 'CLAIM_EXISTS' ? t('claimExists')
       : code === 'RATER_TAKEN' ? t('claimTakenErr') : t('claimError')
   }
-  await load().catch(() => {})
+  await load(true).catch(() => {})
 }
 
 async function withdraw(id: string) {
   error.value = null
   await del(`/api/history/claims/${id}`).catch(() => (error.value = t('claimError')))
-  await load().catch(() => {})
+  await load(true).catch(() => {})
 }
 
 const describe = (r: ClaimCandidate) => `${r.years.join(', ')} · ${r.ratingCount} ${t('claimRatings')}`
@@ -48,7 +49,7 @@ const taken = (r: ClaimCandidate) => (r.linkedToYou ? t('claimLinkedToYou') : r.
 <template>
   <h2>{{ t('claimTitle') }}</h2>
   <p class="muted">{{ t('claimIntro') }}</p>
-  <p v-if="error" class="error">{{ error }}</p>
+  <p v-if="error" class="error" role="alert">{{ error }}</p>
 
   <div v-if="claims.length" class="card">
     <strong>{{ t('claimMine') }}</strong>
