@@ -57,6 +57,25 @@ export interface Team {
   mine: boolean
 }
 
+export interface TeamMate {
+  userId: string
+  displayName: string
+  tastings: number
+  joinedAt: string
+  me: boolean
+}
+
+export interface TeamRoster {
+  id: string
+  slug: string
+  name: string
+  sponsorName?: string
+  sponsorUrl?: string
+  tastings: number
+  mine: boolean
+  members: TeamMate[]
+}
+
 export interface AdminTeam {
   id: string
   slug: string
