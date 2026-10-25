@@ -21,6 +21,9 @@ solo days, the rest in groups formed by QR code. Design and rules: [DESIGN.md](D
   plays for it, each team gets its own winner and "Årets lag" at the finale.
 - **Tipp pallen.** Everyone may tip gold, silver and bronze until the last day begins; the league and "Årets
   tipper" come out at the reveal.
+- **Ganen din.** After three rolls the profile draws your palate: which tags you score above and below your own
+  mean, your taste twin and your taste opposite among the others (from shared beers). The finale lists the
+  season's twins and opposites.
 - **Badges** as baubles on a tree (ten so far, Blind Taster included), label **photos** with admin approval, a
   bilingual **story page**, the imported **history 1998–2019** with charts and claim-your-name, a public
   **landing page**, optional **push notifications** (the daily nudge and the finale), and an **MCP server** so
@@ -49,6 +52,11 @@ To act as a second person in another browser tab while testing a group session:
 ```js
 localStorage.setItem('devUser', 'kari@cantara.no')
 ```
+
+From the command line the same impersonation is the `X-Dev-User` header (`curl -H 'X-Dev-User: kari@cantara.no'
+localhost:8080/api/me`); the event streams take `?devUser=` instead, since EventSource cannot set headers. The dev
+profile opens the season window on 1 October and makes `dev@cantara.no` an admin; the public landing page is at
+`/velkommen` (the dev profile signs everyone in on `/`).
 
 ## Build for production
 
@@ -154,15 +162,19 @@ orientation (JPEG only; PNG has none). Wide-gamut colour profiles are dropped.
 
 ### Deleting a person's data by hand (procedure to review before use)
 
-Deletion requests go to `JULEBRUS_CONTACT_EMAIL` and are done by an organiser. Recipe 1 was run
-(2026-10-24, schema V1 to V9) on a throwaway PostgreSQL 16 with seeded data, once as an admin (who had decided
-beers, photos and claims and uploaded a photo) and once as a normal user (tastings, duels, a hosted session with
-a handed-over member, blind-pour rounds and guesses, photos, an approved claim): both ran to the end and the
-other people's rows were left alone. It has never been run on a real database, and Recipe 2 was not part of that test.
+Deletion requests go to `JULEBRUS_CONTACT_EMAIL` and are done by an organiser. Recipe 1 was last run on
+2026-10-25 against the full schema (V1 to V13) on a throwaway PostgreSQL 16, on a person seeded with everything that
+references `users`: solo and table tastings with notes and tags, duels, a hosted table and a table joined, blind rounds
+hosted and guessed, two teams, a podium tip, an approved label photo, an approved history claim, a push subscription,
+cheers given and received. It ran to `commit`, the two other seeded people kept every row of theirs, the claimed
+historic name disappeared from the history, and a second run stopped at the first step. An earlier run (2026-10-24,
+V1 to V9) covered an admin who had decided beers, photos and claims. It has never been run on a real database, and
+Recipe 2 was not part of either test.
 Run each recipe with `psql -v ON_ERROR_STOP=1 -f recipe.sql`: it stops at the first error and the open transaction is rolled
 back when the session ends. A second run of Recipe 1 stops at the first step ("no rows returned": the person is gone)
 and changes nothing. Review it against the current schema, take a backup, run it in one transaction and check the row counts
-before `commit`. When the schema changes, check that every foreign key to `users` is still handled.
+before `commit`. When the schema changes, check that every foreign key to `users` is still handled:
+`select conrelid::regclass, conname from pg_constraint where confrelid = 'users'::regclass;` lists them.
 
 Two things to know first. Everything is deleted, including the person's `consent_events` rows:
 that log is append-only for the application, but erasure on request overrides it. And the person's
@@ -188,7 +200,8 @@ select * from erase_keys;   -- look at it: these names disappear from the histor
 delete from historic_ratings
  where rater_key in (select k from erase_keys) or lower(rater_email) = lower(:'email');
 
--- 3. Their tastings and duels, in dependency order.
+-- 3. Their tastings and duels, in dependency order (the cheers others gave their rolls go with the rolls).
+delete from feed_reactions where target_id in (select id from tastings where user_id = :'uid');
 delete from tasting_tags where tasting_id in (select id from tastings where user_id = :'uid');
 delete from tastings where user_id = :'uid';
 delete from duels where user_id = :'uid';
@@ -196,6 +209,7 @@ delete from duels where user_id = :'uid';
 delete from blind_guesses where user_id = :'uid'
                              or round_id in (select id from blind_rounds where host_id = :'uid');
 delete from blind_round_options where round_id in (select id from blind_rounds where host_id = :'uid');
+delete from feed_reactions where target_id in (select id from blind_rounds where host_id = :'uid');
 delete from blind_rounds where host_id = :'uid';
 delete from session_members where user_id = :'uid';
 
@@ -203,10 +217,18 @@ delete from session_members where user_id = :'uid';
 --     cover. To keep one with the person's written permission, re-assign it instead:
 --       update beer_photos set user_id = <an admin's users.id> where id = ...;  before the delete below).
 --     Photos they decided as an admin keep the row, only the pointer goes. Beers they added keep existing.
+delete from feed_reactions where target_id in (select id from beer_photos where user_id = :'uid');
 delete from beer_photos where user_id = :'uid';
 update beer_photos set decided_by = null where decided_by = :'uid';
 update beers set created_by = null where created_by = :'uid';
 update beers set decided_by = null where decided_by = :'uid';
+
+-- 3c. Teams, the podium tip, push subscriptions and the cheers they gave on "I kveld".
+--     (Cheers others gave to this person's rolls go with the rolls: feed_reactions.target_id has no foreign key.)
+delete from team_members where user_id = :'uid';
+delete from tips where user_id = :'uid';
+delete from push_subscriptions where user_id = :'uid';
+delete from feed_reactions where user_id = :'uid';
 
 -- 4. Sessions they hosted (sessions.host_id is NOT NULL). A session nobody else belongs to can go.
 --    One with other members must be handed to a member first (update sessions set host_id = ...),
@@ -219,6 +241,8 @@ create temp table erase_sessions on commit drop as
 delete from blind_guesses where round_id in (select id from blind_rounds where session_id in (select id from erase_sessions));
 delete from blind_round_options where round_id in (select id from blind_rounds where session_id in (select id from erase_sessions));
 delete from blind_rounds where session_id in (select id from erase_sessions);
+delete from feed_reactions where target_id in (select id from erase_sessions)
+                              or target_id in (select id from tastings where session_id in (select id from erase_sessions));
 delete from tasting_tags where tasting_id in (select id from tastings where session_id in (select id from erase_sessions));
 delete from tastings where session_id in (select id from erase_sessions);
 delete from duels where session_id in (select id from erase_sessions);
@@ -303,14 +327,17 @@ later invalidates every subscription (people switch it on again). The jar needs 
 HTTPS to the push services (Google, Mozilla, Apple). Browsers that answer 404 or 410, or fail
 five times in a row, are forgotten. On iPhone, push works only for the app on the home screen.
 
-## Live reveal
+## Live reveal and the wall
 
-Every phone at a table holds one server-sent event stream (`/api/sessions/{id}/events`). A
-reverse proxy in front of the jar must not buffer it: the response carries
-`X-Accel-Buffering: no` and `Cache-Control: no-cache`, which nginx honours; otherwise set
-`proxy_buffering off` for `/api/sessions/` and give the location a read timeout above the
-20-second heartbeat (`proxy_read_timeout 60s` or more). Without the stream the app still
-works: the session page falls back to polling every five seconds.
+Every phone at a table holds one server-sent event stream (`/api/sessions/{id}/events`), and
+every phone on "I kveld" holds the day-wide one (`/api/feed/events`). A reverse proxy in front
+of the jar must not buffer them: the responses carry `X-Accel-Buffering: no` and
+`Cache-Control: no-cache`, which nginx honours; otherwise set `proxy_buffering off` for
+`/api/sessions/` and `/api/feed/` and give the locations a read timeout above the 20-second
+heartbeat (`proxy_read_timeout 60s` or more). Without the streams the app still works: both
+pages fall back to polling every five seconds. Streams time out after 30 minutes and the
+browser reconnects on its own. The events carry only a kind, never data; the client refetches,
+so the reveal rules stay on the server.
 
 ## Teams
 
@@ -357,8 +384,9 @@ season and no e-mail addresses.
 | `list_raters` | | everyone who has tasted, with years and vote count |
 | `rater_history` | `name` | one rater's mean against the crowd mean per season |
 | `current_ranking` | | this season's weighted Bayesian ranking |
+| `team_ranking` | `team` (slug) | the same ranking over one team's raters |
 | `duel_ranking` | | this season's Bradley-Terry duel ranking |
-| `season_status` | | dates, days left, rules and totals so far |
+| `season_status` | | dates, days left, rules (daily limits, big table, solo days), teams, tips and totals so far |
 | `finale` | | the revealed result on the last day; before that only the reveal time |
 
 Claude Code, for example, connects with:
