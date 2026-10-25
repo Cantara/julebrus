@@ -95,7 +95,7 @@ jobs:
           cp "$jar" "dist/julebrus-$VERSION.jar"
           (cd dist && sha256sum "julebrus-$VERSION.jar" > "julebrus-$VERSION.jar.sha256")
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: dist
           path: dist/
@@ -108,7 +108,7 @@ jobs:
     permissions:
       contents: write   # create the GitHub release
     steps:
-      - uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@v8
         with:
           name: dist
           path: dist
@@ -131,7 +131,7 @@ jobs:
       id-token: write   # GitHub OIDC for the AWS upload role
       contents: read
     steps:
-      - uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@v8
         with:
           name: dist
           path: dist
