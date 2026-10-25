@@ -379,6 +379,47 @@ python3 tools/to_landing_stats.py backend/src/main/resources/landing/history-sta
 `LandingStatsTest` recomputes the numbers from `data/` and fails when the file is stale; `LandingPageTest`
 checks that no name from `data/votes.csv`, `data/participation.csv` or `history/raters.csv` appears in the page.
 
+## Vinmonopolet products and the match review
+
+`data/vinmonopolet/` (Vinmonopolet's juleøl lists 2013-2025 and the machine's guess for each of the 401 tasting results) is imported at
+startup into three tables, so an administrator can finish the review in the app:
+
+| Table | Holds | Key |
+|---|---|---|
+| `vmp_products` | one row per article number (`products.csv`) | `article_no` |
+| `vmp_listings` | every yearly listing (`listings.csv`), with the article number it is linked to and on what basis (`link_basis`) | `id` (no natural key: a list may repeat a name) |
+| `vote_matches` | one row per (`season_year`, `vote_beer`): the `machine_*` guess and `candidates` from `vote_matches.csv`, and the person's decision (`decision` CONFIRMED / CHOSEN / NONE / NOT_A_PRODUCT, `decision_article_no`, `decision_product_name`, `decided_by`, `decided_at`), `version` for optimistic locking | `id`, unique (`season_year`, `vote_beer`) |
+
+The CSVs are not copied into the backend: `backend/pom.xml` maps `../data/vinmonopolet/*.csv` (not `README.md`) into the jar under
+`vinmonopolet/`, and `VmpImportService` reads `vinmonopolet/products.csv`, `listings.csv` and `vote_matches.csv` (the per-year files are
+in the jar but not read; `listings.csv` has them all). The import runs at startup (`VmpImportRunner`; a failure is logged, not fatal)
+and on `POST /api/admin/vinmonopolet/import`. It is additive and idempotent: missing products and listings are inserted, a new
+(year, beer) is inserted, and if a newer `vote_matches.csv` changes the machine side of an existing entry only the `machine_*` columns
+and `candidates` are updated (which also bumps `version`, so a page loaded before the import gets 409 on its next click). A decision is
+never written, cleared or deleted by the import, and rows absent from the files are never deleted. A repeated (year, beer) in
+`vote_matches.csv` is used once (the first wins; 2018 "CB Juleøl" is in the results twice, so 400 rows come from 401 lines).
+
+Admin API (admin check as everywhere under `/api/admin`, behind the consent gate, CSRF on the POSTs):
+
+| Endpoint | Does |
+|---|---|
+| `GET /api/admin/matches?status=&year=&decided=&page=&size=` | a page of entries plus a `summary` (counts per machine status, undecided per status, counts per decision). `status` is `auto, likely, review, none, not-a-product`. Order: undecided first (review, none, likely, auto, not-a-product), then decided; then year and name. `size` default 25, at most 100. |
+| `POST /api/admin/matches/{id}/decision` | `{action, version, articleNo?, productName?}`. `CONFIRM` accepts the machine guess (needs one), `CHOOSE` needs an article number and/or a name that exists in `vmp_products` / `vmp_listings` (and, when both are given, belong together), `NONE`, `NOT_A_PRODUCT`, `CLEAR` removes the decision. `version` must be the one the page showed. |
+| `POST /api/admin/matches/bulk` | `{action: "CONFIRM", year, status: "likely"\|"auto", dryRun?, expectedCount?}`. Confirms the undecided entries of that year and status that have a guess. `dryRun` defaults to **true** and only counts. With `expectedCount`, an apply fails with 409 if the number is no longer that. Returns `{dryRun, year, status, count}`. |
+| `GET /api/admin/matches/overrides.csv` | every decision as `year,vote_beer,product_article_no,product_name`; NONE and NOT_A_PRODUCT both as `none`; RFC 4180 quoting |
+| `GET /api/admin/products/search?q=` | type-ahead over products and distinct listing names, 20 at most, case-, accent- and ø/æ/å-insensitive |
+| `POST /api/admin/vinmonopolet/import` | re-runs the import and returns the counts |
+
+Error codes: `FORBIDDEN` (403, not an admin), `CONSENT_REQUIRED` (403), `MATCH_NOT_FOUND` (404), `CONFLICT` (409, stale `version` or a changed
+count), `INVALID_FILTER` (422, unknown `status`), `NO_MACHINE_GUESS`, `CHOICE_REQUIRED`, `UNKNOWN_PRODUCT`, `CHOICE_MISMATCH`, `BULK_STATUS` (all
+422), `VALIDATION` (400, unreadable body, unknown action, wrong parameter type).
+
+The screen is "Treff" under Admin (profile page, then Admin, then the Treff tab) (`frontend/src/components/AdminMatches.vue`). **The database is the
+source of truth after the import.** To carry decisions back into the repo, download `overrides.csv` there, save it as
+`data/vinmonopolet/vote_match_overrides.csv` and run `python3 tools/match_votes_to_products.py`; the script applies it over its own guesses and
+rewrites `vote_matches.csv`, which the next deploy then imports (changing only machine fields of rows, never decisions).
+The app's `vote_matches`/`vmp_*` tables hold product data and beer names only; no personal data, so the consent text is not involved.
+
 ## MCP server
 
 The tasting data is also available to AI agents over the Model Context Protocol

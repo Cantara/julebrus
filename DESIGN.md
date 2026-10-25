@@ -217,7 +217,7 @@ backend/    Spring Boot 3.5, Java 21, PostgreSQL, Flyway, Google OIDC
   what the web app already shows to everyone logged in, and never e-mails or
   per-person scores from the running season.
 
-### Data model (V1–V13)
+### Data model (V1–V14)
 
 ```
 users             id, email, display_name, created_at, teams_chosen_at
@@ -248,6 +248,11 @@ consent_events    id, user_id, consent_version, event ACCEPT|WITHDRAW, at     (a
 historic_rater_claims  id, user_id, rater_key, status, created_at, decided_by?, decided_at?, approved_key?, version
 claim_events      id, claim_id, event, actor_user_id, at
 historic_seasons  season_year, title, scale_min, scale_max, weighting_description, source_url
+vmp_products      article_no (pk), name, brewery?, abv?, ...                (Vinmonopolet public product data)
+vmp_listings      id, list_year, name, product_article_no?, ...             (a juleøl list per year)
+vote_matches      id, season_year, vote_beer, machine_* (status, method, score, article), candidates,
+                  decision CONFIRMED|CHOSEN|NONE|NOT_A_PRODUCT, decision_*, decided_by? (set null), version
+                  unique (season_year, vote_beer)
 historic_ratings  id, season_year, beer_name, beer_name_original?, brewery?, beer_id?, rater_name,
                   rater_key?, rater_email?, score (original scale), weight (rater's that year), notes?
 ```
