@@ -132,7 +132,7 @@ const NOTE_FIELDS: [keyof BeerPage['notes'][number], string][] = [
             <tr v-for="h in page.history" :key="h.year"><td>{{ h.year }}</td><td style="text-align: right">{{ h.mean.toFixed(2) }}</td><td style="text-align: right">{{ h.ratings }}</td></tr>
           </tbody>
         </table>
-        <p class="muted" style="margin: 8px 0 0"><router-link to="/historikk">Hele historikken ›</router-link></p>
+        <p class="muted" style="margin: 8px 0 0"><router-link class="lnk" :to="`/historikk/ol/${encodeURIComponent(page.beer.name)}`">Stemmene år for år</router-link> · <router-link class="lnk" to="/historikk">hele historikken</router-link></p>
       </div>
     </template>
   </template>

@@ -63,6 +63,9 @@ body {
   background-repeat: no-repeat;
 }
 a { color: inherit; }
+/* A name that opens a page: dotted so it reads as a door, not as decoration. */
+.lnk { color: var(--brand); text-decoration: underline dotted; text-underline-offset: 3px; text-decoration-thickness: 1px; }
+.lnk strong { color: inherit; }
 main { position: relative; z-index: 1; max-width: 640px; margin: 0 auto; padding: 16px 16px calc(80px + env(safe-area-inset-bottom)); }
 h1, h2, .display {
   font-family: Fraunces, Georgia, "Times New Roman", serif;
