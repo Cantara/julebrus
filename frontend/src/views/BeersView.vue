@@ -40,7 +40,7 @@ onMounted(load)
 
   <div v-for="b in beers" :key="b.id" class="card row">
     <div>
-      <strong>{{ b.name }}</strong>
+      <router-link :to="`/beers/${b.id}`" class="beer-link"><strong>{{ b.name }}</strong></router-link>
       <span v-if="b.homebrew" class="pill">hjemmebrygg</span>
       <span v-if="b.status === 'PENDING'" class="pill">venter på godkjenning</span>
       <span v-else-if="b.status === 'REJECTED'" class="pill">avvist</span>
@@ -51,6 +51,7 @@ onMounted(load)
     <router-link class="btn secondary" :to="`/beers/${b.id}/rate`">Smak</router-link>
   </div>
   <p v-if="!beers.length" class="muted">Ingen treff.</p>
+  <p v-else class="muted" style="margin: -4px 0 12px">Trykk på et øl for siden med fordeling, stikkord og notater.</p>
 
   <button class="secondary" style="width: 100%" @click="adding = !adding">Legg til et øl som mangler</button>
   <form v-if="adding" class="card" @submit.prevent="add">

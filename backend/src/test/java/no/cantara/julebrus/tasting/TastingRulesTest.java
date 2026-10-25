@@ -28,18 +28,18 @@ class TastingRulesTest {
 
     @Test
     void acceptsAnOrdinaryGroupTasting() {
-        assertThatCode(() -> rules.check(at("2026-12-05T19:00"), false, ledger(2, Set.of())))
+        assertThatCode(() -> rules.check(at("2026-12-05T19:00"), 3, ledger(2, Set.of())))
                 .doesNotThrowAnyException();
     }
 
     @Test
     void refusesBeforeAndAfterTheSeason() {
-        assertThatThrownBy(() -> rules.check(at("2026-10-31T23:59"), false, ledger(0, Set.of())))
+        assertThatThrownBy(() -> rules.check(at("2026-10-31T23:59"), 3, ledger(0, Set.of())))
                 .isInstanceOfSatisfying(TastingRules.RuleViolation.class,
                         v -> org.assertj.core.api.Assertions.assertThat(v.violation()).isEqualTo(TastingRules.Violation.OUTSIDE_SEASON));
-        assertThatThrownBy(() -> rules.check(at("2026-12-24T00:01"), false, ledger(0, Set.of())))
+        assertThatThrownBy(() -> rules.check(at("2026-12-24T00:01"), 3, ledger(0, Set.of())))
                 .isInstanceOf(TastingRules.RuleViolation.class);
-        assertThatCode(() -> rules.check(at("2026-12-23T23:59"), false, ledger(0, Set.of())))
+        assertThatCode(() -> rules.check(at("2026-12-23T23:59"), 3, ledger(0, Set.of())))
                 .doesNotThrowAnyException();
     }
 
@@ -47,16 +47,33 @@ class TastingRulesTest {
     void dayBoundaryIsOsloNotUtc() {
         // 2026-10-31T23:30 UTC is already 1 Nov 00:30 in Oslo.
         Instant lateUtc = Instant.parse("2026-10-31T23:30:00Z");
-        assertThatCode(() -> rules.check(lateUtc, false, ledger(0, Set.of()))).doesNotThrowAnyException();
+        assertThatCode(() -> rules.check(lateUtc, 3, ledger(0, Set.of()))).doesNotThrowAnyException();
     }
 
     @Test
     void fifthTastingIsFineSixthIsRefused() {
-        assertThatCode(() -> rules.check(at("2026-11-10T20:00"), false, ledger(4, Set.of())))
+        assertThatCode(() -> rules.check(at("2026-11-10T20:00"), 3, ledger(4, Set.of())))
                 .doesNotThrowAnyException();
-        assertThatThrownBy(() -> rules.check(at("2026-11-10T20:00"), false, ledger(5, Set.of())))
+        assertThatThrownBy(() -> rules.check(at("2026-11-10T20:00"), 3, ledger(5, Set.of())))
                 .isInstanceOfSatisfying(TastingRules.RuleViolation.class,
                         v -> org.assertj.core.api.Assertions.assertThat(v.violation()).isEqualTo(TastingRules.Violation.DAILY_LIMIT));
+    }
+
+    @Test
+    void aBigTableLiftsTheDailyLimitToTwelve() {
+        // Eight at the table: the sixth roll is fine, the thirteenth is not.
+        assertThatCode(() -> rules.check(at("2026-11-10T20:00"), 8, ledger(5, Set.of())))
+                .doesNotThrowAnyException();
+        assertThatCode(() -> rules.check(at("2026-11-10T20:00"), 8, ledger(11, Set.of())))
+                .doesNotThrowAnyException();
+        assertThatThrownBy(() -> rules.check(at("2026-11-10T20:00"), 8, ledger(12, Set.of())))
+                .isInstanceOfSatisfying(TastingRules.RuleViolation.class,
+                        v -> org.assertj.core.api.Assertions.assertThat(v.violation()).isEqualTo(TastingRules.Violation.DAILY_LIMIT));
+        // Seven is an ordinary table, and a solo roll after a big evening is still over the ordinary limit.
+        assertThatThrownBy(() -> rules.check(at("2026-11-10T20:00"), 7, ledger(5, Set.of())))
+                .isInstanceOf(TastingRules.RuleViolation.class);
+        assertThatThrownBy(() -> rules.check(at("2026-11-10T23:00"), 1, ledger(6, Set.of())))
+                .isInstanceOf(TastingRules.RuleViolation.class);
     }
 
     @Test
@@ -66,20 +83,20 @@ class TastingRulesTest {
                 LocalDate.of(2026, 11, 5), LocalDate.of(2026, 11, 6));
 
         // Another solo tasting on a day that is already a solo day is fine.
-        assertThatCode(() -> rules.check(at("2026-11-06T21:00"), true, ledger(1, fiveDays)))
+        assertThatCode(() -> rules.check(at("2026-11-06T21:00"), 1, ledger(1, fiveDays)))
                 .doesNotThrowAnyException();
         // A solo tasting on a sixth day is not.
-        assertThatThrownBy(() -> rules.check(at("2026-11-07T21:00"), true, ledger(0, fiveDays)))
+        assertThatThrownBy(() -> rules.check(at("2026-11-07T21:00"), 1, ledger(0, fiveDays)))
                 .isInstanceOfSatisfying(TastingRules.RuleViolation.class,
                         v -> org.assertj.core.api.Assertions.assertThat(v.violation()).isEqualTo(TastingRules.Violation.SOLO_DAYS_EXHAUSTED));
         // A group tasting on that sixth day is always fine.
-        assertThatCode(() -> rules.check(at("2026-11-07T21:00"), false, ledger(0, fiveDays)))
+        assertThatCode(() -> rules.check(at("2026-11-07T21:00"), 3, ledger(0, fiveDays)))
                 .doesNotThrowAnyException();
     }
 
     @Test
     void eachBeerIsRatedOnce() {
-        assertThatThrownBy(() -> rules.check(at("2026-11-10T20:00"), false,
+        assertThatThrownBy(() -> rules.check(at("2026-11-10T20:00"), 3,
                 new TastingRules.Ledger(0, Set.of(), true)))
                 .isInstanceOfSatisfying(TastingRules.RuleViolation.class,
                         v -> org.assertj.core.api.Assertions.assertThat(v.violation()).isEqualTo(TastingRules.Violation.ALREADY_RATED));

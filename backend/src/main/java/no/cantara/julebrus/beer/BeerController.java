@@ -68,9 +68,11 @@ public class BeerController {
     private final PhotoService photos;
     private final TastingRepository tastings;
     private final CurrentUser currentUser;
+    private final BeerPageService page;
 
     public BeerController(BeerRepository beers, BeerService beerService, PhotoService photos, TastingRepository tastings,
-                          CurrentUser currentUser) {
+                          CurrentUser currentUser, BeerPageService page) {
+        this.page = page;
         this.photos = photos;
         this.beers = beers;
         this.beerService = beerService;
@@ -105,6 +107,12 @@ public class BeerController {
                 .sorted(java.util.Comparator.comparingLong(BeerView::ratingCount).thenComparing(BeerView::name))
                 .limit(limit)
                 .toList();
+    }
+
+    /** One beer's page: facts, this season, duels, the room's words (guarded), your roll, earlier years. */
+    @GetMapping("/{id}")
+    public BeerPageService.Page page(@org.springframework.web.bind.annotation.PathVariable UUID id) {
+        return page.page(id, currentUser.get());
     }
 
     /** Anyone may add a beer; an admin's goes straight in, everyone else's waits for approval. */

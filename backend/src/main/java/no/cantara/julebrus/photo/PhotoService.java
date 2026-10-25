@@ -63,13 +63,15 @@ public class PhotoService {
     private final ConsentService consents;
     private final Clock clock;
     private final TransactionTemplate tx;
+    private final no.cantara.julebrus.live.SessionEvents events;
     private final Semaphore decoding = new Semaphore(MAX_CONCURRENT_DECODES);
     /** People with an upload being processed right now: one at a time each. */
     private final Set<UUID> uploading = ConcurrentHashMap.newKeySet();
 
     public PhotoService(BeerPhotoRepository photos, PhotoStore store, BeerRepository beers, UserRepository users,
                         AuthProperties auth, SeasonProperties season, ConsentService consents, Clock clock,
-                        PlatformTransactionManager txm) {
+                        PlatformTransactionManager txm, no.cantara.julebrus.live.SessionEvents events) {
+        this.events = events;
         this.photos = photos;
         this.store = store;
         this.beers = beers;
@@ -241,6 +243,8 @@ public class PhotoService {
         boolean won = Boolean.TRUE.equals(tx.execute(s -> store.decide(photoId,
                 choice == Choice.APPROVE ? BeerPhoto.Status.APPROVED : BeerPhoto.Status.REJECTED, admin.getId(), clock.instant())));
         if (!won) throw new ApiException(HttpStatus.CONFLICT, "PHOTO_NOT_PENDING", "That picture is already decided");
+        // An approved label shows up on the day's wall; the decision is committed already, so this fires at once.
+        if (choice == Choice.APPROVE) events.publishFeed(no.cantara.julebrus.live.SessionEvents.Kind.PHOTO);
         BeerPhoto after = photos.findLive(photoId).orElseThrow(PhotoService::noSuchPhoto);
         User up = users.findById(after.getUserId()).orElse(null);
         Beer beer = beers.findById(after.getBeerId()).orElse(null);

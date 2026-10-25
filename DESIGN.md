@@ -1,6 +1,8 @@
 # Cantaras digitale juleølsmaking — design
 
-Status: draft, decided points marked **[decided]**. Season 2026 runs 1 Nov – 23 Dec.
+Status: living document, decided points marked **[decided]** or dated. Season 2026 runs 1 Nov – 23 Dec.
+Everything below the *Why* section describes what is built unless it says otherwise; the *Status* section at
+the end says where the plan stands.
 
 ## Why
 
@@ -16,6 +18,7 @@ small. Three rules do that:
 |------|-------|--------|
 | Season window | 1 Nov – 23 Dec | Follows the Vinmonopolet juleøl release; final reveal 23 Dec |
 | Max tastings per person per day | 5 | Real pours, fresh palate |
+| ... at a table of 8 or more | 12 | A party is a different evening (decided 25 Oct). The 5 still holds for anything else that day |
 | Max solo tasting days per person | 5 | Pushes tasting into groups, which is the point |
 | What counts as a juleøl | From Vinmonopolet, above grocery strength (4.7 %) | Butikkøl is refused on add and import, and never ranked |
 | Homebrew | Allowed above 4.7 %, rated only at a table of 6+, ranked only with 4+ scores | Nobody rigs their own |
@@ -107,8 +110,8 @@ but never decides. The choice is changeable on the profile; admins create, edit 
 What a team changes: team pills next to names around the table; a team filter on the ranking (the same
 Bayesian ranking over that team's raters only, with the team's own mean as prior); in the finale each
 team's own number one and the award "Årets lag" (most tastings per member, so a small team can win);
-an MCP tool `team_ranking`. Membership is visible to other tasters like the display name; the consent
-text gets that line at the next version bump.
+an MCP tool `team_ranking`; a roster page per team (`/lag/<slug>`: names and rolls, most active first).
+Membership is visible to other tasters like the display name; the consent text says so since 2026-5.
 
 ## Tipping the podium (decided 24 Oct)
 
@@ -129,15 +132,50 @@ environment; the message encryption is RFC 8291 on the JDK, verified against the
 vector. Subscriptions hold only what the browser hands over (endpoint, its public key, its auth
 secret) and are deleted on unsubscribe, on 404/410 from the push service, or after five failures.
 
+## "I kveld", the day's wall (decided 25 Oct)
+
+Everyone sees one wall for the whole house, one Oslo day at a time: who rolled which beer (at which
+table, when there was one), which tables opened and whether they are still going, which labels were
+approved, how each blind round went, newest first, live over the same SSE machinery as the tables
+(`/api/feed/events`). A person's dice never appear on it: scores belong to the table until the reveal
+and to the ranking after it. The wall gives the day's average per beer only from three rolls, so no
+single roll can be read off it. Interaction is a fixed set of emojis (🍻 first, then 🎅 🔥 😂 👏),
+one of each per person per line, tap again to take it back: community without free text, so nothing
+to moderate. People without active consent are left out, like everywhere else. The consent text
+names the wall, the teams line it owed since October, and bumps to 2026-5.
+
+## The beer page and shared notes (decided 25 Oct)
+
+Every beer name in the app leads to `/beers/<id>`: facts and label, this season's rank and dice histogram, duel
+record, the tags people gave it, their structured tasting notes (appearance, aroma, taste, finish) without names
+or times and in random order, the reader's own roll, and the beer's earlier years. Two guards: anything derived
+from other people's rolls appears only from three rolls, and the notes only once the reader has rolled the beer
+themselves ("smak først, les etterpå"), so the page teaches without becoming a crib sheet. A note from an open
+table that has not revealed the beer stays at the table, and the free comment is never shared. The consent text
+says so since 2026-6. The all-time list (every recorded season, each year's own weighting, Bayesian prior 5
+towards the all-time mean) sits at the top of the history page now that the old names are normalised.
+
 ## Statistics
 
-- **Beers:** weighted Bayesian average (prior = weighted global mean, prior weight
-  = 5 votes), people count and effective votes, controversy (weighted standard
-  deviation), duel ranking (sidebar), style and brewery breakdowns.
-- **People:** tastings, generosity (mean offset vs. crowd), consistency (variance vs.
-  own mean), prediction accuracy, solo days used of 5.
-- **Activity:** heatmap 1 Nov – 23 Dec, co-tasting graph, time-of-day histogram.
-- **Final result:** 23 Dec, "Cantaras juleøl 2026", with the duel ranking beside it.
+Built:
+
+- **Beers** (`/stats`, `/api/stats/beers`): weighted Bayesian average (prior = weighted global mean, prior weight
+  5 votes), people count and effective votes, filterable per team (the team's own mean as prior). Beers that do
+  not count (grocery strength, pending, homebrew under four scores) are out of the list.
+- **Duels** (`/api/stats/duels`): Bradley–Terry over the pairwise answers, shown as a sidebar ranking.
+- **Ganen din** (profile, `/api/stats/palate/me`, `PalateMath` pure): tastings and own mean, the lift of each tag
+  against the person's own mean (likes and dislikes), and the taste twin and taste opposite among the others
+  (cosine-like similarity over shared beers, from `minCommon` beers in common). The finale lists everyone's twins
+  and opposites (`/api/stats/palate/pairs`).
+- **History** (`/historikk`): the all-time list across every recorded season (`/api/history/alltime`), then
+  per season and per beer, the old results with their weighting, "you against the crowd" for linked people, and
+  the admin's rigging signals (`/api/admin/raters`: share of 1s and 6s, largest brewery bias).
+- **The day** ("I kveld"): rolls, people and tables today, day average per beer from three rolls.
+- **Final result:** 23 Dec 18:00, "Cantaras juleøl 2026", with the duel podium, team winners, the tipping league,
+  the twins and the season's awards.
+
+Not built, and not missed so far: an activity heatmap over the season, a co-tasting graph, a time-of-day
+histogram. The advent calendar on Home covers the first for the person themselves.
 
 ## Badges
 
@@ -170,8 +208,8 @@ backend/    Spring Boot 3.5, Java 21, PostgreSQL, Flyway, Google OIDC
 - Ranking math (`BayesianAverage`, `BradleyTerry`) is pure as well.
 - `dev` profile: H2 in memory, security replaced by a fixed dev user, so the app runs
   without Google credentials or a database.
-- Beer catalogue: seeded from the Vinmonopolet product API filtered to juleøl,
-  plus manual entries for homebrew and imports (phase 2; manual entry in phase 1).
+- Beer catalogue: manual entries (pending until an admin approves, admins' own approved at once) and the
+  admin CSV import of a Vinmonopolet list; no product API, see *Product data* below.
 - MCP server at `/mcp` (MCP Java SDK, Streamable HTTP) with read-only tools over the
   history and the running season, guarded by one shared bearer token
   (`JULEBRUS_MCP_TOKEN`; unset means the endpoint answers 404). It sits beside the
@@ -179,52 +217,106 @@ backend/    Spring Boot 3.5, Java 21, PostgreSQL, Flyway, Google OIDC
   what the web app already shows to everyone logged in, and never e-mails or
   per-person scores from the running season.
 
-### Data model
+### Data model (V1–V14)
 
 ```
-users            id, email, display_name, created_at
-beers            id, name, brewery, style, abv, vinmonopolet_id, image_url
-sessions         id, host_id, join_code, created_at, closed_at
-session_members  session_id, user_id, joined_at
-session_beers    session_id, beer_id, added_at
-tastings         id, user_id, beer_id, session_id?, score 1..6, prediction?, notes,
-                 appearance, aroma, taste, finish, tasted_at, tasted_day (Oslo date)
-                 unique (user_id, beer_id)
-tasting_tags     tasting_id, tag
-duels            id, user_id, session_id, winner_beer_id, loser_beer_id, created_at
-rater_weights    id, season_year, email, weight 0..1, reason, flagged, flag_note
-historic_seasons year, title, scale_min, scale_max, weighting_description, source_url
-historic_ratings id, season_year, beer_name, brewery, beer_id?, rater_name,
-                 rater_email?, score (original scale), weight (rater's that year), notes
+users             id, email, display_name, created_at, teams_chosen_at
+beers             id, name, brewery, style, abv, vinmonopolet_id, image_url, created_at,
+                  status PENDING|APPROVED|REJECTED, created_by?, decided_by?, decided_at?, homebrew
+sessions          id, host_id, join_code, created_at, closed_at?
+session_members   session_id, user_id, joined_at
+session_beers     session_id, beer_id, added_at
+tastings          id, user_id, beer_id, session_id?, score 1..6, prediction?, notes,
+                  appearance, aroma, taste, finish, tasted_at, tasted_day (Oslo date)
+                  unique (user_id, beer_id)
+tasting_tags      tasting_id, tag
+duels             id, user_id, session_id, winner_beer_id, loser_beer_id, created_at
+blind_rounds      id, session_id, host_id, answer_beer_id, created_at, revealed_at?
+blind_round_options  round_id, beer_id, position
+blind_guesses     round_id, user_id, beer_id, guessed_at          (one per person per round)
+teams             id, slug, name, sponsor_name?, sponsor_url?, domains?, enabled, created_at
+team_members      team_id, user_id, joined_at
+tips              user_id (pk), first_beer_id, second_beer_id, third_beer_id, created_at, updated_at
+beer_photos       id, beer_id, user_id, status, content_type, width, height, size_bytes,
+                  data (bytea, read only by PhotoStore), created_at, decided_by?, decided_at?, deleted_at?
+push_subscriptions id, user_id, endpoint, p256dh, auth, user_agent?, created_at, last_nudge_day?,
+                  finale_sent_at?, failures
+feed_reactions    id, target_kind, target_id, user_id, emoji, created_at   unique (target_id, user_id, emoji)
+rater_weights     id, season_year, email, weight 0..1, reason, flagged, flag_note?, overridden
+user_consents     id, user_id, consent_version, accepted_at, withdrawn_at?   unique (user_id, version)
+consent_events    id, user_id, consent_version, event ACCEPT|WITHDRAW, at     (append-only)
+historic_rater_claims  id, user_id, rater_key, status, created_at, decided_by?, decided_at?, approved_key?, version
+claim_events      id, claim_id, event, actor_user_id, at
+historic_seasons  season_year, title, scale_min, scale_max, weighting_description, source_url
+vmp_products      article_no (pk), name, brewery?, abv?, ...                (Vinmonopolet public product data)
+vmp_listings      id, list_year, name, product_article_no?, ...             (a juleøl list per year)
+vote_matches      id, season_year, vote_beer, machine_* (status, method, score, article), candidates,
+                  decision CONFIRMED|CHOSEN|NONE|NOT_A_PRODUCT, decision_*, decided_by? (set null), version
+                  unique (season_year, vote_beer)
+historic_ratings  id, season_year, beer_name, beer_name_original?, brewery?, beer_id?, rater_name,
+                  rater_key?, rater_email?, score (original scale), weight (rater's that year), notes?
 ```
 
-### API (phase 1)
+Hibernate validates the schema against the entities (`ddl-auto: validate`); every change is a new Flyway
+migration. Badges are not stored: `BadgeEvaluator` recomputes them from the tasting log.
+
+### API
+
+Everything under `/api/**` needs a Google login (the dev profile impersonates with `X-Dev-User`) and accepted
+consent, except `/api/me`, `/api/consent*`, `/api/config` and `/api/privacy`. State-changing calls need the CSRF
+cookie. Admin routes also need the e-mail in `JULEBRUS_ADMINS`.
 
 ```
-GET  /api/me                      current user, today's count, solo days used
-GET  /api/beers?q=                catalogue, with rating counts
-POST /api/beers                   manual add
-POST /api/sessions                open a session (returns id, joinCode)
-POST /api/sessions/join           { code }
-GET  /api/sessions/{id}           members, beers, reveal state per beer
-POST /api/sessions/{id}/beers     { beerId }
-POST /api/sessions/{id}/close
-POST /api/tastings                { beerId, sessionId?, score, prediction?, notes }
-POST /api/duels                   { sessionId, winnerBeerId, loserBeerId }
-GET  /api/stats/beers             Bayesian ranking
-GET  /api/stats/duels             Bradley–Terry ranking (sidebar)
+# person
+GET  /api/me                         who, today's count and the limit that applies, solo days, weight, teams, open table, admin chores
+GET  /api/consent  POST /accept /withdraw   the texts, accept the current version, withdraw
+GET  /api/config                     public: sponsor line
+GET  /api/privacy  GET /privacy      public: consent texts as JSON / server-rendered HTML
+GET  /api/teams  GET /api/teams/{slug}  PUT /api/me/teams   the enabled teams, one roster, my choice
+
+# beers and tastings
+GET  /api/beers?q=  POST /api/beers  GET /api/beers/least-tasted   catalogue, manual add (PENDING unless admin)
+GET  /api/beers/{id}                 the beer page: season, duels, tags, anonymised notes (guarded), your roll, history
+POST /api/tastings                   { beerId, sessionId?, score, prediction?, notes?, appearance.., tags }
+GET  /api/tastings/mine  GET /api/tastings/tags
+POST /api/beers/{id}/photos  GET /api/beers/{id}/photo  GET /api/beers/photos/{id}/image  DELETE /api/beers/photos/{id}
+
+# tables
+POST /api/sessions  POST /api/sessions/join { code }  GET /api/sessions/mine
+GET  /api/sessions/{id}              members, beers, reveal state, scores and notes once revealed
+POST /api/sessions/{id}/beers  POST /api/sessions/{id}/close
+GET  /api/sessions/{id}/events       SSE, members only
+POST /api/duels  GET /api/duels/pending/{sessionId}
+GET  /api/sessions/{id}/blind  POST .../blind  POST .../blind/{roundId}/guess  POST .../blind/{roundId}/reveal
+
+# the day, the game, the season
+GET  /api/feed?day=  PUT /api/feed/reactions  GET /api/feed/events      "I kveld"
+GET  /api/tips/me  PUT /api/tips  DELETE /api/tips                       podium tip
+GET  /api/stats/beers?team=  GET /api/stats/duels  GET /api/stats/palate/me  GET /api/stats/palate/pairs
 GET  /api/badges/me
-GET  /api/tastings/mine           this season, with notes and tags
-GET  /api/history/seasons         earlier seasons and how they were weighted
-GET  /api/history/me              my scores from earlier years, original and on 1–6
-GET  /api/history/beers?name=     what earlier years said about a beer
-GET  /api/admin/raters            rigging signals, admins only
-POST /api/admin/raters/flag       { email, seasonYear?, flagged, note }
-POST /api/admin/raters/override   { email, seasonYear?, weight, reason }
+GET  /api/finale                     the result after the reveal, the countdown before
+GET  /api/push/config /me  POST|DELETE /api/push/subscriptions  POST /api/push/test
+
+# history
+GET  /api/history/seasons /seasons/{year} /beers?name= /raters /overview /alltime?min= /me /me/summary
+GET  /api/history/claim-candidates  POST /api/history/claims  GET /claims/me  DELETE /claims/{id}
+
+# admin
+GET  /api/admin/raters  POST /raters/flag  POST /raters/override
+GET  /api/admin/beers  POST /api/admin/beers/{id}/decision  POST /api/admin/beers/import (CSV)
+GET  /api/admin/photos?status=  POST /api/admin/photos/{id}/decision
+GET  /api/admin/history/claims  POST .../{id}/decision  POST .../{id}/revoke
+GET  /api/admin/history/raters /logins  POST /link  POST /unlink
+GET  /api/admin/teams  POST /api/admin/teams  POST /api/admin/teams/{id}
+GET  /api/push/keygen
+
+# outside the web app's gates
+/mcp                                 MCP (Streamable HTTP), bearer token only, read-only tools
+/  /velkommen  /welcome  /landing    public landing page (anonymous visitors on /)
 ```
 
-Rule violations return HTTP 422 with a machine-readable `code`:
-`OUTSIDE_SEASON`, `DAILY_LIMIT`, `SOLO_DAYS_EXHAUSTED`, `ALREADY_RATED`.
+Rule violations return HTTP 422 with a machine-readable `code` (`OUTSIDE_SEASON`, `DAILY_LIMIT`,
+`SOLO_DAYS_EXHAUSTED`, `ALREADY_RATED`); every other refusal carries its own code too, listed in CLAUDE.md.
 
 ## Product data, images, barcode and photos (decided 24 Oct)
 
@@ -258,15 +350,17 @@ Cantara, the photo feature, and the 2026 Vinmonopolet list imported as DATA thro
 the official list by hand on the day it is published; no API key and no release needed for the list itself). If the photo review
 finds a blocker that cannot be fixed in time, v0.5 ships without photos and they follow as v0.5.1. Then barcode scanning.
 
-## Plan
+## Plan and status
 
-Today is 24 Oct. Phase 1 must be live by 1 Nov.
+Written 24 Oct: phase 1 (login, catalogue, tables with QR, rating with the rules, blind reveal, results) by
+1 Nov; phase 2 (duels, stats, badges) in November; phase 3 (predictions, finale page) in December.
 
-1. **Phase 1 (by 1 Nov):** login, catalogue, sessions with QR, rating with rule
-   enforcement, blind reveal, plain results list.
-2. **Phase 2 (November):** duels and sidebar ranking, stats pages, heatmap, badges.
-   Badges are computed retroactively, so nothing is lost by shipping them late.
-3. **Phase 3 (December):** predictions, co-tasting graph, final reveal page for 23 Dec.
+Status 25 Oct, before the season: all three phases are in, plus what nobody planned in October: the live
+reveal, the blind pour, teams, the podium tip, push notifications, label photos, the day's wall, the public
+landing page, the MCP server and the imported history with claim-your-name. Left for later, in rough order of
+how much they would add: the barcode scanner, the 2026 Vinmonopolet list as data, an evening summary to share,
+dark mode, team colours. The framework majors (Spring Boot 4, Vite 8, Vue Router 5,
+Pinia 4, TypeScript 7) wait until after 23 December.
 
 ## Open questions
 
@@ -275,5 +369,6 @@ Today is 24 Oct. Phase 1 must be live by 1 Nov.
 - Vinmonopolet API key? Not needed for the 2026 list (official list download + the admin CSV import) and not for images
   (user photos). Only worth it if barcode scanning needs the product's GTIN.
 - Does Vinmonopolet's product data carry the barcode (GTIN)? Decides whether barcode scanning can match beers.
-- Emails for the historic raters in `history/raters.csv`, so people see their own
-  history. Only the names are mapped so far.
+- Emails for the historic raters: `history/raters.csv` maps names only. People link themselves under *Meg*
+  (an admin approves), and an admin can link or unlink a historic name to a login under *Admin*. Whether to
+  seed the file with known e-mails as well is still open.

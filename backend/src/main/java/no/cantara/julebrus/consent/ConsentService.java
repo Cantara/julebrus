@@ -24,7 +24,7 @@ public class ConsentService {
      * <p>DRAFT: the consent texts are a draft for the organisers to review and approve
      * before the season opens. Nobody has given them legal sign-off.</p>
      */
-    public static final String CONSENT_VERSION = "2026-4";
+    public static final String CONSENT_VERSION = "2026-6";
 
     public record Texts(String nb, String en) {
     }
@@ -32,6 +32,7 @@ public class ConsentService {
     private final UserConsentRepository consents;
     private final ConsentEventRepository events;
     private final Texts texts;
+    private final Texts summary;
 
     public ConsentService(UserConsentRepository consents, ConsentEventRepository events, SponsorProperties sponsor,
                           ContactProperties contact) {
@@ -40,6 +41,9 @@ public class ConsentService {
         this.texts = new Texts(
                 render("consent/consent-nb.md", sponsor, contact, "arrangørene"),
                 render("consent/consent-en.md", sponsor, contact, "the organisers"));
+        this.summary = new Texts(
+                render("consent/consent-summary-nb.md", sponsor, contact, "arrangørene"),
+                render("consent/consent-summary-en.md", sponsor, contact, "the organisers"));
     }
 
     /** Fills {sponsor} and {contact} in a text ("the organisers" stands in for a blank contact). Without a sponsor only the line that carries {sponsor} is dropped. */
@@ -64,6 +68,11 @@ public class ConsentService {
 
     public Texts texts() {
         return texts;
+    }
+
+    /** The short plain-language version shown first; the full texts above remain the binding ones. */
+    public Texts summary() {
+        return summary;
     }
 
     /** Everyone whose consent to the current version is active. Admin overviews and weights cover only these. */

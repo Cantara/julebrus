@@ -6,6 +6,7 @@ export const router = createRouter({
   routes: [
     { path: '/', component: () => import('./views/HomeView.vue') },
     { path: '/beers', component: () => import('./views/BeersView.vue') },
+    { path: '/beers/:id', component: () => import('./views/BeerDetailView.vue'), props: true },
     { path: '/beers/:id/rate', component: () => import('./views/RateView.vue'), props: true },
     { path: '/session', component: () => import('./views/SessionStartView.vue') },
     { path: '/session/:id', component: () => import('./views/SessionView.vue'), props: true },
@@ -18,7 +19,9 @@ export const router = createRouter({
     { path: '/consent', component: () => import('./views/ConsentView.vue') },
     { path: '/me', component: () => import('./views/ProfileView.vue') },
     { path: '/lag', component: () => import('./views/TeamView.vue') },
+    { path: '/lag/:slug', component: () => import('./views/TeamRosterView.vue'), props: true },
     { path: '/tipp', component: () => import('./views/TipView.vue') },
+    { path: '/ikveld', component: () => import('./views/TonightView.vue') },
     { path: '/admin', component: () => import('./views/AdminView.vue') },
   ],
 })

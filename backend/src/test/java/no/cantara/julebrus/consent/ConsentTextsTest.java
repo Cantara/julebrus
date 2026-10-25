@@ -42,7 +42,7 @@ class ConsentTextsTest {
 
     @Test
     void versionIsBumpedAndBothTextsDescribeThePhotos() {
-        assertThat(ConsentService.CONSENT_VERSION).isEqualTo("2026-4");
+        assertThat(ConsentService.CONSENT_VERSION).isEqualTo("2026-6");
         var texts = new ConsentService(null, null, new SponsorProperties("x", ""), new ContactProperties("a@b.no")).texts();
         assertThat(texts.nb()).contains("Bilder av etiketten").contains("opphavsretten").contains("aldri som offentlige lenker")
                 .contains("Metadata").contains("slette bildet ditt selv").contains("tilhører produsenten")
@@ -53,6 +53,28 @@ class ConsentTextsTest {
                 .contains("Metadata").contains("delete your own picture").contains("belongs to the producer")
                 .contains("name and email address of the person who uploaded it").contains("who, which beer and when")
                 .contains("no longer shown to the other participants").doesNotContain("{");
+    }
+
+    @Test
+    void theShortSummaryCoversTheKeyFactsInBothLanguagesAndFillsInTheContact() {
+        var summary = new ConsentService(null, null, new SponsorProperties("x", ""), new ContactProperties("a@b.no")).summary();
+        assertThat(summary.nb()).startsWith("## Kort fortalt").contains("a@b.no").contains("Bilder av øletiketter er valgfrie")
+                .contains("trekke samtykket tilbake").contains("wiki.cantara.no").contains("Administratorene").doesNotContain("{");
+        assertThat(summary.en()).startsWith("## In short").contains("a@b.no").contains("Label photos are optional")
+                .contains("withdraw your consent").contains("wiki.cantara.no").contains("Administrators").doesNotContain("{");
+        assertThat(bullets(summary.nb())).isEqualTo(bullets(summary.en()));
+        assertThat(summary.nb().length()).isLessThan(1200);
+    }
+
+    @Test
+    void theSummaryFallsBackToTheOrganisersWithoutAContact() {
+        var summary = new ConsentService(null, null, new SponsorProperties("", ""), new ContactProperties("")).summary();
+        assertThat(summary.nb()).contains("hos arrangørene").doesNotContain("{");
+        assertThat(summary.en()).contains("with the organisers").doesNotContain("{");
+    }
+
+    private static long bullets(String text) {
+        return text.lines().filter(l -> l.startsWith("- ")).count();
     }
 
     @Test

@@ -18,7 +18,8 @@ import java.util.UUID;
 @RestController
 public class MeController {
 
-    public record Season(int year, LocalDate start, LocalDate end, int maxTastingsPerDay, int maxSoloDays) {
+    public record Season(int year, LocalDate start, LocalDate end, int maxTastingsPerDay, int maxSoloDays,
+                         int bigTableSize, int maxTastingsPerDayBigTable) {
     }
 
     public record Weight(double weight, String reason) {
@@ -38,7 +39,9 @@ public class MeController {
                      /** false until the team page has been answered, "later" included */
                      boolean teamsChosen,
                      /** null when no table is open */
-                     OpenTable openTable) {
+                     OpenTable openTable,
+                     /** what waits for an organiser; null for everyone who is not an admin */
+                     no.cantara.julebrus.admin.AdminChores.Chores chores) {
     }
 
     private final CurrentUser currentUser;
@@ -51,11 +54,14 @@ public class MeController {
     private final no.cantara.julebrus.session.SessionService sessions;
     private final no.cantara.julebrus.tasting.TastingRepository tastingRows;
     private final no.cantara.julebrus.user.UserRepository users;
+    private final no.cantara.julebrus.admin.AdminChores chores;
 
     public MeController(CurrentUser currentUser, TastingService tastings, SeasonProperties season,
                         RaterWeightService weights, no.cantara.julebrus.config.AuthProperties auth,
                         ConsentService consents, TeamService teams, no.cantara.julebrus.session.SessionService sessions,
-                        no.cantara.julebrus.tasting.TastingRepository tastingRows, no.cantara.julebrus.user.UserRepository users) {
+                        no.cantara.julebrus.tasting.TastingRepository tastingRows, no.cantara.julebrus.user.UserRepository users,
+                        no.cantara.julebrus.admin.AdminChores chores) {
+        this.chores = chores;
         this.sessions = sessions;
         this.tastingRows = tastingRows;
         this.users = users;
@@ -89,9 +95,12 @@ public class MeController {
                                 s.getBeers().size(), (int) Math.max(0, s.getBeers().size() - rated));
                     }).orElse(null);
         }
+        boolean admin = auth.isAdmin(u.getEmail());
         return new Me(u.getId(), u.getEmail(), u.getDisplayName(), tastings.status(u.getId()),
-                new Season(season.year(), season.start(), season.end(), season.maxTastingsPerDay(), season.maxSoloDays()),
-                weight, auth.isAdmin(u.getEmail()),
-                !consented, ConsentService.CONSENT_VERSION, mine, u.getTeamsChosenAt() != null, open);
+                new Season(season.year(), season.start(), season.end(), season.maxTastingsPerDay(), season.maxSoloDays(),
+                        season.bigTableSize(), season.maxTastingsPerDayBigTable()),
+                weight, admin,
+                !consented, ConsentService.CONSENT_VERSION, mine, u.getTeamsChosenAt() != null, open,
+                admin && consented ? chores.count() : null);
     }
 }

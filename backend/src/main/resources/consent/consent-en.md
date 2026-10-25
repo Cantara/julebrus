@@ -13,6 +13,8 @@ Julebrus is Cantara's Christmas beer tasting. It is run by the Cantara community
 - Earlier seasons' ratings, imported from the public pages on wiki.cantara.no, with the names as written in the old spreadsheets, sometimes with an initial or surname
 - Where the organisers have linked earlier ratings to an email address, that address is stored with them
 - Pictures of beer labels that you choose to upload, with the time and the beer they belong to
+- The teams you choose to play for
+- Cheers and emojis you give in "I kveld", with timestamps
 - Preferences (language and snow), kept in your browser's local storage
 
 ## Before you have answered
@@ -26,6 +28,8 @@ To run the tasting and show results and history.
 ## Who sees what
 
 - Members of a group see each other's scores when everyone in the group has rated, or when the group has been closed
+- All participants see your name and your teams, and in "I kveld" which beers you have tasted today, which table you sit at and what you have cheered. Your dice are not shown there, only the day's average per beer once at least three people have rolled it
+- Your tasting notes (appearance, aroma, taste, finish and tags) are shown on the beer's page to the other participants, without your name or the time and in random order, only once at least three people have tasted the beer and only to those who have tasted it themselves. Your comment and your dice are shown at the table only
 - Season statistics are shown per beer
 - The history shows the names of the people who tasted in earlier years, as written in the old spreadsheets
 - Administrators see the name and email address of people who ask to link themselves to earlier seasons, in the approval queue

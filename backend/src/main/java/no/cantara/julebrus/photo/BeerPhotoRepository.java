@@ -21,6 +21,10 @@ public interface BeerPhotoRepository extends JpaRepository<BeerPhoto, UUID> {
     @Query("select p from BeerPhoto p where p.id = :id and p.deletedAt is null")
     Optional<BeerPhoto> findLive(@Param("id") UUID id);
 
+    /** Live photos decided in a window of time with the given outcome, for the day's feed. */
+    @Query("select p from BeerPhoto p where p.deletedAt is null and p.status = :status and p.decidedAt >= :from and p.decidedAt < :to")
+    List<BeerPhoto> decidedBetween(@Param("status") BeerPhoto.Status status, @Param("from") Instant from, @Param("to") Instant to);
+
     /**
      * Beers this person can see a cover for: an approved photo exists, or they have a pending one of their own.
      * Only photos whose uploader's consent (the given version) is active count.

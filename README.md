@@ -1,7 +1,40 @@
 # julebrus
 
-Cantaras digitale juleølsmaking. Season 1 Nov – 23 Dec, five tastings a day, five
+Cantaras digitale juleølsmaking. Season 1 Nov – 23 Dec, five tastings a day (twelve at a table of eight or more), five
 solo days, the rest in groups formed by QR code. Design and rules: [DESIGN.md](DESIGN.md).
+
+## What it does
+
+- **Tables.** A host opens a table and shows a QR code or a six-character code; the others join on their own
+  phones. Scores are dice, 1–6, hidden until the last person at the table has rolled, then revealed on every
+  phone in the same second (server-sent events), with the notes and tags people wrote. Duels ("which was better?")
+  build a Bradley–Terry side ranking; the host can pour a **blind round** where the guests guess which beer is in
+  the glass. An open table is one tap away from Home and from "Dine bord".
+- **The season.** Max 5 tastings a day (12 at a table of 8 or more, because a party is a different evening), max 5 solo days, only Vinmonopolet-strength juleøl counts, homebrew under
+  its own rules. Home is an advent calendar (this week by default) with a streak counter; the results page is a
+  weighted Bayesian ranking, filterable per team. Rater weights: 0.5 the first season, 1.0 after a normal one,
+  0 when flagged for rigging; veterans from the old spreadsheets are recognised through the admin name mapping.
+- **"I kveld".** The day's wall for the whole house: who rolled which beer, the tables going right now, approved labels and
+  blind-round results, live, with a 🍻 and four more emojis to give each line. Never a person's dice, and a day average per
+  beer only from three rolls. People without active consent are left out.
+- **Teams.** Cantara and Rebel out of the box, more on request. Pick yours after consent, tap a team to see who
+  plays for it, each team gets its own winner and "Årets lag" at the finale.
+- **Tipp pallen.** Everyone may tip gold, silver and bronze until the last day begins; the league and "Årets
+  tipper" come out at the reveal.
+- **Every beer has a page.** Tap a beer anywhere (catalogue, results, the wall, a table, the calendar, the finale) for
+  its label, this season's rank and dice histogram, its duel record, the tags people gave it, their tasting notes without
+  names, your own roll and what earlier years said. Anything from other people's rolls shows only from three rolls, and the
+  notes only after you have rolled the beer yourself: taste first, read afterwards.
+- **All-time list.** With the old beer names normalised, the history page ranks every beer across all recorded
+  seasons, weighted as each year weighted its votes and shrunk towards the all-time mean, with each beer's best year.
+- **Ganen din.** After three rolls the profile draws your palate: which tags you score above and below your own
+  mean, your taste twin and your taste opposite among the others (from shared beers). The finale lists the
+  season's twins and opposites.
+- **Badges** as baubles on a tree (ten so far, Blind Taster included), label **photos** with admin approval, a
+  bilingual **story page**, the imported **history 1998–2019** with charts and claim-your-name, a public
+  **landing page**, optional **push notifications** (the daily nudge and the finale), and an **MCP server** so
+  agents can read the aggregates.
+- **The finale, 23 December 18:00.** Podium, duel podium, team winners, the tipping league and the season's awards.
 
 ## Layout
 
@@ -26,6 +59,11 @@ To act as a second person in another browser tab while testing a group session:
 localStorage.setItem('devUser', 'kari@cantara.no')
 ```
 
+From the command line the same impersonation is the `X-Dev-User` header (`curl -H 'X-Dev-User: kari@cantara.no'
+localhost:8080/api/me`); the event streams take `?devUser=` instead, since EventSource cannot set headers. The dev
+profile opens the season window on 1 October and makes `dev@cantara.no` an admin; the public landing page is at
+`/velkommen` (the dev profile signs everyone in on `/`).
+
 ## Build for production
 
 ```bash
@@ -38,7 +76,8 @@ Environment variables: `JULEBRUS_DB_URL`, `JULEBRUS_DB_USER`, `JULEBRUS_DB_PASSW
 (comma separated; empty allows any Google account) and **`JULEBRUS_ADMINS`** (emails
 that may flag raters, override weights, approve history claims, beers and photos). **Production must set
 `JULEBRUS_ADMINS`**: it has no default, and empty means nobody is an admin (the `dev` profile has its own
-dev admin; the box has it set). The Google OAuth redirect URI is
+dev admin; the box has it set). Admins see what waits for them (claims to decide, logins without a historic name,
+beers and label photos to approve) as a card on Home and a dot on the "Meg" tab. The Google OAuth redirect URI is
 `https://<host>/login/oauth2/code/google`.
 
 Also optional: `JULEBRUS_CONTACT_EMAIL` (named in the consent text as where to ask for
@@ -130,15 +169,19 @@ orientation (JPEG only; PNG has none). Wide-gamut colour profiles are dropped.
 
 ### Deleting a person's data by hand (procedure to review before use)
 
-Deletion requests go to `JULEBRUS_CONTACT_EMAIL` and are done by an organiser. Recipe 1 was run
-(2026-10-24, schema V1 to V9) on a throwaway PostgreSQL 16 with seeded data, once as an admin (who had decided
-beers, photos and claims and uploaded a photo) and once as a normal user (tastings, duels, a hosted session with
-a handed-over member, blind-pour rounds and guesses, photos, an approved claim): both ran to the end and the
-other people's rows were left alone. It has never been run on a real database, and Recipe 2 was not part of that test.
+Deletion requests go to `JULEBRUS_CONTACT_EMAIL` and are done by an organiser. Recipe 1 was last run on
+2026-10-25 against the full schema (V1 to V13) on a throwaway PostgreSQL 16, on a person seeded with everything that
+references `users`: solo and table tastings with notes and tags, duels, a hosted table and a table joined, blind rounds
+hosted and guessed, two teams, a podium tip, an approved label photo, an approved history claim, a push subscription,
+cheers given and received. It ran to `commit`, the two other seeded people kept every row of theirs, the claimed
+historic name disappeared from the history, and a second run stopped at the first step. An earlier run (2026-10-24,
+V1 to V9) covered an admin who had decided beers, photos and claims. It has never been run on a real database, and
+Recipe 2 was not part of either test.
 Run each recipe with `psql -v ON_ERROR_STOP=1 -f recipe.sql`: it stops at the first error and the open transaction is rolled
 back when the session ends. A second run of Recipe 1 stops at the first step ("no rows returned": the person is gone)
 and changes nothing. Review it against the current schema, take a backup, run it in one transaction and check the row counts
-before `commit`. When the schema changes, check that every foreign key to `users` is still handled.
+before `commit`. When the schema changes, check that every foreign key to `users` is still handled:
+`select conrelid::regclass, conname from pg_constraint where confrelid = 'users'::regclass;` lists them.
 
 Two things to know first. Everything is deleted, including the person's `consent_events` rows:
 that log is append-only for the application, but erasure on request overrides it. And the person's
@@ -164,7 +207,8 @@ select * from erase_keys;   -- look at it: these names disappear from the histor
 delete from historic_ratings
  where rater_key in (select k from erase_keys) or lower(rater_email) = lower(:'email');
 
--- 3. Their tastings and duels, in dependency order.
+-- 3. Their tastings and duels, in dependency order (the cheers others gave their rolls go with the rolls).
+delete from feed_reactions where target_id in (select id from tastings where user_id = :'uid');
 delete from tasting_tags where tasting_id in (select id from tastings where user_id = :'uid');
 delete from tastings where user_id = :'uid';
 delete from duels where user_id = :'uid';
@@ -172,6 +216,7 @@ delete from duels where user_id = :'uid';
 delete from blind_guesses where user_id = :'uid'
                              or round_id in (select id from blind_rounds where host_id = :'uid');
 delete from blind_round_options where round_id in (select id from blind_rounds where host_id = :'uid');
+delete from feed_reactions where target_id in (select id from blind_rounds where host_id = :'uid');
 delete from blind_rounds where host_id = :'uid';
 delete from session_members where user_id = :'uid';
 
@@ -179,10 +224,18 @@ delete from session_members where user_id = :'uid';
 --     cover. To keep one with the person's written permission, re-assign it instead:
 --       update beer_photos set user_id = <an admin's users.id> where id = ...;  before the delete below).
 --     Photos they decided as an admin keep the row, only the pointer goes. Beers they added keep existing.
+delete from feed_reactions where target_id in (select id from beer_photos where user_id = :'uid');
 delete from beer_photos where user_id = :'uid';
 update beer_photos set decided_by = null where decided_by = :'uid';
 update beers set created_by = null where created_by = :'uid';
 update beers set decided_by = null where decided_by = :'uid';
+
+-- 3c. Teams, the podium tip, push subscriptions and the cheers they gave on "I kveld".
+--     (Cheers others gave to this person's rolls go with the rolls: feed_reactions.target_id has no foreign key.)
+delete from team_members where user_id = :'uid';
+delete from tips where user_id = :'uid';
+delete from push_subscriptions where user_id = :'uid';
+delete from feed_reactions where user_id = :'uid';
 
 -- 4. Sessions they hosted (sessions.host_id is NOT NULL). A session nobody else belongs to can go.
 --    One with other members must be handed to a member first (update sessions set host_id = ...),
@@ -195,6 +248,8 @@ create temp table erase_sessions on commit drop as
 delete from blind_guesses where round_id in (select id from blind_rounds where session_id in (select id from erase_sessions));
 delete from blind_round_options where round_id in (select id from blind_rounds where session_id in (select id from erase_sessions));
 delete from blind_rounds where session_id in (select id from erase_sessions);
+delete from feed_reactions where target_id in (select id from erase_sessions)
+                              or target_id in (select id from tastings where session_id in (select id from erase_sessions));
 delete from tasting_tags where tasting_id in (select id from tastings where session_id in (select id from erase_sessions));
 delete from tastings where session_id in (select id from erase_sessions);
 delete from duels where session_id in (select id from erase_sessions);
@@ -250,6 +305,27 @@ history files with:
 python3 tools/to_app_history.py backend/src/main/resources/history
 ```
 
+## Fixing a beer name
+
+Some old beer names are misspelled ("Rignes Julebokk"). The app imports a season only once, so the database in
+production is fixed through `backend/src/main/resources/history/beer_names.csv`, which it applies at every startup:
+
+1. Either fix the name in the source too (`source/google-sheets/<year>.csv`, or `NAME_FIXES` in
+   `tools/extract_wiki_tables.py` for the wiki years), rerun `tools/build_data.py`, `tools/to_app_history.py` and
+   `tools/to_landing_stats.py` (see `data/README.md`), and add `year,old name,new name,legacy` to beer_names.csv;
+   or leave the source as written and add `year,as written,correct name,` (the name exactly as in `data/votes.csv`).
+   Quote a name that has a comma. Remove a line to undo a fix.
+2. Open a pull request. The fix takes effect on the next deploy and restart: the app renames the ratings already
+   in its database; nothing is deleted or re-imported.
+3. The original spelling is kept (`historic_ratings.beer_name_original`); the landing page numbers use the
+   corrected names. A `legacy` row is one whose old name is gone from the corrected files: it renames databases
+   imported before the correction and matches nothing in a fresh one.
+
+Candidates: `python3 -I tools/suggest_beer_name_fixes.py` writes a review sheet,
+`data/review/beer-name-candidates.csv` (suggestions only; fill in its `decision` column). After a change run
+`python3 -I tools/to_landing_stats.py backend/src/main/resources/landing/history-stats.json` and
+`cd backend && mvn -B -ntp test -Dtest=BeerNamesTest,LandingStatsTest,SuggestBeerNameFixesTest`.
+
 ## Push notifications
 
 Two messages, both opt-in per browser from the "Varsler" card on the profile page: a daily
@@ -263,14 +339,17 @@ later invalidates every subscription (people switch it on again). The jar needs 
 HTTPS to the push services (Google, Mozilla, Apple). Browsers that answer 404 or 410, or fail
 five times in a row, are forgotten. On iPhone, push works only for the app on the home screen.
 
-## Live reveal
+## Live reveal and the wall
 
-Every phone at a table holds one server-sent event stream (`/api/sessions/{id}/events`). A
-reverse proxy in front of the jar must not buffer it: the response carries
-`X-Accel-Buffering: no` and `Cache-Control: no-cache`, which nginx honours; otherwise set
-`proxy_buffering off` for `/api/sessions/` and give the location a read timeout above the
-20-second heartbeat (`proxy_read_timeout 60s` or more). Without the stream the app still
-works: the session page falls back to polling every five seconds.
+Every phone at a table holds one server-sent event stream (`/api/sessions/{id}/events`), and
+every phone on "I kveld" holds the day-wide one (`/api/feed/events`). A reverse proxy in front
+of the jar must not buffer them: the responses carry `X-Accel-Buffering: no` and
+`Cache-Control: no-cache`, which nginx honours; otherwise set `proxy_buffering off` for
+`/api/sessions/` and `/api/feed/` and give the locations a read timeout above the 20-second
+heartbeat (`proxy_read_timeout 60s` or more). Without the streams the app still works: both
+pages fall back to polling every five seconds. Streams time out after 30 minutes and the
+browser reconnects on its own. The events carry only a kind, never data; the client refetches,
+so the reveal rules stay on the server.
 
 ## Teams
 
@@ -355,11 +434,13 @@ season and no e-mail addresses.
 | `list_seasons` | | every recorded season with size, winner, weighting and source |
 | `season_results` | `year` | that season's ranked result list, weighted as it was that year |
 | `beer_history` | `name` | one beer's mean and vote count per season |
+| `alltime_ranking` | `min` (default 5) | every beer across all recorded seasons, Bayesian-adjusted, with its best year |
 | `list_raters` | | everyone who has tasted, with years and vote count |
 | `rater_history` | `name` | one rater's mean against the crowd mean per season |
 | `current_ranking` | | this season's weighted Bayesian ranking |
+| `team_ranking` | `team` (slug) | the same ranking over one team's raters |
 | `duel_ranking` | | this season's Bradley-Terry duel ranking |
-| `season_status` | | dates, days left, rules and totals so far |
+| `season_status` | | dates, days left, rules (daily limits, big table, solo days), teams, tips and totals so far |
 | `finale` | | the revealed result on the last day; before that only the reveal time |
 
 Claude Code, for example, connects with:

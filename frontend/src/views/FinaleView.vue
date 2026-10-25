@@ -193,14 +193,14 @@ function fit(ctx: CanvasRenderingContext2D, text: string, max: number) {
     <div class="finale-hero">
       <div class="star lit">★</div>
       <h1>Cantaras juleøl {{ finale.year }}</h1>
-      <p v-if="finale.podium[0]" class="winner display">{{ finale.podium[0].name }}</p>
+      <p v-if="finale.podium[0]" class="winner display"><router-link :to="`/beers/${finale.podium[0].beerId}`" style="text-decoration: none">{{ finale.podium[0].name }}</router-link></p>
       <p v-if="finale.podium[0]" class="muted">{{ finale.podium[0].brewery }} · {{ finale.podium[0].bayesian.toFixed(2) }} av 6 · {{ finale.podium[0].ratings }} smakere</p>
     </div>
 
     <div class="podium" aria-label="Pallen">
       <div v-for="b in podium" :key="b.beerId" class="step" :class="`p${b.rank}`">
         <div class="label">
-          <strong>{{ b.name }}</strong>
+          <router-link :to="`/beers/${b.beerId}`" style="text-decoration: none"><strong>{{ b.name }}</strong></router-link>
           <div class="muted">{{ b.bayesian.toFixed(2) }}</div>
         </div>
         <div class="block"><span class="display">{{ b.rank }}</span></div>
@@ -262,11 +262,15 @@ function fit(ctx: CanvasRenderingContext2D, text: string, max: number) {
     </template>
 
     <h2>Årets priser</h2>
-    <div v-for="a in finale.awards" :key="a.id" class="card award" :class="{ none: !a.winnerName }">
+    <div v-for="a in (finale.awards ?? []).filter((x) => x.winnerName)" :key="a.id" class="card award">
       <strong class="display">{{ a.title }}</strong>
       <div class="muted">{{ a.description }}</div>
-      <div class="who"><strong>{{ a.winnerName ?? 'Ingen i år' }}</strong><span class="muted"> · {{ a.detail }}</span></div>
+      <div class="who"><strong>{{ a.winnerName }}</strong><span class="muted"> · {{ a.detail }}</span></div>
     </div>
+    <p v-if="(finale.awards ?? []).some((x) => !x.winnerName)" class="muted" style="margin: 6px 0 0">
+      {{ (finale.awards ?? []).every((x) => !x.winnerName) ? 'Ingen priser delt ut ennå.' : 'Ingen kvalifiserte i år:' }}
+      {{ (finale.awards ?? []).filter((x) => !x.winnerName).map((x) => x.title.replace(/^Årets /, '')).join(', ') }}.
+    </p>
 
     <p class="muted" style="text-align: center; margin-top: 16px">
       {{ finale.totals.tastings }} terningkast · {{ finale.totals.beers }} øl · {{ finale.totals.people }} smakere. Takk for i år.

@@ -11,6 +11,7 @@ import LangToggle from '../components/LangToggle.vue'
 import { t } from '../i18n'
 import type { BadgeView, Beer, HistoricRating, MySeason, Palate, Tasting } from '../api/types'
 import BadgeTree from '../components/BadgeTree.vue'
+import DiceFace from '../components/DiceFace.vue'
 import { useMe } from '../stores/me'
 
 const store = useMe()
@@ -80,7 +81,7 @@ const byYear = () => {
     <div class="row">
       <div>
         <strong>Lag</strong>
-        <div v-if="store.me?.teams.length"><span v-for="t in store.me.teams" :key="t.id" class="pill on">{{ t.name }}</span></div>
+        <div v-if="store.me?.teams.length"><router-link v-for="t in store.me.teams" :key="t.id" class="pill on" :to="`/lag/${t.slug}`" style="text-decoration: none">{{ t.name }} ›</router-link></div>
         <div v-else class="muted">Du spiller ikke for noe lag ennå.</div>
       </div>
       <button v-if="!editingTeams" class="secondary" @click="editingTeams = true">{{ store.me?.teams.length ? 'Endre' : 'Velg lag' }}</button>
@@ -142,8 +143,8 @@ const byYear = () => {
     <table>
       <tbody>
         <tr v-for="t in mine" :key="t.id">
-          <td>{{ beerNames[t.beerId] ?? '?' }}<div v-if="t.tags.length" class="muted">{{ t.tags.join(', ') }}</div></td>
-          <td style="text-align: right"><strong>{{ t.score }}</strong></td>
+          <td><router-link :to="`/beers/${t.beerId}`">{{ beerNames[t.beerId] ?? '?' }}</router-link><div v-if="t.tags.length" class="muted">{{ t.tags.join(', ') }}</div></td>
+          <td style="text-align: right"><DiceFace :value="t.score" :size="26" /></td>
         </tr>
       </tbody>
     </table>

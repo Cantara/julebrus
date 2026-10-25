@@ -11,7 +11,9 @@ import java.util.Set;
  *
  * <ul>
  *   <li>A tasting must fall inside the season window.</li>
- *   <li>A person may rate at most {@code maxTastingsPerDay} beers per Oslo day.</li>
+ *   <li>A person may rate at most {@code maxTastingsPerDay} beers per Oslo day, or
+ *       {@code maxTastingsPerDayBigTable} when the tasting happens at a table of
+ *       {@code bigTableSize} or more. A party of eight is a different evening.</li>
  *   <li>A person may have at most {@code maxSoloDays} distinct days with a solo tasting.</li>
  *   <li>A beer is rated once per person.</li>
  * </ul>
@@ -52,12 +54,15 @@ public final class TastingRules {
     }
 
     /**
-     * @param at     when the tasting happens
-     * @param solo   true when the tasting is not part of a session with other members
-     * @param ledger the person's history as of now
+     * @param at        when the tasting happens
+     * @param tableSize how many people sit at the table, 1 when the tasting is not part of a
+     *                  session with other members
+     * @param ledger    the person's history as of now
      * @throws RuleViolation when the tasting must be refused
      */
-    public void check(Instant at, boolean solo, Ledger ledger) {
+    public void check(Instant at, int tableSize, Ledger ledger) {
+        boolean solo = tableSize <= 1;
+        int limit = season.maxTastingsPerDay(tableSize);
         LocalDate day = dayOf(at);
         if (!inSeason(day)) {
             throw new RuleViolation(Violation.OUTSIDE_SEASON,
@@ -66,9 +71,10 @@ public final class TastingRules {
         if (ledger.alreadyRatedBeer()) {
             throw new RuleViolation(Violation.ALREADY_RATED, "You have already rated this beer");
         }
-        if (ledger.tastingsToday() >= season.maxTastingsPerDay()) {
-            throw new RuleViolation(Violation.DAILY_LIMIT,
-                    "Max %d tastings per day".formatted(season.maxTastingsPerDay()));
+        if (ledger.tastingsToday() >= limit) {
+            throw new RuleViolation(Violation.DAILY_LIMIT, season.isBigTable(tableSize)
+                    ? "Max %d tastings per day, even at a table of %d or more".formatted(limit, season.bigTableSize())
+                    : "Max %d tastings per day (%d at a table of %d or more)".formatted(limit, season.maxTastingsPerDayBigTable(), season.bigTableSize()));
         }
         if (solo && !ledger.soloDays().contains(day) && ledger.soloDays().size() >= season.maxSoloDays()) {
             throw new RuleViolation(Violation.SOLO_DAYS_EXHAUSTED,

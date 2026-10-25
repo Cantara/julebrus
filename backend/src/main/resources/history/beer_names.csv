@@ -1,0 +1,61 @@
+year,as_written,canonical,note
+# Corrections to beer names in the earlier seasons. as_written is the name as it was when the season was first
+# imported into the database, canonical the right one. Applied on every startup to the ratings already in the
+# database; the original name is kept (historic_ratings.beer_name_original). Remove a row and the original comes back
+# at the next start. Candidates to look at: data/review/beer-name-candidates.csv (python3 -I tools/suggest_beer_name_fixes.py).
+#
+# note is empty for a correction of a name that is still written so in history/<year>.csv and data/.
+# note = legacy: the source files have since been corrected (source/google-sheets/, data/, history/<year>.csv), so
+# as_written no longer appears there and a database imported from the current files never matches the row. It is kept
+# for databases imported before the files were corrected (production), which still hold the old name.
+#
+# Certain: the same name as Vinmonopolet's list of that year, apart from case.
+2014,Hansa Juleale,Hansa JuleAle,
+2014,Sagene sterk jul,Sagene Sterk Jul,
+2015,Hansa Juleale,Hansa JuleAle,
+2019,Ringnes julebokk,Ringnes Julebokk,
+2019,Ringnes juleøl,Ringnes Juleøl,
+# legacy: the spelling and diacritic fixes made directly in the source files in "Normalize historical juleøl names"
+# (a8a00be, Svein-Magnus Sørensen, 2026-10-24). 2014 EC Dahls Juleøl -> Dahls Juleøl joins that row with the other
+# 2014 Dahls Juleøl, as the corrected files do.
+2003,Nøgne ø,Nøgne Ø,legacy
+2011,Dahls,Dahls Juleøl,legacy
+2011,NøgneØ God Jul,Nøgne Ø God Jul,legacy
+2011,NøgneØ Underlig jul,Nøgne Ø Underlig Jul,legacy
+2011,"Hansddbrygggirier, nissefar",Haandbryggeriet Nissefar,legacy
+2012,Aass Juleøl Orginal,Aass Juleøl Original,legacy
+2012,Dahls,Dahls Juleøl,legacy
+2012,NøgneØ God Jul,Nøgne Ø God Jul,legacy
+2012,NøgneØ Underlig jul,Nøgne Ø Underlig Jul,legacy
+2013,Dahls,Dahls Juleøl,legacy
+2014,EC Dahls Juleøl,Dahls Juleøl,legacy
+2014,Aass Vellagert,Aass Juleøl Vellagret,legacy
+2014,Rignes Julebokk,Ringnes Julebokk,legacy
+2015,Lervigs Jul,Lervig's Jul,legacy
+2015,Rignes Julebokk,Ringnes Julebokk,legacy
+2015,Nøgne Rød Jul,Nøgne Ø Rød Jul,legacy
+2015,Dahls,Dahls Juleøl,legacy
+2015,Nøgne God Jul Whisky,Nøgne Ø God Jul Whisky,legacy
+2015,Amundsen Jol,Amundsen Jól,legacy
+2015,Nøgne God Jul,Nøgne Ø God Jul,legacy
+2015,Nøgne Underlig,Nøgne Ø Underlig Jul,legacy
+2017,Bådom Tussvatnet,Bådin Tussvatnet,legacy
+2017,Berntsens Julefnugg,Berentsens Julefnugg,legacy
+2017,Cervisiam Chocoloate Salty Christmas  Balls,Cervisiam Chocolate Salty Christmas Balls,legacy
+2017,C Dahls store bjørn juleøl,Dahls Store Bjørn Juleøl,legacy
+2017,Grim & Fryt Vinternatt,Grim & Gryt Vinternatt,legacy
+2017,Schaus Juleøl,Schous Juleøl,legacy
+2017,St. Halvard Forjul,St. Hallvards For-Jul,legacy
+2017,St. Halvard Reservejul,St. Hallvards Reserve-Jul,legacy
+2017,Grunerløkkas Julebokk,Grünerløkkas Julebokk,legacy
+2018,Fimafeng,Ægir Fimafeng,legacy
+2018,St. Hallvard For Jul,St. Hallvards For-Jul,legacy
+2018,Aas Premium,Aass Premium,legacy
+2018,Dalhs,Dahls Juleøl,legacy
+2018,Løkka Julebrokk,Løkka Julebokk,legacy
+2018,Scours Juleøl,Schous Juleøl,legacy
+2019,Frederikstad Juleøl,Fredrikstad Juleøl,legacy
+2019,Mack julobok,Mack Julebokk,legacy
+2019,Dahls Juløl,Dahls Juleøl,legacy
+2019,7 sorter chritmas ale - 7 fjell,7 Fjell 7 Sorter Christmas Ale,legacy
+2019,Halvard Klapp på vogna,St. Hallvards 5. Jul på Vogna,legacy

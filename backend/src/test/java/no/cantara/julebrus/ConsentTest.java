@@ -56,7 +56,9 @@ class ConsentTest {
                 .andExpect(jsonPath("$.texts.nb").value(containsString("eXOReaction")))
                 .andExpect(jsonPath("$.texts.en").value(containsString("eXOReaction")))
                 .andExpect(jsonPath("$.texts.nb").value(not(containsString("{contact}"))))
-                .andExpect(jsonPath("$.texts.en").value(containsString("get in touch with the organisers")));
+                .andExpect(jsonPath("$.texts.en").value(containsString("get in touch with the organisers")))
+                .andExpect(jsonPath("$.summary.nb").value(containsString("Kort fortalt")))
+                .andExpect(jsonPath("$.summary.en").value(containsString("In short")));
 
         ConsentSupport.accept(mvc, who);
 

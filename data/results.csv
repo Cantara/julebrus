@@ -21,7 +21,7 @@ year,beer,n_votes,mean_unweighted,mean_weighted,rank,weight_sum
 2003,Aas,14,4.43,4.36,1,
 2003,Lervig,14,3.21,3.21,12,
 2003,Borg,20,3.9,3.86,7,
-2003,Nøgne ø,9,3.33,3.31,11,
+2003,Nøgne Ø,9,3.33,3.31,11,
 2003,Mack,21,4,4.03,3,
 2003,Dahls,15,3.87,3.78,10,
 2003,Fredrikstad,16,3.75,3.79,9,
@@ -65,16 +65,62 @@ year,beer,n_votes,mean_unweighted,mean_weighted,rank,weight_sum
 2007,Mack,1,,3.67,8,
 2007,Fredrikstad,5,,2.89,14,
 2007,Levig,2,,5,1,
-2011,Dahls,7,3.29,3.17,,
+2008,Aass,10,,,,9
+2008,Aass Premium,12,,,,11
+2008,CB,5,,,,4
+2008,Dahl,8,,,,7
+2008,Fredrikstad,7,,,,6.5
+2008,Grans,3,,,,3
+2008,Hansa,9,,,,9
+2008,Hansa Vellagret,9,,,,8
+2008,Lervik,2,,,,2
+2008,Mack Juleøl,11,,,,10
+2008,Nøgne Ø - Underlig jul,6,,,,4.5
+2008,Nøgne Ø - God Jul,5,,,,3.5
+2008,Nissemor,2,,,,1.5
+2008,Nissefar,1,,,,1
+2008,Ringnes,8,,,,7
+2008,Ringnes Julebokk,11,,,,10
+2008,Berentsen Julefnugg,4,,,,4
+2008,Berentsen Jule Avec,2,,,,2
+2008,Borg,4,,,,3.5
+2008,Fenalår Tinde,8,,,,6.5
+2008,Fenalår Bjorli,8,,,,6.5
+2008,Fenalår Grillstad,9,,,,7.5
+2010,Dahls,,2.92,2.81,,10.5
+2010,Aas Juleøl,,3.86,3.63,,8
+2010,Hansa Julebrygg,,3.67,3.41,,8.5
+2010,Borg,,3,2.8,,5
+2010,NøgneØ Underlig jul,,2,1.86,,7
+2010,Hansa juleøl,,3.64,3.55,,11
+2010,Ringnes julebokk,,4.11,4,,9
+2010,Borg Juleøl,,3.2,3,,6
+2010,Aass Juleøl premium,,4.43,4.13,,8
+2010,Nøgne Ø Special Holiday Ale,,5,4,,3
+2010,CB,,3,2.87,,11.5
+2010,Fredrikstad,,3.67,3.5,,10
+2010,Berentsen Julefnugg,,4,3.73,,5.5
+2010,Ægir julebrygg,,4,3.5,,4
+2010,Haandbryggeriet Nissefar,,3.6,3.33,,6
+2010,Berentsen Juleavec,,4.33,4,,7
+2010,Håndbryggeriet Nissemor,,4,3.5,,4
+2010,Ringnes Juleøl Sterk,,3.71,3.5,,8
+2010,Mack Juleøl,,3.75,3.57,,7
+2010,NøgneØ God Jul,,3.5,3.2,,5
+2010,Grans Juleøl,,4,3.71,,7
+2010,fenalår Smedstuen,,4.56,4.22,,9
+2010,Fenalår Aronmat,,3.44,3.44,,9
+2010,fenalår Ringdal,,3.7,3.6,,10
+2011,Dahls Juleøl,7,3.29,3.17,,
 2011,Aass Juleøl,10,3.9,3.76,,
 2011,Hansa Julebrygg,5,4.4,4.4,,
 2011,Borg,4,3.75,3.71,,
-2011,NøgneØ Underlig jul,3,3.33,3.4,,
+2011,Nøgne Ø Underlig Jul,3,3.33,3.4,,
 2011,Hansa juleøl,5,3.4,3.4,,
 2011,Ringnes julebokk,5,3.6,3.6,,
 2011,Lervig Juleøl,1,4,4,,
 2011,Aass Juleøl premium,4,3.75,4,,
-2011,"Hansddbrygggirier, nissefar",1,5,5,,
+2011,Haandbryggeriet Nissefar,1,5,5,,
 2011,CB,4,4.25,4.25,,
 2011,Fredrikstad,3,4,4,,
 2011,Berentsen Julefnugg,4,4.75,4.75,,
@@ -84,23 +130,23 @@ year,beer,n_votes,mean_unweighted,mean_weighted,rank,weight_sum
 2011,Håndbryggeriet Nissemor,2,4,4,,
 2011,Ringnes Juleøl Sterk,6,3,3.09,,
 2011,Mack Juleøl,6,3.67,3.67,,
-2011,NøgneØ God Jul,5,5.4,5.38,,
+2011,Nøgne Ø God Jul,5,5.4,5.38,,
 2011,fenalår Tind (rød),8,4.63,4.54,,
 2011,Fenalår Meny (grønn),7,4.71,4.82,,
 2011,fenalår Rema (hvit),7,4.43,4.64,,
 2011,Vertskapet,,,,,
 2012,Atna Julenisjeøl,2,4.5,,,
-2012,Aass Juleøl Orginal,4,5,,,
+2012,Aass Juleøl Original,4,5,,,
 2012,Ringnes sterk,5,3.6,,,
 2012,Hansa Julebrygg,3,4.33,,,
 2012,Borg,4,4,,,
-2012,NøgneØ Underlig jul,1,4,,,
+2012,Nøgne Ø Underlig Jul,1,4,,,
 2012,Aass Premium,5,3.6,,,
 2012,Ringnes julebokk,2,4.5,,,
 2012,Julefnugg,2,4,,,
 2012,Aass Juleøl premium,0,,,,
 2012,Lervig,2,2,,,
-2012,Dahls,5,3.8,,,
+2012,Dahls Juleøl,5,3.8,,,
 2012,CB,3,2.67,,,
 2012,Bestefar,1,3,,,
 2012,Ægir julebrygg,2,2.5,,,
@@ -109,7 +155,7 @@ year,beer,n_votes,mean_unweighted,mean_weighted,rank,weight_sum
 2012,Håndbryggeriet Nissemor,0,,,,
 2012,Ringnes Juleøl Sterk,1,3,,,
 2012,Mack Juleøl,0,,,,
-2012,NøgneØ God Jul,2,4,,,
+2012,Nøgne Ø God Jul,2,4,,,
 2012,nissefar,2,,,,
 2012,bestefar,1,,,,
 2012,grans lade gaards,2,,,,
@@ -129,7 +175,7 @@ year,beer,n_votes,mean_unweighted,mean_weighted,rank,weight_sum
 2013,Berentsens Julefnugg,7,3.63,3.8,,
 2013,Borg,3,3.25,3.28571,,
 2013,CB,6,2.88,2.84615,,
-2013,Dahls,3,3.5,3.5,,
+2013,Dahls Juleøl,3,3.5,3.5,,
 2013,Fredrikstad,6,3.29,3.27273,,
 2013,Haandbryggeriet Bestefar,5,4.33,4.33333,,
 2013,Haandbryggeriet Halvor's Jul,0,,,,
@@ -166,7 +212,7 @@ year,beer,n_votes,mean_unweighted,mean_weighted,rank,weight_sum
 2014,Borg Juleøl,,,3,,
 2014,CB Juleøl,,,2.5,,
 2014,Dahls Juleøl,,,3,,
-2014,EC Dahls Juleøl,,,3.5,,
+2014,Dahls Juleøl,,,3.5,,
 2014,Fredrikstad Juleøl,,,2.8,,
 2014,Haandbryggeriets Bestefar,,,3.8,,
 2014,Hansa Juleale,,,4.33,,
@@ -187,40 +233,40 @@ year,beer,n_votes,mean_unweighted,mean_weighted,rank,weight_sum
 2014,Schouskjelleren Juleøl,,,2.86,,
 2014,Smedstuen gård (fenalår),,,3.45,,
 2014,Aass  Normal,,,4,,
-2014,Aass Vellagert,,,4,,
+2014,Aass Juleøl Vellagret,,,4,,
 2014,Vossakjøtt (fenalår),,,3.18,,
 2014,Ylir,,,3.33,,
-2014,Rignes Julebokk,,,,,
+2014,Ringnes Julebokk,,,,,
 2015,Hansa Julebrygg,,,3,,
 2015,Fredrikstad,,,4.33,,
 2015,Eiker God Jul,,,1.5,,
 2015,Sagene,,,3.5,,
-2015,Dahls,,,3.43,,
+2015,Dahls Juleøl,,,3.43,,
 2015,Ringnes Sterk,,,3.57,,
 2015,Telemark,,,4,,
 2015,Mack,,,4.14,,
 2015,Austmann Vintersolverv,,,4,,
 2015,Julepynt,,,2,,
-2015,Amundsen Jol,,,2.5,,
+2015,Amundsen Jól,,,2.5,,
 2015,Færder,,,2,,
 2015,Julefnugg,,,4.33,,
 2015,7F 7 Sorter,,,3.33,,
-2015,Nøgne Underlig,,,4,,
-2015,Nøgne God Jul Whisky,,,5,,
+2015,Nøgne Ø Underlig Jul,,,4,,
+2015,Nøgne Ø God Jul Whisky,,,5,,
 2015,Borg,,,3,,
 2015,Hansa Juleale,,,5,,
 2015,Lade Gaard,,,3,,
-2015,Lervigs Jul,,,5,,
+2015,Lervig's Jul,,,5,,
 2015,Bad Santa,,,1,,
 2015,Aass Premium,,,3.5,,
 2015,CB,,,4,,
 2015,Ylir 2015,,,5,,
 2015,Aass Vellagret,,,4.71,,
-2015,Rignes Julebokk,,,4,,
+2015,Ringnes Julebokk,,,4,,
 2015,Hansa Juleøl,,,3,,
 2015,Nissefar,,,4.33,,
-2015,Nøgne Rød Jul,,,4,,
-2015,Nøgne God Jul,,,4,,
+2015,Nøgne Ø Rød Jul,,,4,,
+2015,Nøgne Ø God Jul,,,4,,
 2015,Klostergaarden 7 Sorter,,,4.5,,
 2015,Smestadstuen,,,4,,
 2015,Nordfjord,,,4,,
@@ -230,20 +276,20 @@ year,beer,n_votes,mean_unweighted,mean_weighted,rank,weight_sum
 2015,Stjerneskudd Krydret Juleale,,,5,,
 2016,Haand Halvors Jul,,,6,,
 2016,Vossakjøt,,,5.5,,
-2016,Aas Vellagret,,,5,,
+2016,Aass Juleøl Vellagret,,,5,,
 2016,Ægir Ylir,,,5,,
 2016,Hansa Jule Ale,,,5,,
-2016,NisseKjesk,,,5,,
-2016,Roros – mork lager,,,5,,
-2016,St Hallvards Reserve Jul,,,5,,
+2016,Qvart Nissekjesk,,,5,,
+2016,Røros Mørk Lager,,,5,,
+2016,St. Hallvards Reserve-Jul,,,5,,
 2016,Wettres15,,,5,,
-2016,Hansa Jul Øl,,,4.66667,,
+2016,Hansa Juleøl,,,4.66667,,
 2016,Sinterklaas,,,4.66667,,
 2016,Færder,,,4.33333,,
 2016,Mack Julebocken Bruse,,,4.33333,,
-2016,Haand Nisse Mor Brygg,,,4.28571,,
+2016,Haandbryggeriet Nissemor,,,4.28571,,
 2016,Aass P,,,4.25,,
-2016,Dahls Jul Øl,,,4.25,,
+2016,Dahls Juleøl,,,4.25,,
 2016,7 Sorter,,,4,,
 2016,AJA Saison,,,4,,
 2016,Færder >Myrra,,,4,,
@@ -255,30 +301,30 @@ year,beer,n_votes,mean_unweighted,mean_weighted,rank,weight_sum
 2016,Jul På Tonga,,,4,,
 2016,lervig,,,4,,
 2016,mikrobyggeriet,,,4,,
-2016,Qvart Juleskjesk grønn,,,4,,
-2016,Rignes bokk,,,4,,
+2016,Qvart Julekjesk grønn,,,4,,
+2016,Ringnes Julebokk,,,4,,
 2016,Ringnes juleøl,,,4,,
 2016,Mack God Jul,,,3.875,,
 2016,Kinn Julefred,,,3.85714,,
 2016,haand nissefar,,,3.66667,,
-2016,nøgne ø rod jul,,,3.57143,,
+2016,Nøgne Ø Rød Jul,,,3.57143,,
 2016,Fredrikstad,,,3.5,,
-2016,Sagne sterk jul,,,3.33333,,
+2016,Sagene Sterk Jul,,,3.33333,,
 2016,Ægir Ylir 2015,,,3,,
 2016,Bad Santa,,,3,,
 2016,CB,,,3,,
 2016,Eld,,,3,,
 2016,Lindheim 1000 days,,,3,,
 2016,Qvart,,,3,,
-2016,Qvart Juleskjesk rod,,,3,,
+2016,Qvart Julekjesk rød,,,3,,
 2016,schous,,,3,,
 2016,Ugly Duck Ugly Xmas,,,3,,
 2016,Vinternatt Grim & Gryt,,,3,,
 2016,Wettres16,,,2.66667,,
-2016,Bådin Tussvatnett,,,2,,
+2016,Bådin Tussvatnet,,,2,,
 2016,Berentsens,,,2,,
 2016,Borg,,,2,,
-2016,Dahls Store Bjorn,,,2,,
+2016,Dahls Store Bjørn Juleøl,,,2,,
 2016,Jacobs Kjøt,,,2,,
 2016,Tonga,,,2,,
 2016,Trondheim Mikrobyggeriet,,,2,,
@@ -291,21 +337,21 @@ year,beer,n_votes,mean_unweighted,mean_weighted,rank,weight_sum
 2017,Aass Premium Juleøl,,,3.75,,6
 2017,Ægir Eldir,,,3.5,,2
 2017,Amundsen Rebel King Christmas,,,4,,1
-2017,Bådom Tussvatnet,,,4,,2
-2017,Berntsens Julefnugg,,,3.8,,2.5
+2017,Bådin Tussvatnet,,,4,,2
+2017,Berentsens Julefnugg,,,3.8,,2.5
 2017,Borg Juleøl,,,4,,1.5
 2017,Bryggerhuset Kokosmakronstout,,,4,,0.5
 2017,Bryggerhuset Lussekat-Trippel,,,2,,0.5
 2017,CB Juleøl,,,4,,3.5
-2017,Cervisiam Chocoloate Salty Christmas  Balls,,,6,,1
+2017,Cervisiam Chocolate Salty Christmas Balls,,,6,,1
 2017,Dahls Juleøl,,,4,,1
 2017,Dragur Sur Jul,,,5,,1
-2017,C Dahls store bjørn juleøl,,,1,,1
+2017,Dahls Store Bjørn Juleøl,,,1,,1
 2017,Eiker God Jul,,,4.33333,,1.5
 2017,ELØ Julebokk,,,4,,1
 2017,Erdinger Schneeweiss,,,4.5,,0.5
 2017,Fredrikstad Juleøl,,,3.3,,5
-2017,Grim & Fryt Vinternatt,,,4,,0.5
+2017,Grim & Gryt Vinternatt,,,4,,0.5
 2017,Haandbryggeriet Fatlagret Nissemor,,,3,,1
 2017,Håndbryggeriet Bestefar,,,3.33333,,3
 2017,Hansa Julebrygg,,,4,,1
@@ -328,10 +374,10 @@ year,beer,n_votes,mean_unweighted,mean_weighted,rank,weight_sum
 2017,Ringnes Julebokk,,,4.5,,2
 2017,Ringnes Juleøl,,,3.66667,,3
 2017,Røros Mørk Lager,,,5,,1
-2017,Schaus Juleøl,,,3,,2
+2017,Schous Juleøl,,,3,,2
 2017,Små Vesen Jolereia Joleøl frå Valdres,,,2,,1
-2017,St. Halvard Forjul,,,3.5,,2
-2017,St. Halvard Reservejul,,,3,,1
+2017,St. Hallvards For-Jul,,,3.5,,2
+2017,St. Hallvards Reserve-Jul,,,3,,1
 2017,Telemark Juleøl,,,5.42857,,3.5
 2017,Test,,,2,,1
 2017,Ugly Duck Brewing Company Happy Christmas,,,3,,0.5
@@ -341,21 +387,21 @@ year,beer,n_votes,mean_unweighted,mean_weighted,rank,weight_sum
 2017,Dronebygg Kirsebærakvarell,,,5,,1
 2017,AJA Bryggeri Juovla-Stout,,,4,,1
 2017,Berntsens The Holy Book,,,3,,1
-2017,Grunerløkkas Julebokk,,,4,,1
+2017,Grünerløkkas Julebokk,,,4,,1
 2018,Harstad,,,5,,2
-2018,Fimafeng,,,2.66667,,3
+2018,Ægir Fimafeng,,,2.66667,,3
 2018,Evens More XMas,,,2,,1
 2018,Eldir,,,6,,1
-2018,St. Hallvard For Jul,,,3.5,,2
+2018,St. Hallvards For-Jul,,,3.5,,2
 2018,Advent Julelager,,,4,,0.5
 2018,Harstad Trippel,,,5,,1
 2018,Berentsen Julefnugg,,,3,,1
-2018,Aas Premium,,,3.75,,4
-2018,Dalhs,,,4.8,,2.5
+2018,Aass Premium,,,3.75,,4
+2018,Dahls Juleøl,,,4.8,,2.5
 2018,Hansa Juleøl,,,3,,1
 2018,Ego Pale Ale Juleøl,,,2,,1
 2018,Haand Nissefar,,,3,,1
-2018,Løkka Julebrokk,,,4.5,,2
+2018,Løkka Julebokk,,,4.5,,2
 2018,Ægir Kveite Witbier,,,5,,0.5
 2018,Hansa Julebrygg,,,4,,1
 2018,Mack Juleøl,,,4,,2
@@ -372,30 +418,30 @@ year,beer,n_votes,mean_unweighted,mean_weighted,rank,weight_sum
 2018,Haand Nissemor,,,,,1
 2018,Sagene sterk jul,,,,,1
 2018,Ølkymisten Gingerbread Maniac,,,,,1
-2018,Scours Juleøl,,,,,1
+2018,Schous Juleøl,,,,,1
 2018,CB Juleøl,,,,,1
 2019,Berentsens Julefnugg,,,3,,1
-2019,Frederikstad Juleøl,,,3,,2
+2019,Fredrikstad Juleøl,,,3,,2
 2019,Lervig Naughty & Nice,,,5,,1
 2019,Ægir Fimafeng,,,4,,1
 2019,Kinn Tomasmesse,,,3,,2
 2019,Løkka Jul,,,3.5,,2
 2019,Kvit Jul,,,3,,2
 2019,Red & Wheat X-mas,,,4,,1
-2019,Mack julobok,,,3,,2
+2019,Mack Julebokk,,,3,,2
 2019,Direktørens jul,,,2,,1
 2019,Ringnes julebokk,,,4,,1
 2019,Aass juleøl,,,3,,1
 2019,Borg Juleøl,,,4,,1
-2019,Dahls Juløl,,,4.5,,2
+2019,Dahls Juleøl,,,4.5,,2
 2019,Christmas Crush,,,4,,2
 2019,Hansa Juløl,,,3,,1
 2019,Fjord Folk Julelager,,,3.66667,,1.5
 2019,OMA Juleøl,,,4,,2.5
-2019,7 sorter chritmas ale - 7 fjell,,,3.6,,2.5
+2019,7 Fjell 7 Sorter Christmas Ale,,,3.6,,2.5
 2019,Ringnes juleøl,,,4,,1
 2019,Cervisiam C.H.U.D,,,6,,2
-2019,Halvard Klapp på vogna,,,3,,1
+2019,St. Hallvards 5. Jul på Vogna,,,3,,1
 2019,Sagene Sterk Jul,,,5,,1
 2019,Aass vellagret,,,4,,1
 2019,Kraftig Juling,,,1,,1

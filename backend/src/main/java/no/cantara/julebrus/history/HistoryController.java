@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -97,6 +98,69 @@ public class HistoryController {
         return ratings.summariseRaters().stream()
                 .map(r -> new RaterView(r.raterKey(), r.raterEmail() != null, r.ratings(), r.firstYear(), r.lastYear()))
                 .toList();
+    }
+
+    /**
+     * One beer across every recorded season: all its votes on 1–6, weighted as each year weighted
+     * them, shrunk towards the all-time mean the same way the season ranking is (prior weight 5
+     * votes) so a beer with a handful of votes does not top the list on luck.
+     */
+    public record AllTimeRow(int rank, String beerName, String brewery, List<Integer> years, long ratings,
+                             double weightSum, double mean, double bayesian, int bestYear, double bestMean) {
+    }
+
+    /** Beers with at least {@code min} votes over the years, best first. */
+    @GetMapping("/alltime")
+    public List<AllTimeRow> allTime(@RequestParam(defaultValue = "5") int min) {
+        return allTime(ratings.findAll(), seasonIndex(), Math.max(1, min));
+    }
+
+    static List<AllTimeRow> allTime(List<HistoricRating> all, Map<Integer, HistoricSeason> byYear, int min) {
+        record Vote(String name, String brewery, int year, double score, double weight) {
+        }
+        List<Vote> votes = all.stream().map(r -> {
+            HistoricSeason s = byYear.get(r.getSeasonYear());
+            double score = s == null ? r.getScore().doubleValue() : s.normalise(r.getScore());
+            return new Vote(r.getBeerName(), r.getBrewery(), r.getSeasonYear(), score, r.getWeight().doubleValue());
+        }).toList();
+        double totalW = votes.stream().mapToDouble(Vote::weight).sum();
+        double allTimeMean = totalW == 0 ? 3.5 : votes.stream().mapToDouble(v -> v.score() * v.weight()).sum() / totalW;
+        var bayes = new no.cantara.julebrus.stats.BayesianAverage(allTimeMean, 5.0);
+        Map<String, List<Vote>> perBeer = votes.stream().collect(Collectors.groupingBy(v -> v.name().toLowerCase(java.util.Locale.ROOT),
+                java.util.LinkedHashMap::new, Collectors.toList()));
+        List<AllTimeRow> rows = new ArrayList<>();
+        for (List<Vote> vs : perBeer.values()) {
+            if (vs.size() < min) continue;
+            double w = vs.stream().mapToDouble(Vote::weight).sum();
+            if (w == 0) continue;
+            double sum = vs.stream().mapToDouble(v -> v.score() * v.weight()).sum();
+            Map<Integer, List<Vote>> perYear = vs.stream().collect(Collectors.groupingBy(Vote::year, java.util.TreeMap::new, Collectors.toList()));
+            int bestYear = 0;
+            double bestMean = -1;
+            for (var e : perYear.entrySet()) {
+                double yw = e.getValue().stream().mapToDouble(Vote::weight).sum();
+                if (yw == 0) continue;
+                double ym = e.getValue().stream().mapToDouble(v -> v.score() * v.weight()).sum() / yw;
+                if (ym > bestMean) {
+                    bestMean = ym;
+                    bestYear = e.getKey();
+                }
+            }
+            Vote first = vs.get(0);
+            String brewery = vs.stream().map(Vote::brewery).filter(b -> b != null && !b.isBlank()).findFirst().orElse(null);
+            rows.add(new AllTimeRow(0, first.name(), brewery, List.copyOf(perYear.keySet()), vs.size(),
+                    Math.round(w * 100) / 100.0, Math.round(sum / w * 100) / 100.0, Math.round(bayes.of(sum, w) * 1000) / 1000.0,
+                    bestYear, Math.round(bestMean * 100) / 100.0));
+        }
+        rows.sort(java.util.Comparator.comparingDouble(AllTimeRow::bayesian).reversed()
+                .thenComparing(java.util.Comparator.comparingDouble(AllTimeRow::weightSum).reversed()).thenComparing(AllTimeRow::beerName));
+        List<AllTimeRow> ranked = new ArrayList<>();
+        for (int i = 0; i < rows.size(); i++) {
+            AllTimeRow r = rows.get(i);
+            ranked.add(new AllTimeRow(i + 1, r.beerName(), r.brewery(), r.years(), r.ratings(), r.weightSum(), r.mean(), r.bayesian(),
+                    r.bestYear(), r.bestMean()));
+        }
+        return ranked;
     }
 
     /** One row per season with its size and winner, for the history page and its charts. */
