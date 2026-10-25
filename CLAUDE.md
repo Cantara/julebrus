@@ -2,7 +2,7 @@
 
 ## Purpose
 Cantaras digitale juleølsmaking: a season-long (1 Nov – 23 Dec) Christmas beer tasting
-app. Max 5 tastings per person per day, max 5 solo tasting days, groups formed by QR
+app. Max 5 tastings per person per day (12 at a table of 8 or more), max 5 solo tasting days, groups formed by QR
 code, scores 1–6, blind reveal within a group, pairwise duels as a sidebar ranking,
 badges, and imported historic seasons. See DESIGN.md for rules and decisions.
 

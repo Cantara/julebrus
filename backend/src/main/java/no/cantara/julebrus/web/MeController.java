@@ -18,7 +18,8 @@ import java.util.UUID;
 @RestController
 public class MeController {
 
-    public record Season(int year, LocalDate start, LocalDate end, int maxTastingsPerDay, int maxSoloDays) {
+    public record Season(int year, LocalDate start, LocalDate end, int maxTastingsPerDay, int maxSoloDays,
+                         int bigTableSize, int maxTastingsPerDayBigTable) {
     }
 
     public record Weight(double weight, String reason) {
@@ -90,7 +91,8 @@ public class MeController {
                     }).orElse(null);
         }
         return new Me(u.getId(), u.getEmail(), u.getDisplayName(), tastings.status(u.getId()),
-                new Season(season.year(), season.start(), season.end(), season.maxTastingsPerDay(), season.maxSoloDays()),
+                new Season(season.year(), season.start(), season.end(), season.maxTastingsPerDay(), season.maxSoloDays(),
+                        season.bigTableSize(), season.maxTastingsPerDayBigTable()),
                 weight, auth.isAdmin(u.getEmail()),
                 !consented, ConsentService.CONSENT_VERSION, mine, u.getTeamsChosenAt() != null, open);
     }

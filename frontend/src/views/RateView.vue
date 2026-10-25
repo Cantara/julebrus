@@ -39,7 +39,7 @@ onMounted(async () => {
 
 const RULE_TEXT: Record<string, string> = {
   OUTSIDE_SEASON: 'Sesongen er ikke i gang. 1. november til 23. desember.',
-  DAILY_LIMIT: 'Fem er nok for i dag. Palaten takker deg i morgen.',
+  DAILY_LIMIT: 'Nok for i dag. Palaten takker deg i morgen. Fem er grensen, tolv ved et bord med åtte eller flere.',
   SOLO_DAYS_EXHAUSTED: 'Alle solo-dagene er brukt opp. Finn noen å smake med.',
   ALREADY_RATED: 'Du har allerede gitt dette ølet terningkast.',
   HOMEBREW_NEEDS_GROUP: 'Hjemmebrygg smakes bare rundt bord med mer enn fem. Få flere til bordet først.',

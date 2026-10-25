@@ -24,8 +24,9 @@ import java.util.UUID;
 @Service
 public class TastingService {
 
+    /** {@code maxPerDay} is the limit that applies right now: the big-table one while the person sits at an open big table. */
     public record Status(LocalDate today, int tastingsToday, int maxPerDay, int soloDaysUsed, int maxSoloDays,
-                         boolean inSeason) {
+                         boolean inSeason, boolean bigTable) {
     }
 
     private final TastingRepository tastings;
@@ -56,7 +57,6 @@ public class TastingService {
         if (beer.getStatus() == Beer.Status.REJECTED) {
             throw new ApiException(HttpStatus.UNPROCESSABLE_ENTITY, "BEER_REJECTED", "That beer was rejected by the organisers");
         }
-        boolean solo = true;
         int tableSize = 1;
         if (sessionId != null) {
             TastingSession session = sessions.findById(sessionId)
@@ -64,7 +64,6 @@ public class TastingService {
             if (!session.isMember(userId)) throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Not a member");
             if (!session.isOpen()) throw new ResponseStatusException(HttpStatus.GONE, "Session is closed");
             if (!session.hasBeer(beerId)) throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, "Beer is not in this session");
-            solo = session.isSolo();
             tableSize = session.getMembers().size();
         }
         // Homebrew is rated only at a table of more than five, so nobody scores their own in a quiet corner.
@@ -79,7 +78,7 @@ public class TastingService {
                 tastings.countByUserIdAndTastedDay(userId, day),
                 new HashSet<>(tastings.findSoloDays(userId)),
                 tastings.existsByUserIdAndBeerId(userId, beerId));
-        rules.check(now, solo, ledger);
+        rules.check(now, tableSize, ledger);
 
         Tasting saved = tastings.save(new Tasting(userId, beerId, sessionId, score, prediction, notes, structured, tags, now, day));
         events.publish(sessionId, SessionEvents.Kind.TASTING);
@@ -89,9 +88,11 @@ public class TastingService {
     @Transactional(readOnly = true)
     public Status status(UUID userId) {
         LocalDate today = rules.dayOf(clock.instant());
+        boolean bigTable = sessions.findByMember(userId).stream()
+                .anyMatch(s -> s.isOpen() && season.isBigTable(s.getMembers().size()));
         return new Status(today,
-                tastings.countByUserIdAndTastedDay(userId, today), season.maxTastingsPerDay(),
+                tastings.countByUserIdAndTastedDay(userId, today), season.maxTastingsPerDay(bigTable ? season.bigTableSize() : 1),
                 tastings.findSoloDays(userId).size(), season.maxSoloDays(),
-                rules.inSeason(today));
+                rules.inSeason(today), bigTable);
     }
 }

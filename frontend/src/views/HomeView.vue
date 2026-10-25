@@ -191,7 +191,7 @@ const dayOfSeason = computed(() => {
 
   <div v-if="store.me" class="card">
     <strong class="display">Hei, {{ store.me.displayName }}</strong>
-    <p class="muted" style="margin: 8px 0 0">I dag</p>
+    <p class="muted" style="margin: 8px 0 0">I dag<template v-if="store.me.status.bigTable"> · stort bord, {{ store.me.status.maxPerDay }} i kveld</template></p>
     <LightsMeter :lit="store.me.status.tastingsToday" :total="store.me.status.maxPerDay" tone="warm" label="Smakinger i dag" />
     <p class="muted" style="margin: 8px 0 0">Solo-dager</p>
     <LightsMeter :lit="store.me.status.soloDaysUsed" :total="store.me.status.maxSoloDays" tone="solo" label="Solo-dager brukt" />

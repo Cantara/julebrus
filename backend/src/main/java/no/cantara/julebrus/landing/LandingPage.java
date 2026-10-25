@@ -299,7 +299,10 @@ public final class LandingPage {
                 l("Følger juleølslippet. Vinduet håndheves på serveren: ingenting kan scores før eller etter.",
                         "Follows the juleøl release. The window is enforced on the server: nothing can be scored before or after."));
         rule(h, l("Per dag", "Per day"), l("Høyst " + season.maxTastingsPerDay() + " smakinger per person", "At most " + season.maxTastingsPerDay() + " tastings per person"),
-                l("Ekte glass og frisk gane. En dag er en kalenderdag i Oslo.", "Real pours and a fresh palate. A day is a calendar day in Oslo."));
+                l("Ekte glass og frisk gane. En dag er en kalenderdag i Oslo. Ved et bord med " + season.bigTableSize() + " eller flere er grensen "
+                                + season.maxTastingsPerDayBigTable() + ", for et selskap er en annen kveld.",
+                        "Real pours and a fresh palate. A day is a calendar day in Oslo. At a table of " + season.bigTableSize() + " or more the limit is "
+                                + season.maxTastingsPerDayBigTable() + ", because a party is a different evening."));
         rule(h, l("Alene", "Solo"), l("Høyst " + season.maxSoloDays() + " solodager", "At most " + season.maxSoloDays() + " solo days"),
                 l("Smakingen skal skje sammen med andre. Det er hele poenget.", "The tasting is meant to happen in company. That is the point."));
         rule(h, l("Hva teller", "What counts"), l("Juleøl fra Vinmonopolet, over " + abv(), "Juleøl from Vinmonopolet, above " + abv()),

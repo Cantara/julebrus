@@ -1,10 +1,13 @@
 export interface Status {
   today: string
   tastingsToday: number
+  /** the limit that applies right now: the big-table one while sitting at an open big table */
   maxPerDay: number
   soloDaysUsed: number
   maxSoloDays: number
   inSeason: boolean
+  /** sitting at an open table of bigTableSize or more */
+  bigTable: boolean
 }
 
 export interface Me {
@@ -12,7 +15,15 @@ export interface Me {
   email: string
   displayName: string
   status: Status
-  season: { year: number; start: string; end: string; maxTastingsPerDay: number; maxSoloDays: number }
+  season: {
+    year: number
+    start: string
+    end: string
+    maxTastingsPerDay: number
+    maxSoloDays: number
+    bigTableSize: number
+    maxTastingsPerDayBigTable: number
+  }
   /** absent until the person has consented */
   weight: { weight: number; reason: string } | null
   admin: boolean
