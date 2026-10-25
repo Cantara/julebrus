@@ -65,7 +65,7 @@ public class McpTools {
     public List<McpServerFeatures.SyncToolSpecification> specifications() {
         return List.of(
                 tool("list_seasons",
-                        "Every recorded season of Cantara's Christmas beer tasting (1998 onwards): size, winner, weighting and source. Years with no surviving votes are absent.",
+                        "Every recorded season of the Christmas beer tasting (the tasting began in 1992; votes are recorded from 1998 onwards): size, winner, weighting and source. Years with no surviving votes are absent.",
                         noArgs(), args -> history.overview()),
                 tool("season_results",
                         "The ranked result list of one earlier season, weighted as it was that year. Scores are on each season's own scale (all 1-6 so far).",

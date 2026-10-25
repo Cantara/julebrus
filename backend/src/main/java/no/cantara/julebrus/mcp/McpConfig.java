@@ -37,7 +37,7 @@ public class McpConfig {
                                    org.springframework.core.env.Environment env) {
         return McpServer.sync(transport)
                 .serverInfo("julebrus", env.getProperty("app.version", "0.1.0"))
-                .instructions("Cantara's Christmas beer tasting: history since 1998 and the running season. "
+                .instructions("The Christmas beer tasting (begun 1992 at HIS in Stavanger, a #puben event from 1998, a Cantara event since 2014): recorded history from 1998 and the running season. "
                         + "All tools are read-only. Scores are dice 1-6. Use list_seasons first to see which years exist.")
                 .capabilities(McpSchema.ServerCapabilities.builder().tools(true).build())
                 .tools(tools.specifications())

@@ -1,6 +1,6 @@
 # Historic juleøl test data
 
-The history of the Cantara juleøl (Christmas beer) tests: who voted what, per beer, per year. The scores come from the Cantara wiki (`#puben` space,
+The history of the juleøl (Christmas beer) tests: who voted what, per beer, per year. The tasting began in 1992 as a student event at Høgskolesenteret i Stavanger (HIS), ran as a #puben event from 1998 and has been a Cantara event since 2014; the votes that survive start in 1998. The scores come from the Cantara wiki (`#puben` space,
 https://wiki.cantara.no, now https://cantara.github.io/wiki), from the Google Sheets the wiki pages link,
 and from the Internet Archive.
 
