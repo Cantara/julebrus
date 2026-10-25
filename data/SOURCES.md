@@ -82,6 +82,13 @@ Votes typed outside the scored block are not in the data: in the 2017 sheet two 
 four on rows in the catalogue of untasted beers below the block (all four on beers that are also listed in the block,
 three of them under a slightly different name); in the 2018 sheet three votes on rows without a stated vote weight ("Sagene Juleøl", "Færder").
 
+## Checked against the original files (2026-10-25)
+
+- 2007: `Juleøl 2007.xlsx` (the file the wiki page was made from) agrees with data/votes.csv in every cell: 13 voters, 99 votes, the same weights and names.
+- 2016: `votes.ods` (the sheet's own matrix, 15 voters) reproduces the aggregate in results.csv for all 40 beers whose names match, and the 14 renamed ones pair by
+  weighted mean and vote count; Eirik has one extra vote in a second "7 Sorter" column. NOT imported yet: 2016 is still an aggregate in the repository.
+- Names decided by the owner: "Redhead" is Arild, "Stig" is Stig Lau (history/raters.csv); plain "Kjetil" is a different person from "Kjetil J. D." (both voted in 2010).
+
 ## Beer name corrections
 
 Confirmed spelling and diacritic errors in beer names are corrected in the sources themselves (commit a8a00be,

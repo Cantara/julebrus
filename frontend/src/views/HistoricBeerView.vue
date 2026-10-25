@@ -6,22 +6,25 @@
  */
 import { computed, onMounted, ref, watch } from 'vue'
 import { get } from '../api/client'
-import type { AllTimeRow, Beer, HistoricRating } from '../api/types'
+import type { AllTimeRow, Beer, FactTier, HistoricFact, HistoricRating } from '../api/types'
 
 const props = defineProps<{ name: string }>()
 const rows = ref<HistoricRating[]>([])
 const allTime = ref<AllTimeRow[]>([])
 const current = ref<Beer | null>(null)
+const facts = ref<HistoricFact[]>([])
 const loaded = ref(false)
 
 async function load() {
   loaded.value = false
   const name = props.name
-  const [r, a, beers] = await Promise.all([
+  const [r, a, beers, f] = await Promise.all([
     get<HistoricRating[]>(`/api/history/beers?name=${encodeURIComponent(name)}`).catch(() => []),
     get<AllTimeRow[]>('/api/history/alltime?min=1').catch(() => []),
     get<Beer[]>(`/api/beers?q=${encodeURIComponent(name)}`).catch(() => []),
+    get<HistoricFact[]>(`/api/history/beers/facts?name=${encodeURIComponent(name)}`).catch(() => []),
   ])
+  facts.value = f
   rows.value = r
   allTime.value = a
   current.value = beers.find((b) => b.name.localeCompare(name, undefined, { sensitivity: 'accent' }) === 0 && b.status !== 'REJECTED') ?? null
@@ -31,6 +34,19 @@ onMounted(load)
 watch(() => props.name, load)
 
 const brewery = computed(() => rows.value.find((r) => r.brewery)?.brewery ?? null)
+
+// How sure the match is, said in words. Only a person's decision is called confirmed.
+const TIER: Record<FactTier, { label: string; note: string }> = {
+  CONFIRMED: { label: 'Bekreftet', note: 'En arrangør har sagt at dette er ølet.' },
+  MATCHED: { label: 'Treff', note: 'Navnet står slik i Polets liste.' },
+  PROBABLE: { label: 'Sannsynlig', note: 'Maskinen og en gjennomgang tror det er dette, men ingen arrangør har bekreftet det.' },
+  GUESS: { label: 'Gjetning', note: 'Mest sannsynlig dette ølet ut fra navnet, men en gjetning. Ingen arrangør har bekreftet det.' },
+}
+const nb = (n: number) => n.toLocaleString('nb-NO')
+const kr = (n: number) => n.toLocaleString('nb-NO', { minimumFractionDigits: Number.isInteger(n) ? 0 : 2 })
+function listed(years: number[]) {
+  return years.length > 6 ? `${years[0]}–${years[years.length - 1]} (${years.length} år)` : years.join(', ')
+}
 const mine = computed(() => allTime.value.find((r) => r.beerName.localeCompare(props.name, undefined, { sensitivity: 'accent' }) === 0) ?? null)
 const ranked = computed(() => allTime.value.filter((r) => r.ratings >= 5))
 const rankAmongRanked = computed(() => {
@@ -60,6 +76,24 @@ const byYear = computed(() => {
     </div>
     <span class="muted">›</span>
   </router-link>
+
+  <div v-for="f in facts" :key="f.tier + f.productName" class="card">
+    <div class="row" style="align-items: baseline">
+      <strong class="display">{{ f.productName }}</strong>
+      <span class="pill" :class="{ on: f.tier === 'CONFIRMED' || f.tier === 'MATCHED' }">{{ TIER[f.tier].label }}</span>
+    </div>
+    <div class="muted">{{ TIER[f.tier].note }} Gjelder stemmene fra {{ f.years.join(', ') }}.</div>
+    <ul style="margin: 8px 0 0; padding-left: 18px">
+      <li v-if="f.abvPercent.length">Alkohol: {{ f.abvPercent.map((a) => nb(a) + ' %').join(' / ') }}</li>
+      <li v-if="f.brewery">Bryggeri: {{ f.brewery }}</li>
+      <li v-if="f.style">Stil: {{ f.style }}</li>
+      <li v-if="f.listedYears.length">På Polets julelister: {{ listed(f.listedYears) }}</li>
+      <li v-if="f.latestPriceNok != null">Pris {{ f.latestPriceYear }}: {{ kr(f.latestPriceNok) }} kr</li>
+      <li v-if="f.poletUrl"><a :href="f.poletUrl" target="_blank" rel="noopener">Se produktet hos Vinmonopolet</a></li>
+      <li v-else-if="f.articleNos.length > 1">Flere varenumre: {{ f.articleNos.join(', ') }}</li>
+    </ul>
+    <p class="muted" style="margin: 8px 0 0">Dette er produktet slik Polet lister det. Oppskriften kan ha endret seg siden den gang.</p>
+  </div>
 
   <div v-if="mine" class="card">
     <div class="row" style="align-items: baseline">

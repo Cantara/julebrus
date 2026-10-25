@@ -39,20 +39,22 @@ public class HistoryController {
 
     /** One beer in one season: weighted mean on the original scale and on 1–6. */
     public record BeerSeasonView(int year, String beerName, String brewery, long ratings, double weightedMean,
-                                 double normalisedMean) {
+                                 double normalisedMean, boolean nonBeer) {
     }
 
     private final HistoricSeasonRepository seasons;
     private final HistoricRatingRepository ratings;
     private final CurrentUser currentUser;
     private final ClaimService claims;
+    private final NonBeers nonBeers;
 
     public HistoryController(HistoricSeasonRepository seasons, HistoricRatingRepository ratings, CurrentUser currentUser,
-                             ClaimService claims) {
+                             ClaimService claims, NonBeers nonBeers) {
         this.seasons = seasons;
         this.ratings = ratings;
         this.currentUser = currentUser;
         this.claims = claims;
+        this.nonBeers = nonBeers;
     }
 
     @GetMapping("/seasons")
@@ -85,11 +87,19 @@ public class HistoryController {
 
     /** A season's result list, weighted the way it was weighted at the time. */
     @GetMapping("/seasons/{year}")
-    public List<BeerSeasonView> season(@PathVariable int year) {
+    public List<BeerSeasonView> season(@PathVariable int year, @RequestParam(defaultValue = "false") boolean includeNonBeer) {
         HistoricSeason season = seasons.findById(year)
                 .orElseThrow(() -> new org.springframework.web.server.ResponseStatusException(
                         org.springframework.http.HttpStatus.NOT_FOUND));
-        return seasonResults(season, ratings.findBySeasonYearOrderByBeerNameAsc(year));
+        NonBeers.Judge judge = nonBeers.judge();
+        List<HistoricRating> rows = ratings.findBySeasonYearOrderByBeerNameAsc(year).stream()
+                .filter(r -> includeNonBeer || !judge.isNonBeer(year, r.getBeerName())).toList();
+        return seasonResults(season, rows, judge);
+    }
+
+    /** The season's results without the cured meat and the hosts (what the tasting is about). */
+    public List<BeerSeasonView> season(int year) {
+        return season(year, false);
     }
 
     /** Who has tasted over the years, joined by raters.csv. Emails are not exposed. */
@@ -106,13 +116,27 @@ public class HistoryController {
      * votes) so a beer with a handful of votes does not top the list on luck.
      */
     public record AllTimeRow(int rank, String beerName, String brewery, List<Integer> years, long ratings,
-                             double weightSum, double mean, double bayesian, int bestYear, double bestMean) {
+                             double weightSum, double mean, double bayesian, int bestYear, double bestMean,
+                             boolean nonBeer) {
     }
 
     /** Beers with at least {@code min} votes over the years, best first. */
     @GetMapping("/alltime")
-    public List<AllTimeRow> allTime(@RequestParam(defaultValue = "5") int min) {
-        return allTime(ratings.findAll(), seasonIndex(), Math.max(1, min));
+    public List<AllTimeRow> allTime(@RequestParam(defaultValue = "5") int min,
+                                    @RequestParam(defaultValue = "false") boolean includeNonBeer) {
+        NonBeers.Judge judge = nonBeers.judge();
+        List<HistoricRating> all = ratings.findAll().stream()
+                .filter(r -> includeNonBeer || !judge.isNonBeer(r.getSeasonYear(), r.getBeerName())).toList();
+        List<AllTimeRow> rows = allTime(all, seasonIndex(), Math.max(1, min));
+        if (!includeNonBeer) return rows;
+        return rows.stream().map(r -> judge.isNonBeerInAny(r.years(), r.beerName())
+                ? new AllTimeRow(r.rank(), r.beerName(), r.brewery(), r.years(), r.ratings(), r.weightSum(), r.mean(), r.bayesian(),
+                r.bestYear(), r.bestMean(), true) : r).toList();
+    }
+
+    /** The all-time list of beers only (the MCP tool and the default view). */
+    public List<AllTimeRow> allTime(int min) {
+        return allTime(min, false);
     }
 
     static List<AllTimeRow> allTime(List<HistoricRating> all, Map<Integer, HistoricSeason> byYear, int min) {
@@ -150,7 +174,7 @@ public class HistoryController {
             String brewery = vs.stream().map(Vote::brewery).filter(b -> b != null && !b.isBlank()).findFirst().orElse(null);
             rows.add(new AllTimeRow(0, first.name(), brewery, List.copyOf(perYear.keySet()), vs.size(),
                     Math.round(w * 100) / 100.0, Math.round(sum / w * 100) / 100.0, Math.round(bayes.of(sum, w) * 1000) / 1000.0,
-                    bestYear, Math.round(bestMean * 100) / 100.0));
+                    bestYear, Math.round(bestMean * 100) / 100.0, false));
         }
         rows.sort(java.util.Comparator.comparingDouble(AllTimeRow::bayesian).reversed()
                 .thenComparing(java.util.Comparator.comparingDouble(AllTimeRow::weightSum).reversed()).thenComparing(AllTimeRow::beerName));
@@ -158,7 +182,7 @@ public class HistoryController {
         for (int i = 0; i < rows.size(); i++) {
             AllTimeRow r = rows.get(i);
             ranked.add(new AllTimeRow(i + 1, r.beerName(), r.brewery(), r.years(), r.ratings(), r.weightSum(), r.mean(), r.bayesian(),
-                    r.bestYear(), r.bestMean()));
+                    r.bestYear(), r.bestMean(), false));
         }
         return ranked;
     }
@@ -169,15 +193,22 @@ public class HistoryController {
                                  String weightingDescription, String sourceUrl) {
     }
 
-    @GetMapping("/overview")
+    /** One row per season, the winner chosen among beers only. */
     public List<SeasonOverview> overview() {
+        return overview(false);
+    }
+
+    @GetMapping("/overview")
+    public List<SeasonOverview> overview(@RequestParam(defaultValue = "false") boolean includeNonBeer) {
+        NonBeers.Judge judge = nonBeers.judge();
         Map<Integer, List<HistoricRating>> byYear = ratings.findAll().stream()
+                .filter(r -> includeNonBeer || !judge.isNonBeer(r.getSeasonYear(), r.getBeerName()))
                 .collect(Collectors.groupingBy(HistoricRating::getSeasonYear));
         return seasons.findAll().stream()
                 .sorted((a, b) -> Integer.compare(b.getYear(), a.getYear()))
                 .map(season -> {
                     List<HistoricRating> rs = byYear.getOrDefault(season.getYear(), List.of());
-                    BeerSeasonView top = seasonResults(season, rs).stream().findFirst().orElse(null);
+                    BeerSeasonView top = seasonResults(season, rs, judge).stream().findFirst().orElse(null);
                     return new SeasonOverview(season.getYear(), season.getTitle(),
                             rs.stream().map(r -> r.getRaterKey() == null ? r.getRaterName() : r.getRaterKey()).distinct().count(),
                             rs.stream().map(r -> r.getBeerName().toLowerCase()).distinct().count(),
@@ -216,7 +247,7 @@ public class HistoryController {
                 .toList();
     }
 
-    private List<BeerSeasonView> seasonResults(HistoricSeason season, List<HistoricRating> rows) {
+    private List<BeerSeasonView> seasonResults(HistoricSeason season, List<HistoricRating> rows, NonBeers.Judge judge) {
         Map<String, List<HistoricRating>> byBeer = rows.stream()
                 .collect(Collectors.groupingBy(r -> r.getBeerName().toLowerCase(), java.util.LinkedHashMap::new, Collectors.toList()));
         return byBeer.values().stream().map(rs -> {
@@ -225,7 +256,8 @@ public class HistoryController {
             double weighted = rs.stream().mapToDouble(r -> r.getScore().doubleValue() * r.getWeight().doubleValue()).sum() / w;
             double normalised = rs.stream().mapToDouble(r -> season.normalise(r.getScore()) * r.getWeight().doubleValue()).sum() / w;
             HistoricRating first = rs.get(0);
-            return new BeerSeasonView(season.getYear(), first.getBeerName(), first.getBrewery(), rs.size(), weighted, normalised);
+            return new BeerSeasonView(season.getYear(), first.getBeerName(), first.getBrewery(), rs.size(), weighted, normalised,
+                    judge.isNonBeer(season.getYear(), first.getBeerName()));
         }).filter(java.util.Objects::nonNull)
           .sorted((a, b) -> Double.compare(b.weightedMean(), a.weightedMean())).toList();
     }
