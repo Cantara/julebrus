@@ -29,6 +29,7 @@ For å kjøre smakingen og vise resultater og historikk.
 
 - Medlemmer i en gruppe ser hverandres scorer når alle i gruppen har gitt score, eller når gruppen er avsluttet
 - Alle deltakerne ser navnet ditt og lagene dine, og i «I kveld» hvilke øl du har smakt i dag, hvilket bord du sitter ved og hva du har skålt for. Terningkastet ditt vises ikke der, bare dagens snitt per øl når minst tre har kastet
+- Smaksnotatene dine (utseende, lukt, smak, ettersmak og stikkord) vises på ølets side for de andre deltakerne, uten navn og tidspunkt og i tilfeldig rekkefølge, først når minst tre har smakt ølet og bare for dem som selv har smakt det. Kommentaren din og terningkastet ditt vises bare rundt bordet
 - Sesongstatistikken vises per øl
 - Historikken viser navnene til dem som smakte i tidligere år, slik de står i de gamle regnearkene
 - Administratorer ser navn og e-postadresse til dem som ber om å koble seg til tidligere år, i godkjenningskøen

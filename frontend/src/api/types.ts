@@ -35,6 +35,16 @@ export interface Me {
   teamsChosen: boolean
   /** the newest open table this person sits at; null when none */
   openTable: OpenTable | null
+  /** what waits for an organiser; absent for everyone else */
+  chores?: AdminChores | null
+}
+
+export interface AdminChores {
+  claims: number
+  unmatched: number
+  beers: number
+  photos: number
+  total: number
 }
 
 export interface OpenTable {
@@ -369,6 +379,20 @@ export interface SeasonOverview {
   sourceUrl?: string
 }
 
+/** One beer across every recorded season, weighted as each year weighted it, shrunk towards the all-time mean. */
+export interface AllTimeRow {
+  rank: number
+  beerName: string
+  brewery?: string | null
+  years: number[]
+  ratings: number
+  weightSum: number
+  mean: number
+  bayesian: number
+  bestYear: number
+  bestMean: number
+}
+
 export interface BeerSeason {
   year: number
   beerName: string
@@ -525,4 +549,38 @@ export interface Feed {
   entries: FeedEntry[]
   beers: FeedDayBeer[]
   emojis: string[]
+}
+
+/** One beer's page. Anything from other people's rolls appears only from minShared rolls. */
+export interface BeerPage {
+  beer: Beer
+  season: {
+    tastings: number
+    people: number
+    rank?: number | null
+    rankedOf?: number | null
+    bayesian?: number | null
+    mean?: number | null
+    /** counts of 1..6, absent until minShared rolls */
+    histogram?: number[] | null
+  }
+  duels: { wins: number; losses: number; rank?: number | null; strength?: number | null }
+  mine?: {
+    score: number
+    prediction?: number | null
+    notes?: string | null
+    appearance?: string | null
+    aroma?: string | null
+    taste?: string | null
+    finish?: string | null
+    tags: string[]
+    tastedDay: string
+    sessionId?: string | null
+  } | null
+  tags?: { tag: string; count: number }[] | null
+  notesOpen: boolean
+  notesLocked?: 'NEED_ROLL' | 'NEED_MORE' | null
+  notes: { appearance?: string | null; aroma?: string | null; taste?: string | null; finish?: string | null; tags: string[] }[]
+  minShared: number
+  history: { year: number; ratings: number; mean: number }[]
 }

@@ -143,7 +143,7 @@ const byYear = () => {
     <table>
       <tbody>
         <tr v-for="t in mine" :key="t.id">
-          <td>{{ beerNames[t.beerId] ?? '?' }}<div v-if="t.tags.length" class="muted">{{ t.tags.join(', ') }}</div></td>
+          <td><router-link :to="`/beers/${t.beerId}`">{{ beerNames[t.beerId] ?? '?' }}</router-link><div v-if="t.tags.length" class="muted">{{ t.tags.join(', ') }}</div></td>
           <td style="text-align: right"><DiceFace :value="t.score" :size="26" /></td>
         </tr>
       </tbody>

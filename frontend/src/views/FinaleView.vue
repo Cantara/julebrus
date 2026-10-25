@@ -193,14 +193,14 @@ function fit(ctx: CanvasRenderingContext2D, text: string, max: number) {
     <div class="finale-hero">
       <div class="star lit">★</div>
       <h1>Cantaras juleøl {{ finale.year }}</h1>
-      <p v-if="finale.podium[0]" class="winner display">{{ finale.podium[0].name }}</p>
+      <p v-if="finale.podium[0]" class="winner display"><router-link :to="`/beers/${finale.podium[0].beerId}`" style="text-decoration: none">{{ finale.podium[0].name }}</router-link></p>
       <p v-if="finale.podium[0]" class="muted">{{ finale.podium[0].brewery }} · {{ finale.podium[0].bayesian.toFixed(2) }} av 6 · {{ finale.podium[0].ratings }} smakere</p>
     </div>
 
     <div class="podium" aria-label="Pallen">
       <div v-for="b in podium" :key="b.beerId" class="step" :class="`p${b.rank}`">
         <div class="label">
-          <strong>{{ b.name }}</strong>
+          <router-link :to="`/beers/${b.beerId}`" style="text-decoration: none"><strong>{{ b.name }}</strong></router-link>
           <div class="muted">{{ b.bayesian.toFixed(2) }}</div>
         </div>
         <div class="block"><span class="display">{{ b.rank }}</span></div>

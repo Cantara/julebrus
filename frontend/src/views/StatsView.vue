@@ -42,7 +42,7 @@ onMounted(async () => {
       <span class="rank display">{{ r.rank }}</span>
       <div class="body">
         <div class="row" style="align-items: baseline">
-          <strong class="name">{{ r.name }}</strong>
+          <router-link :to="`/beers/${r.beerId}`" class="name"><strong>{{ r.name }}</strong></router-link>
           <strong class="display score">{{ r.bayesian.toFixed(2) }}</strong>
         </div>
         <div class="bar" role="img" :aria-label="`Justert ${r.bayesian.toFixed(2)} av 6`"><span :style="{ width: `${((r.bayesian - 1) / 5) * 100}%` }" /></div>
@@ -59,7 +59,7 @@ onMounted(async () => {
       <thead><tr><th>#</th><th>Øl</th><th>Styrke</th></tr></thead>
       <tbody>
         <tr v-for="r in duels" :key="r.beerId">
-          <td>{{ r.rank }}</td><td>{{ r.name }}</td><td>{{ r.strength.toFixed(2) }}</td>
+          <td>{{ r.rank }}</td><td><router-link :to="`/beers/${r.beerId}`">{{ r.name }}</router-link></td><td>{{ r.strength.toFixed(2) }}</td>
         </tr>
       </tbody>
     </table>
@@ -84,7 +84,7 @@ onMounted(async () => {
 .ranked .r2 .rank { background: #d9d4cc; color: #2b1a14; }
 .ranked .r3 .rank { background: #c99a6b; color: #2b1a14; }
 .ranked .body { flex: 1; min-width: 0; display: grid; gap: 4px; }
-.ranked .name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.ranked .name { display: block; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; text-decoration: none; }
 .ranked .score { color: var(--brand); }
 .ranked .bar { height: 6px; background: var(--line); border-radius: 999px; overflow: hidden; }
 .ranked .bar span { display: block; height: 100%; background: var(--brass); border-radius: 999px; }

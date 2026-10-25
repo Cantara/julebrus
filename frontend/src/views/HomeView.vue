@@ -118,7 +118,7 @@ const days = computed<Record<string, DayEntry>>(() => {
   const out: Record<string, DayEntry> = {}
   for (const t of mine.value) {
     const entry = (out[t.tastedDay] ??= { beers: [], solo: false })
-    entry.beers.push({ name: beerName.value[t.beerId] ?? '?', score: t.score })
+    entry.beers.push({ id: t.beerId, name: beerName.value[t.beerId] ?? '?', score: t.score })
     if (!t.sessionId || soloSessions.value.has(t.sessionId)) entry.solo = true
   }
   return out
@@ -140,6 +140,26 @@ const streak = computed(() => {
 })
 
 const season = computed(() => store.me?.season)
+
+/** What waits for an organiser, worded, and the admin section with the most of it. */
+const choresText = computed(() => {
+  const c = store.me?.chores
+  if (!c) return ''
+  const parts: string[] = []
+  if (c.claims) parts.push(`${c.claims} ${c.claims === 1 ? 'historikk-kobling' : 'historikk-koblinger'} å avgjøre`)
+  if (c.beers) parts.push(`${c.beers} ${c.beers === 1 ? 'øl' : 'øl'} å godkjenne`)
+  if (c.photos) parts.push(`${c.photos} ${c.photos === 1 ? 'etikett' : 'etiketter'} å se på`)
+  if (c.unmatched) parts.push(`${c.unmatched} ${c.unmatched === 1 ? 'innlogging' : 'innlogginger'} uten historisk navn`)
+  return parts.join(' · ')
+})
+const choresLink = computed(() => {
+  const c = store.me?.chores
+  if (!c) return '/admin'
+  if (c.claims) return '/admin?s=claims'
+  if (c.beers) return '/admin?s=beers'
+  if (c.photos) return '/admin?s=photos'
+  return '/admin?s=raters'
+})
 const today = computed(() => store.me?.status.today ?? new Date().toISOString().slice(0, 10))
 
 const daysUntilStart = computed(() => {
@@ -187,6 +207,14 @@ const dayOfSeason = computed(() => {
         {{ store.me.openTable.members }} rundt bordet · {{ store.me.openTable.beers }} øl
         <template v-if="store.me.openTable.pendingForMe > 0"> · <strong style="color: var(--brand)">{{ store.me.openTable.pendingForMe }} venter på terningen din</strong></template>
       </div>
+    </div>
+    <span class="muted">›</span>
+  </router-link>
+
+  <router-link v-if="store.me?.chores && store.me.chores.total > 0" class="card row chores" :to="choresLink" style="text-decoration: none">
+    <div>
+      <strong class="display">🧹 Arrangørsysler</strong>
+      <div class="muted">{{ choresText }}</div>
     </div>
     <span class="muted">›</span>
   </router-link>
@@ -262,5 +290,6 @@ const dayOfSeason = computed(() => {
 <style scoped>
 .toast { position: fixed; left: 16px; right: 16px; bottom: calc(72px + env(safe-area-inset-bottom)); z-index: 3; display: flex; justify-content: space-between; gap: 12px; align-items: center; background: var(--pine); color: #fff; border: none; box-shadow: 0 8px 24px rgba(0,0,0,0.25); animation: land 500ms cubic-bezier(0.2, 1.2, 0.3, 1) both; }
 .toast a { color: var(--candle); font-weight: 600; }
+.chores { border: 1px dashed var(--brass); }
 .table-card { border: 1px solid var(--candle); box-shadow: 0 0 0 1px var(--candle) inset, 0 2px 10px rgba(0,0,0,0.05); }
 </style>

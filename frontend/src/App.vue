@@ -34,8 +34,9 @@ onMounted(() => {
     <router-link to="/stats">
       <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 20h18M9 20v-8h6v8M3 20v-5h6M15 20v-4h6M12 3l1.1 2.3 2.5.4-1.8 1.7.4 2.5L12 8.7l-2.2 1.2.4-2.5-1.8-1.7 2.5-.4z" /></svg>Resultater
     </router-link>
-    <router-link to="/me">
+    <router-link to="/me" :class="{ waiting: (store.me?.chores?.total ?? 0) > 0 }">
       <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM4 20a8 8 0 0 1 16 0" /></svg>Meg
+      <i v-if="(store.me?.chores?.total ?? 0) > 0" class="dot" :aria-label="`${store.me?.chores?.total} arrangørsysler venter`" />
     </router-link>
   </nav>
 </template>

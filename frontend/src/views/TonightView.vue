@@ -164,7 +164,10 @@ function line(e: FeedEntry): string {
           <div>
             <span class="who" aria-hidden="true">{{ e.kind === 'TASTING' ? '🎲' : e.kind === 'TABLE' ? '🍻' : e.kind === 'BLIND' ? '🙈' : '📷' }}</span>
             <strong v-if="e.displayName && e.kind !== 'PHOTO'">{{ e.me ? 'Du' : e.displayName }}</strong>
-            {{ line(e) }}
+            <template v-if="e.kind === 'TASTING'"> smakte <router-link :to="`/beers/${e.beerId}`">{{ e.beerName }}</router-link><template v-if="e.tableId"> ved bordet hos {{ e.tableHost }}</template></template>
+            <template v-else-if="e.kind === 'BLIND'"> kjørte blindsmaking: {{ e.correct }} av {{ e.guesses }} traff <router-link :to="`/beers/${e.beerId}`">{{ e.beerName }}</router-link></template>
+            <template v-else-if="e.kind === 'PHOTO'">Ny etikett på <router-link :to="`/beers/${e.beerId}`">{{ e.beerName }}</router-link></template>
+            <template v-else> {{ line(e) }}</template>
             <span v-if="e.brewery && e.kind !== 'TABLE'" class="muted"> · {{ e.brewery }}</span>
           </div>
           <span class="muted when">{{ clock(e.at) }}</span>
@@ -190,8 +193,8 @@ function line(e: FeedEntry): string {
       <p class="muted">Snittet vises først når tre har kastet. Ingen enkeltkast, de hører bordet til.</p>
       <div v-for="b in feed.beers" :key="b.beerId" class="card row">
         <div>
-          <strong>{{ b.name }}</strong>
-          <div class="muted">{{ b.brewery ? b.brewery + ' · ' : '' }}{{ b.count }} {{ b.count === 1 ? 'terningkast' : 'terningkast' }}</div>
+          <router-link :to="`/beers/${b.beerId}`" style="text-decoration: none"><strong>{{ b.name }}</strong></router-link>
+          <div class="muted">{{ b.brewery ? b.brewery + ' · ' : '' }}{{ b.count }} terningkast</div>
         </div>
         <span v-if="b.average !== null" class="avg display">{{ b.average.toFixed(1) }}</span>
         <span v-else class="muted" style="font-size: 0.8rem">{{ 3 - b.count }} til for snitt</span>

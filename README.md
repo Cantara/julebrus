@@ -21,6 +21,12 @@ solo days, the rest in groups formed by QR code. Design and rules: [DESIGN.md](D
   plays for it, each team gets its own winner and "Årets lag" at the finale.
 - **Tipp pallen.** Everyone may tip gold, silver and bronze until the last day begins; the league and "Årets
   tipper" come out at the reveal.
+- **Every beer has a page.** Tap a beer anywhere (catalogue, results, the wall, a table, the calendar, the finale) for
+  its label, this season's rank and dice histogram, its duel record, the tags people gave it, their tasting notes without
+  names, your own roll and what earlier years said. Anything from other people's rolls shows only from three rolls, and the
+  notes only after you have rolled the beer yourself: taste first, read afterwards.
+- **All-time list.** With the old beer names normalised, the history page ranks every beer across all recorded
+  seasons, weighted as each year weighted its votes and shrunk towards the all-time mean, with each beer's best year.
 - **Ganen din.** After three rolls the profile draws your palate: which tags you score above and below your own
   mean, your taste twin and your taste opposite among the others (from shared beers). The finale lists the
   season's twins and opposites.
@@ -70,7 +76,8 @@ Environment variables: `JULEBRUS_DB_URL`, `JULEBRUS_DB_USER`, `JULEBRUS_DB_PASSW
 (comma separated; empty allows any Google account) and **`JULEBRUS_ADMINS`** (emails
 that may flag raters, override weights, approve history claims, beers and photos). **Production must set
 `JULEBRUS_ADMINS`**: it has no default, and empty means nobody is an admin (the `dev` profile has its own
-dev admin; the box has it set). The Google OAuth redirect URI is
+dev admin; the box has it set). Admins see what waits for them (claims to decide, logins without a historic name,
+beers and label photos to approve) as a card on Home and a dot on the "Meg" tab. The Google OAuth redirect URI is
 `https://<host>/login/oauth2/code/google`.
 
 Also optional: `JULEBRUS_CONTACT_EMAIL` (named in the consent text as where to ask for
@@ -381,6 +388,7 @@ season and no e-mail addresses.
 | `list_seasons` | | every recorded season with size, winner, weighting and source |
 | `season_results` | `year` | that season's ranked result list, weighted as it was that year |
 | `beer_history` | `name` | one beer's mean and vote count per season |
+| `alltime_ranking` | `min` (default 5) | every beer across all recorded seasons, Bayesian-adjusted, with its best year |
 | `list_raters` | | everyone who has tasted, with years and vote count |
 | `rater_history` | `name` | one rater's mean against the crowd mean per season |
 | `current_ranking` | | this season's weighted Bayesian ranking |
