@@ -84,7 +84,7 @@ onMounted(async () => {
 .ranked .r2 .rank { background: #d9d4cc; color: #2b1a14; }
 .ranked .r3 .rank { background: #c99a6b; color: #2b1a14; }
 .ranked .body { flex: 1; min-width: 0; display: grid; gap: 4px; }
-.ranked .name { display: block; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; text-decoration: none; }
+.ranked .name { display: block; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--brand); text-decoration: underline dotted; text-underline-offset: 3px; text-decoration-thickness: 1px; }
 .ranked .score { color: var(--brand); }
 .ranked .bar { height: 6px; background: var(--line); border-radius: 999px; overflow: hidden; }
 .ranked .bar span { display: block; height: 100%; background: var(--brass); border-radius: 999px; }

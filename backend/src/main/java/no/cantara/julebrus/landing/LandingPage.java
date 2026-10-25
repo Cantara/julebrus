@@ -379,6 +379,11 @@ public final class LandingPage {
         group(h, l("Gjør den til din", "Make it yours"), l(
                 "Alt her er valgfritt. Terningen og et glass er nok.",
                 "Everything here is optional. The dice and a glass are enough."));
+        step(h, ICON_BOOK, l("Hvert øl har en side", "Every beer has a page"), l(
+                "Trykk på et øl hvor som helst: etiketten, plassen på lista og fordelingen av terningkast, duellene, stikkordene folk satte, og smaksnotatene deres uten navn. "
+                        + "Smak først, les etterpå: notatene åpner når du selv har kastet, og først når tre har smakt ølet. Øl fra arkivet har sin side med stemmene år for år.",
+                "Tap a beer anywhere: the label, its place in the list and the spread of dice, the duels, the tags people gave it, and their tasting notes without names. "
+                        + "Taste first, read afterwards: the notes open once you have rolled yourself, and only once three people have tasted the beer. Beers from the archive have their page with the votes year by year."));
         step(h, ICON_CAMERA, l("Bilde av etiketten", "A photo of the label"), l(
                 "Ta gjerne et bilde av etiketten før du smaker. Bildet gjøres mindre og renses for sted og kameradata, og de andre ser det når en arrangør har godkjent det. "
                         + "Det første godkjente blir ølets bilde.",
@@ -423,9 +428,11 @@ public final class LandingPage {
                 .append("<h2 id=\"historien\">").append(l("Protokollen, " + t.firstYear() + "–" + t.lastYear(), "The record, " + t.firstYear() + "–" + t.lastYear())).append("</h2>\n")
                 .append("<p class=\"intro\">").append(l(
                         n(t.seasonsWithVotes()) + " sesonger har overlevd med hver eneste stemme, " + agg
-                                + " bare som et sammendrag, og mange år er borte. Her er det som kan telles: summer og snitt per år og per øl, aldri hvem som ga hva.",
+                                + " bare som et sammendrag, og mange år er borte. Her er det som kan telles: summer og snitt per år og per øl, aldri hvem som ga hva. "
+                                + "Inne i appen ligger alle-tiders-lista på tvers av sesongene og hvert øls side med stemmene år for år.",
                         n(t.seasonsWithVotes()) + " seasons survive with every single vote, " + agg
-                                + " only as a summary, and many years are lost. Here is what can be counted: totals and means per year and per beer, never who gave what."))
+                                + " only as a summary, and many years are lost. Here is what can be counted: totals and means per year and per beer, never who gave what. "
+                                + "Inside the app sit the all-time list across the seasons and every beer's page with the votes year by year."))
                 .append("</p>\n");
         provenance(h, agg);
         h.append("<div class=\"grid\">\n");
@@ -684,6 +691,7 @@ public final class LandingPage {
     private static final String ICON_CAL = icon("<rect x=\"4\" y=\"5\" width=\"16\" height=\"15\" rx=\"2\"/><path d=\"M4 10h16M9 3v4M15 3v4M9 14h2v2H9z\"/>");
     private static final String ICON_TEAM = icon("<path d=\"M5 21V4h11l-2 4 2 4H5\"/>");
     private static final String ICON_PODIUM = icon("<path d=\"M3 20h18M9 20V8h6v12M3 20v-7h6M15 20v-9h6v9\"/>");
+    private static final String ICON_BOOK = icon("<path d=\"M4 5a2 2 0 0 1 2-2h5v16H6a2 2 0 0 0-2 2zM20 5a2 2 0 0 0-2-2h-5v16h5a2 2 0 0 1 2 2zM11 19v2M13 19v2\"/>");
     private static final String ICON_CAMERA = icon("<path d=\"M4 8h3l2-3h6l2 3h3v11H4z\"/><circle cx=\"12\" cy=\"13\" r=\"3.5\"/>");
     private static final String ICON_BELL = icon("<path d=\"M6 16v-5a6 6 0 0 1 12 0v5l2 2H4zM10 21h4\"/>");
     private static final String ICON_STAR = icon("<path d=\"m12 3 2.6 5.6 6 .7-4.5 4.1 1.2 6L12 16.4 6.7 19.4l1.2-6L3.4 9.3l6-.7z\"/>");
