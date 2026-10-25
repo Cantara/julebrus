@@ -346,8 +346,8 @@ public final class LandingPage {
                 "Én er vert. Telefonen viser en QR-kode og en kode på 6 tegn for mørke kjøkken og døde kameraer. De andre skanner eller taster, og dere sitter ved samme bord.",
                 "Someone hosts. Their phone shows a QR code and a 6-character code for dim kitchens and dead cameras. The others scan or type it, and you are at the same table."));
         step(h, ICON_LOCK, l("Låst, blind avsløring", "Locked blind reveal"), l(
-                "Alle scorer på sin egen telefon. Ingen ser noe før siste person har scoret. Da pakkes scorene opp på alle telefonene i samme sekund, uten at noen laster siden på nytt. Ingen ankrer på den som roper først.",
-                "Everyone scores on their own phone. Nobody sees anything until the last person has scored. Then the scores are unwrapped on every phone in the same second, no reloading. No anchoring on whoever shouts first."));
+                "Alle scorer på sin egen telefon. Ingen ser noe før siste person har scoret. Da pakkes terningene opp på alle telefonene i samme sekund, uten at noen laster siden på nytt, sammen med det folk skrev om ølet. Ingen ankrer på den som roper først.",
+                "Everyone scores on their own phone. Nobody sees anything until the last person has scored. Then the dice are unwrapped on every phone in the same second, no reloading, along with what people wrote about the beer. No anchoring on whoever shouts first."));
         step(h, ICON_DUEL, l("Dueller på siden", "Duels on the side"), l(
                 "Etter to øl: hvilket var best? Svarene gir en egen rangering ved siden av, som ikke bryr seg om hvor raus du er med terningen. Den offisielle rangeringen er terningkastet.",
                 "After two beers: which was better? The answers build a separate ranking on the side that does not care how generous you are with the dice. The official ranking is the dice."));
@@ -359,9 +359,9 @@ public final class LandingPage {
                 "Smakingen er en sesong, ikke en kveld. Det er noe å spille for hele veien.",
                 "The tasting is a season, not an evening. There is something to play for all the way."));
         step(h, ICON_TEAM, l("Cantara mot Rebel", "Cantara against Rebel"), l(
-                "Etter samtykket velger du lag: Cantara, Rebel eller begge. Rangeringen kan vises per lag, hvert lag får sin egen vinner i finalen, "
+                "Etter samtykket velger du lag: Cantara, Rebel eller begge. Trykk på laget for å se hvem som spiller for det. Rangeringen kan vises per lag, hvert lag får sin egen vinner i finalen, "
                         + "og årets lag kåres på terningkast per hode, så et lite lag kan slå et stort. Vil dere stille med et eget lag, spør arrangørene.",
-                "After the consent step you pick a team: Cantara, Rebel or both. The ranking can be shown per team, each team gets its own winner in the finale, "
+                "After the consent step you pick a team: Cantara, Rebel or both. Tap a team to see who plays for it. The ranking can be shown per team, each team gets its own winner in the finale, "
                         + "and the team of the year is decided by scores per head, so a small team can beat a big one. Want a team of your own? Ask the organisers."));
         step(h, ICON_PODIUM, l("Tipp pallen", "Tip the podium"), l(
                 "Hvilke tre øl ender på pallen? Tipp gull, sølv og bronse, og endre tipset så ofte du vil til siste dag begynner. "
@@ -369,8 +369,8 @@ public final class LandingPage {
                 "Which three beers make the podium? Tip gold, silver and bronze, and change your tip as often as you like until the last day begins. "
                         + "Nobody sees the tips before the finale, where the tipster of the year is named."));
         step(h, ICON_CAL, l("Adventskalenderen", "The advent calendar"), l(
-                "Hjemskjermen er en adventskalender. Hver dag du smaker, åpner en luke.",
-                "The home screen is an advent calendar. Every day you taste opens a door."));
+                "Hjemskjermen er en adventskalender. Hver dag du smaker, åpner en luke, og den holder tellingen på dager på rad. Sitter du ved et bord, ligger det øverst til det er avsluttet.",
+                "The home screen is an advent calendar. Every day you taste opens a door, and it keeps count of days in a row. While you sit at a table, it stays at the top until the host closes it."));
         step(h, ICON_STAR, l("Finalen " + date(season.end(), false), "The finale on " + date(season.end(), false)), l(
                 "Klokka " + finale + " tennes stjerna. Cantaras juleøl " + season.year() + " kåres, med duellrangeringen ved siden av, lagenes egne vinnere, tippeligaen og sesongens priser.",
                 "At " + finale + " the star lights up. Cantara's juleøl " + season.year() + " is named, with the duel ranking beside it, each team's own winner, the tipping league and the season's awards."));

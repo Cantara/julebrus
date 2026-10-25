@@ -18,8 +18,8 @@
 # Until both are set, the upload job is skipped and the release only goes to GitHub.
 #
 # Actions are pinned by tag, not by commit SHA: actions/checkout@v7, actions/setup-node@v4, actions/setup-java@v4,
-# actions/upload-artifact@v4, actions/download-artifact@v4, softprops/action-gh-release@v2,
-# aws-actions/configure-aws-credentials@v4.
+# actions/upload-artifact@v7, actions/download-artifact@v8, softprops/action-gh-release@v3,
+# aws-actions/configure-aws-credentials@v6 (all on the Node 24 runtime; download-artifact v8 fails on a checksum mismatch).
 name: Release
 
 on:
