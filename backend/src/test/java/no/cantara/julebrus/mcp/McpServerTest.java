@@ -63,7 +63,7 @@ class McpServerTest {
         assertThat(list.statusCode()).isEqualTo(200);
         List<String> names = new ArrayList<>();
         firstResult(list).path("tools").forEach(t -> names.add(t.path("name").asText()));
-        assertThat(names).containsExactlyInAnyOrder("list_seasons", "season_results", "beer_history", "list_raters",
+        assertThat(names).containsExactlyInAnyOrder("list_seasons", "season_results", "beer_history", "alltime_ranking", "list_raters",
                 "rater_history", "current_ranking", "team_ranking", "duel_ranking", "season_status", "finale");
 
         HttpResponse<String> call = post(Map.of("jsonrpc", "2.0", "id", 3, "method", "tools/call",

@@ -13,7 +13,16 @@ public interface TastingRepository extends JpaRepository<Tasting, UUID> {
     record BeerCount(UUID beerId, long count) {
     }
 
+    record UserCount(UUID userId, long count) {
+    }
+
+    @Query("select new no.cantara.julebrus.tasting.TastingRepository$UserCount(t.userId, count(t)) from Tasting t group by t.userId")
+    List<UserCount> countPerUser();
+
     int countByUserIdAndTastedDay(UUID userId, LocalDate day);
+
+    /** Everyone's rolls on one Oslo day, for the day's feed. */
+    List<Tasting> findByTastedDay(LocalDate day);
 
     int countByUserIdAndTastedDayBetween(UUID userId, LocalDate from, LocalDate to);
 

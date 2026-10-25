@@ -68,7 +68,7 @@ async function save(ids: string[]) {
       <span class="mark" aria-hidden="true">{{ picked.has(t.id) ? '✓' : '' }}</span>
       <span class="body">
         <strong class="display">{{ t.name }}</strong>
-        <span class="muted">{{ t.members }} {{ t.members === 1 ? 'smaker' : 'smakere' }}<template v-if="t.suggested && !store.me?.teamsChosen"> · foreslått fra e-posten din</template></span>
+        <span class="muted">{{ t.members }} {{ t.members === 1 ? 'smaker' : 'smakere' }}<template v-if="t.suggested && !store.me?.teamsChosen"> · foreslått fra e-posten din</template><template v-if="t.members"> · <router-link :to="`/lag/${t.slug}`" @click.stop>hvem?</router-link></template></span>
         <span v-if="t.sponsorName" class="muted">Støttet av {{ t.sponsorName }}</span>
       </span>
     </button>

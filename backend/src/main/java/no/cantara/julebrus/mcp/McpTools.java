@@ -75,6 +75,10 @@ public class McpTools {
                         "How one beer has scored across the years, by season: mean on 1-6 and number of votes. Name match is exact, case-insensitive.",
                         schema(Map.of("name", Map.of("type", "string", "description", "Beer name as written in the results, e.g. 'Aass Juleøl'")), List.of("name")),
                         args -> beerHistory(stringArg(args, "name"))),
+                tool("alltime_ranking",
+                        "The all-time list across every recorded season: each beer's votes on 1-6, weighted as each year weighted them, shrunk towards the all-time mean (prior 5 votes), with its best year. Beers with at least `min` votes (default 5).",
+                        schema(Map.of("min", Map.of("type", "integer", "description", "Minimum votes over the years, default 5")), List.of()),
+                        args -> history.allTime(args.get("min") == null ? 5 : intArg(args, "min"))),
                 tool("list_raters",
                         "Everyone who has tasted in the recorded seasons, by display name, with their years and vote count. Names only; no contact details.",
                         noArgs(), args -> history.raters()),
@@ -119,6 +123,8 @@ public class McpTools {
         out.put("tipped", tips.count());
         out.put("rules", Map.of(
                 "maxTastingsPerDay", season.maxTastingsPerDay(),
+                "bigTableSize", season.bigTableSize(),
+                "maxTastingsPerDayBigTable", season.maxTastingsPerDayBigTable(),
                 "maxSoloDays", season.maxSoloDays(),
                 "counts", "Vinmonopolet juleøl above 4.7 % ABV; homebrew only at a table of 6+ and with 4+ scores"));
         out.put("teams", teams.enabled().stream().map(t -> Map.of("slug", t.getSlug(), "name", t.getName(),

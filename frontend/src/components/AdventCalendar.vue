@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue'
+import DiceFace from './DiceFace.vue'
 
 /**
  * The season as an advent calendar: one door per day from start to end.
@@ -7,7 +8,7 @@ import { computed, ref } from 'vue'
  * (a sequential encoding, 1..5). Today glows, future doors are shut.
  */
 export interface DayEntry {
-  beers: { name: string; score: number }[]
+  beers: { id?: string; name: string; score: number }[]
   solo: boolean
 }
 
@@ -130,8 +131,8 @@ const detailDate = computed(() => {
     <table>
       <tbody>
         <tr v-for="b in detail.beers" :key="b.name">
-          <td>{{ b.name }}</td>
-          <td style="text-align: right"><strong>{{ b.score }}</strong></td>
+          <td><router-link v-if="b.id" :to="`/beers/${b.id}`">{{ b.name }}</router-link><template v-else>{{ b.name }}</template></td>
+          <td style="text-align: right"><DiceFace :value="b.score" :size="26" /></td>
         </tr>
       </tbody>
     </table>

@@ -225,7 +225,7 @@ class LandingStatsTest {
                 } else {
                     assertThat(html).contains("Spill for laget ditt, tipp pallen")
                             .contains("Hele adventstiden").contains("Cantara mot Rebel").contains("Cantara, Rebel eller begge")
-                            .contains("pakkes scorene opp på alle telefonene i samme sekund")
+                            .contains("pakkes terningene opp på alle telefonene i samme sekund")
                             .contains("Tipp pallen").contains("3 poeng for riktig plass, 1 for et øl på pallen på feil plass, 9 er perfekt")
                             .contains("frist ved midnatt før 23.\u00a0desember")
                             .contains("Gjør den til din").contains("Bilde av etiketten")

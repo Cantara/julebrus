@@ -30,6 +30,9 @@ julebrus:
     end: 2026-12-23
     zone: Europe/Oslo
     max-tastings-per-day: 5
+    # A table of this many or more is a big table, where the daily limit is the second number.
+    big-table-size: 8
+    max-tastings-per-day-big-table: 12
     max-solo-days: 5
     # Local time on the last day when the finale page reveals the result.
     finale-time: "18:00"
