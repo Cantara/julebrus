@@ -68,8 +68,11 @@ the differences). They agree except:
   24 columns; they match only for Dahls. For 18 columns the stated volume is 1 more than the listed weights (for
   example Aas Juleøl 8 against 7, Berentsen Julefnugg 5.5 against 4.5), and the stated weighted sum is then about 2
   more, as if one extra vote of 2 with weight 1 were counted; for Hansa Julebrygg, Borg, Hansa juleøl, CB and Mack
-  Juleøl the volume matches but the weighted mean does not (CB stated 2.87, from votes 3.13). The cause is not
-  known (the sheet's formulas are not in the export). The stated values and the votes are both kept as they are.
+  Juleøl the volume matches but the weighted mean does not (CB stated 2.87, from votes 3.13). Cause found
+  2026-10-25: the wiki page is an OLDER snapshot of the sheet. The final workbook (owner's Drive, `Juleøl 2010.xlsx`) states
+  numbers that follow from its own votes for 24 of its 25 items (CB 3.13; Aass Juleøl premium 4.5 over a volume of 8), and it has one
+  vote the snapshot lacks (Eirik, Aass Juleøl premium, 5; `ADDED_VOTES` in tools/extract_wiki_tables.py). results.csv still holds
+  what the wiki page states; the votes are what the app uses.
 - 2013: the sheet's own statistics do not match its vote rows for 25 of the 31 beers that have votes (stated counts are mostly lower than
   the listed votes; for example the means for Aass Premium, Ringnes Juleøl and Nøgne Ø God Jul differ). The sheet has
   three voters added at the bottom without a weight ("tobiast", "Hein", "Hvem?"), but leaving them out does not
@@ -91,6 +94,21 @@ three of them under a slightly different name); in the 2018 sheet three votes on
   vote count reproduces), and Eirik's one extra vote sits in a second "7 Sorter" column ("7 fjrll, 7 sorter"), kept as its own item because merging it would change
   the stated mean of "7 Sorter". Eirik therefore has 10 votes against the stated 9. 2016 is now an ordinary season in the app and on the landing page.
 - Names decided by the owner: "Redhead" is Arild, "Stig" is Stig Lau (history/raters.csv); plain "Kjetil" is a different person from "Kjetil J. D." (both voted in 2010).
+
+- 2008, 2010 and 2011-2019 against the original workbooks (the owner's Drive, 2026-10-25, cell by cell):
+  - 2011-2018: the same number of cells as our exported sheets and no score differs. The differences are only spelling corrections the repo already made
+    ("Dahls" to "Dahls Juleøl", "Scours Juleøl" to "Schous Juleøl", "Hansddbrygggirier. nissefar" to "Haandbryggeriet Nissefar") and the workbooks' computed means at full
+    precision (3.16667) where our exports are rounded (3.17).
+  - 2019: the same scores. The workbook also carries two header labels ("Antall vekt", "Vektet Snit") and trailing `#DIV/0!` cells that the CSV export left blank.
+  - 2010: identical in voters (17 against our 16: Cynthia has a weight and no beer votes), weights, beers and scores, except the one vote above.
+    A second sheet, "Kjetils alternative" (also in 2011), is Kjetil's own statistical re-weighting of the voters; not used. Kjetil J. D. has weight 0 in the official sheet.
+  - 2008: voters, beers and scores agree. The workbook's "Fingers off!" sheet shows score times weight for the half-weight voters (a 5 appears as 2.5), which is why it differs
+    from our original dice values; the fenalår are not on that sheet. Its weight column says Agnes 1.0, but she voted only on the three cured-meat items, whose stated weight
+    sums (6.5, 6.5, 7.5) are reproduced only with 0.5; nothing about a beer changes.
+  - Not used or not compared: `scores.csv` (a per-voter score export that looks like 2018 and has the voters' e-mail addresses: personal data, deliberately not copied into the
+    repository), `Juleøl+2013.xlsx` "Sheet2" (31 products from the "Bestillingsutvalget" with article numbers and prices; not compared with data/vinmonopolet/2013.csv),
+    and the PNG images of the 1998, 2003, 2004 and 2014 result pages (we have those years as tables).
+- Names: "Eirik hordaland" (2014) is Eirik Litangen, like "Eirik" and "Eirik L" (no same-year overlap); "Eirik Averøya" (2014) is someone else.
 
 ## Beer name corrections
 

@@ -93,13 +93,13 @@
    "source": "votes",
    "beers": 21,
    "voters": 16,
-   "votes": 171,
-   "meanScore": 3.67,
+   "votes": 172,
+   "meanScore": 3.68,
    "top": [
     {
      "beer": "Aass Juleøl premium",
-     "mean": 4.43,
-     "votes": 7
+     "mean": 4.5,
+     "votes": 8
     }
    ]
   },
@@ -244,15 +244,15 @@
   "seasonsRecorded": 15,
   "firstYear": 1998,
   "lastYear": 2019,
-  "votes": 1863,
-  "votesIncludingAggregate": 1863
+  "votes": 1864,
+  "votesIncludingAggregate": 1864
  },
  "dice": {
   "1": 30,
   "2": 186,
   "3": 482,
   "4": 666,
-  "5": 416,
+  "5": 417,
   "6": 71
  },
  "nonIntegerScores": 12,
