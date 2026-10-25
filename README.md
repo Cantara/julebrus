@@ -307,14 +307,19 @@ python3 tools/to_app_history.py backend/src/main/resources/history
 
 ## Fixing a beer name
 
-Some old beer names are misspelled ("Rignes Julebokk"). Fix them in one file, never in the raw data:
+Some old beer names are misspelled ("Rignes Julebokk"). The app imports a season only once, so the database in
+production is fixed through `backend/src/main/resources/history/beer_names.csv`, which it applies at every startup:
 
-1. On a branch, add a line `year,as written,correct name` to `backend/src/main/resources/history/beer_names.csv`
-   (the name exactly as in `data/votes.csv`; quote it if it has a comma). Remove a line to undo a fix.
+1. Either fix the name in the source too (`source/google-sheets/<year>.csv`, or `NAME_FIXES` in
+   `tools/extract_wiki_tables.py` for the wiki years), rerun `tools/build_data.py`, `tools/to_app_history.py` and
+   `tools/to_landing_stats.py` (see `data/README.md`), and add `year,old name,new name,legacy` to beer_names.csv;
+   or leave the source as written and add `year,as written,correct name,` (the name exactly as in `data/votes.csv`).
+   Quote a name that has a comma. Remove a line to undo a fix.
 2. Open a pull request. The fix takes effect on the next deploy and restart: the app renames the ratings already
    in its database; nothing is deleted or re-imported.
-3. The original spelling is kept (`historic_ratings.beer_name_original`). `data/` and `history/<year>.csv` stay as
-   written; the landing page numbers use the corrected names.
+3. The original spelling is kept (`historic_ratings.beer_name_original`); the landing page numbers use the
+   corrected names. A `legacy` row is one whose old name is gone from the corrected files: it renames databases
+   imported before the correction and matches nothing in a fresh one.
 
 Candidates: `python3 -I tools/suggest_beer_name_fixes.py` writes a review sheet,
 `data/review/beer-name-candidates.csv` (suggestions only; fill in its `decision` column). After a change run

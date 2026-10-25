@@ -56,6 +56,28 @@ class ConsentTextsTest {
     }
 
     @Test
+    void theShortSummaryCoversTheKeyFactsInBothLanguagesAndFillsInTheContact() {
+        var summary = new ConsentService(null, null, new SponsorProperties("x", ""), new ContactProperties("a@b.no")).summary();
+        assertThat(summary.nb()).startsWith("## Kort fortalt").contains("a@b.no").contains("Bilder av øletiketter er valgfrie")
+                .contains("trekke samtykket tilbake").contains("wiki.cantara.no").contains("Administratorene").doesNotContain("{");
+        assertThat(summary.en()).startsWith("## In short").contains("a@b.no").contains("Label photos are optional")
+                .contains("withdraw your consent").contains("wiki.cantara.no").contains("Administrators").doesNotContain("{");
+        assertThat(bullets(summary.nb())).isEqualTo(bullets(summary.en()));
+        assertThat(summary.nb().length()).isLessThan(1200);
+    }
+
+    @Test
+    void theSummaryFallsBackToTheOrganisersWithoutAContact() {
+        var summary = new ConsentService(null, null, new SponsorProperties("", ""), new ContactProperties("")).summary();
+        assertThat(summary.nb()).contains("hos arrangørene").doesNotContain("{");
+        assertThat(summary.en()).contains("with the organisers").doesNotContain("{");
+    }
+
+    private static long bullets(String text) {
+        return text.lines().filter(l -> l.startsWith("- ")).count();
+    }
+
+    @Test
     void onlyHttpLinksAreExposedAsSponsorUrl() {
         assertThat(new SponsorProperties("x", "javascript:alert(1)").safeUrl()).isNull();
         assertThat(new SponsorProperties("x", "https://example.com").safeUrl()).isEqualTo("https://example.com");

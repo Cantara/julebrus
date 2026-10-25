@@ -298,6 +298,7 @@ export interface ConsentView {
   version: string
   accepted: boolean
   texts: { nb: string; en: string }
+  summary: { nb: string; en: string }
 }
 
 export interface PublicConfig {

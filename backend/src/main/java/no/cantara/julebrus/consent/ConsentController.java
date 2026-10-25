@@ -17,7 +17,8 @@ import java.util.UUID;
 @RequestMapping("/api/consent")
 public class ConsentController {
 
-    public record ConsentView(String version, boolean accepted, ConsentService.Texts texts) {
+    public record ConsentView(String version, boolean accepted, ConsentService.Texts texts,
+                          ConsentService.Texts summary) {
     }
 
     public record AcceptRequest(@NotBlank String version) {
@@ -56,6 +57,7 @@ public class ConsentController {
     }
 
     private ConsentView view(UUID userId) {
-        return new ConsentView(ConsentService.CONSENT_VERSION, consents.hasAccepted(userId), consents.texts());
+        return new ConsentView(ConsentService.CONSENT_VERSION, consents.hasAccepted(userId), consents.texts(),
+                consents.summary());
     }
 }
