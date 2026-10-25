@@ -4,6 +4,7 @@ import { useRoute, useRouter } from 'vue-router'
 import { get } from '../api/client'
 import type { AllTimeRow, BeerSeason, SeasonOverview } from '../api/types'
 import BarChart from '../components/BarChart.vue'
+import { showNonBeer } from '../showNonBeer'
 
 const route = useRoute()
 const router = useRouter()
@@ -14,19 +15,36 @@ const allTime = ref<AllTimeRow[]>([])
 const allTimeOpen = ref(false)
 const loading = ref(false)
 
+// The food that was scored (fenalår, the hosts) is left out unless the reader switches it on.
+const flag = () => (showNonBeer.value ? '?includeNonBeer=true' : '')
+
+async function loadAll() {
+  get<AllTimeRow[]>(`/api/history/alltime${flag()}`).then((r) => (allTime.value = r)).catch(() => {})
+  overview.value = await get<SeasonOverview[]>(`/api/history/overview${flag()}`).catch(() => [])
+}
+
+async function loadSeason(y: number | null) {
+  if (!y) return
+  loading.value = true
+  results.value = await get<BeerSeason[]>(`/api/history/seasons/${y}${flag()}`).catch(() => [])
+  loading.value = false
+}
+
 onMounted(async () => {
-  get<AllTimeRow[]>('/api/history/alltime').then((r) => (allTime.value = r)).catch(() => {})
-  overview.value = await get<SeasonOverview[]>('/api/history/overview').catch(() => [])
+  await loadAll()
   const q = Number(route.query.year)
   year.value = overview.value.some((s) => s.year === q) ? q : (overview.value[0]?.year ?? null)
 })
 
-watch(year, async (y) => {
+watch(year, (y) => {
   if (!y) return
-  loading.value = true
   router.replace({ query: { year: String(y) } })
-  results.value = await get<BeerSeason[]>(`/api/history/seasons/${y}`).catch(() => [])
-  loading.value = false
+  loadSeason(y)
+})
+
+watch(showNonBeer, async () => {
+  await loadAll()
+  loadSeason(year.value)
 })
 
 const season = computed(() => overview.value.find((s) => s.year === year.value) ?? null)
@@ -39,6 +57,10 @@ const ratersPerYear = computed(() => chronological.value.map((s) => ({ label: St
 <template>
   <h1>Tidligere år</h1>
   <p class="muted">Arkivet fra wikien og regnearkene, med den vektingen som gjaldt hvert år. Alt vist på 1–6.</p>
+  <label class="muted" style="display: flex; gap: 8px; align-items: center; margin: 0 0 8px">
+    <input v-model="showNonBeer" type="checkbox" style="width: auto; margin: 0" />
+    <span>Vis fenalår og annen mat. Noen år fikk spekemat og vertskapet terningkast også. De er skjult som standard.</span>
+  </label>
 
   <h2 style="margin-top: 8px">Gjennom alle år</h2>
   <p class="muted">Alle terningkast siden 1998 på 1–6, vektet slik hvert år vektet dem, og trukket mot alle års snitt til et øl har fått nok stemmer. Minst fem stemmer.</p>
@@ -48,7 +70,7 @@ const ratersPerYear = computed(() => chronological.value.map((s) => ({ label: St
       <tbody>
         <tr v-for="r in (allTimeOpen ? allTime : allTime.slice(0, 10))" :key="r.beerName">
           <td>{{ r.rank }}</td>
-          <td><router-link class="lnk" :to="`/historikk/ol/${encodeURIComponent(r.beerName)}`">{{ r.beerName }}</router-link><div class="muted">{{ [r.brewery, r.years.length === 1 ? String(r.years[0]) : `${r.years.length} sesonger, best ${r.bestYear} (${r.bestMean.toFixed(2)})`].filter(Boolean).join(' · ') }}</div></td>
+          <td><router-link class="lnk" :to="`/historikk/ol/${encodeURIComponent(r.beerName)}`">{{ r.beerName }}</router-link><span v-if="r.nonBeer" class="pill" style="margin-left: 6px">mat</span><div class="muted">{{ [r.brewery, r.years.length === 1 ? String(r.years[0]) : `${r.years.length} sesonger, best ${r.bestYear} (${r.bestMean.toFixed(2)})`].filter(Boolean).join(' · ') }}</div></td>
           <td style="text-align: right"><strong>{{ r.bayesian.toFixed(2) }}</strong><div class="muted">snitt {{ r.mean.toFixed(2) }}</div></td>
           <td style="text-align: right">{{ r.ratings }}</td>
         </tr>
@@ -83,7 +105,7 @@ const ratersPerYear = computed(() => chronological.value.map((s) => ({ label: St
         <tbody>
           <tr v-for="(r, i) in results" :key="r.beerName">
             <td>{{ i + 1 }}</td>
-            <td><router-link class="lnk" :to="`/historikk/ol/${encodeURIComponent(r.beerName)}`">{{ r.beerName }}</router-link><div v-if="r.brewery" class="muted">{{ r.brewery }}</div></td>
+            <td><router-link class="lnk" :to="`/historikk/ol/${encodeURIComponent(r.beerName)}`">{{ r.beerName }}</router-link><span v-if="r.nonBeer" class="pill" style="margin-left: 6px">mat</span><div v-if="r.brewery" class="muted">{{ r.brewery }}</div></td>
             <td><strong>{{ r.weightedMean.toFixed(2) }}</strong></td>
             <td>{{ r.ratings }}</td>
           </tr>

@@ -392,6 +392,26 @@ export interface AllTimeRow {
   bayesian: number
   bestYear: number
   bestMean: number
+  /** Food or the hosts, not a beer; only present in the data when the reader asked for it. */
+  nonBeer?: boolean
+}
+
+/** What Vinmonopolet's lists say about an archive beer, and how sure the match is (strongest first). */
+export type FactTier = 'CONFIRMED' | 'MATCHED' | 'PROBABLE' | 'GUESS'
+
+export interface HistoricFact {
+  years: number[]
+  tier: FactTier
+  productName: string
+  articleNos: string[]
+  brewery?: string | null
+  style?: string | null
+  abvPercent: number[]
+  listedYears: number[]
+  latestPriceNok?: number | null
+  latestPriceYear?: number | null
+  /** Only when there is exactly one article number. */
+  poletUrl?: string | null
 }
 
 export interface BeerSeason {
@@ -401,6 +421,7 @@ export interface BeerSeason {
   ratings: number
   weightedMean: number
   normalisedMean: number
+  nonBeer?: boolean
 }
 
 export interface MySeason {

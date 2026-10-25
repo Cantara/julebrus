@@ -64,5 +64,15 @@ Years without a list (1998-2012) can only match against other years' beers, so g
 Human decisions go in `vote_match_overrides.csv` (`year, vote_beer, product_article_no, product_name`; the article number OR the name, or `none`) and win over the
 script on the next run. The app imports these files at startup into its database (admins review the matches there), and from then on the database decisions are the source of truth; `GET /api/admin/matches/overrides.csv` exports them in the override format above.
 
+## Analysis pass (2026-10-25)
+
+`match_analysis_2026-10-25.csv` holds a reading of the 246 entries the machine was not sure about (`likely`, `review`, `none`), one row where something
+is proposed, with a reason, a confidence (H/M/L) and whether the product is on that year's list (`on_that_years_list`: 39 of the 41 matches in years
+that have a list are; "no list" for 1998-2012). `python3 -I tools/apply_match_analysis.py` applies H and M rows to `vote_matches.csv` and is idempotent:
+a match becomes status `likely` with method `analysis-high` or `analysis-medium`; cured meat and junk become `not-a-product`; Tuborg (a Danish import, not on the
+Norwegian list) becomes `none`; L rows stay unresolved (a machine `likely` row that I rate L is demoted to `review`). Rules learned from the owner: a bare
+"Ringnes" is the normal-strength Ringnes Juleøl, a bare "Julebokk" is Ringnes Julebokk, Haandbryggeriet's Nissefar has two article numbers. The app shows the
+facts in four tiers (confirmed by a person, matched, probable, guess) and a person's decision always replaces this analysis.
+
 ## Images (decision 2026-10-24)
 Product photos are not stored here and not hotlinked: the app's images come from its users' own label photos (see DESIGN.md). The lists have no image column.

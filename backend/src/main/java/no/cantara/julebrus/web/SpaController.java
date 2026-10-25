@@ -11,8 +11,14 @@ import org.springframework.web.bind.annotation.GetMapping;
 @Controller
 public class SpaController {
 
-    @GetMapping({"/{path:[^.]*}", "/{path:[^.]*}/{sub:[^.]*}"})
+    @GetMapping({"/{path:[^.]*}", "/{path:[^.]*}/{sub:[^.]*}", "/{path:[^.]*}/{sub:[^.]*}/{rest:[^.]*}"})
     public String index() {
+        return "forward:/index.html";
+    }
+
+    /** An archive beer is addressed by its name, and names have dots in them ("St. Hallvards For-Jul"). */
+    @GetMapping("/historikk/ol/{name}")
+    public String archiveBeer() {
         return "forward:/index.html";
     }
 }

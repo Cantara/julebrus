@@ -1,0 +1,121 @@
+year,vote_beer,machine_status,machine_pick,proposed,proposed_product,article_no,confidence,on_that_years_list,reason
+1998,Aass,review,Aass Juleøl,match,Aass Juleøl,265502,M,no list,brewery name only: the standard Aass Juleøl (Premium and Vellagret are named when meant)
+1998,Hansa,review,Hansa Juleøl,match,Hansa Juleøl,,M,no list,brewery name only: the standard Hansa Juleøl
+1998,Låret,likely,Stavanger Juleøl Lagret,not-a-product,,,H,,"the cured leg of lamb (fenalår), not a beer"
+1998,Mack,review,Mack Juleøl,match,Mack Juleøl,,M,no list,brewery name only: the standard Mack Juleøl (Julebokk and Nissefant are named when meant)
+1998,Ringnes,review,Ringnes Julebokk,match,Ringnes Juleøl,,H,no list,"brewery name only = the normal-strength Ringnes Juleøl sold at Vinmonopolet (Totto, 2026-10-25); the machine picked Julebokk. Two article numbers (2013, 2022+), both 6.3%"
+1998,Fredrikstad,review,Fredrikstad Juleøl,match,Fredrikstad Juleøl,896702,H,no list,the only Fredrikstad beer on the lists; the other candidate is a different brewery
+1998,Schous,review,Schouskjellern Julestout,leave,,,L,,the old Schous brewery's juleøl: not what the machine found (Schouskjelleren is a micro brewery from 2010)
+1998,Tuborg,likely,Borg Juleøl,none,,,H,,"Danish Christmas beer, not on the Norwegian Vinmonopolet list (Totto, 2026-10-25); the machine mistook it for Borg"
+2003,Julebokk,review,Balder Julebukk,match,Ringnes Julebokk,,M,no list,"a bare ""Julebokk"" is Ringnes Julebokk, the strong one (Totto, 2026-10-25); the machine picked Balder. The lists give 9%, Totto remembers 10%"
+2003,Schous,review,Schouskjellern Julestout,leave,,,L,,the old Schous brewery's juleøl: not what the machine found (Schouskjelleren is a micro brewery from 2010)
+2003,Ringnes,review,Ringnes Julebokk,match,Ringnes Juleøl,,H,no list,"brewery name only = the normal-strength Ringnes Juleøl sold at Vinmonopolet (Totto, 2026-10-25); the machine picked Julebokk. Two article numbers (2013, 2022+), both 6.3%"
+2003,Aas,review,Aass Juleøl,match,Aass Juleøl,265502,M,no list,brewery name only: the standard Aass Juleøl (Premium and Vellagret are named when meant)
+2003,Lervig,review,Lervig Christmas Shake,leave,,,L,,"brewery name only, very early; the candidates are products from 2016 on"
+2003,Nøgne ø,review,Nøgne Ø Julequad,leave,,,L,,three Nøgne Ø Christmas beers tie
+2003,Mack,review,Mack Juleøl,match,Mack Juleøl,,M,no list,brewery name only: the standard Mack Juleøl (Julebokk and Nissefant are named when meant)
+2003,Fredrikstad,review,Fredrikstad Juleøl,match,Fredrikstad Juleøl,896702,H,no list,the only Fredrikstad beer on the lists; the other candidate is a different brewery
+2003,Hansa,review,Hansa Juleøl,match,Hansa Juleøl,,M,no list,brewery name only: the standard Hansa Juleøl
+2003,Tou,none,,not-a-product,,,M,,junk row in the sheet
+2004,Julebokk,review,Balder Julebukk,match,Ringnes Julebokk,,M,no list,"a bare ""Julebokk"" is Ringnes Julebokk, the strong one (Totto, 2026-10-25); the machine picked Balder. The lists give 9%, Totto remembers 10%"
+2004,Lervig,review,Lervig Christmas Shake,leave,,,L,,"brewery name only, very early; the candidates are products from 2016 on"
+2004,Ringnes,review,Ringnes Julebokk,match,Ringnes Juleøl,,H,no list,"brewery name only = the normal-strength Ringnes Juleøl sold at Vinmonopolet (Totto, 2026-10-25); the machine picked Julebokk. Two article numbers (2013, 2022+), both 6.3%"
+2004,Aas,review,Aass Juleøl,match,Aass Juleøl,265502,M,no list,brewery name only: the standard Aass Juleøl (Premium and Vellagret are named when meant)
+2004,Mack,review,Mack Juleøl,match,Mack Juleøl,,M,no list,brewery name only: the standard Mack Juleøl (Julebokk and Nissefant are named when meant)
+2004,Fredrikstad,review,Fredrikstad Juleøl,match,Fredrikstad Juleøl,896702,H,no list,the only Fredrikstad beer on the lists; the other candidate is a different brewery
+2004,Hansa,review,Hansa Juleøl,match,Hansa Juleøl,,M,no list,brewery name only: the standard Hansa Juleøl
+2007,Ringnes,review,Ringnes Julebokk,match,Ringnes Juleøl,,H,no list,"brewery name only = the normal-strength Ringnes Juleøl sold at Vinmonopolet (Totto, 2026-10-25); the machine picked Julebokk. Two article numbers (2013, 2022+), both 6.3%"
+2007,Hansa,review,Hansa Juleøl,match,Hansa Juleøl,,M,no list,brewery name only: the standard Hansa Juleøl
+2007,Nissefar,review,Haandbryggeriet Nissefar,match,Haandbryggeriet Nissefar,,M,no list,"Nissefar is Haandbryggeriet's; Mack Nissefant is spelled with -ant. Two article numbers (4478502 from 2013, 14852002 from 2022), both 7%: possibly two versions, so no single Polet link"
+2007,Hansa Julebrygg,review,Hansa Juleøl,match,Hansa Ekstra Vellagret Julebrygg,896402,M,no list,"the word Julebrygg; the 2014 vote ""Hansa Vellagret Julebrygg"" is the same beer. The machine picked Juleøl/JuleAle"
+2007,Aass,review,Aass Juleøl,match,Aass Juleøl,265502,M,no list,brewery name only: the standard Aass Juleøl (Premium and Vellagret are named when meant)
+2007,God jul,review,Eiker God Jul,leave,,,L,,"a generic phrase; Eiker, Nøgne Ø and Røros all have a God Jul"
+2007,Nissemor,review,Haandbryggeriet Nissemor,match,Haandbryggeriet Nissemor,,H,no list,Haandbryggeriet Nissemor (the fatlagret variants are named when meant)
+2007,Julefnugg,review,Berentsens Julefnugg,match,Berentsens Julefnugg,,M,no list,Berentsens Julefnugg; Thisted Julefnug is Danish
+2007,Julebukk,review,Balder Julebukk,match,Ringnes Julebokk,,M,no list,"a bare ""Julebokk"" is Ringnes Julebokk, the strong one (Totto, 2026-10-25); the machine picked Balder. The lists give 9%, Totto remembers 10%"
+2007,Mack,review,Mack Juleøl,match,Mack Juleøl,,M,no list,brewery name only: the standard Mack Juleøl (Julebokk and Nissefant are named when meant)
+2007,Fredrikstad,review,Fredrikstad Juleøl,match,Fredrikstad Juleøl,896702,H,no list,the only Fredrikstad beer on the lists; the other candidate is a different brewery
+2007,Levig,review,Lervig Christmas Shake,leave,,,L,,"brewery name only, very early; the candidates are products from 2016 on"
+2011,Hansa Julebrygg,review,Hansa Juleøl,match,Hansa Ekstra Vellagret Julebrygg,896402,M,no list,"the word Julebrygg; the 2014 vote ""Hansa Vellagret Julebrygg"" is the same beer. The machine picked Juleøl/JuleAle"
+2011,Lervig Juleøl,review,Larvik Juleøl,match,Lervig's jul,9549902,M,no list,the machine picked Larvik (a different place); Lervig's jul is Lervig's Christmas beer
+2011,"Hansddbrygggirier, nissefar",review,Haandbryggeriet Nissefar,match,Haandbryggeriet Nissefar,,M,no list,"Nissefar is Haandbryggeriet's; Mack Nissefant is spelled with -ant. Two article numbers (4478502 from 2013, 14852002 from 2022), both 7%: possibly two versions, so no single Polet link"
+2011,Fredrikstad,review,Fredrikstad Juleøl,match,Fredrikstad Juleøl,896702,H,no list,the only Fredrikstad beer on the lists; the other candidate is a different brewery
+2011,Ægir julebrygg,review,Ægir Ylir Julebrygg,match,Ægir Ylir Julebrygg,195602,M,no list,Ylir was Ægir's Christmas beer at the time; Eldir and Fimafeng came later
+2011,Berentsen Juleavec,review,Berentsens Jule-Avec,match,Berentsens Jule-Avec,4983402,H,no list,named Jule-Avec
+2011,Håndbryggeriet Nissemor,review,Haandbryggeriet Nissemor,match,Haandbryggeriet Nissemor,,H,no list,Haandbryggeriet Nissemor (the fatlagret variants are named when meant)
+2011,Ringnes Juleøl Sterk,review,Ringnes Juleøl,leave,,,L,,"no ""sterk"" product on the lists"
+2012,Aass Juleøl Orginal,none,,match,Aass Juleøl,265502,M,no list,the ordinary Aass Juleøl
+2012,Hansa Julebrygg,review,Hansa Juleøl,match,Hansa Ekstra Vellagret Julebrygg,896402,M,no list,"the word Julebrygg; the 2014 vote ""Hansa Vellagret Julebrygg"" is the same beer. The machine picked Juleøl/JuleAle"
+2012,Julefnugg,review,Berentsens Julefnugg,match,Berentsens Julefnugg,,M,no list,Berentsens Julefnugg; Thisted Julefnug is Danish
+2012,Lervig,review,Lervig Christmas Shake,match,Lervig's jul,9549902,M,no list,brewery name only; Lervig's jul is their Christmas beer on the 2013 list
+2012,Bestefar,review,Haandbryggeriet Bestefar,match,Haandbryggeriet Bestefar,,M,no list,Haandbryggeriet Bestefar (Fatlagret is named when meant); Lindheim Bestefars Jul is a different name
+2012,Ægir julebrygg,review,Ægir Ylir Julebrygg,match,Ægir Ylir Julebrygg,195602,M,no list,Ylir was Ægir's Christmas beer at the time; Eldir and Fimafeng came later
+2012,Fredrikstad,review,Fredrikstad Juleøl,match,Fredrikstad Juleøl,896702,H,no list,the only Fredrikstad beer on the lists; the other candidate is a different brewery
+2012,Berentsen Juleavec,review,Berentsens Jule-Avec,match,Berentsens Jule-Avec,4983402,H,no list,named Jule-Avec
+2012,Håndbryggeriet Nissemor,review,Haandbryggeriet Nissemor,match,Haandbryggeriet Nissemor,,H,no list,Haandbryggeriet Nissemor (the fatlagret variants are named when meant)
+2012,Ringnes Juleøl Sterk,review,Ringnes Juleøl,leave,,,L,,"no ""sterk"" product on the lists"
+2012,nissefar,review,Haandbryggeriet Nissefar,match,Haandbryggeriet Nissefar,,M,no list,"Nissefar is Haandbryggeriet's; Mack Nissefant is spelled with -ant. Two article numbers (4478502 from 2013, 14852002 from 2022), both 7%: possibly two versions, so no single Polet link"
+2012,bestefar,review,Haandbryggeriet Bestefar,match,Haandbryggeriet Bestefar,,M,no list,Haandbryggeriet Bestefar (Fatlagret is named when meant); Lindheim Bestefars Jul is a different name
+2012,grans lade gaards,none,,match,Lade Gaards Juleøl,9521002,M,no list,Lade Gaards
+2012,tomasmesse,review,Kinn Tomasmess,match,Kinn Tomasmesse,,H,no list,spelling of Kinn Tomasmesse; the other candidate is a misspelling in the list
+2012,Smedstuen,none,,not-a-product,,,H,,"cured meat or decoration, not a beer (the landing page already leaves these out)"
+2012,Finsbråten,none,,not-a-product,,,H,,"cured meat or decoration, not a beer (the landing page already leaves these out)"
+2013,Aass,review,Aass Juleøl,match,Aass Juleøl,265502,M,yes,brewery name only: the standard Aass Juleøl (Premium and Vellagret are named when meant)
+2013,Fredrikstad,review,Fredrikstad Juleøl,match,Fredrikstad Juleøl,896702,H,yes,the only Fredrikstad beer on the lists; the other candidate is a different brewery
+2013,Hansa,review,Hansa Juleøl,match,Hansa Juleøl,,M,yes,brewery name only: the standard Hansa Juleøl
+2013,Mack,likely,Mack Juleøl,match,Mack Juleøl,,M,yes,brewery name only: the standard Mack Juleøl (Julebokk and Nissefant are named when meant)
+2013,Finsbråten,none,,not-a-product,,,H,,"cured meat or decoration, not a beer (the landing page already leaves these out)"
+2013,Smedstuen gård (røkt),none,,not-a-product,,,H,,"cured meat or decoration, not a beer (the landing page already leaves these out)"
+2014,Kloster. G. Juleøl,review,Klostergården Jul e øl,match,Klostergården Jul e øl,,M,yes,Klostergården is clear; the product name in the list is garbled
+2014,Aass  Normal,none,,match,Aass Juleøl,265502,M,NO,the ordinary Aass Juleøl
+2015,Hansa Julebrygg,review,Hansa JuleAle,match,Hansa Ekstra Vellagret Julebrygg,896402,M,yes,"the word Julebrygg; the 2014 vote ""Hansa Vellagret Julebrygg"" is the same beer. The machine picked Juleøl/JuleAle"
+2015,Fredrikstad,review,Fredrikstad Juleøl,match,Fredrikstad Juleøl,896702,H,yes,the only Fredrikstad beer on the lists; the other candidate is a different brewery
+2015,Mack,review,Mack Juleøl,match,Mack Juleøl,,M,yes,brewery name only: the standard Mack Juleøl (Julebokk and Nissefant are named when meant)
+2015,Julepynt,none,,not-a-product,,,H,,"cured meat or decoration, not a beer (the landing page already leaves these out)"
+2015,Julefnugg,review,Berentsens Julefnugg,match,Berentsens Julefnugg,,M,yes,Berentsens Julefnugg; Thisted Julefnug is Danish
+2015,7F 7 Sorter,none,,match,7 Fjell 7 Sorter Christmas Ale,1829302,H,yes,7 Fjell 7 Sorter; spelling
+2015,Nissefar,review,Haandbryggeriet Nissefar,match,Haandbryggeriet Nissefar,,M,yes,"Nissefar is Haandbryggeriet's; Mack Nissefant is spelled with -ant. Two article numbers (4478502 from 2013, 14852002 from 2022), both 7%: possibly two versions, so no single Polet link"
+2015,Smestadstuen,none,,not-a-product,,,H,,"cured meat or decoration, not a beer (the landing page already leaves these out)"
+2015,Vetikke,none,,not-a-product,,,M,,junk row in the sheet
+2015,Nøisom,review,Nøisom Gullinbustes Torreblot Jòl,leave,,,L,,several Nøisom beers tie
+2016,Hansa Jule Ale,review,Hansa JuleAle,match,Hansa JuleAle,,H,yes,named JuleAle
+2016,Haand Nisse Mor Brygg,none,,match,Haandbryggeriet Nissemor,,H,yes,Haandbryggeriet Nissemor (the fatlagret variants are named when meant)
+2016,Aass P,none,,match,Aass Juleøl Premium,,M,yes,P = Premium
+2016,Færder >Myrra,review,"Færder Gull, Røkelse og Myrra (3x33cl)",match,"Færder Gull, Røkelse og Myrra (3x33cl)",6393908,M,yes,the Myrra beer of a three-pack; the pack is what is on the list
+2016,Hansa Julebrygg,review,Hansa JuleAle,match,Hansa Ekstra Vellagret Julebrygg,896402,M,yes,"the word Julebrygg; the 2014 vote ""Hansa Vellagret Julebrygg"" is the same beer. The machine picked Juleøl/JuleAle"
+2016,lervig,review,Lervig Smokes like Christmas,leave,,,L,,Smokes like Christmas and Lervig's jul tie
+2016,mikrobyggeriet,review,Mikrobryggeriet Oslo Julebrygg,match,Mikrobryggeriet Oslo Julebrygg,,M,yes,"Mikrobryggeriet (Oslo), their Christmas beer on the lists"
+2016,Qvart Juleskjesk grønn,review,Qvart Julekjesk,match,Qvart Julekjesk,,M,yes,Julekjesk (the colour is not a product name)
+2016,Rignes bokk,review,Ringnes Julebokk,match,Ringnes Julebokk,,H,yes,"Rignes = Ringnes, bokk = Julebokk"
+2016,haand nissefar,likely,Haandbryggeriet Nissefar,match,Haandbryggeriet Nissefar,,M,yes,"Nissefar is Haandbryggeriet's; Mack Nissefant is spelled with -ant. Two article numbers (4478502 from 2013, 14852002 from 2022), both 7%: possibly two versions, so no single Polet link"
+2016,nøgne ø rod jul,review,Nøgne Ø God Jul,match,Nøgne Ø Rød Jul,3577802,H,yes,rod = Rød; the machine picked God Jul
+2016,Fredrikstad,review,Fredrikstad Juleøl,match,Fredrikstad Juleøl,896702,H,yes,the only Fredrikstad beer on the lists; the other candidate is a different brewery
+2016,Eld,review,Kinn Eld Røykt Juleøl,match,Kinn Eld Røykt Juleøl,,M,yes,"Kinn Eld, the smoked one"
+2016,Qvart,review,Qvart Julekjesk,leave,,,L,,Julekjesk and Nissekjesk tie
+2016,Berentsens,review,Berentsens Jule Avec,leave,,,L,,three Berentsens beers tie
+2016,Dahls Store Bjorn,none,,match,EC Dahls Store Bjørn,,M,NO,E.C. Dahls Store Bjørn
+2016,Jacobs Kjøt,none,,not-a-product,,,H,,"cured meat or decoration, not a beer (the landing page already leaves these out)"
+2016,Trondheim Mikrobyggeriet,likely,Trondhjem Mikrobryggeri Gledelig Jul,leave,,,L,,brewery name only; the machine pick is one of their beers
+2017,Bådom Tussvatnet,none,,match,Bådin Tussvatnet Juleøl,3558902,M,yes,Bådin Tussvatnet (the same name matched in 2016)
+2017,C Dahls store bjørn juleøl,review,EC Dahls Store Bjørn,match,EC Dahls Store Bjørn,,H,yes,C = EC (E.C. Dahls)
+2017,ELØ Julebokk,review,Løkka Julebokk,leave,,,L,,"""ELØ"" is unclear"
+2017,Grim & Fryt Vinternatt,review,Grim&Gryt Vinternatt Juleøl,match,Grim&Gryt Vinternatt Juleøl,,H,yes,Fryt = Gryt
+2017,Håndbryggeriet Bestefar,review,Haandbryggeriet Bestefar,match,Haandbryggeriet Bestefar,,M,yes,Haandbryggeriet Bestefar (Fatlagret is named when meant); Lindheim Bestefars Jul is a different name
+2017,Hansa Julebrygg,review,Hansa JuleAle,match,Hansa Ekstra Vellagret Julebrygg,896402,M,yes,"the word Julebrygg; the 2014 vote ""Hansa Vellagret Julebrygg"" is the same beer. The machine picked Juleøl/JuleAle"
+2017,Krampus,review,Del Ducato Krampus,leave,,,L,,Del Ducato and Cervisiam both make a Krampus
+2017,h,none,,not-a-product,,,M,,junk row in the sheet
+2017,Nøisom Juleøl 2017,likely,Nøisom Dobbelbock Juleøl,leave,,,L,,Nøisom made several Christmas beers; the machine pick is one of them
+2017,Schaus Juleøl,review,Hansa Juleøl,leave,,,L,,"the machine picked Hansa Juleøl, which is wrong; Schous probably, but no product to point at"
+2017,Test,none,,not-a-product,,,M,,junk row in the sheet
+2017,Berntsens The Holy Book,review,Berentsens The Holy Bock Vanilla,match,Berentsens The Holy Bock Vanilla,7977002,M,yes,Holy Bock; the Vanilla variant may or may not be what was tasted
+2017,Grunerløkkas Julebokk,review,Løkka Julebokk,match,Løkka Julebokk,,M,yes,Grünerløkka Brygghus Løkka Julebokk
+2018,Harstad,review,Harstad Bryggeri Jul 2018,match,Harstad Bryggeri Jul 2018,10484802,M,yes,"Harstad's Jul 2018; ""Harstad Trippel"" is its own entry"
+2018,Evens More XMas,review,Haandbryggeriet Even S’more x-mas,match,Haandbryggeriet Even S’more x-mas,,H,yes,Even S'more x-mas
+2018,Haand Nissefar,likely,Haandbryggeriet Nissefar,match,Haandbryggeriet Nissefar,,M,yes,"Nissefar is Haandbryggeriet's; Mack Nissefant is spelled with -ant. Two article numbers (4478502 from 2013, 14852002 from 2022), both 7%: possibly two versions, so no single Polet link"
+2018,Hansa Julebrygg,review,Hansa Juleale,match,Hansa Ekstra Vellagret Julebrygg,896402,M,yes,"the word Julebrygg; the 2014 vote ""Hansa Vellagret Julebrygg"" is the same beer. The machine picked Juleøl/JuleAle"
+2018,Ringnes juleøl sterk,review,Ringnes Juleøl,leave,,,L,,"no ""sterk"" product on the lists"
+2018,Nissefar,likely,Haandbryggeriet Nissefar,match,Haandbryggeriet Nissefar,,M,yes,"Nissefar is Haandbryggeriet's; Mack Nissefant is spelled with -ant. Two article numbers (4478502 from 2013, 14852002 from 2022), both 7%: possibly two versions, so no single Polet link"
+2018,Haand Nissemor,review,Haandbryggeriet Nissemor,match,Haandbryggeriet Nissemor,,H,yes,Haandbryggeriet Nissemor (the fatlagret variants are named when meant)
+2019,Christmas Crush,review,Lervig Christmas Crush Barrel aged Flemmish inspired red ale,match,Lervig Christmas Crush Barrel aged Flemmish inspired red ale,,M,yes,Christmas Crush is Lervig's
+2019,7 sorter chritmas ale - 7 fjell,none,,match,7 Fjell 7 Sorter Christmas Ale,1829302,H,yes,7 Fjell 7 Sorter; spelling
+2019,Kraftig Juling,review,Tya Kraftig Juling Belgisk Kvadruppel Juleøl,match,Tya Kraftig Juling Belgisk Kvadruppel Juleøl,,H,yes,Tya Kraftig Juling
