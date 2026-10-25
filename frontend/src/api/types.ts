@@ -153,6 +153,8 @@ export interface SessionBeer {
   revealed: boolean
   scores?: Record<string, number>
   average?: number
+  /** only once revealed, and only for people who wrote something */
+  notes?: Record<string, { notes?: string; tags: string[] }>
 }
 
 export interface Session {

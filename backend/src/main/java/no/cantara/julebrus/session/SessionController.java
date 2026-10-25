@@ -39,8 +39,14 @@ public class SessionController {
      * Blind reveal: {@code scores} is only populated once every member has rated the
      * beer. Until then members see who has rated, not what.
      */
+    /** What a person wrote with their roll: the free comment and the tags. Shown with the scores at the reveal. */
+    public record NoteView(String notes, List<String> tags) {
+    }
+
     public record SessionBeerView(UUID beerId, String name, String brewery, List<UUID> ratedBy,
-                                  boolean revealed, Map<UUID, Integer> scores, Double average) {
+                                  boolean revealed, Map<UUID, Integer> scores, Double average,
+                                  /** only once revealed, and only for people who wrote something */
+                                  Map<UUID, NoteView> notes) {
     }
 
     public record SessionView(UUID id, UUID hostId, String joinCode, Instant createdAt, Instant closedAt,
@@ -159,8 +165,18 @@ public class SessionController {
             Double average = revealed && !rated.isEmpty()
                     ? rated.stream().mapToInt(Tasting::getScore).average().orElse(Double.NaN)
                     : null;
+            Map<UUID, NoteView> notes = null;
+            if (revealed) {
+                notes = new java.util.LinkedHashMap<>();
+                for (Tasting t : rated) {
+                    boolean hasText = t.getNotes() != null && !t.getNotes().isBlank();
+                    if (hasText || !t.getTags().isEmpty()) {
+                        notes.put(t.getUserId(), new NoteView(hasText ? t.getNotes() : null, List.copyOf(t.getTags())));
+                    }
+                }
+            }
             return new SessionBeerView(beerId, beer == null ? "?" : beer.getName(),
-                    beer == null ? null : beer.getBrewery(), ratedBy, revealed, scores, average);
+                    beer == null ? null : beer.getBrewery(), ratedBy, revealed, scores, average, notes);
         }).toList();
 
         return new SessionView(s.getId(), s.getHostId(), s.getJoinCode(), s.getCreatedAt(), s.getClosedAt(),

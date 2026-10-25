@@ -5,6 +5,7 @@ import { get, post } from '../api/client'
 import { subscribeSession, type LiveStatus } from '../api/live'
 import type { Beer, BlindRound, DuelPair, Session } from '../api/types'
 import BlindPour from '../components/BlindPour.vue'
+import DiceFace from '../components/DiceFace.vue'
 import QrCode from '../components/QrCode.vue'
 import { useMe } from '../stores/me'
 
@@ -170,8 +171,20 @@ onUnmounted(() => {
       <div v-if="b.revealed && b.scores" class="reveal" :class="{ unwrap: unwrapping.has(b.beerId) }">
         <span class="paper" aria-hidden="true" />
         <span class="burst" aria-hidden="true"><i v-for="n in 10" :key="n" :style="{ '--a': `${n * 36}deg` }" /></span>
-        <div class="scores"><span v-for="(s, uid) in b.scores" :key="uid" class="pill score">{{ memberName(String(uid)) }}: <strong>{{ s }}</strong></span></div>
+        <div class="scores dice-row">
+          <span v-for="(s, uid) in b.scores" :key="uid" class="score roll">
+            <DiceFace :value="s" :size="34" />
+            <span class="who">{{ memberName(String(uid)) }}</span>
+          </span>
+        </div>
         <p class="ok average display" style="margin: 8px 0 0">Snitt {{ b.average?.toFixed(2) }}</p>
+        <ul v-if="b.notes && Object.keys(b.notes).length" class="notes">
+          <li v-for="(n, uid) in b.notes" :key="uid">
+            <strong>{{ memberName(String(uid)) }}:</strong>{{ ' ' }}
+            <template v-if="n.notes">{{ n.notes }}{{ ' ' }}</template>
+            <span v-for="tag in n.tags" :key="tag" class="pill">{{ tag }}</span>
+          </li>
+        </ul>
       </div>
       <p v-else class="muted" style="margin: 8px 0 0">
         {{ b.ratedBy.length }} av {{ session.members.length }} har svart. Scorene vises når alle er ferdige.
@@ -193,10 +206,10 @@ onUnmounted(() => {
     <template v-if="pending.length">
       <h2>Duell</h2>
       <p class="muted">Hvilket var best? Dette lager sideranking uavhengig av hvor snill du er med terningen.</p>
-      <div v-for="p in pending" :key="p.beerA + p.beerB" class="card row">
-        <button class="secondary" style="flex: 1" @click="answerDuel(p.beerA, p.beerB)">{{ beerName(p.beerA) }}</button>
-        <span class="muted">vs</span>
-        <button class="secondary" style="flex: 1" @click="answerDuel(p.beerB, p.beerA)">{{ beerName(p.beerB) }}</button>
+      <div v-for="p in pending" :key="p.beerA + p.beerB" class="card duel">
+        <button class="secondary" @click="answerDuel(p.beerA, p.beerB)">{{ beerName(p.beerA) }}</button>
+        <span class="vs" aria-hidden="true">vs</span>
+        <button class="secondary" @click="answerDuel(p.beerB, p.beerA)">{{ beerName(p.beerB) }}</button>
       </div>
     </template>
 
@@ -205,6 +218,14 @@ onUnmounted(() => {
 </template>
 
 <style scoped>
+.dice-row { display: flex; flex-wrap: wrap; gap: 10px 14px; margin-top: 10px; }
+.dice-row .score { display: inline-flex; flex-direction: column; align-items: center; gap: 2px; }
+.dice-row .who { font-size: 0.75rem; color: var(--muted); max-width: 72px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.notes { list-style: none; margin: 8px 0 0; padding: 0; display: grid; gap: 4px; font-size: 0.9rem; }
+.notes .pill { margin-left: 4px; }
+.duel { display: grid; gap: 6px; }
+.duel button { width: 100%; text-align: left; }
+.duel .vs { justify-self: center; font-size: 0.75rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
 .live { font-size: 0.75rem; color: var(--muted); display: inline-flex; align-items: center; gap: 5px; }
 .live i { width: 8px; height: 8px; border-radius: 50%; background: var(--muted); opacity: 0.5; }
 .live.live i { background: #3c8a4f; opacity: 1; box-shadow: 0 0 6px #3c8a4f88; }
