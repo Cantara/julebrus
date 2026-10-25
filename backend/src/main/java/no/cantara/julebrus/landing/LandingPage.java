@@ -299,7 +299,10 @@ public final class LandingPage {
                 l("Følger juleølslippet. Vinduet håndheves på serveren: ingenting kan scores før eller etter.",
                         "Follows the juleøl release. The window is enforced on the server: nothing can be scored before or after."));
         rule(h, l("Per dag", "Per day"), l("Høyst " + season.maxTastingsPerDay() + " smakinger per person", "At most " + season.maxTastingsPerDay() + " tastings per person"),
-                l("Ekte glass og frisk gane. En dag er en kalenderdag i Oslo.", "Real pours and a fresh palate. A day is a calendar day in Oslo."));
+                l("Ekte glass og frisk gane. En dag er en kalenderdag i Oslo. Ved et bord med " + season.bigTableSize() + " eller flere er grensen "
+                                + season.maxTastingsPerDayBigTable() + ", for et selskap er en annen kveld.",
+                        "Real pours and a fresh palate. A day is a calendar day in Oslo. At a table of " + season.bigTableSize() + " or more the limit is "
+                                + season.maxTastingsPerDayBigTable() + ", because a party is a different evening."));
         rule(h, l("Alene", "Solo"), l("Høyst " + season.maxSoloDays() + " solodager", "At most " + season.maxSoloDays() + " solo days"),
                 l("Smakingen skal skje sammen med andre. Det er hele poenget.", "The tasting is meant to happen in company. That is the point."));
         rule(h, l("Hva teller", "What counts"), l("Juleøl fra Vinmonopolet, over " + abv(), "Juleøl from Vinmonopolet, above " + abv()),
@@ -369,8 +372,8 @@ public final class LandingPage {
                 "Which three beers make the podium? Tip gold, silver and bronze, and change your tip as often as you like until the last day begins. "
                         + "Nobody sees the tips before the finale, where the tipster of the year is named."));
         step(h, ICON_CAL, l("Adventskalenderen", "The advent calendar"), l(
-                "Hjemskjermen er en adventskalender. Hver dag du smaker, åpner en luke, og den holder tellingen på dager på rad. Sitter du ved et bord, ligger det øverst til det er avsluttet.",
-                "The home screen is an advent calendar. Every day you taste opens a door, and it keeps count of days in a row. While you sit at a table, it stays at the top until the host closes it."));
+                "Hjemskjermen er en adventskalender. Hver dag du smaker, åpner en luke, og den holder tellingen på dager på rad. Sitter du ved et bord, ligger det øverst til det er avsluttet. «I kveld» er veggen for hele huset: hvem som smaker hva akkurat nå, med skål og emoji til de andre, men aldri terningkastene deres.",
+                "The home screen is an advent calendar. Every day you taste opens a door, and it keeps count of days in a row. While you sit at a table, it stays at the top until the host closes it. \"I kveld\" is the wall for the whole house: who is tasting what right now, with a cheer and an emoji for the others, but never their dice."));
         step(h, ICON_STAR, l("Finalen " + date(season.end(), false), "The finale on " + date(season.end(), false)), l(
                 "Klokka " + finale + " tennes stjerna. Cantaras juleøl " + season.year() + " kåres, med duellrangeringen ved siden av, lagenes egne vinnere, tippeligaen og sesongens priser.",
                 "At " + finale + " the star lights up. Cantara's juleøl " + season.year() + " is named, with the duel ranking beside it, each team's own winner, the tipping league and the season's awards."));

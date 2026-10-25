@@ -1,6 +1,6 @@
 # julebrus
 
-Cantaras digitale juleølsmaking. Season 1 Nov – 23 Dec, five tastings a day, five
+Cantaras digitale juleølsmaking. Season 1 Nov – 23 Dec, five tastings a day (twelve at a table of eight or more), five
 solo days, the rest in groups formed by QR code. Design and rules: [DESIGN.md](DESIGN.md).
 
 ## What it does
@@ -10,10 +10,13 @@ solo days, the rest in groups formed by QR code. Design and rules: [DESIGN.md](D
   phone in the same second (server-sent events), with the notes and tags people wrote. Duels ("which was better?")
   build a Bradley–Terry side ranking; the host can pour a **blind round** where the guests guess which beer is in
   the glass. An open table is one tap away from Home and from "Dine bord".
-- **The season.** Max 5 tastings a day, max 5 solo days, only Vinmonopolet-strength juleøl counts, homebrew under
+- **The season.** Max 5 tastings a day (12 at a table of 8 or more, because a party is a different evening), max 5 solo days, only Vinmonopolet-strength juleøl counts, homebrew under
   its own rules. Home is an advent calendar (this week by default) with a streak counter; the results page is a
   weighted Bayesian ranking, filterable per team. Rater weights: 0.5 the first season, 1.0 after a normal one,
   0 when flagged for rigging; veterans from the old spreadsheets are recognised through the admin name mapping.
+- **"I kveld".** The day's wall for the whole house: who rolled which beer, the tables going right now, approved labels and
+  blind-round results, live, with a 🍻 and four more emojis to give each line. Never a person's dice, and a day average per
+  beer only from three rolls. People without active consent are left out.
 - **Teams.** Cantara and Rebel out of the box, more on request. Pick yours after consent, tap a team to see who
   plays for it, each team gets its own winner and "Årets lag" at the finale.
 - **Tipp pallen.** Everyone may tip gold, silver and bronze until the last day begins; the league and "Årets

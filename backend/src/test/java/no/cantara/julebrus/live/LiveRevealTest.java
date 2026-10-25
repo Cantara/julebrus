@@ -57,6 +57,19 @@ class LiveRevealTest {
         String beerId = beer.get("id").asText();
         post(guest, "/api/sessions/join", Map.of("code", code));
 
+        // The outsider is not at the table, but the day's wall is everyone's: it hears the same rolls.
+        List<String> wall = new CopyOnWriteArrayList<>();
+        HttpResponse<Stream<String>> wallResponse = http.sendAsync(
+                HttpRequest.newBuilder(uri("/api/feed/events?devUser=" + nosy)).header("Accept", "text/event-stream").build(),
+                HttpResponse.BodyHandlers.ofLines()).get(10, TimeUnit.SECONDS);
+        assertThat(wallResponse.statusCode()).isEqualTo(200);
+        Thread wallReader = new Thread(() -> wallResponse.body().forEach(line -> {
+            if (line.startsWith("event:")) wall.add(line.substring(6).trim());
+        }));
+        wallReader.setDaemon(true);
+        wallReader.start();
+        waitFor(() -> wall.contains("hello"));
+
         // An outsider is refused before any stream opens.
         HttpResponse<String> refused = http.send(HttpRequest.newBuilder(uri("/api/sessions/" + sid + "/events"))
                 .header("X-Dev-User", nosy).header("Accept", "text/event-stream").build(), HttpResponse.BodyHandlers.ofString());
@@ -90,6 +103,13 @@ class LiveRevealTest {
                 "optionBeerIds", List.of(beerId, beer2.get("id").asText())));
         waitFor(() -> seen.contains("blind"));
         assertThat(seen).containsSubsequence("hello", "session", "tasting", "blind");
+        waitFor(() -> wall.contains("blind"));
+        assertThat(wall).containsSubsequence("hello", "session", "tasting", "blind");
+        // A solo roll has no table, and still lands on the wall.
+        JsonNode beer3 = post(nosy, "/api/beers", Map.of("name", "Direkteøl 3", "abv", 6.5));
+        post(nosy, "/api/tastings", Map.of("beerId", beer3.get("id").asText(), "score", 3));
+        waitFor(() -> wall.stream().filter("tasting"::equals).count() >= 2);
+        assertThat(seen.stream().filter("tasting"::equals).count()).isEqualTo(1);
     }
 
     private static void waitFor(java.util.function.BooleanSupplier condition) throws InterruptedException {

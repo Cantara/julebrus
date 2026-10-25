@@ -119,6 +119,8 @@ public class McpTools {
         out.put("tipped", tips.count());
         out.put("rules", Map.of(
                 "maxTastingsPerDay", season.maxTastingsPerDay(),
+                "bigTableSize", season.bigTableSize(),
+                "maxTastingsPerDayBigTable", season.maxTastingsPerDayBigTable(),
                 "maxSoloDays", season.maxSoloDays(),
                 "counts", "Vinmonopolet juleøl above 4.7 % ABV; homebrew only at a table of 6+ and with 4+ scores"));
         out.put("teams", teams.enabled().stream().map(t -> Map.of("slug", t.getSlug(), "name", t.getName(),

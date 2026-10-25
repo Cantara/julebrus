@@ -1,10 +1,13 @@
 export interface Status {
   today: string
   tastingsToday: number
+  /** the limit that applies right now: the big-table one while sitting at an open big table */
   maxPerDay: number
   soloDaysUsed: number
   maxSoloDays: number
   inSeason: boolean
+  /** sitting at an open table of bigTableSize or more */
+  bigTable: boolean
 }
 
 export interface Me {
@@ -12,7 +15,15 @@ export interface Me {
   email: string
   displayName: string
   status: Status
-  season: { year: number; start: string; end: string; maxTastingsPerDay: number; maxSoloDays: number }
+  season: {
+    year: number
+    start: string
+    end: string
+    maxTastingsPerDay: number
+    maxSoloDays: number
+    bigTableSize: number
+    maxTastingsPerDayBigTable: number
+  }
   /** absent until the person has consented */
   weight: { weight: number; reason: string } | null
   admin: boolean
@@ -459,4 +470,59 @@ export interface BlindRound {
   answerBeerId?: string
   guesses?: Record<string, string>
   correct?: string[]
+}
+
+/** "I kveld": one line on the day's wall. Which optional fields are set depends on kind. */
+export interface FeedReaction {
+  emoji: string
+  count: number
+  mine: boolean
+}
+
+export interface FeedEntry {
+  kind: 'TASTING' | 'TABLE' | 'PHOTO' | 'BLIND'
+  id: string
+  at: string
+  userId?: string | null
+  displayName?: string | null
+  me: boolean
+  beerId?: string | null
+  beerName?: string | null
+  brewery?: string | null
+  tableId?: string | null
+  tableHost?: string | null
+  tableSize?: number | null
+  open?: boolean | null
+  beers?: number | null
+  correct?: number | null
+  guesses?: number | null
+  reactions: FeedReaction[]
+}
+
+export interface FeedOpenTable {
+  id: string
+  hostName: string
+  members: number
+  beers: number
+  mine: boolean
+}
+
+export interface FeedDayBeer {
+  beerId: string
+  name: string
+  brewery?: string | null
+  count: number
+  /** only from three rolls */
+  average: number | null
+}
+
+export interface Feed {
+  day: string
+  today: string
+  tastings: number
+  people: number
+  openTables: FeedOpenTable[]
+  entries: FeedEntry[]
+  beers: FeedDayBeer[]
+  emojis: string[]
 }
