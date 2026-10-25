@@ -3,6 +3,27 @@
 Cantaras digitale juleølsmaking. Season 1 Nov – 23 Dec, five tastings a day, five
 solo days, the rest in groups formed by QR code. Design and rules: [DESIGN.md](DESIGN.md).
 
+## What it does
+
+- **Tables.** A host opens a table and shows a QR code or a six-character code; the others join on their own
+  phones. Scores are dice, 1–6, hidden until the last person at the table has rolled, then revealed on every
+  phone in the same second (server-sent events), with the notes and tags people wrote. Duels ("which was better?")
+  build a Bradley–Terry side ranking; the host can pour a **blind round** where the guests guess which beer is in
+  the glass. An open table is one tap away from Home and from "Dine bord".
+- **The season.** Max 5 tastings a day, max 5 solo days, only Vinmonopolet-strength juleøl counts, homebrew under
+  its own rules. Home is an advent calendar (this week by default) with a streak counter; the results page is a
+  weighted Bayesian ranking, filterable per team. Rater weights: 0.5 the first season, 1.0 after a normal one,
+  0 when flagged for rigging; veterans from the old spreadsheets are recognised through the admin name mapping.
+- **Teams.** Cantara and Rebel out of the box, more on request. Pick yours after consent, tap a team to see who
+  plays for it, each team gets its own winner and "Årets lag" at the finale.
+- **Tipp pallen.** Everyone may tip gold, silver and bronze until the last day begins; the league and "Årets
+  tipper" come out at the reveal.
+- **Badges** as baubles on a tree (ten so far, Blind Taster included), label **photos** with admin approval, a
+  bilingual **story page**, the imported **history 1998–2019** with charts and claim-your-name, a public
+  **landing page**, optional **push notifications** (the daily nudge and the finale), and an **MCP server** so
+  agents can read the aggregates.
+- **The finale, 23 December 18:00.** Podium, duel podium, team winners, the tipping league and the season's awards.
+
 ## Layout
 
 ```
