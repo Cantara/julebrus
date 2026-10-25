@@ -167,7 +167,7 @@ function line(e: FeedEntry): string {
             <template v-if="e.kind === 'TASTING'"> smakte <router-link class="lnk" :to="`/beers/${e.beerId}`">{{ e.beerName }}</router-link><template v-if="e.tableId"> ved bordet hos {{ e.tableHost }}</template></template>
             <template v-else-if="e.kind === 'BLIND'"> kjørte blindsmaking: {{ e.correct }} av {{ e.guesses }} traff <router-link class="lnk" :to="`/beers/${e.beerId}`">{{ e.beerName }}</router-link></template>
             <template v-else-if="e.kind === 'PHOTO'">Ny etikett på <router-link class="lnk" :to="`/beers/${e.beerId}`">{{ e.beerName }}</router-link></template>
-            <template v-else> {{ line(e) }}</template>
+            <template v-else>&nbsp;{{ line(e) }}</template>
             <span v-if="e.brewery && e.kind !== 'TABLE'" class="muted"> · {{ e.brewery }}</span>
           </div>
           <span class="muted when">{{ clock(e.at) }}</span>
