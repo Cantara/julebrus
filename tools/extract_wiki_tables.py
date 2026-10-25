@@ -14,6 +14,11 @@ from html.parser import HTMLParser
 # The pages live in Cantara/wiki, not in this repository, so a fix to a wiki year's name goes here (the Google
 # Sheets years are fixed in source/google-sheets/ directly). Databases imported before a fix also need the
 # old -> new row in backend/src/main/resources/history/beer_names.csv.
+# A vote the wiki's HTML snapshot of the 2010 sheet lacks (its cell is empty and the page's own stated mean, 4.13, fits a 2), but the
+# later original workbook has: Eirik's 5 on "Aass Juleøl premium"; that workbook then reproduces its own stated mean (4.5) and vote
+# volume (8). Found on the owner's Drive 2026-10-25; see data/SOURCES.md.
+ADDED_VOTES = [(2010, "Eirik", "1", "Aass Juleøl premium", "5")]
+
 NAME_FIXES = {
     (2003, "Nøgne ø"): "Nøgne Ø",
 }
@@ -239,6 +244,6 @@ def extract(src, voter_checks=None, notes=None):
     voters_as_rows(tables(os.path.join(src, "Juleøltesten-2007.md"))[0], 1, 2007, votes, results)
     sheet_2008(sheet_grid(os.path.join(src, "Juleøltesten-2008.md")), votes, results, voter_checks, notes)
     sheet_2010(sheet_grid(os.path.join(src, "Juleøltesten-2010.md")), votes, results, voter_checks, notes)
-    votes = [(y, v, w, NAME_FIXES.get((y, b), b), s) for y, v, w, b, s in votes]
+    votes = [(y, v, w, NAME_FIXES.get((y, b), b), s) for y, v, w, b, s in votes + ADDED_VOTES]
     results = [(r[0], NAME_FIXES.get((r[0], r[1]), r[1])) + tuple(r[2:]) for r in results]
     return votes, results

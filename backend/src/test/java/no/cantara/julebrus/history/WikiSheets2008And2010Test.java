@@ -70,12 +70,14 @@ class WikiSheets2008And2010Test {
     @Test
     void the2010SheetsOwnCountsAndMeans() {
         List<Map<String, String>> votes = votes(2010);
-        assertThat(votes).hasSize(171);
+        assertThat(votes).hasSize(172); // 171 from the wiki page plus Eirik's vote it lacks (ADDED_VOTES)
         // "Antall" per voter, over every column (the Fenalår included); the last three are in the sheet's second table.
-        Map.of("Totto", 24, "Petter", 15, "Dyveke", 7, "Kjetil J. D.", 8, "Stig Lau", 10, "Eirik", 9)
+        // Eirik: the wiki page says 9, the final workbook 10, because it has his vote on Aass Juleøl premium.
+        Map.of("Totto", 24, "Petter", 15, "Dyveke", 7, "Kjetil J. D.", 8, "Stig Lau", 10, "Eirik", 10)
                 .forEach((voter, n) -> assertThat(of(votes, "voter", voter)).as(voter).hasSize(n));
-        // "Gjennomsnitt" (unweighted) per beer matches for every beer; a few of them here.
-        Map.of("Dahls", 2.92, "Aass Juleøl premium", 4.43, "Berentsen Julefnugg", 4.00, "Nøgne Ø Special Holiday Ale", 5.00, "fenalår Smedstuen", 4.56)
+        // "Gjennomsnitt" (unweighted) per beer matches for every beer; a few of them here. Aass Juleøl premium: the wiki page
+        // states 4.43 (without Eirik's vote); the final workbook states 4.5 and reproduces it with his 5.
+        Map.of("Dahls", 2.92, "Aass Juleøl premium", 4.5, "Berentsen Julefnugg", 4.00, "Nøgne Ø Special Holiday Ale", 5.00, "fenalår Smedstuen", 4.56)
                 .forEach((name, m) -> assertThat(mean(of(votes, "beer", name))).as(name).isCloseTo(m, offset(0.006)));
         // "Vektet snitt" and "Stemmevolum" match for Dahls; for most other beers the sheet's weighted numbers do not
         // follow from its own vote rows (Aas Juleøl: stated volume 8, listed weight 7). Both are kept as they are.
@@ -93,6 +95,15 @@ class WikiSheets2008And2010Test {
         assertThat(wt).hasSize(16).doesNotContainKey("Cynthia").containsEntry("Ingvild", "0.5").containsEntry("Kjetil J. D.", "0");
         assertThat(of(votes, "beer", "Vertskapet")).isEmpty();
         assertThat(of(of(votes, "voter", "Eirik"), "beer", "Ægir julebrygg")).isEmpty();
+        // Eirik's vote the wiki's HTML snapshot lacks, from the final workbook (data/SOURCES.md).
+        List<Map<String, String>> eirikPremium = of(of(votes, "voter", "Eirik"), "beer", "Aass Juleøl premium");
+        assertThat(eirikPremium).hasSize(1);
+        assertThat(eirikPremium.get(0)).containsEntry("score", "5").containsEntry("weight", "1");
+        // with it the workbook's own stated weighted mean (4.5) and volume (8) follow from the votes
+        List<Map<String, String>> premium = of(votes, "beer", "Aass Juleøl premium");
+        assertThat(premium.stream().mapToDouble(r -> Double.parseDouble(r.get("weight"))).sum()).isEqualTo(8.0);
+        assertThat(premium.stream().mapToDouble(r -> Double.parseDouble(r.get("score")) * Double.parseDouble(r.get("weight"))).sum() / 8.0)
+                .isCloseTo(4.5, offset(0.006));
     }
 
     @Test
