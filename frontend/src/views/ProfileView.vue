@@ -81,7 +81,7 @@ const byYear = () => {
     <div class="row">
       <div>
         <strong>Lag</strong>
-        <div v-if="store.me?.teams.length"><span v-for="t in store.me.teams" :key="t.id" class="pill on">{{ t.name }}</span></div>
+        <div v-if="store.me?.teams.length"><router-link v-for="t in store.me.teams" :key="t.id" class="pill on" :to="`/lag/${t.slug}`" style="text-decoration: none">{{ t.name }} ›</router-link></div>
         <div v-else class="muted">Du spiller ikke for noe lag ennå.</div>
       </div>
       <button v-if="!editingTeams" class="secondary" @click="editingTeams = true">{{ store.me?.teams.length ? 'Endre' : 'Velg lag' }}</button>

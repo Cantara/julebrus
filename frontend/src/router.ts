@@ -18,6 +18,7 @@ export const router = createRouter({
     { path: '/consent', component: () => import('./views/ConsentView.vue') },
     { path: '/me', component: () => import('./views/ProfileView.vue') },
     { path: '/lag', component: () => import('./views/TeamView.vue') },
+    { path: '/lag/:slug', component: () => import('./views/TeamRosterView.vue'), props: true },
     { path: '/tipp', component: () => import('./views/TipView.vue') },
     { path: '/admin', component: () => import('./views/AdminView.vue') },
   ],

@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { onMounted, ref, watch } from 'vue'
+import { useRoute } from 'vue-router'
 import { get } from '../api/client'
 import type { BeerRank, DuelRank, HistoricSeason, Team } from '../api/types'
 
@@ -7,8 +8,9 @@ const beers = ref<BeerRank[]>([])
 const duels = ref<DuelRank[]>([])
 const seasons = ref<HistoricSeason[]>([])
 const teams = ref<Team[]>([])
-/** Empty means everyone; otherwise one team's raters only. */
-const team = ref('')
+/** Empty means everyone; otherwise one team's raters only. Arrives preset from a team page. */
+const route = useRoute()
+const team = ref(typeof route.query.team === 'string' ? route.query.team : '')
 
 async function loadBeers() {
   beers.value = await get<BeerRank[]>('/api/stats/beers' + (team.value ? `?team=${encodeURIComponent(team.value)}` : ''))
