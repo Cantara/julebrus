@@ -665,3 +665,18 @@ export interface BeerPage {
   minShared: number
   history: { year: number; ratings: number; mean: number }[]
 }
+
+/** One person in the organiser's weight list. */
+export interface AdminRater {
+  email: string
+  displayName: string
+  scores: number
+  weight: number
+  reason: string
+  flagged: boolean
+  flagNote?: string | null
+  overridden: boolean
+  extremeShare: number
+  breweryBias: number
+  mostFavouredBrewery?: string | null
+}

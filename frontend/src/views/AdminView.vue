@@ -7,11 +7,12 @@ import AdminBeers from '../components/AdminBeers.vue'
 import AdminClaims from '../components/AdminClaims.vue'
 import AdminMatches from '../components/AdminMatches.vue'
 import AdminPhotos from '../components/AdminPhotos.vue'
+import AdminRaters from '../components/AdminRaters.vue'
 import AdminRaterLinks from '../components/AdminRaterLinks.vue'
 import AdminTeams from '../components/AdminTeams.vue'
 
 const SECTIONS = [
-  ['beers', 'Øl'], ['photos', 'Bilder'], ['import', 'Import'], ['teams', 'Lag'], ['claims', 'Krav'], ['raters', 'Koblinger'], ['matches', 'Treff'],
+  ['beers', 'Øl'], ['photos', 'Bilder'], ['weights', 'Vekt'], ['import', 'Import'], ['teams', 'Lag'], ['claims', 'Krav'], ['raters', 'Koblinger'], ['matches', 'Treff'],
 ] as const
 type Section = (typeof SECTIONS)[number][0]
 
@@ -29,6 +30,7 @@ watch(section, (s) => router.replace({ query: { s } }))
   </div>
   <AdminBeers v-if="section === 'beers'" />
   <AdminPhotos v-else-if="section === 'photos'" />
+  <AdminRaters v-else-if="section === 'weights'" />
   <AdminBeerImport v-else-if="section === 'import'" />
   <AdminTeams v-else-if="section === 'teams'" />
   <AdminClaims v-else-if="section === 'claims'" />

@@ -69,6 +69,10 @@ and attaches their login email.
 - The blind reveal inside a group session shows plain, unweighted scores. That is a
   social moment, not the official result.
 - Everyone can see their own weight and the reason on their profile.
+- The archive has holes (no votes survive for 2020 onwards, and several earlier years), so the
+  policy can only see what was recorded. An organiser sets a weight by hand under *Admin: Vekt*
+  with a reason the person sees, and can hand it back to the policy; a hand-set weight is left
+  alone by the re-decision on read.
 - Flagging is a human decision. `/api/admin/raters` lists every rater with two
   signals: share of scores that are 1 or 6, and the largest brewery bias (mean for
   one brewery minus the person's own mean, breweries with 3+ scores). Admins
