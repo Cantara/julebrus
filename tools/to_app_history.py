@@ -6,7 +6,7 @@ Usage: to_app_history.py OUT_DIR   (the app's backend/src/main/resources/history
 Layout follows HistoryImporter in the app: seasons.csv is `year,title,scale_min,scale_max,weighting_description,source_url`
 and each <year>.csv is `beer_name,brewery,rater_name,rater_email,score,weight,notes`. Brewery, e-mail and notes are
 empty (the sources do not state them); a blank weight means the source gave none, which the app reads as 1.
-Only years with single votes get a season (2016 has none).
+Only years with single votes get a season.
 """
 import csv
 import os
@@ -18,9 +18,10 @@ WEIGHTING = "Kvalifiserte stemmegivere teller 1, probies 1/2, failed probies 0 (
 # Where a year's own page states the rules, its season row says what that page says.
 WEIGHTING_BY_YEAR = {
     2008: "Stemmer med vekt 1 og 0.5 (regnearket oppgir per øl hvor mange stemmer som hadde vekt 0.5; vekten per stemmegiver er utledet av disse tellingene)",
+    2016: "Vekt per stemmegiver som oppgitt i regnearket; sju stemmegivere har ingen oppgitt vekt og teller 1 (med det gjengir stemmene de oppgitte snittene og stemmetallene)",
     2010: "Probies 1/2 vekt, qualified voters 1/1 vekt, failed probies 0/2 vekt (stemmeregler, Juleølsmaking 2010; vekt per stemmegiver som oppgitt i kilden)",
 }
-CONFLUENCE = {2011: 26083648, 2012: 32178223, 2013: 36897787, 2014: 38964246, 2015: 43649089,
+CONFLUENCE = {2011: 26083648, 2012: 32178223, 2013: 36897787, 2014: 38964246, 2015: 43649089, 2016: 43649274,
               2017: 45547558, 2018: 46137421, 2019: 47022084}
 
 

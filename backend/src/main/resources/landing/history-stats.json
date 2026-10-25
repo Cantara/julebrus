@@ -180,16 +180,16 @@
   },
   {
    "year": 2016,
-   "source": "aggregate",
-   "beers": 52,
+   "source": "votes",
+   "beers": 53,
    "voters": 15,
-   "votes": 100,
-   "meanScore": null,
+   "votes": 101,
+   "meanScore": 3.95,
    "top": [
     {
-     "beer": "Haand Halvors Jul",
-     "mean": 6.0,
-     "votes": null
+     "beer": "Aass Juleøl Vellagret",
+     "mean": 5.0,
+     "votes": 4
     }
    ]
   },
@@ -240,27 +240,27 @@
   }
  ],
  "totals": {
-  "seasonsWithVotes": 14,
+  "seasonsWithVotes": 15,
   "seasonsRecorded": 15,
   "firstYear": 1998,
   "lastYear": 2019,
-  "votes": 1762,
-  "votesIncludingAggregate": 1862
+  "votes": 1863,
+  "votesIncludingAggregate": 1863
  },
  "dice": {
   "1": 30,
-  "2": 177,
-  "3": 458,
-  "4": 632,
-  "5": 389,
-  "6": 67
+  "2": 186,
+  "3": 482,
+  "4": 666,
+  "5": 416,
+  "6": 71
  },
- "nonIntegerScores": 9,
+ "nonIntegerScores": 12,
  "regulars": [
   {
    "beer": "CB",
-   "seasons": 10,
-   "votes": 81,
+   "seasons": 11,
+   "votes": 82,
    "years": [
     1998,
     2003,
@@ -271,13 +271,14 @@
     2011,
     2012,
     2013,
-    2015
+    2015,
+    2016
    ]
   },
   {
    "beer": "Borg",
-   "seasons": 10,
-   "votes": 74,
+   "seasons": 11,
+   "votes": 75,
    "years": [
     1998,
     2003,
@@ -288,13 +289,14 @@
     2011,
     2012,
     2013,
-    2015
+    2015,
+    2016
    ]
   },
   {
    "beer": "Fredrikstad",
-   "seasons": 10,
-   "votes": 66,
+   "seasons": 11,
+   "votes": 68,
    "years": [
     1998,
     2003,
@@ -305,13 +307,14 @@
     2011,
     2012,
     2013,
-    2015
+    2015,
+    2016
    ]
   },
   {
    "beer": "Ringnes Julebokk",
-   "seasons": 9,
-   "votes": 38,
+   "seasons": 10,
+   "votes": 42,
    "years": [
     2008,
     2010,
@@ -320,23 +323,55 @@
     2013,
     2014,
     2015,
+    2016,
     2017,
     2019
    ]
   },
   {
    "beer": "Dahls Juleøl",
-   "seasons": 8,
-   "votes": 30,
+   "seasons": 9,
+   "votes": 34,
    "years": [
     2011,
     2012,
     2013,
     2014,
     2015,
+    2016,
     2017,
     2018,
     2019
+   ]
+  },
+  {
+   "beer": "Hansa juleøl",
+   "seasons": 8,
+   "votes": 32,
+   "years": [
+    2010,
+    2011,
+    2012,
+    2014,
+    2015,
+    2016,
+    2017,
+    2018
+   ]
+  },
+  {
+   "beer": "Hansa Julebrygg",
+   "seasons": 8,
+   "votes": 28,
+   "years": [
+    2007,
+    2010,
+    2011,
+    2012,
+    2015,
+    2016,
+    2017,
+    2018
    ]
   },
   {
@@ -349,34 +384,6 @@
     2010,
     2011,
     2014,
-    2017,
-    2018
-   ]
-  },
-  {
-   "beer": "Hansa juleøl",
-   "seasons": 7,
-   "votes": 29,
-   "years": [
-    2010,
-    2011,
-    2012,
-    2014,
-    2015,
-    2017,
-    2018
-   ]
-  },
-  {
-   "beer": "Hansa Julebrygg",
-   "seasons": 7,
-   "votes": 27,
-   "years": [
-    2007,
-    2010,
-    2011,
-    2012,
-    2015,
     2017,
     2018
    ]

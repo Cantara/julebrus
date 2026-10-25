@@ -51,7 +51,7 @@ The Confluence pages for 2011-2019 link a Google Sheet each; these were exported
 | 2011, 2012, 2013 | Voters as rows, beers as columns | |
 | 2014 | Beers as rows, voters as columns | The stated mean per beer matches the votes. One vote on the last row ("Ringnes Julebokk", no stated mean) is kept. |
 | 2015 | Header `Voter, Level, Antall, <beers>` | Weights use decimal commas in the sheet. |
-| 2016 | Ranked list only | Weighted score per beer, and votes cast per voter. No single votes in the sheet. |
+| 2016 | Ranked list only | Weighted score per beer, and votes cast per voter. No single votes in this sheet; they come from the Drive matrix below. |
 | 2017, 2018, 2019 | Beers as rows, voters as columns | A row counts when it has a beer name and a stated vote weight. |
 
 ## Checked against the sources
@@ -85,8 +85,11 @@ three of them under a slightly different name); in the 2018 sheet three votes on
 ## Checked against the original files (2026-10-25)
 
 - 2007: `Juleøl 2007.xlsx` (the file the wiki page was made from) agrees with data/votes.csv in every cell: 13 voters, 99 votes, the same weights and names.
-- 2016: `votes.ods` (the sheet's own matrix, 15 voters) reproduces the aggregate in results.csv for all 40 beers whose names match, and the 14 renamed ones pair by
-  weighted mean and vote count; Eirik has one extra vote in a second "7 Sorter" column. NOT imported yet: 2016 is still an aggregate in the repository.
+- 2016: `votes.ods` (the sheet's own matrix, 15 voters, 101 votes) reproduces the aggregate in results.csv for all 40 beers whose names match, and the 14 renamed ones pair by
+  weighted mean and vote count. IMPORTED (source/google-drive/votes-2016.csv, tools/extract_google_sheets.py `matrix_2016`):
+  the 14 spellings are mapped to the stated list's names (`NAMES_2016`), a blank weight counts as 1 (seven voters have none; with that every mean and every
+  vote count reproduces), and Eirik's one extra vote sits in a second "7 Sorter" column ("7 fjrll, 7 sorter"), kept as its own item because merging it would change
+  the stated mean of "7 Sorter". Eirik therefore has 10 votes against the stated 9. 2016 is now an ordinary season in the app and on the landing page.
 - Names decided by the owner: "Redhead" is Arild, "Stig" is Stig Lau (history/raters.csv); plain "Kjetil" is a different person from "Kjetil J. D." (both voted in 2010).
 
 ## Beer name corrections

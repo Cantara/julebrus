@@ -13,8 +13,9 @@ and from the Internet Archive.
   source states; nothing is recomputed. An empty cell means the source did not state it. `weight_sum` is the
   stated sum of vote weights (2010 and the 2017-2019 sheets; for 2008 the sum of the two stated counts, full
   votes + 0.5 x half-weight votes).
-- `data/participation.csv`: `year, voter, votes_cast`. For 2016, the only year where single votes are not available.
+- `data/participation.csv`: `year, voter, votes_cast`. Only 2016 has it (the sheet's own list of votes cast per voter); the 2016 single votes come from `source/google-drive/votes-2016.csv`, and participation is kept as the cross-check.
 - `../source/google-sheets/<year>.csv`: the raw exports of the Google Sheets (2016 and 2019 via the `gviz` CSV form).
+- `../source/google-drive/votes-2016.csv`: the 2016 vote matrix (voters as rows, beers as columns), from the sheet `votes.ods` the owner found on Drive (2026-10-25), exactly as the sheet states it.
 
 Voters appear under the names used on the wiki pages and in the sheets.
 Beer names retain source wording except for confirmed spelling and diacritic fixes and the approved Dahls normalization; separate Vinmonopolet reference listings retain their official product names.
@@ -25,7 +26,7 @@ Beer names retain source wording except for confirmed spelling and diacritic fix
 | --- | --- |
 | 1998, 2003, 2004, 2007, 2008, 2010 | Full vote matrix, from the wiki pages (2008 and 2010 from the spreadsheet HTML on the page) |
 | 2011, 2012, 2013, 2014, 2015, 2017, 2018, 2019 | Full vote matrix, from the linked Google Sheets |
-| 2016 | Weighted score per beer and votes cast per voter; single votes not available |
+| 2016 | Full vote matrix, from the Drive sheet `votes.ods`; the Google Sheet's ranked list and votes-cast counts are kept and agree with it |
 | 1997 | Winner only (Borg), not in the CSV files |
 | 1992-1996, 1999-2002, 2005, 2006, 2009, 2020, 2021 | No results found |
 
