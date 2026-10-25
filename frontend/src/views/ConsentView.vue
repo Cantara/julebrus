@@ -49,7 +49,11 @@ async function accept() {
 
   <p v-if="loadFailed" class="error" role="alert">{{ t('loadFailed') }}</p>
   <div v-if="consent" class="card">
-    <div :lang="lang"><ConsentText :text="lang === 'en' ? consent.texts.en : consent.texts.nb" /></div>
+    <div :lang="lang"><ConsentText :text="lang === 'en' ? consent.summary.en : consent.summary.nb" /></div>
+    <details class="full-text">
+      <summary>{{ t('consentReadFull') }}</summary>
+      <div :lang="lang"><ConsentText :text="lang === 'en' ? consent.texts.en : consent.texts.nb" /></div>
+    </details>
     <p class="muted">{{ t('consentVersion') }} {{ consent.version }} · <a href="/privacy">{{ t('privacyLink') }}</a></p>
     <p v-if="failed" class="error" role="alert">{{ t('consentFailed') }}</p>
     <p v-if="consent.accepted" class="ok" role="status">{{ t('consentAlready') }}</p>
@@ -61,3 +65,13 @@ async function accept() {
     </div>
   </div>
 </template>
+
+<style scoped>
+.full-text {
+  margin: 0.75rem 0;
+}
+.full-text > summary {
+  cursor: pointer;
+  font-weight: 600;
+}
+</style>
