@@ -11,4 +11,7 @@ public interface SessionRepository extends JpaRepository<TastingSession, UUID> {
     /** Every table this person sits at, newest first. */
     @org.springframework.data.jpa.repository.Query("select s from TastingSession s join s.members m where m.userId = :userId order by s.createdAt desc")
     java.util.List<TastingSession> findByMember(@org.springframework.data.repository.query.Param("userId") UUID userId);
+
+    /** Tables opened in a window of time, for the day's feed. */
+    java.util.List<TastingSession> findByCreatedAtGreaterThanEqualAndCreatedAtLessThan(java.time.Instant from, java.time.Instant to);
 }

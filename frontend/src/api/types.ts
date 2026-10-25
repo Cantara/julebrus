@@ -471,3 +471,58 @@ export interface BlindRound {
   guesses?: Record<string, string>
   correct?: string[]
 }
+
+/** "I kveld": one line on the day's wall. Which optional fields are set depends on kind. */
+export interface FeedReaction {
+  emoji: string
+  count: number
+  mine: boolean
+}
+
+export interface FeedEntry {
+  kind: 'TASTING' | 'TABLE' | 'PHOTO' | 'BLIND'
+  id: string
+  at: string
+  userId?: string | null
+  displayName?: string | null
+  me: boolean
+  beerId?: string | null
+  beerName?: string | null
+  brewery?: string | null
+  tableId?: string | null
+  tableHost?: string | null
+  tableSize?: number | null
+  open?: boolean | null
+  beers?: number | null
+  correct?: number | null
+  guesses?: number | null
+  reactions: FeedReaction[]
+}
+
+export interface FeedOpenTable {
+  id: string
+  hostName: string
+  members: number
+  beers: number
+  mine: boolean
+}
+
+export interface FeedDayBeer {
+  beerId: string
+  name: string
+  brewery?: string | null
+  count: number
+  /** only from three rolls */
+  average: number | null
+}
+
+export interface Feed {
+  day: string
+  today: string
+  tastings: number
+  people: number
+  openTables: FeedOpenTable[]
+  entries: FeedEntry[]
+  beers: FeedDayBeer[]
+  emojis: string[]
+}

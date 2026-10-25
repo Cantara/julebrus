@@ -372,8 +372,8 @@ public final class LandingPage {
                 "Which three beers make the podium? Tip gold, silver and bronze, and change your tip as often as you like until the last day begins. "
                         + "Nobody sees the tips before the finale, where the tipster of the year is named."));
         step(h, ICON_CAL, l("Adventskalenderen", "The advent calendar"), l(
-                "Hjemskjermen er en adventskalender. Hver dag du smaker, åpner en luke, og den holder tellingen på dager på rad. Sitter du ved et bord, ligger det øverst til det er avsluttet.",
-                "The home screen is an advent calendar. Every day you taste opens a door, and it keeps count of days in a row. While you sit at a table, it stays at the top until the host closes it."));
+                "Hjemskjermen er en adventskalender. Hver dag du smaker, åpner en luke, og den holder tellingen på dager på rad. Sitter du ved et bord, ligger det øverst til det er avsluttet. «I kveld» er veggen for hele huset: hvem som smaker hva akkurat nå, med skål og emoji til de andre, men aldri terningkastene deres.",
+                "The home screen is an advent calendar. Every day you taste opens a door, and it keeps count of days in a row. While you sit at a table, it stays at the top until the host closes it. \"I kveld\" is the wall for the whole house: who is tasting what right now, with a cheer and an emoji for the others, but never their dice."));
         step(h, ICON_STAR, l("Finalen " + date(season.end(), false), "The finale on " + date(season.end(), false)), l(
                 "Klokka " + finale + " tennes stjerna. Cantaras juleøl " + season.year() + " kåres, med duellrangeringen ved siden av, lagenes egne vinnere, tippeligaen og sesongens priser.",
                 "At " + finale + " the star lights up. Cantara's juleøl " + season.year() + " is named, with the duel ranking beside it, each team's own winner, the tipping league and the season's awards."));

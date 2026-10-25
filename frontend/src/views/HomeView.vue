@@ -2,7 +2,7 @@
 import { computed, onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { get } from '../api/client'
-import type { BadgeView, Beer, MyTip, Session, Tasting } from '../api/types'
+import type { BadgeView, Beer, Feed, MyTip, Session, Tasting } from '../api/types'
 import { useRoute } from 'vue-router'
 import AdventCalendar, { type DayEntry } from '../components/AdventCalendar.vue'
 import LightsMeter from '../components/LightsMeter.vue'
@@ -37,6 +37,7 @@ async function restart() {
 const leastTasted = ref<Beer[]>([])
 const mine = ref<Tasting[]>([])
 const tip = ref<MyTip | null>(null)
+const tonight = ref<Feed | null>(null)
 const beerName = ref<Record<string, string>>({})
 const soloSessions = ref<Set<string>>(new Set())
 
@@ -72,6 +73,7 @@ function toggleSnow() {
 
 onMounted(async () => {
   get<MyTip>('/api/tips/me').then((t) => (tip.value = t)).catch(() => {})
+  get<Feed>('/api/feed').then((f) => (tonight.value = f)).catch(() => {})
   const [least, tastings, beers] = await Promise.all([
     get<Beer[]>('/api/beers/least-tasted?limit=5').catch(() => []),
     get<Tasting[]>('/api/tastings/mine').catch(() => []),
@@ -185,6 +187,20 @@ const dayOfSeason = computed(() => {
         {{ store.me.openTable.members }} rundt bordet · {{ store.me.openTable.beers }} øl
         <template v-if="store.me.openTable.pendingForMe > 0"> · <strong style="color: var(--brand)">{{ store.me.openTable.pendingForMe }} venter på terningen din</strong></template>
       </div>
+    </div>
+    <span class="muted">›</span>
+  </router-link>
+
+  <router-link class="card row tonight" to="/ikveld" style="text-decoration: none">
+    <div>
+      <strong class="display">🍻 I kveld</strong>
+      <div v-if="tonight" class="muted">
+        <template v-if="tonight.tastings === 0">Stille på veggen ennå. Bli den første i dag.</template>
+        <template v-else>
+          {{ tonight.tastings }} terningkast fra {{ tonight.people }} {{ tonight.people === 1 ? 'smaker' : 'smakere' }}<template v-if="tonight.openTables.length"> · {{ tonight.openTables.length }} {{ tonight.openTables.length === 1 ? 'bord i gang' : 'bord i gang' }}</template>. Skål for dem.
+        </template>
+      </div>
+      <div v-else class="muted">Hvem smaker akkurat nå? Skål og emoji til de andre.</div>
     </div>
     <span class="muted">›</span>
   </router-link>

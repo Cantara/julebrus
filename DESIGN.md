@@ -130,6 +130,18 @@ environment; the message encryption is RFC 8291 on the JDK, verified against the
 vector. Subscriptions hold only what the browser hands over (endpoint, its public key, its auth
 secret) and are deleted on unsubscribe, on 404/410 from the push service, or after five failures.
 
+## "I kveld", the day's wall (decided 25 Oct)
+
+Everyone sees one wall for the whole house, one Oslo day at a time: who rolled which beer (at which
+table, when there was one), which tables opened and whether they are still going, which labels were
+approved, how each blind round went, newest first, live over the same SSE machinery as the tables
+(`/api/feed/events`). A person's dice never appear on it: scores belong to the table until the reveal
+and to the ranking after it. The wall gives the day's average per beer only from three rolls, so no
+single roll can be read off it. Interaction is a fixed set of emojis (🍻 first, then 🎅 🔥 😂 👏),
+one of each per person per line, tap again to take it back: community without free text, so nothing
+to moderate. People without active consent are left out, like everywhere else. The consent text
+names the wall, the teams line it owed since October, and bumps to 2026-5.
+
 ## Statistics
 
 - **Beers:** weighted Bayesian average (prior = weighted global mean, prior weight

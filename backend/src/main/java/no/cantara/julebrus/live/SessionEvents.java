@@ -23,12 +23,19 @@ import java.util.concurrent.TimeUnit;
  * and every phone at the table re-reads the session at once, so the paper tears off on
  * all of them together. Events carry no data beyond their kind: the client fetches, so
  * the blind-reveal rules stay in one place.
+ *
+ * <p>One more channel, {@link #FEED}, is the whole house: every table event is mirrored
+ * there, and so is everything else that shows up in "I kveld" (a solo roll, an approved
+ * photo, a cheer), so the day's wall updates on every phone that has it open.
  */
 @Component
 public class SessionEvents {
 
     /** What changed. The client treats every kind the same way (refetch), the names are for logs and tests. */
-    public enum Kind { SESSION, TASTING, DUEL, BLIND }
+    public enum Kind { SESSION, TASTING, DUEL, BLIND, PHOTO, REACTION }
+
+    /** The day-wide channel behind /api/feed/events. */
+    public static final UUID FEED = new UUID(0L, 0L);
 
     /** Browsers reconnect on their own; a shortish timeout keeps dead streams from piling up. */
     static final Duration TIMEOUT = Duration.ofMinutes(30);
@@ -65,21 +72,30 @@ public class SessionEvents {
     }
 
     /**
-     * Tells the table something changed. Inside a transaction the event waits for the
-     * commit, so a client that refetches on it sees the new row.
+     * Tells the table something changed, and the feed with it. Inside a transaction the
+     * event waits for the commit, so a client that refetches on it sees the new row.
+     * A null table (a solo roll) reaches the feed alone.
      */
     public void publish(UUID sessionId, Kind kind) {
-        if (sessionId == null) return;
+        Runnable fire = () -> {
+            if (sessionId != null) send(sessionId, kind);
+            send(FEED, kind);
+        };
         if (TransactionSynchronizationManager.isSynchronizationActive()) {
             TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {
                 @Override
                 public void afterCommit() {
-                    send(sessionId, kind);
+                    fire.run();
                 }
             });
         } else {
-            send(sessionId, kind);
+            fire.run();
         }
+    }
+
+    /** Something that is not about one table changed: a photo approved, a cheer given. */
+    public void publishFeed(Kind kind) {
+        publish(null, kind);
     }
 
     /** How many phones are listening at this table right now. */

@@ -20,6 +20,7 @@ export const router = createRouter({
     { path: '/lag', component: () => import('./views/TeamView.vue') },
     { path: '/lag/:slug', component: () => import('./views/TeamRosterView.vue'), props: true },
     { path: '/tipp', component: () => import('./views/TipView.vue') },
+    { path: '/ikveld', component: () => import('./views/TonightView.vue') },
     { path: '/admin', component: () => import('./views/AdminView.vue') },
   ],
 })

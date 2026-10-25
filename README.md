@@ -14,6 +14,9 @@ solo days, the rest in groups formed by QR code. Design and rules: [DESIGN.md](D
   its own rules. Home is an advent calendar (this week by default) with a streak counter; the results page is a
   weighted Bayesian ranking, filterable per team. Rater weights: 0.5 the first season, 1.0 after a normal one,
   0 when flagged for rigging; veterans from the old spreadsheets are recognised through the admin name mapping.
+- **"I kveld".** The day's wall for the whole house: who rolled which beer, the tables going right now, approved labels and
+  blind-round results, live, with a 🍻 and four more emojis to give each line. Never a person's dice, and a day average per
+  beer only from three rolls. People without active consent are left out.
 - **Teams.** Cantara and Rebel out of the box, more on request. Pick yours after consent, tap a team to see who
   plays for it, each team gets its own winner and "Årets lag" at the finale.
 - **Tipp pallen.** Everyone may tip gold, silver and bronze until the last day begins; the league and "Årets
