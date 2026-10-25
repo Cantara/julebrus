@@ -427,11 +427,11 @@ public final class LandingPage {
                 .append("<p class=\"eyebrow\">").append(l("Historien", "The history")).append("</p>\n")
                 .append("<h2 id=\"historien\">").append(l("Protokollen, " + t.firstYear() + "–" + t.lastYear(), "The record, " + t.firstYear() + "–" + t.lastYear())).append("</h2>\n")
                 .append("<p class=\"intro\">").append(l(
-                        n(t.seasonsWithVotes()) + " sesonger har overlevd med hver eneste stemme, " + agg
-                                + " bare som et sammendrag, og mange år er borte. Her er det som kan telles: summer og snitt per år og per øl, aldri hvem som ga hva. "
+                        n(t.seasonsWithVotes()) + " sesonger har overlevd med hver eneste stemme, "
+                                + (agg.isEmpty() ? "" : agg + " bare som et sammendrag, ") + "og mange år er borte. Her er det som kan telles: summer og snitt per år og per øl, aldri hvem som ga hva. "
                                 + "Inne i appen ligger alle-tiders-lista på tvers av sesongene og hvert øls side med stemmene år for år.",
-                        n(t.seasonsWithVotes()) + " seasons survive with every single vote, " + agg
-                                + " only as a summary, and many years are lost. Here is what can be counted: totals and means per year and per beer, never who gave what. "
+                        n(t.seasonsWithVotes()) + " seasons survive with every single vote, "
+                                + (agg.isEmpty() ? "" : agg + " only as a summary, ") + "and many years are lost. Here is what can be counted: totals and means per year and per beer, never who gave what. "
                                 + "Inside the app sit the all-time list across the seasons and every beer's page with the votes year by year."))
                 .append("</p>\n");
         provenance(h, agg);
@@ -449,8 +449,8 @@ public final class LandingPage {
                 .append(l("Om dataene", "About the data")).append("</h3>\n<ul>\n")
                 .append("<li>").append(l("Kilden er Cantaras wiki og regnearkene den lenker til. Hvert år og hver kjent feil står i <code>data/SOURCES.md</code>.",
                         "The source is Cantara's wiki and the spreadsheets it links to. Every year and every known quirk is in <code>data/SOURCES.md</code>.")).append("</li>\n")
-                .append("<li>").append(l(agg + " finnes bare som en rangert liste med vektet score per øl og antall stemmer per person, uten enkeltstemmer.",
-                        agg + " exists only as a ranked list with a weighted score per beer and the number of votes per person, no single votes.")).append("</li>\n")
+                .append(agg.isEmpty() ? "" : "<li>" + l(agg + " finnes bare som en rangert liste med vektet score per øl og antall stemmer per person, uten enkeltstemmer.",
+                        agg + " exists only as a ranked list with a weighted score per beer and the number of votes per person, no single votes.") + "</li>\n")
                 .append("<li>").append(l("Smakingen er fra 1992, men ingenting fra 1992–1996 er bevart. 1997 har bare vinneren, og for mange år er ingenting funnet.",
                         "The tasting dates from 1992, but nothing from 1992–1996 survives. 1997 has only the winner, and for many years nothing was found.")).append("</li>\n")
                 .append("<li>").append(l("Vektene varierte (nye teller 0,5, en gruppeoppføring i 2007 teller 2,5, stemmer uten oppgitt vekt teller 1), og både lag og utvalg skiftet fra år til år. Tallene sier noe om hvert år, men er ikke direkte sammenlignbare mellom årene.",

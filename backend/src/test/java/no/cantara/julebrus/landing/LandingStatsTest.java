@@ -83,20 +83,31 @@ class LandingStatsTest {
     }
 
     @Test
-    void the2016SummaryComesFromTheRankedListAndTheParticipationCounts() {
-        List<Map<String, String>> results = RepoData.corrected(RepoData.csv(RepoData.DATA.resolve("results.csv"))).stream()
-                .filter(r -> r.get("year").equals("2016")).filter(LandingStatsTest::isBeer).toList();
+    void the2016SeasonComesFromTheSingleVotesAndTheStatedListCrossChecksThem() {
+        // 2016 was only a ranked list until the sheet's own vote matrix turned up (source/google-drive/votes-2016.csv).
+        HistoryStats.Season s = season(2016);
+        assertThat(s.aggregate()).isFalse();
+        List<Map<String, String>> votes = votesByYear().get(2016);
         List<Map<String, String>> people = RepoData.csv(RepoData.DATA.resolve("participation.csv")).stream()
                 .filter(r -> r.get("year").equals("2016")).toList();
-        HistoryStats.Season s = season(2016);
-        assertThat(s.aggregate()).isTrue();
-        assertThat(s.meanScore()).isNull();
-        assertThat(s.beers()).isEqualTo(results.size());
-        assertThat(s.voters()).isEqualTo(people.size());
-        assertThat(s.votes()).isEqualTo(people.stream().mapToInt(r -> Integer.parseInt(r.get("votes_cast"))).sum());
-        Map<String, String> best = results.stream().max(Comparator.comparingDouble(r -> Double.parseDouble(r.get("mean_weighted")))).orElseThrow();
-        assertThat(s.top()).extracting(HistoryStats.Top::beer).contains(best.get("beer").trim());
-        assertThat(STATS.totals().votesIncludingAggregate()).isEqualTo(STATS.totals().votes() + s.votes());
+        assertThat(s.votes()).isEqualTo(votes.size());
+        assertThat(s.voters()).isEqualTo(people.size()).isEqualTo(votes.stream().map(r -> r.get("voter")).distinct().count());
+
+        // every beer on the sheet's stated list has the stated weighted mean when computed from the single votes
+        for (Map<String, String> stated : RepoData.csv(RepoData.DATA.resolve("results.csv")).stream().filter(r -> r.get("year").equals("2016")).toList()) {
+            List<Map<String, String>> mine = votes.stream().filter(v -> v.get("beer").equalsIgnoreCase(stated.get("beer"))).toList();
+            assertThat(mine).as("votes for " + stated.get("beer")).isNotEmpty();
+            double w = mine.stream().mapToDouble(LandingStatsTest::weight).sum();
+            double mean = mine.stream().mapToDouble(v -> Double.parseDouble(v.get("score")) * weight(v)).sum() / w;
+            assertThat(mean).as("weighted mean of " + stated.get("beer")).isCloseTo(Double.parseDouble(stated.get("mean_weighted")), org.assertj.core.data.Offset.offset(0.02));
+        }
+        // and every voter has the stated number of votes, except Eirik: a second "7 Sorter" column holds one more (see SOURCES.md)
+        for (Map<String, String> p : people) {
+            long listed = votes.stream().filter(v -> v.get("voter").equals(p.get("voter"))).count();
+            int stated = Integer.parseInt(p.get("votes_cast"));
+            assertThat(listed).as("votes of " + p.get("voter")).isEqualTo(p.get("voter").equals("Eirik") ? stated + 1 : stated);
+        }
+        assertThat(STATS.totals().votesIncludingAggregate()).isEqualTo(STATS.totals().votes());
     }
 
     @Test
@@ -185,7 +196,7 @@ class LandingStatsTest {
     void thePageShowsTheRecomputedNumbers() {
         SeasonProperties season = new SeasonProperties(2026, LocalDate.of(2026, 11, 1), LocalDate.of(2026, 12, 23),
                 ZoneId.of("Europe/Oslo"), 5, 5, LocalTime.of(18, 0));
-        int total = RepoData.votes().size() + season(2016).votes();
+        int total = RepoData.votes().size() + STATS.seasons().stream().filter(HistoryStats.Season::aggregate).mapToInt(HistoryStats.Season::votes).sum();
         int votes2003 = votesByYear().get(2003).size();
         for (boolean en : new boolean[]{false, true}) {
             Locale locale = en ? Locale.UK : Locale.forLanguageTag("nb-NO");

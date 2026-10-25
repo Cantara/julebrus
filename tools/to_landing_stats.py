@@ -13,8 +13,9 @@ Rules (the page states them):
 - A blank weight counts as 1, as in the app's history import.
 - The top beer of a season is the highest weighted mean among beers with at least MIN_VOTES votes
   (beer names compared case-insensitively, as written in that year's source). Ties are all listed.
-- 2016 has no single votes: beers and the top beer come from the sheet's ranked list (data/results.csv),
-  voters and votes from data/participation.csv (counted, never named).
+- A 2016 without single votes (it was one until the sheet's own matrix turned up) would take its beers and top beer
+  from the sheet's ranked list (data/results.csv), voters and votes from data/participation.csv (counted, never named);
+  with single votes it is an ordinary season and the ranked list is only a cross-check.
 - Beer names are corrected with the app's history/beer_names.csv (year, as written, correct name), the same
   file the app applies to the database, so the page and the app group the same spellings. data/ stays as written.
 - Beers that come back: names as written, compared case-insensitively; spellings are not merged.
@@ -125,7 +126,8 @@ def main(out):
     for r in votes:
         by_year[int(r["year"])].append(r)
     seasons = [season_from_votes(y, rows) for y, rows in sorted(by_year.items())]
-    seasons.append(season_2016(results, participation))
+    if 2016 not in by_year:
+        seasons.append(season_2016(results, participation))
     seasons.sort(key=lambda s: s["year"])
 
     dice = Counter()
