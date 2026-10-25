@@ -42,11 +42,15 @@ on every startup, so a corrected mapping needs only a restart.
 ## beer_names.csv
 
 ```
-year,as_written,canonical
-2019,Ringnes julebokk,Ringnes Julebokk
+year,as_written,canonical,note
+2019,Ringnes julebokk,Ringnes Julebokk,
+2014,Rignes Julebokk,Ringnes Julebokk,legacy
 ```
 
-Corrects a misspelled beer name. `as_written` is the name exactly as in `<year>.csv`. Like raters.csv it is
+Corrects a misspelled beer name. `as_written` is the name as it was when the season was first imported. When `note` is
+empty, that is the name still written in `<year>.csv`. When `note` is `legacy`, the source files have since been
+corrected, so `<year>.csv` holds `canonical` and the row only renames a database imported before that (production);
+on a fresh database it matches nothing. `BeerNamesTest` checks both. Like raters.csv it is
 applied on every startup, to ratings already in the database: the stored name changes, the source name is kept
 in `historic_ratings.beer_name_original`, nothing is deleted. Remove a line and the original comes back.
 Candidates: `python3 -I tools/suggest_beer_name_fixes.py` (writes `data/review/beer-name-candidates.csv`).

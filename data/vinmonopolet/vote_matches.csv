@@ -1,0 +1,402 @@
+year,vote_beer,status,method,score,product_article_no,article_options,product_name,list_year,candidates
+1998,Aass,review,subset-allyears,0.88,265502,,Aass Juleøl,,Aass Juleøl [265502] 0.88 | Aass Juleøl Premium [3 article no.] 0.84 | Aass Juleøl Vellagret [1824102] 0.84
+1998,Akershus,none,,,,,,,
+1998,Borg,likely,subset-allyears,0.88,896302,,Borg Juleøl,,Borg Juleøl [896302] 0.88 | Birra del Borgo 25 Dodici [6393802] 0.76
+1998,CB,likely,subset-allyears,0.88,,266102;3535502,CB Juleøl,,CB Juleøl [2 article no.] 0.88
+1998,Dahls,likely,subset-allyears,0.88,,264302;6817202,Dahls Juleøl,,Dahls Juleøl [2 article no.] 0.88 | E.C. Dahls Julemysteriet [18666802] 0.80 | EC Dahls Store Bjørn [0 article no.] 0.76
+1998,Frydenlund,none,,,,,,,
+1998,Hansa,review,subset-allyears,0.88,,266402;3535402,Hansa Juleøl,,Hansa Juleøl [2 article no.] 0.88 | Hansa JuleAle [0 article no.] 0.88 | Hansa Ekstra Vellagret Julebrygg [896402] 0.84
+1998,Låret,likely,subset-allyears,0.84,10451102,,Stavanger Juleøl Lagret,,Stavanger Juleøl Lagret [10451102] 0.84 | Stavanger juleøl lagret 12 måneder [0 article no.] 0.76
+1998,Mack,review,subset-allyears,0.88,,14897202;16446102;18693702;19855202;199402,Mack Juleøl,,Mack Juleøl [5 article no.] 0.88 | Mack Nissefant [0 article no.] 0.88 | Mack Julebokk [10485702] 0.88
+1998,Ringnes,review,subset-allyears,0.88,,11297102;3265002,Ringnes Julebokk,,Ringnes Julebokk [2 article no.] 0.88 | Ringnes Juleøl [2 article no.] 0.88
+1998,Fredrikstad,review,subset-allyears,0.88,896702,,Fredrikstad Juleøl,,Fredrikstad Juleøl [896702] 0.88 | Indslev Bryggeri Frederiks Jul [904202] 0.84
+1998,Schous,review,subset-allyears,0.88,,,Schouskjellern Julestout,,Schouskjellern Julestout [0 article no.] 0.88 | Schouskjelleren Mikrobryggeri Juleøl [0 article no.] 0.84 | Schouskjelleren The End Julestout [0 article no.] 0.80
+1998,Tuborg,likely,subset-allyears,0.88,896302,,Borg Juleøl,,Borg Juleøl [896302] 0.88
+1998,Carlsberg,none,,,,,,,
+2003,Julebokk,review,subset-allyears,0.88,892002,,Balder Julebukk,,Balder Julebukk [892002] 0.88 | Ringnes Julebokk [2 article no.] 0.88 | Klokk & Co Juleklokk [10485302] 0.88
+2003,CB,likely,subset-allyears,0.88,,266102;3535502,CB Juleøl,,CB Juleøl [2 article no.] 0.88
+2003,Schous,review,subset-allyears,0.88,,,Schouskjellern Julestout,,Schouskjellern Julestout [0 article no.] 0.88 | Schouskjelleren Mikrobryggeri Juleøl [0 article no.] 0.84 | Schouskjelleren The End Julestout [0 article no.] 0.80
+2003,Ringnes,review,subset-allyears,0.88,,11297102;3265002,Ringnes Julebokk,,Ringnes Julebokk [2 article no.] 0.88 | Ringnes Juleøl [2 article no.] 0.88
+2003,Frydenlund,none,,,,,,,
+2003,Aas,review,subset-allyears,0.88,265502,,Aass Juleøl,,Aass Juleøl [265502] 0.88 | Aass Juleøl Premium [3 article no.] 0.84 | Aass Juleøl Vellagret [1824102] 0.84
+2003,Lervig,review,subset-allyears,0.88,,,Lervig Christmas Shake,,Lervig Christmas Shake [0 article no.] 0.88 | Lervig Nitro Christmas [0 article no.] 0.88 | Lervig's jul [9549902] 0.84
+2003,Borg,likely,subset-allyears,0.88,896302,,Borg Juleøl,,Borg Juleøl [896302] 0.88 | Birra del Borgo 25 Dodici [6393802] 0.76
+2003,Nøgne ø,review,subset-allyears,0.88,13620802,,Nøgne Ø Julequad,,Nøgne Ø Julequad [13620802] 0.88 | Nøgne Ø Tradisjon [0 article no.] 0.88 | Nøgne Ø Julefri [11185602] 0.88
+2003,Mack,review,subset-allyears,0.88,,14897202;16446102;18693702;19855202;199402,Mack Juleøl,,Mack Juleøl [5 article no.] 0.88 | Mack Nissefant [0 article no.] 0.88 | Mack Julebokk [10485702] 0.88
+2003,Dahls,likely,subset-allyears,0.88,,264302;6817202,Dahls Juleøl,,Dahls Juleøl [2 article no.] 0.88 | E.C. Dahls Julemysteriet [18666802] 0.80 | EC Dahls Store Bjørn [0 article no.] 0.76
+2003,Fredrikstad,review,subset-allyears,0.88,896702,,Fredrikstad Juleøl,,Fredrikstad Juleøl [896702] 0.88 | Indslev Bryggeri Frederiks Jul [904202] 0.84
+2003,Hansa,review,subset-allyears,0.88,,266402;3535402,Hansa Juleøl,,Hansa Juleøl [2 article no.] 0.88 | Hansa JuleAle [0 article no.] 0.88 | Hansa Ekstra Vellagret Julebrygg [896402] 0.84
+2003,Tou,none,,,,,,,
+2003,Fenalår P,not-a-product,non-beer words,,,,,,
+2003,Fenalår M,not-a-product,non-beer words,,,,,,
+2004,Julebokk,review,subset-allyears,0.88,892002,,Balder Julebukk,,Balder Julebukk [892002] 0.88 | Ringnes Julebokk [2 article no.] 0.88 | Klokk & Co Juleklokk [10485302] 0.88
+2004,CB,likely,subset-allyears,0.88,,266102;3535502,CB Juleøl,,CB Juleøl [2 article no.] 0.88
+2004,Lervig,review,subset-allyears,0.88,,,Lervig Christmas Shake,,Lervig Christmas Shake [0 article no.] 0.88 | Lervig Nitro Christmas [0 article no.] 0.88 | Lervig's jul [9549902] 0.84
+2004,Ringnes,review,subset-allyears,0.88,,11297102;3265002,Ringnes Julebokk,,Ringnes Julebokk [2 article no.] 0.88 | Ringnes Juleøl [2 article no.] 0.88
+2004,Frydenlund,none,,,,,,,
+2004,Aas,review,subset-allyears,0.88,265502,,Aass Juleøl,,Aass Juleøl [265502] 0.88 | Aass Juleøl Premium [3 article no.] 0.84 | Aass Juleøl Vellagret [1824102] 0.84
+2004,Mack,review,subset-allyears,0.88,,14897202;16446102;18693702;19855202;199402,Mack Juleøl,,Mack Juleøl [5 article no.] 0.88 | Mack Nissefant [0 article no.] 0.88 | Mack Julebokk [10485702] 0.88
+2004,Borg,likely,subset-allyears,0.88,896302,,Borg Juleøl,,Borg Juleøl [896302] 0.88 | Birra del Borgo 25 Dodici [6393802] 0.76
+2004,Nøgne Ø God Jul,likely,exact-other-year,0.90,4679102,,Nøgne Ø God Jul,,
+2004,Nøgne Ø Julenatt,none,,,,,,,
+2004,Nøgne Ø Underlig Jul,likely,exact-other-year,0.90,4773602,,Nøgne Ø Underlig Jul,,
+2004,Dahls,likely,subset-allyears,0.88,,264302;6817202,Dahls Juleøl,,Dahls Juleøl [2 article no.] 0.88 | E.C. Dahls Julemysteriet [18666802] 0.80 | EC Dahls Store Bjørn [0 article no.] 0.76
+2004,Fredrikstad,review,subset-allyears,0.88,896702,,Fredrikstad Juleøl,,Fredrikstad Juleøl [896702] 0.88 | Indslev Bryggeri Frederiks Jul [904202] 0.84
+2004,Hansa,review,subset-allyears,0.88,,266402;3535402,Hansa Juleøl,,Hansa Juleøl [2 article no.] 0.88 | Hansa JuleAle [0 article no.] 0.88 | Hansa Ekstra Vellagret Julebrygg [896402] 0.84
+2004,Fenalår A,not-a-product,non-beer words,,,,,,
+2004,Fenalår B,not-a-product,non-beer words,,,,,,
+2004,Fenalår C,not-a-product,non-beer words,,,,,,
+2007,Fenalår 1,not-a-product,non-beer words,,,,,,
+2007,Fenalår 2,not-a-product,non-beer words,,,,,,
+2007,Ringnes,review,subset-allyears,0.88,,11297102;3265002,Ringnes Julebokk,,Ringnes Julebokk [2 article no.] 0.88 | Ringnes Juleøl [2 article no.] 0.88
+2007,Hansa,review,subset-allyears,0.88,,266402;3535402,Hansa Juleøl,,Hansa Juleøl [2 article no.] 0.88 | Hansa JuleAle [0 article no.] 0.88 | Hansa Ekstra Vellagret Julebrygg [896402] 0.84
+2007,Nissefar,review,subset-allyears,0.88,,14852002;4478502,Haandbryggeriet Nissefar,,Haandbryggeriet Nissefar [2 article no.] 0.88 | Mack Nissefant [0 article no.] 0.88
+2007,Mack Juleøl,likely,exact-other-year,0.90,,14897202;16446102;18693702;19855202;199402,Mack Juleøl,,
+2007,Dahls,likely,subset-allyears,0.88,,264302;6817202,Dahls Juleøl,,Dahls Juleøl [2 article no.] 0.88 | E.C. Dahls Julemysteriet [18666802] 0.80 | EC Dahls Store Bjørn [0 article no.] 0.76
+2007,Hansa Julebrygg,review,subset-allyears,0.88,,266402;3535402,Hansa Juleøl,,Hansa Juleøl [2 article no.] 0.88 | Hansa JuleAle [0 article no.] 0.88 | Hansa Ekstra Vellagret Julebrygg [896402] 0.84
+2007,Borg,likely,subset-allyears,0.88,896302,,Borg Juleøl,,Borg Juleøl [896302] 0.88 | Birra del Borgo 25 Dodici [6393802] 0.76
+2007,Aass,review,subset-allyears,0.88,265502,,Aass Juleøl,,Aass Juleøl [265502] 0.88 | Aass Juleøl Premium [3 article no.] 0.84 | Aass Juleøl Vellagret [1824102] 0.84
+2007,CB,likely,subset-allyears,0.88,,266102;3535502,CB Juleøl,,CB Juleøl [2 article no.] 0.88
+2007,Underlig Jul,likely,subset-allyears,0.84,4773602,,Nøgne Ø Underlig Jul,,Nøgne Ø Underlig Jul [4773602] 0.84
+2007,God jul,review,subset-allyears,0.88,,,Eiker God Jul,,Eiker God Jul [0 article no.] 0.88 | Nøgne Ø God Jul [4679102] 0.84 | Røros Bryggeri God Jul [0 article no.] 0.84
+2007,Nissemor,review,subset-allyears,0.88,,14852102;4478602,Haandbryggeriet Nissemor,,Haandbryggeriet Nissemor [2 article no.] 0.88 | Haandbryggeriet Fatlagret Nissemor [0 article no.] 0.84 | Haandbryggeriet Akevittfatlagret Nissemor [19908302] 0.84
+2007,Julefnugg,review,subset-allyears,0.88,,19889202;4844302;6002602,Berentsens Julefnugg,,Berentsens Julefnugg [3 article no.] 0.88 | Thisted Julefnug [0 article no.] 0.88
+2007,Julebukk,review,subset-allyears,0.88,892002,,Balder Julebukk,,Balder Julebukk [892002] 0.88 | Ringnes Julebokk [2 article no.] 0.88 | Mack Julebokk [10485702] 0.88
+2007,Mack,review,subset-allyears,0.88,,14897202;16446102;18693702;19855202;199402,Mack Juleøl,,Mack Juleøl [5 article no.] 0.88 | Mack Nissefant [0 article no.] 0.88 | Mack Julebokk [10485702] 0.88
+2007,Fredrikstad,review,subset-allyears,0.88,896702,,Fredrikstad Juleøl,,Fredrikstad Juleøl [896702] 0.88 | Indslev Bryggeri Frederiks Jul [904202] 0.84
+2007,Levig,review,subset-allyears,0.88,,,Lervig Christmas Shake,,Lervig Christmas Shake [0 article no.] 0.88 | Lervig Nitro Christmas [0 article no.] 0.88 | Lervig's jul [9549902] 0.84
+2011,Dahls,likely,subset-allyears,0.88,,264302;6817202,Dahls Juleøl,,Dahls Juleøl [2 article no.] 0.88 | E.C. Dahls Julemysteriet [18666802] 0.80 | EC Dahls Store Bjørn [0 article no.] 0.76
+2011,Aass Juleøl,likely,exact-other-year,0.90,265502,,Aass Juleøl,,
+2011,Hansa Julebrygg,review,subset-allyears,0.88,,266402;3535402,Hansa Juleøl,,Hansa Juleøl [2 article no.] 0.88 | Hansa JuleAle [0 article no.] 0.88 | Hansa Ekstra Vellagret Julebrygg [896402] 0.84
+2011,Borg,likely,subset-allyears,0.88,896302,,Borg Juleøl,,Borg Juleøl [896302] 0.88 | Birra del Borgo 25 Dodici [6393802] 0.76
+2011,NøgneØ Underlig jul,likely,exact-other-year,0.90,4773602,,Nøgne Ø Underlig Jul,,
+2011,Hansa juleøl,likely,exact-other-year,0.90,,266402;3535402,Hansa Juleøl,,
+2011,Ringnes julebokk,likely,exact-other-year,0.90,,11297102;3265002,Ringnes Julebokk,,
+2011,Lervig Juleøl,review,fuzzy-allyears,0.80,,,Larvik Juleøl,,Larvik Juleøl [0 article no.] 0.80 | Lervig's jul [9549902] 0.76
+2011,Aass Juleøl premium,likely,exact-other-year,0.90,,1824002;20008602;5122002,Aass Juleøl Premium,,
+2011,"Hansddbrygggirier, nissefar",review,fuzzy-allyears,0.80,,14852002;4478502,Haandbryggeriet Nissefar,,Haandbryggeriet Nissefar [2 article no.] 0.80
+2011,CB,likely,subset-allyears,0.88,,266102;3535502,CB Juleøl,,CB Juleøl [2 article no.] 0.88
+2011,Fredrikstad,review,subset-allyears,0.88,896702,,Fredrikstad Juleøl,,Fredrikstad Juleøl [896702] 0.88 | Indslev Bryggeri Frederiks Jul [904202] 0.84
+2011,Berentsen Julefnugg,likely,fuzzy-allyears,0.93,,19889202;4844302;6002602,Berentsens Julefnugg,,Berentsens Julefnugg [3 article no.] 0.93
+2011,Ægir julebrygg,review,subset-allyears,0.88,195602,,Ægir Ylir Julebrygg,,Ægir Ylir Julebrygg [195602] 0.88 | Ægir Eldir Julebrygg [0 article no.] 0.88 | Ægir Fimafeng Julebrygg [0 article no.] 0.88
+2011,Lade Gaards Sterk Juleøl,likely,subset-allyears,0.92,10392202,,Lade Gaards Juleøl Sterk,,Lade Gaards Juleøl Sterk [10392202] 0.92 | Lade Gaards Juleøl [9521002] 0.81
+2011,Berentsen Juleavec,review,fuzzy-allyears,0.90,,19889502;4983402;6002502,Berentsens Jule-Avec,,Berentsens Jule-Avec [3 article no.] 0.90 | Berentsens Stjerneskudd Krydret JuleAle [0 article no.] 0.84 | Berentsens Jule-Avec Årgang [0 article no.] 0.76
+2011,Håndbryggeriet Nissemor,review,fuzzy-allyears,0.93,,14852102;4478602,Haandbryggeriet Nissemor,,Haandbryggeriet Nissemor [2 article no.] 0.93 | Haandbryggeriet Fatlagret Nissemor [0 article no.] 0.88 | Haandbryggeriet Akevittfatlagret Nissemor [19908302] 0.88
+2011,Ringnes Juleøl Sterk,review,fuzzy-allyears,0.78,,263602;7910502,Ringnes Juleøl,,Ringnes Juleøl [2 article no.] 0.78
+2011,Mack Juleøl,likely,exact-other-year,0.90,,14897202;16446102;18693702;19855202;199402,Mack Juleøl,,
+2011,NøgneØ God Jul,likely,exact-other-year,0.90,4679102,,Nøgne Ø God Jul,,
+2011,fenalår Tind (rød),not-a-product,non-beer words,,,,,,
+2011,Fenalår Meny (grønn),not-a-product,non-beer words,,,,,,
+2011,fenalår Rema (hvit),not-a-product,non-beer words,,,,,,
+2011,Vertskapet,not-a-product,non-beer words,,,,,,
+2012,Atna Julenisjeøl,likely,exact-other-year,0.90,9016702,,Atna Julenisjeøl,,
+2012,Aass Juleøl Orginal,none,,,,,,,
+2012,Ringnes sterk,none,,,,,,,
+2012,Hansa Julebrygg,review,subset-allyears,0.88,,266402;3535402,Hansa Juleøl,,Hansa Juleøl [2 article no.] 0.88 | Hansa JuleAle [0 article no.] 0.88 | Hansa Ekstra Vellagret Julebrygg [896402] 0.84
+2012,Borg,likely,subset-allyears,0.88,896302,,Borg Juleøl,,Borg Juleøl [896302] 0.88 | Birra del Borgo 25 Dodici [6393802] 0.76
+2012,NøgneØ Underlig jul,likely,exact-other-year,0.90,4773602,,Nøgne Ø Underlig Jul,,
+2012,Aass Premium,likely,subset-allyears,0.88,,1824002;20008602;5122002,Aass Juleøl Premium,,Aass Juleøl Premium [3 article no.] 0.88
+2012,Ringnes julebokk,likely,exact-other-year,0.90,,11297102;3265002,Ringnes Julebokk,,
+2012,Julefnugg,review,subset-allyears,0.88,,19889202;4844302;6002602,Berentsens Julefnugg,,Berentsens Julefnugg [3 article no.] 0.88 | Thisted Julefnug [0 article no.] 0.88
+2012,Aass Juleøl premium,likely,exact-other-year,0.90,,1824002;20008602;5122002,Aass Juleøl Premium,,
+2012,Lervig,review,subset-allyears,0.88,,,Lervig Christmas Shake,,Lervig Christmas Shake [0 article no.] 0.88 | Lervig Nitro Christmas [0 article no.] 0.88 | Lervig's jul [9549902] 0.84
+2012,Dahls,likely,subset-allyears,0.88,,264302;6817202,Dahls Juleøl,,Dahls Juleøl [2 article no.] 0.88 | E.C. Dahls Julemysteriet [18666802] 0.80 | EC Dahls Store Bjørn [0 article no.] 0.76
+2012,CB,likely,subset-allyears,0.88,,266102;3535502,CB Juleøl,,CB Juleøl [2 article no.] 0.88
+2012,Bestefar,review,subset-allyears,0.88,,16460002;5343702;6842202,Haandbryggeriet Bestefar,,Haandbryggeriet Bestefar [3 article no.] 0.88 | Haandbryggeriet Fatlagret Bestefar [0 article no.] 0.84 | Lindheim Bestefars Jul [18688702] 0.84
+2012,Ægir julebrygg,review,subset-allyears,0.88,195602,,Ægir Ylir Julebrygg,,Ægir Ylir Julebrygg [195602] 0.88 | Ægir Eldir Julebrygg [0 article no.] 0.88 | Ægir Fimafeng Julebrygg [0 article no.] 0.88
+2012,Fredrikstad,review,subset-allyears,0.88,896702,,Fredrikstad Juleøl,,Fredrikstad Juleøl [896702] 0.88 | Indslev Bryggeri Frederiks Jul [904202] 0.84
+2012,Berentsen Juleavec,review,fuzzy-allyears,0.90,,19889502;4983402;6002502,Berentsens Jule-Avec,,Berentsens Jule-Avec [3 article no.] 0.90 | Berentsens Stjerneskudd Krydret JuleAle [0 article no.] 0.84 | Berentsens Jule-Avec Årgang [0 article no.] 0.76
+2012,Håndbryggeriet Nissemor,review,fuzzy-allyears,0.93,,14852102;4478602,Haandbryggeriet Nissemor,,Haandbryggeriet Nissemor [2 article no.] 0.93 | Haandbryggeriet Fatlagret Nissemor [0 article no.] 0.88 | Haandbryggeriet Akevittfatlagret Nissemor [19908302] 0.88
+2012,Ringnes Juleøl Sterk,review,fuzzy-allyears,0.78,,263602;7910502,Ringnes Juleøl,,Ringnes Juleøl [2 article no.] 0.78
+2012,Mack Juleøl,likely,exact-other-year,0.90,,14897202;16446102;18693702;19855202;199402,Mack Juleøl,,
+2012,NøgneØ God Jul,likely,exact-other-year,0.90,4679102,,Nøgne Ø God Jul,,
+2012,nissefar,review,subset-allyears,0.88,,14852002;4478502,Haandbryggeriet Nissefar,,Haandbryggeriet Nissefar [2 article no.] 0.88 | Mack Nissefant [0 article no.] 0.88
+2012,bestefar,review,subset-allyears,0.88,,16460002;5343702;6842202,Haandbryggeriet Bestefar,,Haandbryggeriet Bestefar [3 article no.] 0.88 | Haandbryggeriet Fatlagret Bestefar [0 article no.] 0.84 | Lindheim Bestefars Jul [18688702] 0.84
+2012,grans lade gaards,none,,,,,,,
+2012,hansa juleøl,likely,exact-other-year,0.90,,266402;3535402,Hansa Juleøl,,
+2012,tomasmesse,review,subset-allyears,0.88,,,Kinn Tomasmess,,Kinn Tomasmess [0 article no.] 0.88 | Kinn Tomasmesse [2 article no.] 0.88
+2012,Smedstuen,none,,,,,,,
+2012,Finsbråten,none,,,,,,,
+2012,Vertskapet,not-a-product,non-beer words,,,,,,
+2013,Aass,review,subset-year,0.88,265502,,Aass Juleøl,2013,Aass Juleøl [265502] 0.88 | Aass Juleøl Premium [5122002] 0.84
+2013,Aass Premium,likely,subset-year,0.88,5122002,,Aass Juleøl Premium,2013,Aass Juleøl Premium [5122002] 0.88
+2013,Atna Julenisjeøl,auto,exact-year,1.00,9016702,,Atna Julenisjeøl,2013,
+2013,Austmann Hooray for Mr Jesus,auto,exact-year,1.00,891002,,Austmann Hooray for Mr Jesus,2013,
+2013,Austmann Jingle Beer,auto,exact-year,1.00,890902,,Austmann Jingle Beer,2013,
+2013,Balder Julebukk,auto,exact-year,1.00,892002,,Balder Julebukk,2013,
+2013,Berentsens Brygghus Stelliger Divum Juleøl,auto,exact-year,1.00,5343602,,Berentsens Brygghus Stelliger Divum Juleøl,2013,
+2013,Berentsens Jule-Avec,auto,exact-year,1.00,4983402,,Berentsens Jule-Avec,2013,
+2013,Berentsens Julefnugg,auto,exact-year,1.00,4844302,,Berentsens Julefnugg,2013,
+2013,Borg,likely,subset-year,0.88,896302,,Borg Juleøl,2013,Borg Juleøl [896302] 0.88
+2013,CB,likely,subset-year,0.88,266102,,CB Juleøl,2013,CB Juleøl [266102] 0.88
+2013,Dahls,likely,subset-year,0.88,264302,,Dahls Juleøl,2013,Dahls Juleøl [264302] 0.88
+2013,Fredrikstad,review,subset-year,0.88,896702,,Fredrikstad Juleøl,2013,Fredrikstad Juleøl [896702] 0.88 | Indslev Bryggeri Frederiks Jul [904202] 0.84
+2013,Haandbryggeriet Bestefar,auto,exact-year,1.00,5343702,,Haandbryggeriet Bestefar,2013,
+2013,Haandbryggeriet Halvor's Jul,auto,exact-year,1.00,903702,,Haandbryggeriet Halvor's Jul,2013,
+2013,Haandbryggeriet Nissefar,auto,exact-year,1.00,4478502,,Haandbryggeriet Nissefar,2013,
+2013,Haandbryggeriet Nissemor,auto,exact-year,1.00,4478602,,Haandbryggeriet Nissemor,2013,
+2013,Hansa Ekstra Vellagret Julebrygg,auto,exact-year,1.00,896402,,Hansa Ekstra Vellagret Julebrygg,2013,
+2013,Hansa,review,subset-year,0.88,266402,,Hansa Juleøl,2013,Hansa Juleøl [266402] 0.88 | Hansa Ekstra Vellagret Julebrygg [896402] 0.84
+2013,Kinn Julefred,auto,exact-year,1.00,9520801,,Kinn Julefred,2013,
+2013,Lade Gaards,likely,subset-year,0.88,9521002,,Lade Gaards Juleøl,2013,Lade Gaards Juleøl [9521002] 0.88
+2013,Lervig's jul,auto,exact-year,1.00,9549902,,Lervig's jul,2013,
+2013,Mack,likely,subset-year,0.88,199402,,Mack Juleøl,2013,Mack Juleøl [199402] 0.88
+2013,Nøgne Ø God Jul,auto,exact-year,1.00,4679102,,Nøgne Ø God Jul,2013,
+2013,Nøgne Ø Special Holiday Ale,auto,exact-year,1.00,5944202,,Nøgne Ø Special Holiday Ale,2013,
+2013,Nøgne Ø Underlig Jul,auto,exact-year,1.00,4773602,,Nøgne Ø Underlig Jul,2013,
+2013,Quinta do Nöel 2013,auto,exact-year,1.00,906802,,Quinta do Nöel 2013,2013,
+2013,Ringnes Julebokk,auto,exact-year,1.00,3265002,,Ringnes Julebokk,2013,
+2013,Ringnes Superior Polaris,none,,,,,,,
+2013,Ringnes Juleøl,auto,exact-year,1.00,263602,,Ringnes Juleøl,2013,
+2013,Ægir Ylir Julebrygg,auto,exact-year,1.00,195602,,Ægir Ylir Julebrygg,2013,
+2013,Nils og Eriks hjemmebrygg,not-a-product,non-beer words,,,,,,
+2013,Finsbråten,none,,,,,,,
+2013,Vossakjøt (spesialmodna),not-a-product,non-beer words,,,,,,
+2013,Smedstuen gård (røkt),none,,,,,,,
+2013,Vertskapet,not-a-product,non-beer words,,,,,,
+2014,7 Fjell 7 Sorter,likely,subset-year,0.92,1829302,,7 Fjell 7 Sorter Christmas Ale,2014,7 Fjell 7 Sorter Christmas Ale [1829302] 0.92
+2014,Ægir Julebrygg,likely,subset-year,0.88,195602,,Ægir Ylir Julebrygg,2014,Ægir Ylir Julebrygg [195602] 0.88
+2014,Amundsens Jól,likely,subset-year,0.92,,,Amundsen Bryggeri Jól,2014,Amundsen Bryggeri Jól [0 article no.] 0.92
+2014,Arendals 1839,likely,subset-year,0.88,,,Arendals Bryggeri Julen 1839,2014,Arendals Bryggeri Julen 1839 [0 article no.] 0.88
+2014,Atna Julenisje,likely,fuzzy-year,0.89,9016702,,Atna Julenisjeøl,2014,Atna Julenisjeøl [9016702] 0.89
+2014,Austmann Stille Natt,auto,exact-year,1.00,1899902,,Austmann Stille Natt,2014,
+2014,Balder Julebukk,auto,exact-year,1.00,892002,,Balder Julebukk,2014,
+2014,Berentsen Julefnugg,likely,fuzzy-year,0.93,,,Berentsens Julefnugg,2014,Berentsens Julefnugg [0 article no.] 0.93
+2014,Berentsen Stelliger Divum,likely,subset-year,0.88,1830302,,Berentsens Stelliger Divum Juleøl,2014,Berentsens Stelliger Divum Juleøl [1830302] 0.88
+2014,Borg Juleøl,auto,exact-year,1.00,896302,,Borg Juleøl,2014,
+2014,CB Juleøl,auto,exact-year,1.00,,,CB Juleøl,2014,
+2014,Dahls Juleøl,auto,exact-year,1.00,,,Dahls Juleøl,2014,
+2014,EC Dahls Juleøl,likely,fuzzy-year,0.84,,,Dahls Juleøl,2014,Dahls Juleøl [0 article no.] 0.84
+2014,Fredrikstad Juleøl,auto,exact-year,1.00,896702,,Fredrikstad Juleøl,2014,
+2014,Haandbryggeriets Bestefar,likely,fuzzy-year,0.93,,,Haandbryggeriet Bestefar,2014,Haandbryggeriet Bestefar [0 article no.] 0.93 | Haandbryggeriet Nissefar [0 article no.] 0.81
+2014,Hansa Juleale,auto,exact-year,1.00,,,Hansa JuleAle,2014,
+2014,Hansa Juleøl,auto,exact-year,1.00,,,Hansa Juleøl,2014,
+2014,Hansa Vellagret Julebrygg,likely,subset-year,0.88,896402,,Hansa Ekstra Vellagret Julebrygg,2014,Hansa Ekstra Vellagret Julebrygg [896402] 0.88
+2014,Kinn Julefred,auto,exact-year,1.00,9520801,,Kinn Julefred,2014,
+2014,Kinn Solsnu,auto,exact-other-year,0.90,,13621005;1857501,Kinn Solsnu,,
+2014,Kloster. G. Juleøl,review,fuzzy-year,0.77,,,Klostergården Jul e øl,2014,Klostergården Jul e øl [0 article no.] 0.77
+2014,Ladegaards Juleøl,likely,fuzzy-year,0.92,9521002,,Lade Gaards Juleøl,2014,Lade Gaards Juleøl [9521002] 0.92
+2014,Lervig Jul,likely,subset-year,0.88,9549902,,Lervig’s jul,2014,Lervig’s jul [9549902] 0.88
+2014,Løkka Jul,likely,subset-year,0.80,13623202,,Grünerløkka Brygghus Løkka Jul,2014,Grünerløkka Brygghus Løkka Jul [13623202] 0.80
+2014,Mack Juleøl,auto,exact-year,1.00,,,Mack Juleøl,2014,
+2014,Nøgne Ø God Jul,auto,exact-year,1.00,4679102,,Nøgne Ø God Jul,2014,
+2014,Nøgne Ø Special Holiday Ale,auto,exact-year,1.00,5944202,,Nøgne Ø Special Holiday Ale,2014,
+2014,Nøgne Ø Underlig Jul,auto,exact-year,1.00,4773602,,Nøgne Ø Underlig Jul,2014,
+2014,Ringnes Juleøl,auto,exact-year,1.00,,,Ringnes Juleøl,2014,
+2014,Sagene sterk jul,auto,exact-year,1.00,1823202,,Sagene Sterk Jul,2014,
+2014,Schouskjelleren Juleøl,likely,subset-year,0.88,,,Schouskjelleren Mikrobryggeri Juleøl,2014,Schouskjelleren Mikrobryggeri Juleøl [0 article no.] 0.88
+2014,Smedstuen gård (fenalår),not-a-product,non-beer words,,,,,,
+2014,Aass  Normal,none,,,,,,,
+2014,Aass Vellagert,likely,subset-year,0.88,1824102,,Aass Juleøl Vellagret,2014,Aass Juleøl Vellagret [1824102] 0.88
+2014,Vossakjøtt (fenalår),not-a-product,non-beer words,,,,,,
+2014,Ylir,likely,subset-year,0.88,195602,,Ægir Ylir Julebrygg,2014,Ægir Ylir Julebrygg [195602] 0.88
+2014,Rignes Julebokk,likely,subset-year,0.92,,,Ringnes Julebokk,2014,Ringnes Julebokk [0 article no.] 0.92
+2015,Hansa Julebrygg,review,subset-year,0.88,,,Hansa JuleAle,2015,Hansa JuleAle [0 article no.] 0.88 | Hansa Juleøl [0 article no.] 0.88 | Hansa Ekstra Vellagret Julebrygg [896402] 0.84
+2015,Fredrikstad,review,subset-year,0.88,896702,,Fredrikstad Juleøl,2015,Fredrikstad Juleøl [896702] 0.88 | Indslev Bryggeri Frederiks Jul [904202] 0.84
+2015,Eiker God Jul,auto,exact-year,1.00,,,Eiker God Jul,2015,
+2015,Sagene,likely,subset-year,0.84,1823202,,Sagene Sterk Jul,2015,Sagene Sterk Jul [1823202] 0.84
+2015,Dahls,likely,subset-year,0.88,,,Dahls Juleøl,2015,Dahls Juleøl [0 article no.] 0.88
+2015,Ringnes Sterk,none,,,,,,,
+2015,Telemark,likely,subset-year,0.84,,,Telemark Mikrobryggeri Juleøl,2015,Telemark Mikrobryggeri Juleøl [0 article no.] 0.84
+2015,Mack,review,subset-year,0.88,,,Mack Juleøl,2015,Mack Juleøl [0 article no.] 0.88 | Mack Nissefant [0 article no.] 0.88
+2015,Austmann Vintersolverv,auto,exact-year,1.00,,,Austmann Vintersolverv,2015,
+2015,Julepynt,none,,,,,,,
+2015,Amundsen Jol,likely,subset-year,0.92,,,Amundsen Bryggeri Jól,2015,Amundsen Bryggeri Jól [0 article no.] 0.92
+2015,Færder,likely,subset-year,0.88,,,Færder Juleøl,2015,Færder Juleøl [0 article no.] 0.88
+2015,Julefnugg,review,subset-year,0.88,,,Berentsens Julefnugg,2015,Berentsens Julefnugg [0 article no.] 0.88 | Thisted Julefnug [0 article no.] 0.88
+2015,7F 7 Sorter,none,,,,,,,
+2015,Nøgne Underlig,likely,subset-year,0.88,4773602,,Nøgne Ø Underlig Jul,2015,Nøgne Ø Underlig Jul [4773602] 0.88
+2015,Nøgne God Jul Whisky,auto,exact-year,1.00,,,Nøgne Ø God Jul Whisky,2015,
+2015,Borg,likely,subset-year,0.88,896302,,Borg Juleøl,2015,Borg Juleøl [896302] 0.88
+2015,Hansa Juleale,auto,exact-year,1.00,,,Hansa JuleAle,2015,
+2015,Lade Gaard,likely,subset-year,0.88,9521002,,Lade Gaards Juleøl,2015,Lade Gaards Juleøl [9521002] 0.88
+2015,Lervigs Jul,likely,fuzzy-year,0.91,9549902,,Lervig’s jul,2015,Lervig’s jul [9549902] 0.91
+2015,Bad Santa,likely,subset-year,0.88,,,Bad Santa Juleøl,2015,Bad Santa Juleøl [0 article no.] 0.88
+2015,Aass Premium,likely,subset-year,0.88,,,Aass Juleøl Premium,2015,Aass Juleøl Premium [0 article no.] 0.88
+2015,CB,likely,subset-year,0.88,,,CB Juleøl,2015,CB Juleøl [0 article no.] 0.88
+2015,Ylir 2015,likely,subset-year,0.88,195602,,Ægir Ylir Julebrygg 2014,2015,Ægir Ylir Julebrygg 2014 [195602] 0.88
+2015,Aass Vellagret,likely,subset-year,0.88,1824102,,Aass Juleøl Vellagret,2015,Aass Juleøl Vellagret [1824102] 0.88
+2015,Rignes Julebokk,likely,subset-year,0.92,,,Ringnes Julebokk,2015,Ringnes Julebokk [0 article no.] 0.92
+2015,Hansa Juleøl,auto,exact-year,1.00,,,Hansa Juleøl,2015,
+2015,Nissefar,review,subset-year,0.88,,,Haandbryggeriet Nissefar,2015,Haandbryggeriet Nissefar [0 article no.] 0.88 | Mack Nissefant [0 article no.] 0.88
+2015,Nøgne Rød Jul,auto,exact-year,1.00,3577802,,Nøgne Ø Rød Jul,2015,
+2015,Nøgne God Jul,auto,exact-year,1.00,4679102,,Nøgne Ø God Jul,2015,
+2015,Klostergaarden 7 Sorter,none,,,,,,,
+2015,Smestadstuen,none,,,,,,,
+2015,Nordfjord,none,,,,,,,
+2015,Vetikke,none,,,,,,,
+2015,Nøisom,review,subset-year,0.80,,,Nøisom Gullinbustes Torreblot Jòl,2015,Nøisom Gullinbustes Torreblot Jòl [0 article no.] 0.80 | Nøisom Lutefisk-øl Julen 2015 [0 article no.] 0.80 | Nøisom Nøisommelig jul [0 article no.] 0.80
+2015,Schou Juleøl,likely,subset-year,0.88,,,Schouskjelleren Mikrobryggeri Juleøl,2015,Schouskjelleren Mikrobryggeri Juleøl [0 article no.] 0.88
+2015,Stjerneskudd Krydret Juleale,likely,subset-year,0.88,,,Berentsens Stjerneskudd Krydret JuleAle,2015,Berentsens Stjerneskudd Krydret JuleAle [0 article no.] 0.88
+2016,Haand Halvors Jul,likely,subset-year,0.88,903702,,Haandbryggeriet Halvor’s Jul,2016,Haandbryggeriet Halvor’s Jul [903702] 0.88
+2016,Vossakjøt,not-a-product,non-beer words,,,,,,
+2016,Aas Vellagret,likely,subset-year,0.88,1824102,,Aass Juleøl Vellagret,2016,Aass Juleøl Vellagret [1824102] 0.88
+2016,Ægir Ylir,likely,subset-year,0.98,195602,,Ægir Ylir Julebrygg,2016,Ægir Ylir Julebrygg [195602] 0.98
+2016,Hansa Jule Ale,review,fuzzy-year,0.91,,,Hansa JuleAle,2016,Hansa JuleAle [0 article no.] 0.91 | Hansa Juleøl [0 article no.] 0.88 | Hansa Ekstra Vellagret Julebrygg [896402] 0.84
+2016,NisseKjesk,likely,subset-year,0.88,,,Qvart Nissekjesk,2016,Qvart Nissekjesk [0 article no.] 0.88
+2016,Roros – mork lager,none,,,,,,,
+2016,St Hallvards Reserve Jul,auto,exact-year,1.00,,,St. Hallvards Reserve-Jul,2016,
+2016,Wettres15,likely,subset-year,0.84,,,Wettre Julekula Juleøl 2015,2016,Wettre Julekula Juleøl 2015 [0 article no.] 0.84
+2016,Hansa Jul Øl,likely,fuzzy-year,0.91,,,Hansa Juleøl,2016,Hansa Juleøl [0 article no.] 0.91 | Hansa JuleAle [0 article no.] 0.79
+2016,Sinterklaas,likely,subset-year,0.80,,,7 Fjell Sinterklaas Belgian Christmas Ale,2016,7 Fjell Sinterklaas Belgian Christmas Ale [0 article no.] 0.80
+2016,Færder,likely,subset-year,0.88,,,Færder Juleøl,2016,"Færder Juleøl [0 article no.] 0.88 | Færder Gull, Røkelse og Myrra (3x33cl) [6393908] 0.68"
+2016,Mack Julebocken Bruse,likely,subset-year,0.88,,,Mack Mikrobryggeri Julebocken Bruse,2016,Mack Mikrobryggeri Julebocken Bruse [0 article no.] 0.88
+2016,Haand Nisse Mor Brygg,none,,,,,,,
+2016,Aass P,none,,,,,,,
+2016,Dahls Jul Øl,likely,fuzzy-year,0.91,,,Dahls Juleøl,2016,Dahls Juleøl [0 article no.] 0.91
+2016,7 Sorter,likely,subset-year,0.84,1829302,,7 Fjell 7 Sorter Christmas Ale,2016,7 Fjell 7 Sorter Christmas Ale [1829302] 0.84
+2016,AJA Saison,likely,subset-year,0.84,,,Aja Saison de Noël,2016,Aja Saison de Noël [0 article no.] 0.84
+2016,Færder >Myrra,review,subset-year,0.72,6393908,,"Færder Gull, Røkelse og Myrra (3x33cl)",2016,"Færder Gull, Røkelse og Myrra (3x33cl) [6393908] 0.72"
+2016,haand Bestefar,likely,subset-year,0.92,,,Haandbryggeriet Bestefar,2016,Haandbryggeriet Bestefar [0 article no.] 0.92
+2016,Hadeland,none,,,,,,,
+2016,hans trapp jule porter,likely,subset-year,0.88,,,Cervisiam Hans Trapp Jule-Porter,2016,Cervisiam Hans Trapp Jule-Porter [0 article no.] 0.88
+2016,Hansa Julebrygg,review,subset-year,0.88,,,Hansa JuleAle,2016,Hansa JuleAle [0 article no.] 0.88 | Hansa Juleøl [0 article no.] 0.88 | Hansa Ekstra Vellagret Julebrygg [896402] 0.84
+2016,Jola Gova,none,,,,,,,
+2016,Jul På Tonga,auto,exact-year,1.00,5898802,,Jul på Tonga,2016,
+2016,lervig,review,subset-year,0.84,,,Lervig Smokes like Christmas,2016,Lervig Smokes like Christmas [0 article no.] 0.84 | Lervig’s jul [9549902] 0.84
+2016,mikrobyggeriet,review,subset-year,0.88,,,Mikrobryggeriet Oslo Julebrygg,2016,Mikrobryggeriet Oslo Julebrygg [0 article no.] 0.88 | Schouskjelleren Mikrobryggeri Juleøl [0 article no.] 0.84 | Telemark Mikrobryggeri Juleøl [0 article no.] 0.84
+2016,Qvart Juleskjesk grønn,review,fuzzy-year,0.77,,,Qvart Julekjesk,2016,Qvart Julekjesk [0 article no.] 0.77
+2016,Rignes bokk,review,fuzzy-year,0.77,,,Ringnes Julebokk,2016,Ringnes Julebokk [0 article no.] 0.77
+2016,Ringnes juleøl,auto,exact-year,1.00,,,Ringnes Juleøl,2016,
+2016,Mack God Jul,none,,,,,,,
+2016,Kinn Julefred,auto,exact-year,1.00,9520801,,Kinn Julefred,2016,
+2016,haand nissefar,likely,subset-year,0.92,,,Haandbryggeriet Nissefar,2016,Haandbryggeriet Nissefar [0 article no.] 0.92
+2016,nøgne ø rod jul,review,fuzzy-year,0.88,4679102,,Nøgne Ø God Jul,2016,Nøgne Ø God Jul [4679102] 0.88 | Nøgne Ø Rød Jul [3577802] 0.88
+2016,Fredrikstad,review,subset-year,0.88,896702,,Fredrikstad Juleøl,2016,Fredrikstad Juleøl [896702] 0.88 | Indslev Bryggeri Frederiks Jul [904202] 0.84
+2016,Sagne sterk jul,likely,subset-year,0.92,1823202,,Sagene Sterk Jul,2016,Sagene Sterk Jul [1823202] 0.92
+2016,Ægir Ylir 2015,likely,subset-year,0.98,195602,,Ægir Ylir Julebrygg,2016,Ægir Ylir Julebrygg [195602] 0.98
+2016,Bad Santa,likely,subset-year,0.88,,,Bad Santa Juleøl,2016,Bad Santa Juleøl [0 article no.] 0.88
+2016,CB,likely,subset-year,0.88,,,CB Juleøl,2016,CB Juleøl [0 article no.] 0.88
+2016,Eld,review,subset-year,0.76,,,Kinn Eld Røykt Juleøl,2016,Kinn Eld Røykt Juleøl [0 article no.] 0.76
+2016,Lindheim 1000 days,likely,subset-year,0.84,,,Lindheim 100 Days Of Juleøl,2016,Lindheim 100 Days Of Juleøl [0 article no.] 0.84
+2016,Qvart,review,subset-year,0.88,,,Qvart Julekjesk,2016,Qvart Julekjesk [0 article no.] 0.88 | Qvart Nissekjesk [0 article no.] 0.88
+2016,Qvart Juleskjesk rod,likely,fuzzy-year,0.81,,,Qvart Julekjesk,2016,Qvart Julekjesk [0 article no.] 0.81
+2016,schous,likely,subset-year,0.84,,,Schouskjelleren Mikrobryggeri Juleøl,2016,Schouskjelleren Mikrobryggeri Juleøl [0 article no.] 0.84
+2016,Ugly Duck Ugly Xmas,likely,subset-year,0.92,904402,,Ugly Duck Ugly Christmas,2016,Ugly Duck Ugly Christmas [904402] 0.92
+2016,Vinternatt Grim & Gryt,likely,subset-year,0.88,,,Grim&Gryt Vinternatt Juleøl,2016,Grim&Gryt Vinternatt Juleøl [0 article no.] 0.88
+2016,Wettres16,likely,subset-year,0.84,,,Wettre Julekula Juleøl 2015,2016,Wettre Julekula Juleøl 2015 [0 article no.] 0.84
+2016,Bådin Tussvatnett,likely,subset-year,0.88,3558902,,Bådin Tussvatnet Juleøl,2016,Bådin Tussvatnet Juleøl [3558902] 0.88
+2016,Berentsens,review,subset-year,0.88,,,Berentsens Jule Avec,2016,Berentsens Jule Avec [0 article no.] 0.88 | Berentsens Julefnugg [0 article no.] 0.88 | Berentsens Jule-Avec Årgang [0 article no.] 0.84
+2016,Borg,likely,subset-year,0.88,896302,,Borg Juleøl,2016,Borg Juleøl [896302] 0.88 | Birra del Borgo 25 Dodici [6393802] 0.76
+2016,Dahls Store Bjorn,none,,,,,,,
+2016,Jacobs Kjøt,none,,,,,,,
+2016,Tonga,likely,subset-year,0.84,5898802,,Jul på Tonga,2016,Jul på Tonga [5898802] 0.84
+2016,Trondheim Mikrobyggeriet,likely,subset-year,0.84,,,Trondhjem Mikrobryggeri Gledelig Jul,2016,Trondhjem Mikrobryggeri Gledelig Jul [0 article no.] 0.84
+2017,Spekeskinke 1 (Voss røkt),not-a-product,non-beer words,,,,,,
+2017,Spekeskinke 2 (Finsbråten),not-a-product,non-beer words,,,,,,
+2017,Spekeskinke 3 (Voss urøkt),not-a-product,non-beer words,,,,,,
+2017,7 Fjell Sinterklaas,likely,subset-year,0.88,,,7 Fjell Sinterklaas Belgian Christmas Ale,2017,7 Fjell Sinterklaas Belgian Christmas Ale [0 article no.] 0.88
+2017,Aja Julekvad,auto,exact-year,1.00,,,Aja Julekvad,2017,
+2017,Aass Juleøl Vellagret,auto,exact-year,1.00,1824102,,Aass Juleøl Vellagret,2017,
+2017,Aass Premium Juleøl,likely,subset-year,0.92,,,Aass Juleøl Premium,2017,Aass Juleøl Premium [0 article no.] 0.92
+2017,Ægir Eldir,likely,subset-year,0.98,,,Ægir Eldir Julebrygg,2017,Ægir Eldir Julebrygg [0 article no.] 0.98
+2017,Amundsen Rebel King Christmas,auto,exact-year,1.00,,,Amundsen Rebel King Christmas,2017,
+2017,Bådom Tussvatnet,none,,,,,,,
+2017,Berntsens Julefnugg,likely,fuzzy-year,0.93,,,Berentsens Julefnugg,2017,Berentsens Julefnugg [0 article no.] 0.93
+2017,Borg Juleøl,auto,exact-year,1.00,896302,,Borg Juleøl,2017,
+2017,Bryggerhuset Kokosmakronstout,likely,subset-year,0.88,,,Bryggerhuset Juleøl kokosmakronstout,2017,Bryggerhuset Juleøl kokosmakronstout [0 article no.] 0.88
+2017,Bryggerhuset Lussekat-Trippel,likely,subset-year,0.88,,,Bryggerhuset Juleøl Lussekatt Trippel,2017,Bryggerhuset Juleøl Lussekatt Trippel [0 article no.] 0.88
+2017,CB Juleøl,auto,exact-year,1.00,,,CB Juleøl,2017,
+2017,Cervisiam Chocoloate Salty Christmas  Balls,likely,fuzzy-year,0.94,16446702,,Cervisiam Chocolate Salty Christmas Balls,2017,Cervisiam Chocolate Salty Christmas Balls [16446702] 0.94
+2017,Dahls Juleøl,auto,exact-year,1.00,,,Dahls Juleøl,2017,
+2017,Dragur Sur Jul,none,,,,,,,
+2017,C Dahls store bjørn juleøl,review,fuzzy-year,0.78,,,EC Dahls Store Bjørn,2017,EC Dahls Store Bjørn [0 article no.] 0.78
+2017,Eiker God Jul,auto,exact-year,1.00,,,Eiker God Jul,2017,
+2017,ELØ Julebokk,review,fuzzy-year,0.76,,,Løkka Julebokk,2017,Løkka Julebokk [0 article no.] 0.76
+2017,Erdinger Schneeweiss,likely,fuzzy-year,0.93,4105002,,Erdinger Schneeweisse,2017,Erdinger Schneeweisse [4105002] 0.93
+2017,Fredrikstad Juleøl,auto,exact-year,1.00,896702,,Fredrikstad Juleøl,2017,
+2017,Grim & Fryt Vinternatt,review,fuzzy-year,0.77,,,Grim&Gryt Vinternatt Juleøl,2017,Grim&Gryt Vinternatt Juleøl [0 article no.] 0.77
+2017,Haandbryggeriet Fatlagret Nissemor,auto,exact-year,1.00,,,Haandbryggeriet Fatlagret Nissemor,2017,
+2017,Håndbryggeriet Bestefar,review,fuzzy-year,0.93,,,Haandbryggeriet Bestefar,2017,Haandbryggeriet Bestefar [0 article no.] 0.93 | Haandbryggeriet Fatlagret Bestefar [0 article no.] 0.88 | Haandbryggeriet Nissefar [0 article no.] 0.81
+2017,Hansa Julebrygg,review,subset-year,0.88,,,Hansa JuleAle,2017,Hansa JuleAle [0 article no.] 0.88 | Hansa Juleøl [0 article no.] 0.88 | Hansa Ekstra Vellagret Julebrygg [896402] 0.84
+2017,Hansa Juleøl,auto,exact-year,1.00,,,Hansa Juleøl,2017,
+2017,Harstad Jul,auto,exact-year,1.00,,,Harstad Jul,2017,
+2017,Hornbeer Helge,likely,subset-year,0.84,,,Hornbeer Helge Barley Wine,2017,Hornbeer Helge Barley Wine [0 article no.] 0.84
+2017,Julekula,likely,subset-year,0.84,,,Wettre Julekula Juleøl,2017,Wettre Julekula Juleøl [0 article no.] 0.84
+2017,Kinn Tomasmesse,auto,exact-year,1.00,,,Kinn Tomasmesse,2017,
+2017,Krampus,review,subset-year,0.84,,,Del Ducato Krampus,2017,Del Ducato Krampus [0 article no.] 0.84 | Cervisiam Krampus Imperial Stout [0 article no.] 0.80 | Del Ducato Krampus Riserva Strepponi [0 article no.] 0.76
+2017,Lervig Christmas Shake,auto,exact-year,1.00,,,Lervig Christmas Shake,2017,
+2017,Little Brother Brewery - Hvor er nisselua mi,likely,subset-year,0.92,,,Little Brother Hvor er nisselua mi?,2017,Little Brother Hvor er nisselua mi? [0 article no.] 0.92
+2017,Mack Juleøl,auto,exact-year,1.00,,,Mack Juleøl,2017,
+2017,Mikeller Juleøl IPA,none,,,,,,,
+2017,h,none,,,,,,,
+2017,Nøgne Ø Rød Jul,auto,exact-year,1.00,3577802,,Nøgne Ø Rød Jul,2017,
+2017,Nøgne Ø Tradisjon 2017,auto,exact-year,1.00,,,Nøgne Ø Tradisjon,2017,
+2017,Nøisom Juleøl 2017,likely,subset-year,0.88,,,Nøisom Dobbelbock Juleøl,2017,Nøisom Dobbelbock Juleøl [0 article no.] 0.88
+2017,Oslo Mikrobryggeri Red & Wheat,none,,,,,,,
+2017,Qvart Julekjesk,auto,exact-year,1.00,,,Qvart Julekjesk,2017,
+2017,Ringnes Julebokk,auto,exact-year,1.00,,,Ringnes Julebokk,2017,
+2017,Ringnes Juleøl,auto,exact-year,1.00,,,Ringnes Juleøl,2017,
+2017,Røros Mørk Lager,none,,,,,,,
+2017,Schaus Juleøl,review,fuzzy-year,0.76,,,Hansa Juleøl,2017,Hansa Juleøl [0 article no.] 0.76
+2017,Små Vesen Jolereia Joleøl frå Valdres,auto,exact-year,1.00,6763202,,Små Vesen Jolereia Joleøl frå Valdres,2017,
+2017,St. Halvard Forjul,likely,fuzzy-year,0.87,,,St. Hallvards For-Jul,2017,St. Hallvards For-Jul [0 article no.] 0.87
+2017,St. Halvard Reservejul,likely,fuzzy-year,0.89,,,St. Hallvards Reserve-Jul,2017,St. Hallvards Reserve-Jul [0 article no.] 0.89
+2017,Telemark Juleøl,likely,subset-year,0.88,,,Telemark Mikrobryggeri Juleøl,2017,Telemark Mikrobryggeri Juleøl [0 article no.] 0.88
+2017,Test,none,,,,,,,
+2017,Ugly Duck Brewing Company Happy Christmas,none,,,,,,,
+2017,Vintersolverv,likely,subset-year,0.88,,,Austmann Vintersolverv,2017,Austmann Vintersolverv [0 article no.] 0.88
+2017,Voss Jolabrygg,likely,subset-year,0.92,,,Voss Bryggeri Jolebrygg,2017,Voss Bryggeri Jolebrygg [0 article no.] 0.92
+2017,Håndbryggeriet fatlagret Bestefar,likely,fuzzy-year,0.94,,,Haandbryggeriet Fatlagret Bestefar,2017,Haandbryggeriet Fatlagret Bestefar [0 article no.] 0.94 | Haandbryggeriet Fatlagret JuleStout [12272902] 0.78 | Haandbryggeriet Bestefar [0 article no.] 0.77
+2017,Dronebygg Kirsebærakvarell,likely,subset-year,0.84,,,Dronebrygg Kirsebær Akvarell Juleøl,2017,Dronebrygg Kirsebær Akvarell Juleøl [0 article no.] 0.84
+2017,AJA Bryggeri Juovla-Stout,none,,,,,,,
+2017,Berntsens The Holy Book,review,fuzzy-year,0.76,7977002,,Berentsens The Holy Bock Vanilla,2017,Berentsens The Holy Bock Vanilla [7977002] 0.76
+2017,Grunerløkkas Julebokk,review,fuzzy-year,0.76,,,Løkka Julebokk,2017,Løkka Julebokk [0 article no.] 0.76
+2018,Harstad,review,subset-year,0.88,10484802,,Harstad Bryggeri Jul 2018,2018,Harstad Bryggeri Jul 2018 [10484802] 0.88 | Harstad Bryggeri Trippel Jul [10484902] 0.84
+2018,Fimafeng,likely,subset-year,0.88,,,Ægir Fimafeng Julebrygg,2018,Ægir Fimafeng Julebrygg [0 article no.] 0.88
+2018,Evens More XMas,review,subset-year,0.76,,,Haandbryggeriet Even S’more x-mas,2018,Haandbryggeriet Even S’more x-mas [0 article no.] 0.76
+2018,Eldir,likely,subset-year,0.88,,,Ægir Eldir Julebrygg,2018,Ægir Eldir Julebrygg [0 article no.] 0.88
+2018,St. Hallvard For Jul,likely,fuzzy-year,0.93,,,St. Hallvards For-Jul,2018,St. Hallvards For-Jul [0 article no.] 0.93
+2018,Advent Julelager,none,,,,,,,
+2018,Harstad Trippel,likely,subset-year,0.88,10484902,,Harstad Bryggeri Trippel Jul,2018,Harstad Bryggeri Trippel Jul [10484902] 0.88
+2018,Berentsen Julefnugg,likely,fuzzy-year,0.93,,,Berentsens Julefnugg,2018,Berentsens Julefnugg [0 article no.] 0.93
+2018,Aas Premium,likely,subset-year,0.88,,,Aass Juleøl Premium,2018,Aass Juleøl Premium [0 article no.] 0.88
+2018,Dalhs,likely,subset-year,0.88,,,Dahls Juleøl,2018,Dahls Juleøl [0 article no.] 0.88 | EC Dahls Store Bjørn [0 article no.] 0.76
+2018,Hansa Juleøl,auto,exact-year,1.00,,,Hansa Juleøl,2018,
+2018,Ego Pale Ale Juleøl,none,,,,,,,
+2018,Haand Nissefar,likely,subset-year,0.92,,,Haandbryggeriet Nissefar,2018,Haandbryggeriet Nissefar [0 article no.] 0.92
+2018,Løkka Julebrokk,likely,subset-year,0.92,,,Løkka Julebokk,2018,Løkka Julebokk [0 article no.] 0.92
+2018,Ægir Kveite Witbier,none,,,,,,,
+2018,Hansa Julebrygg,review,subset-year,0.88,,,Hansa Juleale,2018,Hansa Juleale [0 article no.] 0.88 | Hansa Juleøl [0 article no.] 0.88 | Hansa Ekstra Vellagret Julebrygg [896402] 0.84
+2018,Mack Juleøl,auto,exact-year,1.00,,,Mack Juleøl,2018,
+2018,Ringnes juleøl sterk,review,fuzzy-year,0.78,,,Ringnes Juleøl,2018,Ringnes Juleøl [0 article no.] 0.78
+2018,CB Juleøl,auto,exact-year,1.00,,,CB Juleøl,2018,
+2018,Inderøy Gårdsbryggeri Musemor Old Ale,auto,exact-year,1.00,6450502,,Inderøy Gårdsbryggeri Musemor Old Ale,2018,
+2018,Oslo Brewing Company,none,,,,,,,
+2018,Holy bock,likely,subset-year,0.80,7977002,,Berentsens The Holy Bock Vanilla,2018,Berentsens The Holy Bock Vanilla [7977002] 0.80
+2018,Julemjød,likely,subset-year,0.84,7982104,,Mjøderiet Julemjød,2018,Mjøderiet Julemjød [7982104] 0.84
+2018,Nøisom Dobbelbock Juleøl,auto,exact-year,1.00,,,Nøisom Dobbelbock Juleøl,2018,
+2018,7 sorter,likely,subset-year,0.84,1829302,,7 Fjell 7 Sorter Christmas Ale,2018,7 Fjell 7 Sorter Christmas Ale [1829302] 0.84
+2018,Nissefar,likely,subset-year,0.88,,,Haandbryggeriet Nissefar,2018,Haandbryggeriet Nissefar [0 article no.] 0.88
+2018,Tomasmesse,likely,subset-year,0.88,,,Kinn Tomasmesse,2018,Kinn Tomasmesse [0 article no.] 0.88
+2018,Haand Nissemor,review,subset-year,0.92,,,Haandbryggeriet Nissemor,2018,Haandbryggeriet Nissemor [0 article no.] 0.92 | Haandbryggeriet Fatlagret Nissemor [0 article no.] 0.88
+2018,Sagene sterk jul,auto,exact-year,1.00,1823202,,Sagene Sterk Jul 2017,2018,
+2018,Ølkymisten Gingerbread Maniac,auto,exact-year,1.00,,,Ølkymisten Gingerbread Maniac,2018,
+2018,Scours Juleøl,none,,,,,,,
+2018,CB Juleøl,auto,exact-year,1.00,,,CB Juleøl,2018,
+2019,Berentsens Julefnugg,auto,exact-year,1.00,,,Berentsens Julefnugg,2019,
+2019,Frederikstad Juleøl,likely,fuzzy-year,0.92,896702,,Fredrikstad Juleøl,2019,Fredrikstad Juleøl [896702] 0.92
+2019,Lervig Naughty & Nice,auto,exact-other-year,0.90,14888902,,Lervig Naughty & Nice,,
+2019,Ægir Fimafeng,likely,subset-year,0.98,,,Ægir Fimafeng Julebrygg,2019,Ægir Fimafeng Julebrygg [0 article no.] 0.98
+2019,Kinn Tomasmesse,auto,exact-year,1.00,,,Kinn Tomasmesse,2019,
+2019,Løkka Jul,likely,subset-year,0.80,13623202,,Grünerløkka Brygghus Løkka Jul,2019,Grünerløkka Brygghus Løkka Jul [13623202] 0.80
+2019,Kvit Jul,likely,subset-year,0.88,,,Tya Bryggeri Kvit Jul,2019,Tya Bryggeri Kvit Jul [0 article no.] 0.88
+2019,Red & Wheat X-mas,none,,,,,,,
+2019,Mack julobok,likely,subset-year,0.92,10485702,,Mack Julebokk,2019,Mack Julebokk [10485702] 0.92
+2019,Direktørens jul,likely,subset-year,0.88,10487202,,Hunsfos Bryggeri Direktørens Jul,2019,Hunsfos Bryggeri Direktørens Jul [10487202] 0.88
+2019,Ringnes julebokk,auto,exact-year,1.00,,,Ringnes Julebokk,2019,
+2019,Aass juleøl,auto,exact-other-year,0.90,265502,,Aass Juleøl,,
+2019,Borg Juleøl,auto,exact-year,1.00,896302,,Borg Juleøl,2019,
+2019,Dahls Juløl,likely,fuzzy-year,0.91,,,Dahls Juleøl,2019,Dahls Juleøl [0 article no.] 0.91
+2019,Christmas Crush,review,subset-year,0.68,,,Lervig Christmas Crush Barrel aged Flemmish inspired red ale,2019,Lervig Christmas Crush Barrel aged Flemmish inspired red ale [0 article no.] 0.68
+2019,Hansa Juløl,likely,fuzzy-year,0.91,,,Hansa Juleøl,2019,Hansa Juleøl [0 article no.] 0.91 | Hansa Juleale [0 article no.] 0.79
+2019,Fjord Folk Julelager,likely,fuzzy-year,0.93,10589102,,Fjordfolk Julelager,2019,Fjordfolk Julelager [10589102] 0.93 | Fjordfolk Juleale [10589202] 0.82
+2019,OMA Juleøl,auto,exact-year,1.00,,,OMA Juleøl,2019,
+2019,7 sorter chritmas ale - 7 fjell,none,,,,,,,
+2019,Ringnes juleøl,auto,exact-year,1.00,,,Ringnes Juleøl,2019,
+2019,Cervisiam C.H.U.D,likely,subset-year,0.84,,,Cervisiam C.H.U.D. Imperial Christmas Stout,2019,Cervisiam C.H.U.D. Imperial Christmas Stout [0 article no.] 0.84
+2019,Halvard Klapp på vogna,none,,,,,,,
+2019,Sagene Sterk Jul,auto,exact-other-year,0.90,1823202,,Sagene Sterk Jul,,
+2019,Aass vellagret,likely,subset-year,0.88,1824102,,Aass Juleøl Vellagret,2019,Aass Juleøl Vellagret [1824102] 0.88
+2019,Kraftig Juling,review,subset-year,0.76,,,Tya Kraftig Juling Belgisk Kvadruppel Juleøl,2019,Tya Kraftig Juling Belgisk Kvadruppel Juleøl [0 article no.] 0.76
+2019,BrewDog Punk IPA,none,,,,,,,

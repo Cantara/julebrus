@@ -95,6 +95,20 @@
   </dependencies>
 
   <build>
+    <resources>
+      <resource>
+        <directory>src/main/resources</directory>
+      </resource>
+      <!-- Vinmonopolet's lists and the machine vote matches live once, in data/vinmonopolet/, and are
+           copied into the jar under vinmonopolet/ (read by VmpImportService). README.md stays out. -->
+      <resource>
+        <directory>../data/vinmonopolet</directory>
+        <targetPath>vinmonopolet</targetPath>
+        <includes>
+          <include>*.csv</include>
+        </includes>
+      </resource>
+    </resources>
     <plugins>
       <plugin>
         <groupId>org.springframework.boot</groupId>
