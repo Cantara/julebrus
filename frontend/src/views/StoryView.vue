@@ -24,13 +24,14 @@ const copy = computed<{ title: string; lead: string; sections: Section[]; closin
   lang.value === 'en'
     ? {
         title: 'The story of the Christmas beer tasting',
-        lead: `Every year since ${firstYear.value}, give or take a few we lost to the wiki, people at Cantara have sat down with the season's Christmas beers, a stack of dice scores and far too many opinions. This is why we still do it, and how it works now.`,
+        lead: `Every year since 1992, give or take a few we lost to the wiki, people have sat down with the season's Christmas beers, a stack of dice scores and far too many opinions. This is where it comes from, why we still do it, and how it works now.`,
         sections: [
           {
             title: 'How it started',
             paragraphs: [
-              'Norwegian breweries release their juleøl in November, and Vinmonopolet fills a whole shelf with them. Someone at Cantara had the obvious idea: buy one of each, gather the team, and settle once and for all which one is best. Scores on a dice, one to six. Winner announced. Arguments for the rest of the year. One rule from the start: it has to be the Vinmonopolet shelf, the beers above grocery strength. The supermarket juleøl is for the sofa, not the table. Homebrew is welcome if it is as strong, but only at a table of more than five, and it needs four scores before it ranks. Nobody rigs their own.',
-              `The record goes back to ${firstYear.value}. ${seasons.value.length || 'Twelve'} seasons of votes survive, with names, weights and all. You can find your own old scores on your profile, if you were there.`,
+              'It began in 1992 as a student event at Høgskolesenteret i Stavanger (HIS). From 1998 it ran as a #puben event, and since 2014 it has been a Cantara event.',
+              'Norwegian breweries release their juleøl in November, and Vinmonopolet fills a whole shelf with them. Someone had the obvious idea: buy one of each, gather the gang, and settle once and for all which one is best. Scores on a dice, one to six. Winner announced. Arguments for the rest of the year. One rule from the start: it has to be the Vinmonopolet shelf, the beers above grocery strength. The supermarket juleøl is for the sofa, not the table. Homebrew is welcome if it is as strong, but only at a table of more than five, and it needs four scores before it ranks. Nobody rigs their own.',
+              `The tasting is older than the record: the votes we have kept go back to ${firstYear.value}. ${seasons.value.length || 'Twelve'} seasons of votes survive, with names, weights and all. You can find your own old scores on your profile, if you were there.`,
             ],
           },
           {
@@ -76,13 +77,14 @@ const copy = computed<{ title: string; lead: string; sections: Section[]; closin
       }
     : {
         title: 'Historien om juleølsmakingen',
-        lead: `Hvert år siden ${firstYear.value}, pluss minus noen år wikien har glemt, har folk i Cantara satt seg ned med sesongens juleøl, en bunke terningkast og altfor mange meninger. Dette er hvorfor vi fortsatt gjør det, og hvordan det fungerer nå.`,
+        lead: `Hvert år siden 1992, pluss minus noen år wikien har glemt, har folk satt seg ned med sesongens juleøl, en bunke terningkast og altfor mange meninger. Dette er hvor det kommer fra, hvorfor vi fortsatt gjør det, og hvordan det fungerer nå.`,
         sections: [
           {
             title: 'Slik begynte det',
             paragraphs: [
-              'Bryggeriene slipper juleølet i november, og Polet fyller en hel hylle. Noen i Cantara fikk den åpenbare ideen: kjøp én av hver, samle gjengen, og avgjør én gang for alle hvilket som er best. Terningkast fra én til seks. Vinner kåres. Krangling resten av året. Én regel fra første dag: det må være Polets hylle, ølet over butikkstyrke. Juleølet fra dagligvaren er for sofaen, ikke for bordet. Hjemmebrygg er velkomment om det er like sterkt, men bare rundt bord med mer enn fem, og det må ha fire terningkast før det teller. Ingen jukser med sitt eget.',
-              `Arkivet går tilbake til ${firstYear.value}. ${seasons.value.length || 'Tolv'} sesonger med stemmer har overlevd, med navn og vekt og alt. Du finner dine egne gamle terningkast på profilen din, om du var med.`,
+              'Det begynte i 1992 som et studentarrangement ved Høgskolesenteret i Stavanger (HIS). Fra 1998 var det et #puben-arrangement, og siden 2014 har det vært et Cantara-arrangement.',
+              'Bryggeriene slipper juleølet i november, og Polet fyller en hel hylle. Noen fikk den åpenbare ideen: kjøp én av hver, samle gjengen, og avgjør én gang for alle hvilket som er best. Terningkast fra én til seks. Vinner kåres. Krangling resten av året. Én regel fra første dag: det må være Polets hylle, ølet over butikkstyrke. Juleølet fra dagligvaren er for sofaen, ikke for bordet. Hjemmebrygg er velkomment om det er like sterkt, men bare rundt bord med mer enn fem, og det må ha fire terningkast før det teller. Ingen jukser med sitt eget.',
+              `Smakingen er eldre enn arkivet: stemmene vi har bevart, går tilbake til ${firstYear.value}. ${seasons.value.length || 'Tolv'} sesonger med stemmer har overlevd, med navn og vekt og alt. Du finner dine egne gamle terningkast på profilen din, om du var med.`,
             ],
           },
           {
