@@ -6,6 +6,7 @@ export const router = createRouter({
   routes: [
     { path: '/', component: () => import('./views/HomeView.vue') },
     { path: '/beers', component: () => import('./views/BeersView.vue') },
+    { path: '/beers/:id', component: () => import('./views/BeerDetailView.vue'), props: true },
     { path: '/beers/:id/rate', component: () => import('./views/RateView.vue'), props: true },
     { path: '/session', component: () => import('./views/SessionStartView.vue') },
     { path: '/session/:id', component: () => import('./views/SessionView.vue'), props: true },

@@ -29,6 +29,7 @@ To run the tasting and show results and history.
 
 - Members of a group see each other's scores when everyone in the group has rated, or when the group has been closed
 - All participants see your name and your teams, and in "I kveld" which beers you have tasted today, which table you sit at and what you have cheered. Your dice are not shown there, only the day's average per beer once at least three people have rolled it
+- Your tasting notes (appearance, aroma, taste, finish and tags) are shown on the beer's page to the other participants, without your name or the time and in random order, only once at least three people have tasted the beer and only to those who have tasted it themselves. Your comment and your dice are shown at the table only
 - Season statistics are shown per beer
 - The history shows the names of the people who tasted in earlier years, as written in the old spreadsheets
 - Administrators see the name and email address of people who ask to link themselves to earlier seasons, in the approval queue

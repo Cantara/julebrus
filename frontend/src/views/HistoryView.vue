@@ -2,7 +2,7 @@
 import { computed, onMounted, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { get } from '../api/client'
-import type { BeerSeason, HistoricRating, SeasonOverview } from '../api/types'
+import type { AllTimeRow, BeerSeason, HistoricRating, SeasonOverview } from '../api/types'
 import BarChart from '../components/BarChart.vue'
 
 const route = useRoute()
@@ -10,10 +10,13 @@ const router = useRouter()
 const overview = ref<SeasonOverview[]>([])
 const year = ref<number | null>(null)
 const results = ref<BeerSeason[]>([])
+const allTime = ref<AllTimeRow[]>([])
+const allTimeOpen = ref(false)
 const beerHistory = ref<{ name: string; rows: HistoricRating[] } | null>(null)
 const loading = ref(false)
 
 onMounted(async () => {
+  get<AllTimeRow[]>('/api/history/alltime').then((r) => (allTime.value = r)).catch(() => {})
   overview.value = await get<SeasonOverview[]>('/api/history/overview').catch(() => [])
   const q = Number(route.query.year)
   year.value = overview.value.some((s) => s.year === q) ? q : (overview.value[0]?.year ?? null)
@@ -57,6 +60,25 @@ const beerByYear = computed(() => {
   <h1>Tidligere år</h1>
   <p class="muted">Arkivet fra wikien og regnearkene, med den vektingen som gjaldt hvert år. Alt vist på 1–6.</p>
 
+  <h2 style="margin-top: 8px">Gjennom alle år</h2>
+  <p class="muted">Alle terningkast siden 1998 på 1–6, vektet slik hvert år vektet dem, og trukket mot alle års snitt til et øl har fått nok stemmer. Minst fem stemmer.</p>
+  <div class="card">
+    <table>
+      <thead><tr><th>#</th><th>Øl</th><th style="text-align: right">Justert</th><th style="text-align: right">Stemmer</th></tr></thead>
+      <tbody>
+        <tr v-for="r in (allTimeOpen ? allTime : allTime.slice(0, 10))" :key="r.beerName" style="cursor: pointer" @click="showBeer(r.beerName)">
+          <td>{{ r.rank }}</td>
+          <td>{{ r.beerName }}<div class="muted">{{ [r.brewery, r.years.length === 1 ? String(r.years[0]) : `${r.years.length} sesonger, best ${r.bestYear} (${r.bestMean.toFixed(2)})`].filter(Boolean).join(' · ') }}</div></td>
+          <td style="text-align: right"><strong>{{ r.bayesian.toFixed(2) }}</strong><div class="muted">snitt {{ r.mean.toFixed(2) }}</div></td>
+          <td style="text-align: right">{{ r.ratings }}</td>
+        </tr>
+      </tbody>
+    </table>
+    <p v-if="!allTime.length" class="muted">Ingen historikk lastet.</p>
+    <button v-else-if="allTime.length > 10" class="secondary" style="width: 100%; margin-top: 8px" @click="allTimeOpen = !allTimeOpen">{{ allTimeOpen ? 'Vis topp 10' : `Vis alle ${allTime.length}` }}</button>
+  </div>
+
+  <h2>Sesong for sesong</h2>
   <div class="card" style="overflow-x: auto; white-space: nowrap; padding: 10px 12px">
     <button v-for="s in overview" :key="s.year" type="button" class="pill" :class="{ on: s.year === year }" style="cursor: pointer; border: 0" @click="year = s.year">{{ s.year }}</button>
   </div>

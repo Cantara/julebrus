@@ -163,7 +163,7 @@ onUnmounted(() => {
     <div v-for="b in session.beers" :key="b.beerId" class="card">
       <div class="row">
         <div>
-          <strong>{{ b.name }}</strong>
+          <router-link :to="`/beers/${b.beerId}`" style="text-decoration: none"><strong>{{ b.name }}</strong></router-link>
           <div class="muted">{{ b.brewery }}</div>
         </div>
         <router-link v-if="myId && !b.ratedBy.includes(myId) && !session.closedAt" class="btn" :to="`/beers/${b.beerId}/rate?session=${session.id}`">Gi terningkast</router-link>

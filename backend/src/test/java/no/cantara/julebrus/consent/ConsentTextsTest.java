@@ -42,7 +42,7 @@ class ConsentTextsTest {
 
     @Test
     void versionIsBumpedAndBothTextsDescribeThePhotos() {
-        assertThat(ConsentService.CONSENT_VERSION).isEqualTo("2026-5");
+        assertThat(ConsentService.CONSENT_VERSION).isEqualTo("2026-6");
         var texts = new ConsentService(null, null, new SponsorProperties("x", ""), new ContactProperties("a@b.no")).texts();
         assertThat(texts.nb()).contains("Bilder av etiketten").contains("opphavsretten").contains("aldri som offentlige lenker")
                 .contains("Metadata").contains("slette bildet ditt selv").contains("tilhører produsenten")

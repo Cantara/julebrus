@@ -144,6 +144,17 @@ one of each per person per line, tap again to take it back: community without fr
 to moderate. People without active consent are left out, like everywhere else. The consent text
 names the wall, the teams line it owed since October, and bumps to 2026-5.
 
+## The beer page and shared notes (decided 25 Oct)
+
+Every beer name in the app leads to `/beers/<id>`: facts and label, this season's rank and dice histogram, duel
+record, the tags people gave it, their structured tasting notes (appearance, aroma, taste, finish) without names
+or times and in random order, the reader's own roll, and the beer's earlier years. Two guards: anything derived
+from other people's rolls appears only from three rolls, and the notes only once the reader has rolled the beer
+themselves ("smak først, les etterpå"), so the page teaches without becoming a crib sheet. A note from an open
+table that has not revealed the beer stays at the table, and the free comment is never shared. The consent text
+says so since 2026-6. The all-time list (every recorded season, each year's own weighting, Bayesian prior 5
+towards the all-time mean) sits at the top of the history page now that the old names are normalised.
+
 ## Statistics
 
 Built:
@@ -156,9 +167,9 @@ Built:
   against the person's own mean (likes and dislikes), and the taste twin and taste opposite among the others
   (cosine-like similarity over shared beers, from `minCommon` beers in common). The finale lists everyone's twins
   and opposites (`/api/stats/palate/pairs`).
-- **History** (`/historikk`): per season and per beer, the old results with their weighting, "you against the
-  crowd" for linked people, and the admin's rigging signals (`/api/admin/raters`: share of 1s and 6s, largest
-  brewery bias).
+- **History** (`/historikk`): the all-time list across every recorded season (`/api/history/alltime`), then
+  per season and per beer, the old results with their weighting, "you against the crowd" for linked people, and
+  the admin's rigging signals (`/api/admin/raters`: share of 1s and 6s, largest brewery bias).
 - **The day** ("I kveld"): rolls, people and tables today, day average per beer from three rolls.
 - **Final result:** 23 Dec 18:00, "Cantaras juleøl 2026", with the duel podium, team winners, the tipping league,
   the twins and the season's awards.
@@ -252,7 +263,7 @@ cookie. Admin routes also need the e-mail in `JULEBRUS_ADMINS`.
 
 ```
 # person
-GET  /api/me                         who, today's count and the limit that applies, solo days, weight, teams, open table
+GET  /api/me                         who, today's count and the limit that applies, solo days, weight, teams, open table, admin chores
 GET  /api/consent  POST /accept /withdraw   the texts, accept the current version, withdraw
 GET  /api/config                     public: sponsor line
 GET  /api/privacy  GET /privacy      public: consent texts as JSON / server-rendered HTML
@@ -260,6 +271,7 @@ GET  /api/teams  GET /api/teams/{slug}  PUT /api/me/teams   the enabled teams, o
 
 # beers and tastings
 GET  /api/beers?q=  POST /api/beers  GET /api/beers/least-tasted   catalogue, manual add (PENDING unless admin)
+GET  /api/beers/{id}                 the beer page: season, duels, tags, anonymised notes (guarded), your roll, history
 POST /api/tastings                   { beerId, sessionId?, score, prediction?, notes?, appearance.., tags }
 GET  /api/tastings/mine  GET /api/tastings/tags
 POST /api/beers/{id}/photos  GET /api/beers/{id}/photo  GET /api/beers/photos/{id}/image  DELETE /api/beers/photos/{id}
@@ -281,7 +293,7 @@ GET  /api/finale                     the result after the reveal, the countdown 
 GET  /api/push/config /me  POST|DELETE /api/push/subscriptions  POST /api/push/test
 
 # history
-GET  /api/history/seasons /seasons/{year} /beers?name= /raters /overview /me /me/summary
+GET  /api/history/seasons /seasons/{year} /beers?name= /raters /overview /alltime?min= /me /me/summary
 GET  /api/history/claim-candidates  POST /api/history/claims  GET /claims/me  DELETE /claims/{id}
 
 # admin
@@ -341,8 +353,8 @@ Written 24 Oct: phase 1 (login, catalogue, tables with QR, rating with the rules
 Status 25 Oct, before the season: all three phases are in, plus what nobody planned in October: the live
 reveal, the blind pour, teams, the podium tip, push notifications, label photos, the day's wall, the public
 landing page, the MCP server and the imported history with claim-your-name. Left for later, in rough order of
-how much they would add: the barcode scanner, the 2026 Vinmonopolet list as data, a dice histogram per beer,
-an evening summary to share, dark mode, team colours. The framework majors (Spring Boot 4, Vite 8, Vue Router 5,
+how much they would add: the barcode scanner, the 2026 Vinmonopolet list as data, an evening summary to share,
+dark mode, team colours. The framework majors (Spring Boot 4, Vite 8, Vue Router 5,
 Pinia 4, TypeScript 7) wait until after 23 December.
 
 ## Open questions
