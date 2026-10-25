@@ -40,7 +40,7 @@ onMounted(load)
 
   <div v-for="b in beers" :key="b.id" class="card row">
     <div>
-      <router-link :to="`/beers/${b.id}`" class="beer-link"><strong>{{ b.name }}</strong></router-link>
+      <router-link class="lnk" :to="`/beers/${b.id}`"><strong>{{ b.name }}</strong></router-link>
       <span v-if="b.homebrew" class="pill">hjemmebrygg</span>
       <span v-if="b.status === 'PENDING'" class="pill">venter på godkjenning</span>
       <span v-else-if="b.status === 'REJECTED'" class="pill">avvist</span>

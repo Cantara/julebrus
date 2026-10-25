@@ -143,7 +143,7 @@ const byYear = () => {
     <table>
       <tbody>
         <tr v-for="t in mine" :key="t.id">
-          <td><router-link :to="`/beers/${t.beerId}`">{{ beerNames[t.beerId] ?? '?' }}</router-link><div v-if="t.tags.length" class="muted">{{ t.tags.join(', ') }}</div></td>
+          <td><router-link class="lnk" :to="`/beers/${t.beerId}`">{{ beerNames[t.beerId] ?? '?' }}</router-link><div v-if="t.tags.length" class="muted">{{ t.tags.join(', ') }}</div></td>
           <td style="text-align: right"><DiceFace :value="t.score" :size="26" /></td>
         </tr>
       </tbody>
@@ -165,7 +165,7 @@ const byYear = () => {
       <thead><tr><th>Øl</th><th>Score</th><th>Vekt</th><th>På 1–6</th></tr></thead>
       <tbody>
         <tr v-for="(r, i) in rows" :key="`${r.year}-${r.beerName}-${r.raterName}-${i}`">
-          <td>{{ r.beerName }}<div v-if="r.notes" class="muted">{{ r.notes }}</div></td>
+          <td><router-link class="lnk" :to="`/historikk/ol/${encodeURIComponent(r.beerName)}`">{{ r.beerName }}</router-link><div v-if="r.notes" class="muted">{{ r.notes }}</div></td>
           <td>{{ r.score }}</td><td>{{ r.weight }}</td><td>{{ r.normalised.toFixed(1) }}</td>
         </tr>
       </tbody>

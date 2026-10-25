@@ -96,7 +96,7 @@ async function save() {
   </form>
 
   <details v-if="history.length" class="card">
-    <summary><strong>Tidligere år</strong> <span class="muted">· {{ history.length }} terningkast siden {{ Math.min(...history.map((h) => h.year)) }}</span></summary>
+    <summary><strong>Tidligere år</strong> <span class="muted">· {{ history.length }} terningkast siden {{ Math.min(...history.map((h) => h.year)) }}</span> · <router-link v-if="beer" class="lnk" :to="`/historikk/ol/${encodeURIComponent(beer.name)}`">arkivsiden</router-link></summary>
     <table>
       <thead><tr><th>År</th><th>Hvem</th><th>Score</th><th>Vekt</th><th>På 1–6</th></tr></thead>
       <tbody>

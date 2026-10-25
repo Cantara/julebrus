@@ -24,7 +24,9 @@ solo days, the rest in groups formed by QR code. Design and rules: [DESIGN.md](D
 - **Every beer has a page.** Tap a beer anywhere (catalogue, results, the wall, a table, the calendar, the finale) for
   its label, this season's rank and dice histogram, its duel record, the tags people gave it, their tasting notes without
   names, your own roll and what earlier years said. Anything from other people's rolls shows only from three rolls, and the
-  notes only after you have rolled the beer yourself: taste first, read afterwards.
+  notes only after you have rolled the beer yourself: taste first, read afterwards. A beer from the archive has a page
+  by name (`/historikk/ol/<name>`): its all-time place, every season's votes as the old sheets recorded them, and the
+  way to this year's page when the same name is on the shelf.
 - **All-time list.** With the old beer names normalised, the history page ranks every beer across all recorded
   seasons, weighted as each year weighted its votes and shrunk towards the all-time mean, with each beer's best year.
 - **Ganen din.** After three rolls the profile draws your palate: which tags you score above and below your own

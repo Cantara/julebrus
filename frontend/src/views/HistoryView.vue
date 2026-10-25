@@ -2,7 +2,7 @@
 import { computed, onMounted, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { get } from '../api/client'
-import type { AllTimeRow, BeerSeason, HistoricRating, SeasonOverview } from '../api/types'
+import type { AllTimeRow, BeerSeason, SeasonOverview } from '../api/types'
 import BarChart from '../components/BarChart.vue'
 
 const route = useRoute()
@@ -12,7 +12,6 @@ const year = ref<number | null>(null)
 const results = ref<BeerSeason[]>([])
 const allTime = ref<AllTimeRow[]>([])
 const allTimeOpen = ref(false)
-const beerHistory = ref<{ name: string; rows: HistoricRating[] } | null>(null)
 const loading = ref(false)
 
 onMounted(async () => {
@@ -23,7 +22,6 @@ onMounted(async () => {
 })
 
 watch(year, async (y) => {
-  beerHistory.value = null
   if (!y) return
   loading.value = true
   router.replace({ query: { year: String(y) } })
@@ -36,24 +34,6 @@ const chronological = computed(() => [...overview.value].sort((a, b) => a.year -
 const beersPerYear = computed(() => chronological.value.map((s) => ({ label: String(s.year), value: s.beers })))
 const ratersPerYear = computed(() => chronological.value.map((s) => ({ label: String(s.year), value: s.raters })))
 
-async function showBeer(name: string) {
-  if (beerHistory.value?.name === name) {
-    beerHistory.value = null
-    return
-  }
-  const rows = await get<HistoricRating[]>(`/api/history/beers?name=${encodeURIComponent(name)}`).catch(() => [])
-  beerHistory.value = { name, rows }
-}
-const beerByYear = computed(() => {
-  if (!beerHistory.value) return []
-  const m = new Map<number, HistoricRating[]>()
-  for (const r of beerHistory.value.rows) m.set(r.year, [...(m.get(r.year) ?? []), r])
-  return [...m.entries()].sort((a, b) => b[0] - a[0]).map(([y, rs]) => ({
-    year: y,
-    n: rs.length,
-    mean: rs.reduce((s, r) => s + r.normalised, 0) / rs.length,
-  }))
-})
 </script>
 
 <template>
@@ -66,9 +46,9 @@ const beerByYear = computed(() => {
     <table>
       <thead><tr><th>#</th><th>Øl</th><th style="text-align: right">Justert</th><th style="text-align: right">Stemmer</th></tr></thead>
       <tbody>
-        <tr v-for="r in (allTimeOpen ? allTime : allTime.slice(0, 10))" :key="r.beerName" style="cursor: pointer" @click="showBeer(r.beerName)">
+        <tr v-for="r in (allTimeOpen ? allTime : allTime.slice(0, 10))" :key="r.beerName">
           <td>{{ r.rank }}</td>
-          <td>{{ r.beerName }}<div class="muted">{{ [r.brewery, r.years.length === 1 ? String(r.years[0]) : `${r.years.length} sesonger, best ${r.bestYear} (${r.bestMean.toFixed(2)})`].filter(Boolean).join(' · ') }}</div></td>
+          <td><router-link class="lnk" :to="`/historikk/ol/${encodeURIComponent(r.beerName)}`">{{ r.beerName }}</router-link><div class="muted">{{ [r.brewery, r.years.length === 1 ? String(r.years[0]) : `${r.years.length} sesonger, best ${r.bestYear} (${r.bestMean.toFixed(2)})`].filter(Boolean).join(' · ') }}</div></td>
           <td style="text-align: right"><strong>{{ r.bayesian.toFixed(2) }}</strong><div class="muted">snitt {{ r.mean.toFixed(2) }}</div></td>
           <td style="text-align: right">{{ r.ratings }}</td>
         </tr>
@@ -101,9 +81,9 @@ const beerByYear = computed(() => {
       <table>
         <thead><tr><th>#</th><th>Øl</th><th>Snitt</th><th>Stemmer</th></tr></thead>
         <tbody>
-          <tr v-for="(r, i) in results" :key="r.beerName" style="cursor: pointer" @click="showBeer(r.beerName)">
+          <tr v-for="(r, i) in results" :key="r.beerName">
             <td>{{ i + 1 }}</td>
-            <td>{{ r.beerName }}<div v-if="r.brewery" class="muted">{{ r.brewery }}</div></td>
+            <td><router-link class="lnk" :to="`/historikk/ol/${encodeURIComponent(r.beerName)}`">{{ r.beerName }}</router-link><div v-if="r.brewery" class="muted">{{ r.brewery }}</div></td>
             <td><strong>{{ r.weightedMean.toFixed(2) }}</strong></td>
             <td>{{ r.ratings }}</td>
           </tr>
@@ -113,15 +93,6 @@ const beerByYear = computed(() => {
       <p class="muted" style="margin: 8px 0 0">Trykk på et øl for å se alle årene det har vært med.</p>
     </div>
 
-    <div v-if="beerHistory" class="card">
-      <strong class="display">{{ beerHistory.name }} gjennom årene</strong>
-      <table>
-        <thead><tr><th>År</th><th>Snitt</th><th>Stemmer</th></tr></thead>
-        <tbody>
-          <tr v-for="b in beerByYear" :key="b.year"><td>{{ b.year }}</td><td>{{ b.mean.toFixed(2) }}</td><td>{{ b.n }}</td></tr>
-        </tbody>
-      </table>
-    </div>
   </template>
 
   <h2>Gjennom årene</h2>

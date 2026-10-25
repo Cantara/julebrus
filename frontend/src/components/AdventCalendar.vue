@@ -131,7 +131,7 @@ const detailDate = computed(() => {
     <table>
       <tbody>
         <tr v-for="b in detail.beers" :key="b.name">
-          <td><router-link v-if="b.id" :to="`/beers/${b.id}`">{{ b.name }}</router-link><template v-else>{{ b.name }}</template></td>
+          <td><router-link v-if="b.id" class="lnk" :to="`/beers/${b.id}`">{{ b.name }}</router-link><template v-else>{{ b.name }}</template></td>
           <td style="text-align: right"><DiceFace :value="b.score" :size="26" /></td>
         </tr>
       </tbody>
