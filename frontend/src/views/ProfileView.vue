@@ -62,6 +62,13 @@ const byYear = () => {
   for (const h of history.value) m.set(h.year, [...(m.get(h.year) ?? []), h])
   return [...m.entries()].sort((a, b) => b[0] - a[0])
 }
+
+/** One line per year: how many beers and the mean on 1–6, weighted the way the season counted it. */
+function yearSummary(rows: HistoricRating[]) {
+  const w = rows.reduce((a, r) => a + r.weight, 0)
+  const mean = w > 0 ? rows.reduce((a, r) => a + r.normalised * r.weight, 0) / w : rows.reduce((a, r) => a + r.normalised, 0) / rows.length
+  return { count: rows.length, mean }
+}
 </script>
 
 <template>
@@ -160,7 +167,11 @@ const byYear = () => {
   </div>
   <p class="muted">Fra tidligere års smakinger, med den vektingen som gjaldt da.</p>
   <div v-for="[year, rows] in byYear()" :key="year" class="card">
-    <strong>{{ year }}</strong>
+    <details>
+      <summary class="year-summary">
+        <strong>{{ year }}</strong>
+        <span class="muted">{{ yearSummary(rows).count }} øl · snitt {{ yearSummary(rows).mean.toFixed(1) }}</span>
+      </summary>
     <table>
       <thead><tr><th>Øl</th><th>Score</th><th>Vekt</th><th>På 1–6</th></tr></thead>
       <tbody>
@@ -170,6 +181,7 @@ const byYear = () => {
         </tr>
       </tbody>
     </table>
+    </details>
   </div>
   <p v-if="!history.length" class="muted">Ingen historikk koblet til {{ store.me?.email }} ennå.</p>
 
@@ -199,3 +211,8 @@ const byYear = () => {
     </div>
   </div>
 </template>
+
+<style scoped>
+.year-summary { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; cursor: pointer; }
+details[open] > .year-summary { margin-bottom: 6px; }
+</style>
