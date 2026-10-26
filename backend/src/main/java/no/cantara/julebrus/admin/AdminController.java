@@ -114,6 +114,12 @@ public class AdminController {
     @PostMapping("/raters/override")
     public RaterWeight override(@Valid @RequestBody OverrideRequest in) {
         requireAdmin();
+        // No weight is kept for someone without active consent (they count as 0 and are not profiled).
+        var target = users.findByEmailIgnoreCase(in.email())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "No such user"));
+        if (!consents.activeUserIds().contains(target.getId())) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "That person has no active consent");
+        }
         return weights.override(in.email(), in.seasonYear() == null ? season.year() : in.seasonYear(), in.weight(), in.reason());
     }
 }
