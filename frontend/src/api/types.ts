@@ -358,6 +358,22 @@ export interface Login {
   email: string
 }
 
+/** One login, as the organiser sees it. Without consent only name and e-mail are known. */
+export interface AdminPerson {
+  id: string
+  displayName: string
+  email: string
+  createdAt?: string
+  consented: boolean
+  scores: number | null
+  weight: number | null
+  reason: string | null
+  overridden: boolean
+  flagged: boolean
+  linkedNames: string[]
+  historyYears: number[]
+}
+
 export interface RaterRow {
   raterKey: string
   years: number[]
