@@ -94,7 +94,7 @@ class LandingStatsTest {
         assertThat(s.voters()).isEqualTo(people.size()).isEqualTo(votes.stream().map(r -> r.get("voter")).distinct().count());
 
         // every beer on the sheet's stated list has the stated weighted mean when computed from the single votes
-        for (Map<String, String> stated : RepoData.csv(RepoData.DATA.resolve("results.csv")).stream().filter(r -> r.get("year").equals("2016")).toList()) {
+        for (Map<String, String> stated : RepoData.corrected(RepoData.csv(RepoData.DATA.resolve("results.csv"))).stream().filter(r -> r.get("year").equals("2016")).toList()) {
             List<Map<String, String>> mine = votes.stream().filter(v -> v.get("beer").equalsIgnoreCase(stated.get("beer"))).toList();
             assertThat(mine).as("votes for " + stated.get("beer")).isNotEmpty();
             double w = mine.stream().mapToDouble(LandingStatsTest::weight).sum();
