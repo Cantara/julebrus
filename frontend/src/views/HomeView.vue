@@ -149,6 +149,8 @@ const choresText = computed(() => {
   if (c.claims) parts.push(`${c.claims} ${c.claims === 1 ? 'historikk-kobling' : 'historikk-koblinger'} å avgjøre`)
   if (c.beers) parts.push(`${c.beers} ${c.beers === 1 ? 'øl' : 'øl'} å godkjenne`)
   if (c.photos) parts.push(`${c.photos} ${c.photos === 1 ? 'etikett' : 'etiketter'} å se på`)
+  if (c.noConsent) parts.push(`${c.noConsent} uten samtykke`)
+  if (c.noTeam) parts.push(`${c.noTeam} uten lag`)
   if (c.unmatched) parts.push(`${c.unmatched} ${c.unmatched === 1 ? 'innlogging' : 'innlogginger'} uten historisk navn`)
   return parts.join(' · ')
 })
@@ -158,6 +160,8 @@ const choresLink = computed(() => {
   if (c.claims) return '/admin?s=claims'
   if (c.beers) return '/admin?s=beers'
   if (c.photos) return '/admin?s=photos'
+  if (c.noConsent) return '/admin?s=people&f=noConsent'
+  if (c.noTeam) return '/admin?s=people&f=noTeam'
   return '/admin?s=raters'
 })
 const today = computed(() => store.me?.status.today ?? new Date().toISOString().slice(0, 10))

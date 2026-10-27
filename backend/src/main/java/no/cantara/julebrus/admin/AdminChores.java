@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 import java.util.UUID;
@@ -31,10 +32,13 @@ public class AdminChores {
      * @param unmatched logins with active consent that no historic name is tied to, by claim, admin link or raters.csv
      * @param beers     beers someone added that wait for approval
      * @param photos    label photos that wait for approval
+     * @param noConsent people who signed in but have no active consent: nothing of theirs counts until they do
+     * @param noTeam    people with consent who have not answered the team question yet
      */
-    public record Chores(int claims, int unmatched, int beers, int photos, int total) {
-        static Chores of(int claims, int unmatched, int beers, int photos) {
-            return new Chores(claims, unmatched, beers, photos, claims + unmatched + beers + photos);
+    public record Chores(int claims, int unmatched, int beers, int photos, int noConsent, int noTeam, int total) {
+        static Chores of(int claims, int unmatched, int beers, int photos, int noConsent, int noTeam) {
+            return new Chores(claims, unmatched, beers, photos, noConsent, noTeam,
+                    claims + unmatched + beers + photos + noConsent + noTeam);
         }
     }
 
@@ -62,7 +66,10 @@ public class AdminChores {
         Set<String> emailsInRatersCsv = claims.candidates().values().stream()
                 .map(ClaimService.Candidate::loginEmail).filter(e -> e != null && !e.isBlank())
                 .map(e -> e.trim().toLowerCase(Locale.ROOT)).collect(Collectors.toSet());
-        int unmatched = (int) users.findAll().stream()
+        List<User> all = users.findAll();
+        int noConsent = (int) all.stream().filter(u -> !active.contains(u.getId())).count();
+        int noTeam = (int) all.stream().filter(u -> active.contains(u.getId()) && u.getTeamsChosenAt() == null).count();
+        int unmatched = (int) all.stream()
                 .filter(u -> active.contains(u.getId()))
                 .filter(u -> !owners.contains(u.getId()))
                 .filter(u -> !emailsInRatersCsv.contains(u.getEmail().toLowerCase(Locale.ROOT)))
@@ -70,6 +77,6 @@ public class AdminChores {
         int pendingBeers = beers.findByStatus(Beer.Status.PENDING).size();
         int pendingPhotos = (int) photos.adminQueue(BeerPhoto.Status.PENDING).stream()
                 .filter(r -> active.contains(r.userId())).count();
-        return Chores.of(pendingClaims, unmatched, pendingBeers, pendingPhotos);
+        return Chores.of(pendingClaims, unmatched, pendingBeers, pendingPhotos, noConsent, noTeam);
     }
 }

@@ -41,7 +41,9 @@ public class AdminPeopleController {
                          /** this season's weight; null without consent */ Double weight,
                          String reason, boolean overridden, boolean flagged,
                          /** historic names an admin approved for this login */ List<String> linkedNames,
-                         /** seasons with earlier scores, by e-mail or by an approved name */ List<Integer> historyYears) {
+                         /** seasons with earlier scores, by e-mail or by an approved name */ List<Integer> historyYears,
+                         /** the team question has been answered ("later" counts); false without consent */ boolean teamsChosen,
+                         /** names of the enabled teams the person plays for */ List<String> teams) {
     }
 
     private final CurrentUser currentUser;
@@ -52,10 +54,13 @@ public class AdminPeopleController {
     private final TastingRepository tastings;
     private final HistoricRaterClaimRepository claims;
     private final HistoricRatingRepository history;
+    private final no.cantara.julebrus.team.TeamService teamService;
 
     public AdminPeopleController(CurrentUser currentUser, AuthProperties auth, UserRepository users, ConsentService consents,
                                  RaterWeightService weights, TastingRepository tastings,
-                                 HistoricRaterClaimRepository claims, HistoricRatingRepository history) {
+                                 HistoricRaterClaimRepository claims, HistoricRatingRepository history,
+                                 no.cantara.julebrus.team.TeamService teamService) {
+        this.teamService = teamService;
         this.currentUser = currentUser;
         this.auth = auth;
         this.users = users;
@@ -75,12 +80,16 @@ public class AdminPeopleController {
         for (HistoricRaterClaim c : claims.findByStatusOrderByCreatedAtAsc(HistoricRaterClaim.Status.APPROVED)) {
             keysByUser.computeIfAbsent(c.getUserId(), k -> new java.util.ArrayList<>()).add(c.getRaterKey());
         }
-        return users.findAll().stream()
+        List<User> all = users.findAll();
+        Map<String, String> teamName = teamService.enabled().stream()
+                .collect(Collectors.toMap(no.cantara.julebrus.team.Team::getSlug, no.cantara.julebrus.team.Team::getName));
+        Map<UUID, List<String>> teamsOf = teamService.slugsOf(all.stream().map(User::getId).toList());
+        return all.stream()
                 .sorted(Comparator.comparing((User u) -> u.getDisplayName() == null ? "" : u.getDisplayName().toLowerCase()))
                 .map(u -> {
                     if (!active.contains(u.getId())) {
                         return new Person(u.getId(), u.getDisplayName(), u.getEmail(), u.getCreatedAt(), false,
-                                null, null, null, false, false, List.of(), List.of());
+                                null, null, null, false, false, List.of(), List.of(), false, List.of());
                     }
                     RaterWeight w = weights.current(u);
                     List<String> keys = keysByUser.getOrDefault(u.getId(), List.of());
@@ -88,7 +97,8 @@ public class AdminPeopleController {
                     if (!keys.isEmpty()) years.addAll(history.findSeasonYearsByKeys(keys));
                     return new Person(u.getId(), u.getDisplayName(), u.getEmail(), u.getCreatedAt(), true,
                             scoreCount.getOrDefault(u.getId(), 0L).intValue(), w.weight(), w.getReason(),
-                            w.isOverridden(), w.isFlagged(), keys, List.copyOf(years));
+                            w.isOverridden(), w.isFlagged(), keys, List.copyOf(years), u.getTeamsChosenAt() != null,
+                            teamsOf.getOrDefault(u.getId(), List.of()).stream().map(s -> teamName.getOrDefault(s, s)).toList());
                 })
                 .toList();
     }
