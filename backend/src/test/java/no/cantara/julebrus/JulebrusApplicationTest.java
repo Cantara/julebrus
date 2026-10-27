@@ -157,7 +157,7 @@ class JulebrusApplicationTest {
         mvc.perform(get("/api/history/seasons/2019")).andExpect(status().isOk())
                 .andExpect(jsonPath("$.length()").value(26));
         // raters.csv joins "Eirik" (1998) into Eirik Litangen; unmapped names keep their own.
-        mvc.perform(get("/api/history/beers?name=Aass"))
+        mvc.perform(get("/api/history/beers").param("name", "Aass Juleøl"))
                 .andExpect(jsonPath("$[?(@.year==1998 && @.raterName=='Eirik')].raterKey").value("Eirik Litangen"))
                 .andExpect(jsonPath("$[?(@.year==1998 && @.raterName=='Totto')].raterKey").value("Totto"));
         mvc.perform(get("/api/history/raters")).andExpect(status().isOk())
@@ -210,7 +210,7 @@ class JulebrusApplicationTest {
                         .content("{\"raterKey\":\"Totto\",\"userId\":\"%s\"}".formatted(guestId)))
                 .andExpect(status().isOk()).andExpect(jsonPath("$.linkedTo.email").value(guest));
         mvc.perform(get("/api/history/me").header("X-Dev-User", guest))
-                .andExpect(jsonPath("$[?(@.year==1998 && @.beerName=='Aass')].score").value(3.0));
+                .andExpect(jsonPath("$[?(@.year==1998 && @.beerName=='Aass Juleøl')].score").value(3.0));
         mvc.perform(get("/api/history/me/summary").header("X-Dev-User", guest))
                 .andExpect(jsonPath("$.length()").value(greaterThanOrEqualTo(12)))
                 .andExpect(jsonPath("$[0].year").value(1998));
