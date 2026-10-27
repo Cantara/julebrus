@@ -63,6 +63,13 @@ public class RaterWeight {
         return changed;
     }
 
+    /** Hands the row back to the policy; the next read re-decides it. */
+    public void clearOverride(double weight, String reason) {
+        this.overridden = false;
+        this.weight = BigDecimal.valueOf(weight);
+        this.reason = reason;
+    }
+
     public boolean isOverridden() { return overridden; }
 
     public void flag(boolean flagged, String note) {

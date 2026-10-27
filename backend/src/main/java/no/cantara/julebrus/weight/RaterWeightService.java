@@ -101,6 +101,18 @@ public class RaterWeightService {
         return w;
     }
 
+    /** Removes an admin's override: the policy decides again from what it can see now. */
+    @Transactional
+    public RaterWeight reset(String email, int seasonYear) {
+        RaterWeight w = weights.findBySeasonYearAndEmailIgnoreCase(seasonYear, email)
+                .orElseThrow(() -> new no.cantara.julebrus.web.ApiException(org.springframework.http.HttpStatus.NOT_FOUND,
+                        "RATER_NOT_FOUND", "No weight row for that person this season"));
+        User user = users.findByEmailIgnoreCase(email).orElse(null);
+        RaterWeightPolicy.Decision d = RaterWeightPolicy.decide(user == null ? Optional.empty() : mostRecentPreviousSeason(user));
+        w.clearOverride(d.weight(), d.reason());
+        return w;
+    }
+
     /**
      * The most recent earlier season, from this app's tastings and from the history: rows
      * matched on e-mail, plus every row of a person (key) whose claim an admin approved.

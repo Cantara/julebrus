@@ -6,7 +6,8 @@ import type { AdminPerson } from '../api/types'
 /**
  * Everyone who has signed in: who is mapped to earlier seasons, and what each person's vote counts this season.
  * The weight is decided by the rules (a rookie 0.5, a veteran 1.0) and can be set by hand when the rules are
- * wrong, for example when the last seasons' data is missing. A hand-set weight stays.
+ * wrong, for example when the last seasons' data is missing. A hand-set weight stays until "Tilbakestill"
+ * hands it back to the rules; "Flagg" mutes a person this season (weight 0) without deleting anything.
  */
 const people = ref<AdminPerson[]>([])
 const q = ref('')
@@ -50,6 +51,27 @@ function open(p: AdminPerson, w: number) {
   editing.value = p.email
   weightIn.value = w
   reasonIn.value = p.overridden && p.reason ? p.reason : 'Mangler data fra tidligere år'
+}
+
+async function act(fn: () => Promise<unknown>) {
+  error.value = ''
+  busy.value = true
+  try {
+    await fn()
+    editing.value = null
+    await load()
+  } catch (e) {
+    error.value = e instanceof ApiFailure ? `${e.message} (${e.code})` : 'Noe gikk galt.'
+  } finally {
+    busy.value = false
+  }
+}
+/** Hands a hand-set weight back to the rules. */
+const reset = (p: AdminPerson) => act(() => post('/api/admin/raters/reset', { email: p.email }))
+function flag(p: AdminPerson) {
+  const note = p.flagged ? '' : window.prompt(`Flagg ${p.displayName} for juks i år. Notat:`, '')
+  if (!p.flagged && note === null) return
+  act(() => post('/api/admin/raters/flag', { email: p.email, flagged: !p.flagged, note: note ?? '' }))
 }
 
 async function save(p: AdminPerson) {
@@ -106,8 +128,10 @@ async function save(p: AdminPerson) {
         <button class="secondary" :disabled="busy" @click="editing = null">Avbryt</button>
       </div>
       <div v-else class="row" style="margin-top: 8px; justify-content: flex-start">
-        <button v-if="(p.weight ?? 0) < 1" @click="open(p, 1)">Full vekt</button>
-        <button class="secondary" @click="open(p, p.weight ?? 1)">Sett vekt…</button>
+        <button v-if="(p.weight ?? 0) < 1" :disabled="busy" @click="open(p, 1)">Full vekt</button>
+        <button class="secondary" :disabled="busy" @click="open(p, p.weight ?? 1)">Sett vekt…</button>
+        <button v-if="p.overridden" class="secondary" :disabled="busy" title="La reglene avgjøre igjen" @click="reset(p)">Tilbakestill</button>
+        <button class="secondary" :disabled="busy" @click="flag(p)">{{ p.flagged ? 'Fjern flagg' : 'Flagg' }}</button>
       </div>
     </template>
   </div>

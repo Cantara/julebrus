@@ -681,3 +681,4 @@ export interface BeerPage {
   minShared: number
   history: { year: number; ratings: number; mean: number }[]
 }
+

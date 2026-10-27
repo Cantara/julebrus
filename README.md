@@ -79,7 +79,10 @@ Environment variables: `JULEBRUS_DB_URL`, `JULEBRUS_DB_USER`, `JULEBRUS_DB_PASSW
 that may flag raters, override weights, approve history claims, beers and photos). **Production must set
 `JULEBRUS_ADMINS`**: it has no default, and empty means nobody is an admin (the `dev` profile has its own
 dev admin; the box has it set). Admins see what waits for them (claims to decide, logins without a historic name,
-beers and label photos to approve) as a card on Home and a dot on the "Meg" tab. The Google OAuth redirect URI is
+beers and label photos to approve) as a card on Home and a dot on the "Meg" tab. Under *Admin: Folk* they see
+every person with this season's weight, why, and their earlier seasons, and can set it by hand with a reason the person sees (the archive has
+holes, so a veteran the archive does not show starts at 0.5 until an organiser says otherwise), or hand it back to the
+policy. The Google OAuth redirect URI is
 `https://<host>/login/oauth2/code/google`.
 
 Also optional: `JULEBRUS_CONTACT_EMAIL` (named in the consent text as where to ask for
