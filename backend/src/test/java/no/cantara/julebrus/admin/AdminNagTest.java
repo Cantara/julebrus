@@ -1,6 +1,9 @@
 package no.cantara.julebrus.admin;
 
 import no.cantara.julebrus.ConsentSupport;
+import no.cantara.julebrus.consent.UserConsent;
+import no.cantara.julebrus.consent.UserConsentRepository;
+import no.cantara.julebrus.user.UserRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -9,6 +12,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static org.hamcrest.Matchers.hasItem;
+import static org.hamcrest.Matchers.nullValue;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
@@ -26,14 +30,22 @@ class AdminNagTest {
 
     @Autowired
     MockMvc mvc;
+    @Autowired
+    UserConsentRepository consents;
+    @Autowired
+    UserRepository users;
 
     @Test
     void whoOwesAConsentAndWhoOwesATeam() throws Exception {
-        String silent = "nag-silent@cantara.no", undecided = "nag-undecided@cantara.no", later = "nag-later@cantara.no", fan = "nag-fan@cantara.no";
+        String silent = "nag-silent@cantara.no", stale = "nag-stale@cantara.no", undecided = "nag-undecided@cantara.no", later = "nag-later@cantara.no", fan = "nag-fan@cantara.no";
         ConsentSupport.accept(mvc, ADMIN);
         mvc.perform(put("/api/me/teams").header("X-Dev-User", ADMIN).contentType(APPLICATION_JSON).content("{\"teamIds\":[]}")).andExpect(status().isOk());
         // Signed in, never consented.
         mvc.perform(get("/api/me").header("X-Dev-User", silent)).andExpect(status().isOk());
+        // Signed in and consented to an older text: asked again at the next visit, but did answer once.
+        mvc.perform(get("/api/me").header("X-Dev-User", stale)).andExpect(status().isOk());
+        consents.save(new UserConsent(users.findByEmailIgnoreCase(stale).orElseThrow().getId(), "2026-1"));
+        consents.save(new UserConsent(users.findByEmailIgnoreCase(stale).orElseThrow().getId(), "2026-3"));
         // Consented, team question open.
         ConsentSupport.accept(mvc, undecided);
         // Consented, answered "later" and answered Cantara.
@@ -46,6 +58,11 @@ class AdminNagTest {
         mvc.perform(get("/api/admin/people").header("X-Dev-User", ADMIN))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[?(@.email=='%s')].consented".formatted(silent)).value(hasItem(false)))
+                .andExpect(jsonPath("$[?(@.email=='%s')].consentVersion".formatted(silent)).value(hasItem(nullValue())))
+                .andExpect(jsonPath("$[?(@.email=='%s')].consented".formatted(stale)).value(hasItem(false)))
+                .andExpect(jsonPath("$[?(@.email=='%s')].consentVersion".formatted(stale)).value(hasItem("2026-3")))
+                .andExpect(jsonPath("$[?(@.email=='%s')].weight".formatted(stale)).value(hasItem(nullValue())))
+                .andExpect(jsonPath("$[?(@.email=='%s')].consentVersion".formatted(undecided)).value(hasItem(no.cantara.julebrus.consent.ConsentService.CONSENT_VERSION)))
                 .andExpect(jsonPath("$[?(@.email=='%s')].teamsChosen".formatted(silent)).value(hasItem(false)))
                 .andExpect(jsonPath("$[?(@.email=='%s')].teamsChosen".formatted(undecided)).value(hasItem(false)))
                 .andExpect(jsonPath("$[?(@.email=='%s')].teamsChosen".formatted(later)).value(hasItem(true)))
@@ -53,6 +70,7 @@ class AdminNagTest {
                 .andExpect(jsonPath("$[?(@.email=='%s')].teams[0]".formatted(fan)).value(hasItem("Cantara")));
         mvc.perform(get("/api/me").header("X-Dev-User", ADMIN))
                 .andExpect(jsonPath("$.chores.noConsent").value(1))
+                .andExpect(jsonPath("$.chores.staleConsent").value(1))
                 .andExpect(jsonPath("$.chores.noTeam").value(1));
     }
 }

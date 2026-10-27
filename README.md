@@ -86,7 +86,8 @@ dev admin; the box has it set). Admins see what waits for them (claims to decide
 beers and label photos to approve) as a card on Home and a dot on the "Meg" tab. Under *Admin: Folk* they see
 every person with this season's weight, why, and their earlier seasons, and can set it by hand with a reason the person sees (the archive has
 holes, so a veteran the archive does not show starts at 0.5 until an organiser says otherwise), or hand it back to the
-policy. The same list shows who signed in without consenting and who has not answered the team question; the
+policy. The same list shows who signed in without consenting, who said yes to an older consent text (they are asked
+again at their next visit, and count as unconsented until then), and who has not answered the team question; the
 "Mas" card opens a mail in the organiser's own mail program with those people in BCC and a prepared text. The app sends
 no mail itself. The Google OAuth redirect URI is
 `https://<host>/login/oauth2/code/google`.
