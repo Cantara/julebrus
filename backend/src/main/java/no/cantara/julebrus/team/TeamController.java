@@ -37,26 +37,34 @@ public class TeamController {
     private final CurrentUser currentUser;
     private final no.cantara.julebrus.user.UserRepository users;
     private final no.cantara.julebrus.tasting.TastingRepository tastings;
+    private final no.cantara.julebrus.consent.ConsentService consents;
 
     public TeamController(TeamService service, CurrentUser currentUser, no.cantara.julebrus.user.UserRepository users,
-                          no.cantara.julebrus.tasting.TastingRepository tastings) {
+                          no.cantara.julebrus.tasting.TastingRepository tastings, no.cantara.julebrus.consent.ConsentService consents) {
         this.service = service;
         this.currentUser = currentUser;
         this.users = users;
         this.tastings = tastings;
+        this.consents = consents;
     }
 
-    /** Who plays for a team, and how much they have rolled. Members only see names, as around a table. */
+    /**
+     * Who plays for a team, and how much they have rolled. Members only see names, as around a table, and
+     * only members with active consent are listed at all, like on the wall: a person on an older consent
+     * text is back on the list once they have accepted the current one.
+     */
     @GetMapping("/api/teams/{slug}")
     public Roster roster(@PathVariable String slug) {
         User me = currentUser.get();
         Team t = service.bySlug(slug);
         java.util.Map<UUID, Long> rolls = new java.util.HashMap<>();
         tastings.countPerUser().forEach(c -> rolls.put(c.userId(), c.count()));
-        List<UUID> ids = t.getMembers().stream().map(Team.Member::userId).toList();
+        java.util.Set<UUID> consented = consents.activeUserIds();
+        List<UUID> ids = t.getMembers().stream().map(Team.Member::userId).filter(consented::contains).toList();
         java.util.Map<UUID, User> byId = users.findAllById(ids).stream()
                 .collect(java.util.stream.Collectors.toMap(User::getId, java.util.function.Function.identity()));
         List<Mate> mates = t.getMembers().stream()
+                .filter(m -> consented.contains(m.userId()))
                 .map(m -> new Mate(m.userId(), byId.containsKey(m.userId()) ? byId.get(m.userId()).getDisplayName() : "?",
                         rolls.getOrDefault(m.userId(), 0L), m.joinedAt(), m.userId().equals(me.getId())))
                 .sorted(java.util.Comparator.comparingLong(Mate::tastings).reversed().thenComparing(Mate::displayName))

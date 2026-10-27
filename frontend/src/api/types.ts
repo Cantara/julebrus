@@ -44,8 +44,10 @@ export interface AdminChores {
   unmatched: number
   beers: number
   photos: number
-  /** signed in without active consent */
+  /** signed in, never consented or withdrew */
   noConsent: number
+  /** active consent to an older text; asked again at the next visit */
+  staleConsent: number
   /** consented, team question unanswered */
   noTeam: number
   total: number
@@ -368,7 +370,10 @@ export interface AdminPerson {
   displayName: string
   email: string
   createdAt?: string
+  /** active consent to the current version */
   consented: boolean
+  /** newest version with an active consent, null if none; older than current means "asked again at next visit" */
+  consentVersion: string | null
   scores: number | null
   weight: number | null
   reason: string | null

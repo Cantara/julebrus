@@ -12,8 +12,8 @@ import type { AdminPerson } from '../api/types'
  */
 const people = ref<AdminPerson[]>([])
 const q = ref('')
-type Filter = 'all' | 'noHistory' | 'low' | 'noConsent' | 'noTeam' | 'manual'
-const FILTERS: Filter[] = ['all', 'noHistory', 'low', 'noConsent', 'noTeam', 'manual']
+type Filter = 'all' | 'noHistory' | 'low' | 'noConsent' | 'staleConsent' | 'noTeam' | 'manual'
+const FILTERS: Filter[] = ['all', 'noHistory', 'low', 'noConsent', 'staleConsent', 'noTeam', 'manual']
 const route = useRoute()
 const filter = ref<Filter>(FILTERS.includes(route.query.f as Filter) ? (route.query.f as Filter) : 'all')
 const copied = ref(false)
@@ -34,14 +34,25 @@ const consented = computed(() => people.value.filter((p) => p.consented))
 const noHistory = (p: AdminPerson) => p.consented && !p.historyYears.length
 const low = (p: AdminPerson) => p.consented && (p.weight ?? 1) < 1
 const noTeam = (p: AdminPerson) => p.consented && !p.teamsChosen
+/** Never answered, or withdrew: nothing of theirs counts. */
+const noConsent = (p: AdminPerson) => !p.consentVersion
+/** Answered an older text: asked again at the next visit; until then treated as without consent. */
+const staleConsent = (p: AdminPerson) => !p.consented && !!p.consentVersion
 
 /** The nag: who to write to for the current filter, and a ready-made mail. */
 const nag = computed(() => {
   if (filter.value === 'noConsent') {
     return {
-      who: people.value.filter((p) => !p.consented),
+      who: people.value.filter(noConsent),
       subject: 'Juleølsmakingen: samtykket mangler',
       body: 'Hei!\n\nDu har logget inn i juleølsmakingen, men ikke tatt stilling til samtykket ennå. Før du har sagt ja, teller ingenting du gjør, og du ser ikke bordene.\n\nÅpne appen og svar, så er du med: ' + location.origin + '\n\nSkål,\narrangørene',
+    }
+  }
+  if (filter.value === 'staleConsent') {
+    return {
+      who: people.value.filter(staleConsent),
+      subject: 'Juleølsmakingen: samtykketeksten er oppdatert',
+      body: 'Hei!\n\nSamtykketeksten i juleølsmakingen er oppdatert siden du sa ja (lag, "I kveld", delte smaksnotater og planlagte smakinger). Før du har godtatt den nye teksten, er du ikke med i listene og bordene.\n\nLogg inn, så får du spørsmålet med en gang: ' + location.origin + '\n\nSkål,\narrangørene',
     }
   }
   if (filter.value === 'noTeam') {
@@ -79,7 +90,8 @@ const filtered = computed(() => {
         : filter.value === 'low' ? low(p)
         : filter.value === 'manual' ? p.overridden
         : filter.value === 'noTeam' ? noTeam(p)
-        : !p.consented)
+        : filter.value === 'staleConsent' ? staleConsent(p)
+        : noConsent(p))
 })
 
 function years(p: AdminPerson): string {
@@ -136,7 +148,8 @@ async function save(p: AdminPerson) {
     {{ people.length }} har logget inn, {{ consented.length }} har samtykket,
     {{ consented.filter(noHistory).length }} av dem uten tidligere år koblet, {{ consented.filter(low).length }} har vekt under 1,
     {{ consented.filter(noTeam).length }} har ikke valgt lag.
-    Den som ikke har samtykket vises bare med navn og e-post, uten vekt og uten tidligere år.
+    <template v-if="people.filter(staleConsent).length">{{ people.filter(staleConsent).length }} sa ja til en eldre tekst og blir spurt igjen ved neste innlogging.</template>
+    Den som ikke har samtykket til gjeldende tekst vises bare med navn og e-post, uten vekt og uten tidligere år.
   </p>
   <p v-if="error" class="error" role="alert">{{ error }}</p>
   <div class="row" style="margin-bottom: 8px">
@@ -146,12 +159,13 @@ async function save(p: AdminPerson) {
       <option value="noHistory">Uten tidligere år</option>
       <option value="low">Vekt under 1</option>
       <option value="manual">Satt for hånd</option>
-      <option value="noConsent">Uten samtykke</option>
+      <option value="noConsent">Aldri samtykket</option>
+      <option value="staleConsent">Eldre samtykke</option>
       <option value="noTeam">Uten lag</option>
     </select>
   </div>
   <div v-if="nag" class="card nag">
-    <strong class="display">{{ filter === 'noConsent' ? 'Mas om samtykke' : 'Mas om lag' }}</strong>
+    <strong class="display">{{ filter === 'noConsent' ? 'Mas om samtykke' : filter === 'staleConsent' ? 'Mas om det nye samtykket' : 'Mas om lag' }}</strong>
     <p class="muted" style="margin: 4px 0 8px">
       {{ nag.who.length }} {{ nag.who.length === 1 ? 'person' : 'personer' }}. Appen maser selv når de logger inn; dette er for dem som ikke gjør det.
       E-posten åpnes i ditt eget program med alle som blindkopi og en ferdig tekst du kan endre.
@@ -167,7 +181,8 @@ async function save(p: AdminPerson) {
         <strong>{{ p.displayName }}</strong>
         <div class="muted">{{ p.email }}</div>
       </div>
-      <span v-if="!p.consented" class="pill">ikke samtykket</span>
+      <span v-if="staleConsent(p)" class="pill" :title="'Sa ja til ' + p.consentVersion + '; spørres igjen ved neste innlogging'">eldre samtykke ({{ p.consentVersion }})</span>
+      <span v-else-if="!p.consented" class="pill">ikke samtykket</span>
       <span v-else class="pill" :class="{ on: (p.weight ?? 0) >= 1 }">vekt {{ p.weight }}<template v-if="p.overridden"> · for hånd</template><template v-if="p.flagged"> · flagget</template></span>
     </div>
     <template v-if="p.consented">

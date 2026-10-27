@@ -81,6 +81,32 @@ public class ConsentService {
         return new java.util.HashSet<>(consents.findActiveUserIds(CONSENT_VERSION));
     }
 
+    /**
+     * The newest version each person still has an active consent to, whatever the version. Someone on an
+     * older version is not "consented" anywhere data is shown to others, but they did answer once and are
+     * asked again on their next visit: the admin list tells the two apart.
+     */
+    @Transactional(readOnly = true)
+    public java.util.Map<UUID, String> newestActiveVersions() {
+        java.util.Map<UUID, String> newest = new java.util.HashMap<>();
+        for (UserConsent c : consents.findByWithdrawnAtIsNull()) {
+            newest.merge(c.getUserId(), c.getConsentVersion(), (a, b) -> compareVersions(a, b) >= 0 ? a : b);
+        }
+        return newest;
+    }
+
+    /** Versions are "year-n": by year, then by n as a number, so 2026-10 is newer than 2026-7. */
+    static int compareVersions(String a, String b) {
+        String[] x = a.split("-", 2), y = b.split("-", 2);
+        int byYear = x[0].compareTo(y[0]);
+        if (byYear != 0) return byYear;
+        try {
+            return Integer.compare(Integer.parseInt(x.length > 1 ? x[1] : "0"), Integer.parseInt(y.length > 1 ? y[1] : "0"));
+        } catch (NumberFormatException e) {
+            return a.compareTo(b);
+        }
+    }
+
     @Transactional(readOnly = true)
     public boolean hasAccepted(UUID userId) {
         return consents.findByUserIdAndConsentVersion(userId, CONSENT_VERSION).map(UserConsent::active).orElse(false);

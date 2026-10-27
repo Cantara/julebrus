@@ -161,6 +161,12 @@ one of each per person per line, tap again to take it back: community without fr
 to moderate. People without active consent are left out, like everywhere else. The consent text
 names the wall, the teams line it owed since October, and bumps to 2026-5.
 
+A bump moves everyone who has not visited since to "no active consent" until they accept the new text, which is
+what the data rules need; the admin list (27 Oct) shows them as "eldre samtykke (version)" rather than "ikke
+samtykket", counts them apart in the chores, and nags them with a different text. Text changes should be batched:
+five bumps in four days (2026-3 to 2026-7) sent everyone back to the consent page five times. A team roster, like
+the wall, lists only members with active consent.
+
 ## The beer page and shared notes (decided 25 Oct)
 
 Every beer name in the app leads to `/beers/<id>`: facts and label, this season's rank and dice histogram, duel

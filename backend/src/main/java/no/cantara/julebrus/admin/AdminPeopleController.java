@@ -29,14 +29,18 @@ import java.util.stream.Collectors;
 
 /**
  * Everyone who has signed in, for the organiser to map to earlier seasons and to check the weights. The
- * consent rule holds: a person without active consent is listed by name and e-mail only (the users row
- * that exists anyway), with no weight, no scores and no earlier seasons, and gets no weight row.
+ * consent rule holds: a person without active consent to the current version is listed by name and e-mail
+ * only (the users row that exists anyway), with no weight, no scores and no earlier seasons, and gets no
+ * weight row; {@code consentVersion} says whether they answered an older text and will be asked again.
  */
 @RestController
 @RequestMapping("/api/admin/people")
 public class AdminPeopleController {
 
-    public record Person(UUID id, String displayName, String email, Instant createdAt, boolean consented,
+    public record Person(UUID id, String displayName, String email, Instant createdAt,
+                         /** active consent to the current version */ boolean consented,
+                         /** the newest version with an active consent, or null if none: an older one means "asked again at next visit" */
+                         String consentVersion,
                          /** all scores given in this app; null without consent */ Integer scores,
                          /** this season's weight; null without consent */ Double weight,
                          String reason, boolean overridden, boolean flagged,
@@ -75,6 +79,7 @@ public class AdminPeopleController {
     public List<Person> people() {
         if (!auth.isAdmin(currentUser.get().getEmail())) throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Admins only");
         var active = consents.activeUserIds();
+        Map<UUID, String> versions = consents.newestActiveVersions();
         Map<UUID, Long> scoreCount = tastings.findAll().stream().collect(Collectors.groupingBy(Tasting::getUserId, Collectors.counting()));
         Map<UUID, List<String>> keysByUser = new HashMap<>();
         for (HistoricRaterClaim c : claims.findByStatusOrderByCreatedAtAsc(HistoricRaterClaim.Status.APPROVED)) {
@@ -89,14 +94,14 @@ public class AdminPeopleController {
                 .map(u -> {
                     if (!active.contains(u.getId())) {
                         return new Person(u.getId(), u.getDisplayName(), u.getEmail(), u.getCreatedAt(), false,
-                                null, null, null, false, false, List.of(), List.of(), false, List.of());
+                                versions.get(u.getId()), null, null, null, false, false, List.of(), List.of(), false, List.of());
                     }
                     RaterWeight w = weights.current(u);
                     List<String> keys = keysByUser.getOrDefault(u.getId(), List.of());
                     TreeSet<Integer> years = new TreeSet<>(history.findSeasonYearsByEmail(u.getEmail()));
                     if (!keys.isEmpty()) years.addAll(history.findSeasonYearsByKeys(keys));
                     return new Person(u.getId(), u.getDisplayName(), u.getEmail(), u.getCreatedAt(), true,
-                            scoreCount.getOrDefault(u.getId(), 0L).intValue(), w.weight(), w.getReason(),
+                            ConsentService.CONSENT_VERSION, scoreCount.getOrDefault(u.getId(), 0L).intValue(), w.weight(), w.getReason(),
                             w.isOverridden(), w.isFlagged(), keys, List.copyOf(years), u.getTeamsChosenAt() != null,
                             teamsOf.getOrDefault(u.getId(), List.of()).stream().map(s -> teamName.getOrDefault(s, s)).toList());
                 })
