@@ -9,6 +9,7 @@ export const router = createRouter({
     { path: '/beers/:id', component: () => import('./views/BeerDetailView.vue'), props: true },
     { path: '/beers/:id/rate', component: () => import('./views/RateView.vue'), props: true },
     { path: '/session', component: () => import('./views/SessionStartView.vue') },
+    { path: '/smakinger', component: () => import('./views/EventsView.vue') },
     { path: '/session/:id', component: () => import('./views/SessionView.vue'), props: true },
     { path: '/join/:code?', component: () => import('./views/JoinView.vue'), props: true },
     { path: '/stats', component: () => import('./views/StatsView.vue') },

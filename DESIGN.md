@@ -136,6 +136,17 @@ environment; the message encryption is RFC 8291 on the JDK, verified against the
 vector. Subscriptions hold only what the browser hands over (endpoint, its public key, its auth
 secret) and are deleted on unsubscribe, on 404/410 from the push service, or after five failures.
 
+## Planned tastings (decided 27 Oct)
+
+Hosting is the users' job, not the organisers'. Anyone with consent plans a tasting: a title, a time, physical
+with a place or digital (everyone at home with the same beers, one shared table), a note, an optional cap.
+Everyone sees the list with the host and who signed up (names, like a table's members; the consent text says
+so since 2026-7); joining is open until the event is full, cancelled or six hours past its start. The host
+cannot leave but can cancel; on the night the host opens the table from the event and attendees get the join
+code in the list, so a digital table needs no QR. The finale is the one fixed event, digital because nobody has
+time the day before Christmas Eve: 23 December 18:00, everyone on their own phone, the page reloads itself at
+the reveal and push says "Stjernen er tent".
+
 ## "I kveld", the day's wall (decided 25 Oct)
 
 Everyone sees one wall for the whole house, one Oslo day at a time: who rolled which beer (at which
@@ -290,6 +301,7 @@ POST /api/sessions  POST /api/sessions/join { code }  GET /api/sessions/mine
 GET  /api/sessions/{id}              members, beers, reveal state, scores and notes once revealed
 POST /api/sessions/{id}/beers  POST /api/sessions/{id}/close
 GET  /api/sessions/{id}/events       SSE, members only
+GET  /api/events  POST /api/events  POST|DELETE /api/events/{id}/join  POST .../cancel  POST .../table   planned tastings
 POST /api/duels  GET /api/duels/pending/{sessionId}
 GET  /api/sessions/{id}/blind  POST .../blind  POST .../blind/{roundId}/guess  POST .../blind/{roundId}/reveal
 
