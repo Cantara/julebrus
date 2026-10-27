@@ -26,6 +26,20 @@ class PushPlannerTest {
     }
 
     @Test
+    void eventReminderOnceAnHourBeforeAndNotOnShortNotice() {
+        Instant starts = Instant.parse("2026-12-05T18:00:00Z");
+        Instant planned = starts.minusSeconds(3 * 3600), hourBefore = starts.minusSeconds(3600);
+        assertThat(PushPlanner.eventReminderDue(hourBefore.minusSeconds(1), starts, planned, null, false)).isFalse();
+        assertThat(PushPlanner.eventReminderDue(hourBefore, starts, planned, null, false)).isTrue();
+        assertThat(PushPlanner.eventReminderDue(starts.minusSeconds(60), starts, planned, null, false)).isTrue();
+        assertThat(PushPlanner.eventReminderDue(starts, starts, planned, null, false)).isFalse();
+        assertThat(PushPlanner.eventReminderDue(hourBefore, starts, planned, hourBefore, false)).isFalse();
+        assertThat(PushPlanner.eventReminderDue(hourBefore, starts, planned, null, true)).isFalse();
+        // Planned 40 minutes before the start: everyone just signed up, no "in an hour".
+        assertThat(PushPlanner.eventReminderDue(starts.minusSeconds(1800), starts, starts.minusSeconds(2400), null, false)).isFalse();
+    }
+
+    @Test
     void finaleOnceAtTheRevealAndNotToLatecomers() {
         Instant reveal = Instant.parse("2026-12-23T17:00:00Z");
         Instant early = reveal.minusSeconds(3600), late = reveal.plusSeconds(3600);

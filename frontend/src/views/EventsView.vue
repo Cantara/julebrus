@@ -85,7 +85,7 @@ const todayIso = new Date().toISOString().slice(0, 10)
 
 <template>
   <h1>Smakinger</h1>
-  <p class="muted">Planlegg en kveld, fysisk eller digital, og la de andre melde seg på. Verten åpner bordet herfra når det er tid, og alle påmeldte får koden.</p>
+  <p class="muted">Planlegg en kveld, fysisk eller digital, og la de andre melde seg på. Verten åpner bordet herfra når det er tid, og alle påmeldte får koden. Har du varsler på, får du et dytt en time før.</p>
   <p v-if="error" class="error" role="alert">{{ error }}</p>
 
   <button v-if="!planning" class="btn" style="width: 100%" @click="planning = true">Planlegg en smaking</button>

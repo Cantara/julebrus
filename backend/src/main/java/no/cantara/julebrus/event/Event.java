@@ -50,6 +50,10 @@ public class Event {
     @Column(name = "cancelled_at")
     private Instant cancelledAt;
 
+    /** When the push reminder went out; null until it has, or when it never will. */
+    @Column(name = "reminder_sent_at")
+    private Instant reminderSentAt;
+
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "event_attendees", joinColumns = @JoinColumn(name = "event_id"))
     private List<Attendee> attendees = new ArrayList<>();
@@ -85,6 +89,7 @@ public class Event {
     public boolean isCancelled() { return cancelledAt != null; }
     public void cancel(Instant now) { if (cancelledAt == null) cancelledAt = now; }
     public void attachTable(UUID sessionId) { this.sessionId = sessionId; }
+    public void markReminded(Instant now) { this.reminderSentAt = now; }
 
     public UUID getId() { return id; }
     public UUID getHostId() { return hostId; }
@@ -97,6 +102,7 @@ public class Event {
     public UUID getSessionId() { return sessionId; }
     public Instant getCreatedAt() { return createdAt; }
     public Instant getCancelledAt() { return cancelledAt; }
+    public Instant getReminderSentAt() { return reminderSentAt; }
     public List<Attendee> getAttendees() { return List.copyOf(attendees); }
 
     @Embeddable

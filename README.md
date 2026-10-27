@@ -38,7 +38,7 @@ solo days, the rest in groups formed by QR code. Design and rules: [DESIGN.md](D
   season's twins and opposites.
 - **Badges** as baubles on a tree (ten so far, Blind Taster included), label **photos** with admin approval, a
   bilingual **story page**, the imported **history 1998–2019** with charts and claim-your-name, a public
-  **landing page**, optional **push notifications** (the daily nudge and the finale), and an **MCP server** so
+  **landing page**, optional **push notifications** (the daily nudge, a reminder before a planned tasting and the finale), and an **MCP server** so
   agents can read the aggregates.
 - **The finale, 23 December 18:00.** Podium, duel podium, team winners, the tipping league and the season's awards.
 
@@ -339,9 +339,10 @@ Candidates: `python3 -I tools/suggest_beer_name_fixes.py` writes a review sheet,
 
 ## Push notifications
 
-Two messages, both opt-in per browser from the "Varsler" card on the profile page: a daily
+Three messages, all opt-in per browser from the "Varsler" card on the profile page: a daily
 "Dagens luke står uåpnet" nudge at 17:00 Oslo time (`julebrus.push.nudge-time`) to people who
-have not tasted that day, and "Stjernen er tent" at the reveal. Web Push with VAPID, encrypted
+have not tasted that day, "Smaking om en time" to everyone signed up for a planned tasting, and
+"Stjernen er tent" at the reveal. Web Push with VAPID, encrypted
 on the JDK alone (RFC 8291, checked against the RFC's test vector), no third-party library.
 
 To switch it on, log in as an admin and open `/api/push/keygen`; put the two keys in
