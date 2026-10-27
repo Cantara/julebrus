@@ -130,8 +130,10 @@ awards (at least one point).
 ## Push notifications (decided 24 Oct)
 
 Opt-in per browser. A daily nudge at 17:00 Oslo time to anyone who has not opened that day's
-door, once per day per browser, during the season only; and one "Stjernen er tent" at the reveal
-to browsers subscribed before it (`PushPlanner`, pure). Web Push with VAPID keys from the
+door, once per day per browser, during the season only; "Smaking om en time" to everyone signed up for a
+planned tasting, once per event (27 Oct: never for one planned on shorter notice than the hour, since its
+attendees just signed up); and one "Stjernen er tent" at the reveal to browsers subscribed before it
+(`PushPlanner`, pure). Web Push with VAPID keys from the
 environment; the message encryption is RFC 8291 on the JDK, verified against the RFC's own test
 vector. Subscriptions hold only what the browser hands over (endpoint, its public key, its auth
 secret) and are deleted on unsubscribe, on 404/410 from the push service, or after five failures.
@@ -145,7 +147,7 @@ so since 2026-7); joining is open until the event is full, cancelled or six hour
 cannot leave but can cancel; on the night the host opens the table from the event and attendees get the join
 code in the list, so a digital table needs no QR. The finale is the one fixed event, digital because nobody has
 time the day before Christmas Eve: 23 December 18:00, everyone on their own phone, the page reloads itself at
-the reveal and push says "Stjernen er tent".
+the reveal and push says "Stjernen er tent". Attendees with push on get "Smaking om en time".
 
 ## "I kveld", the day's wall (decided 25 Oct)
 
@@ -232,7 +234,7 @@ backend/    Spring Boot 3.5, Java 21, PostgreSQL, Flyway, Google OIDC
   what the web app already shows to everyone logged in, and never e-mails or
   per-person scores from the running season.
 
-### Data model (V1–V14)
+### Data model (V1–V17)
 
 ```
 users             id, email, display_name, created_at, teams_chosen_at
@@ -257,6 +259,9 @@ beer_photos       id, beer_id, user_id, status, content_type, width, height, siz
 push_subscriptions id, user_id, endpoint, p256dh, auth, user_agent?, created_at, last_nudge_day?,
                   finale_sent_at?, failures
 feed_reactions    id, target_kind, target_id, user_id, emoji, created_at   unique (target_id, user_id, emoji)
+events            id, host_id, title, starts_at, online, place?, note?, capacity?, session_id?, created_at,
+                  cancelled_at?, reminder_sent_at?
+event_attendees   event_id, user_id, joined_at   (the host is always one)
 rater_weights     id, season_year, email, weight 0..1, reason, flagged, flag_note?, overridden
 user_consents     id, user_id, consent_version, accepted_at, withdrawn_at?   unique (user_id, version)
 consent_events    id, user_id, consent_version, event ACCEPT|WITHDRAW, at     (append-only)

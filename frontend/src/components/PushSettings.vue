@@ -1,5 +1,5 @@
 <script setup lang="ts">
-/** The "Varsler" card on the profile: one switch for the daily nudge and the finale announcement. */
+/** The "Varsler" card on the profile: one switch for the daily nudge, the reminder before a planned tasting and the finale announcement. */
 import { onMounted, ref } from 'vue'
 import { get } from '../api/client'
 import { disable, enable, needsHomeScreen, sendTest, state, type PushState } from '../api/push'
@@ -42,7 +42,7 @@ const nudgeTime = () => (config.value?.nudgeTime ?? '17:00').slice(0, 5)
     <div class="row">
       <div>
         <strong>Varsler</strong>
-        <div class="muted">Et dytt klokka {{ nudgeTime() }} de dagene luka står uåpnet, og ett når stjernen tennes.</div>
+        <div class="muted">Et dytt klokka {{ nudgeTime() }} de dagene luka står uåpnet, ett en time før en smaking du er påmeldt, og ett når stjernen tennes.</div>
       </div>
       <button v-if="current === 'available'" :disabled="busy" @click="run(() => enable(config!), 'Varsler er på.')">Skru på</button>
       <button v-else-if="current === 'on'" class="secondary" :disabled="busy" @click="run(disable, 'Varsler er av.')">Skru av</button>

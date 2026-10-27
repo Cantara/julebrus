@@ -2,6 +2,8 @@ package no.cantara.julebrus.push;
 
 import no.cantara.julebrus.config.ContactProperties;
 import no.cantara.julebrus.config.SeasonProperties;
+import no.cantara.julebrus.event.Event;
+import no.cantara.julebrus.event.EventRepository;
 import no.cantara.julebrus.tasting.TastingRepository;
 import no.cantara.julebrus.web.ApiException;
 import org.slf4j.Logger;
@@ -22,8 +24,9 @@ import java.util.List;
 import java.util.UUID;
 
 /**
- * Subscriptions and the two messages the app sends: the daily "dagens luke" nudge to
- * people who have not tasted yet, and the finale announcement at the reveal.
+ * Subscriptions and the three messages the app sends: the daily "dagens luke" nudge to
+ * people who have not tasted yet, the reminder an hour before a planned tasting to those
+ * signed up, and the finale announcement at the reveal.
  */
 @Service
 public class PushService {
@@ -34,16 +37,18 @@ public class PushService {
 
     private final PushSubscriptionRepository subscriptions;
     private final TastingRepository tastings;
+    private final EventRepository events;
     private final WebPushClient client;
     private final PushProperties props;
     private final SeasonProperties season;
     private final ContactProperties contact;
     private final Clock clock;
 
-    public PushService(PushSubscriptionRepository subscriptions, TastingRepository tastings, WebPushClient client,
-                       PushProperties props, SeasonProperties season, ContactProperties contact, Clock clock) {
+    public PushService(PushSubscriptionRepository subscriptions, TastingRepository tastings, EventRepository events,
+                       WebPushClient client, PushProperties props, SeasonProperties season, ContactProperties contact, Clock clock) {
         this.subscriptions = subscriptions;
         this.tastings = tastings;
+        this.events = events;
         this.client = client;
         this.props = props;
         this.season = season;
@@ -100,18 +105,19 @@ public class PushService {
         requireEnabled();
         int sent = 0;
         for (PushSubscription s : subscriptions.findByUserId(userId)) {
-            if (deliver(s, payload("Varsler er på", "Du får et lite dytt klokka " + props.nudgeTime() + " de dagene luka står uåpnet.", "/", "test"))) sent++;
+            if (deliver(s, payload("Varsler er på", "Du får et lite dytt klokka " + props.nudgeTime() + " de dagene luka står uåpnet, og en time før en smaking du er påmeldt.", "/", "test"))) sent++;
         }
         return sent;
     }
 
-    /** Every minute: who is due a nudge, and whether the finale is due. Cheap when nothing is. */
+    /** Every minute: which planned tastings are an hour away, who is due a nudge, and whether the finale is due. Cheap when nothing is. */
     @Scheduled(cron = "0 * * * * *")
     @Transactional
     public void tick() {
         if (!props.enabled()) return;
         try {
             Instant now = clock.instant();
+            remindEvents(now);
             ZonedDateTime local = now.atZone(season.zone());
             LocalDate today = local.toLocalDate();
             LocalTime time = local.toLocalTime();
@@ -129,6 +135,22 @@ public class PushService {
             }
         } catch (RuntimeException e) {
             log.warn("Push tick failed: {}", e.toString());
+        }
+    }
+
+    /** "Smaking om en time" to every attendee's browsers, once per event, {@link PushPlanner#EVENT_LEAD} before it starts. */
+    private void remindEvents(Instant now) {
+        for (Event e : events.findByStartsAtBetweenAndCancelledAtIsNullAndReminderSentAtIsNull(now, now.plus(PushPlanner.EVENT_LEAD))) {
+            if (!PushPlanner.eventReminderDue(now, e.getStartsAt(), e.getCreatedAt(), e.getReminderSentAt(), e.isCancelled())) continue;
+            e.markReminded(now);
+            String where = e.isOnline() ? "digitalt" : e.getPlace() == null ? "" : e.getPlace();
+            int n = e.getAttendees().size();
+            String body = e.getTitle() + (where.isEmpty() ? "" : ", " + where) + ". " + n + (n == 1 ? " påmeldt." : " påmeldte.")
+                    + " Verten åpner bordet fra Smakinger.";
+            String payload = payload("Smaking om en time", body, "/smakinger", "event-" + e.getId());
+            for (Event.Attendee a : e.getAttendees()) {
+                for (PushSubscription s : subscriptions.findByUserId(a.userId())) deliver(s, payload);
+            }
         }
     }
 
