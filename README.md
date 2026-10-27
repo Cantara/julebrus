@@ -17,6 +17,10 @@ solo days, the rest in groups formed by QR code. Design and rules: [DESIGN.md](D
 - **"I kveld".** The day's wall for the whole house: who rolled which beer, the tables going right now, approved labels and
   blind-round results, live, with a 🍻 and four more emojis to give each line. Never a person's dice, and a day average per
   beer only from three rolls. People without active consent are left out.
+- **Planned tastings.** Anyone plans a tasting under *Smakinger*, physical with a place or digital with everyone at
+  home and the same beers, with an optional cap; the others sign up and see who is coming. On the night the host opens
+  the table from the event and every attendee gets the code without a QR. The finale is listed there as the season's
+  fixed digital event: 23 December 18:00, everyone on their own phone, the page reveals the result by itself.
 - **Teams.** Cantara and Rebel out of the box, more on request. Pick yours after consent, tap a team to see who
   plays for it, each team gets its own winner and "Årets lag" at the finale.
 - **Tipp pallen.** Everyone may tip gold, silver and bronze until the last day begins; the league and "Årets

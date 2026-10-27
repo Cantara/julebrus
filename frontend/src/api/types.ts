@@ -690,3 +690,23 @@ export interface BeerPage {
   history: { year: number; ratings: number; mean: number }[]
 }
 
+
+/** A planned tasting. joinCode only once the host opened the table, and only for attendees. */
+export interface PlannedEvent {
+  id: string
+  title: string
+  startsAt: string
+  online: boolean
+  place?: string | null
+  note?: string | null
+  capacity?: number | null
+  hostId: string
+  hostName: string
+  mine: boolean
+  joined: boolean
+  cancelled: boolean
+  attendees: { userId: string; displayName: string }[]
+  sessionId?: string | null
+  joinCode?: string | null
+  tableOpen: boolean
+}

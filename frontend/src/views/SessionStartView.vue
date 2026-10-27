@@ -47,5 +47,12 @@ async function start() {
     <p>Er du gjest? Skann vertens QR-kode med kameraet, eller skriv inn koden.</p>
     <router-link class="btn secondary" style="width: 100%; text-align: center" to="/join">Bli med i en smaking</router-link>
   </div>
+  <router-link class="card row" to="/smakinger" style="text-decoration: none">
+    <div>
+      <strong class="display">📅 Planlagte smakinger</strong>
+      <div class="muted">Se hvem som samler folk, meld deg på, eller planlegg en selv. Fysisk eller digitalt.</div>
+    </div>
+    <span class="muted">›</span>
+  </router-link>
   <p class="muted">Smaker du alene, går du rett på et øl i katalogen. Det bruker en av fem solo-dager.</p>
 </template>

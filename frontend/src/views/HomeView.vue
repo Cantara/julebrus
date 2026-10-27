@@ -2,7 +2,7 @@
 import { computed, onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { get } from '../api/client'
-import type { BadgeView, Beer, Feed, MyTip, Session, Tasting } from '../api/types'
+import type { BadgeView, Beer, Feed, MyTip, PlannedEvent, Session, Tasting } from '../api/types'
 import { useRoute } from 'vue-router'
 import AdventCalendar, { type DayEntry } from '../components/AdventCalendar.vue'
 import LightsMeter from '../components/LightsMeter.vue'
@@ -38,6 +38,7 @@ const leastTasted = ref<Beer[]>([])
 const mine = ref<Tasting[]>([])
 const tip = ref<MyTip | null>(null)
 const tonight = ref<Feed | null>(null)
+const nextEvent = ref<PlannedEvent | null | undefined>(undefined)
 const beerName = ref<Record<string, string>>({})
 const soloSessions = ref<Set<string>>(new Set())
 
@@ -74,6 +75,7 @@ function toggleSnow() {
 onMounted(async () => {
   get<MyTip>('/api/tips/me').then((t) => (tip.value = t)).catch(() => {})
   get<Feed>('/api/feed').then((f) => (tonight.value = f)).catch(() => {})
+  get<PlannedEvent[]>('/api/events').then((l) => (nextEvent.value = l.find((e) => e.joined) ?? l[0] ?? null)).catch(() => (nextEvent.value = null))
   const [least, tastings, beers] = await Promise.all([
     get<Beer[]>('/api/beers/least-tasted?limit=5').catch(() => []),
     get<Tasting[]>('/api/tastings/mine').catch(() => []),
@@ -219,6 +221,18 @@ const dayOfSeason = computed(() => {
     <div>
       <strong class="display">🧹 Arrangørsysler</strong>
       <div class="muted">{{ choresText }}</div>
+    </div>
+    <span class="muted">›</span>
+  </router-link>
+
+  <router-link v-if="nextEvent !== undefined" class="card row" to="/smakinger" style="text-decoration: none">
+    <div>
+      <strong class="display">📅 {{ nextEvent ? (nextEvent.joined ? 'Din neste smaking' : 'Neste smaking') : 'Planlegg en smaking' }}</strong>
+      <div v-if="nextEvent" class="muted">
+        {{ nextEvent.title }} · {{ new Date(nextEvent.startsAt).toLocaleString('nb-NO', { weekday: 'short', day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' }) }}
+        <template v-if="nextEvent.online"> · digitalt</template> · {{ nextEvent.attendees.length }} påmeldt
+      </div>
+      <div v-else class="muted">Ingen planlagte smakinger ennå. Samle folk, fysisk eller digitalt.</div>
     </div>
     <span class="muted">›</span>
   </router-link>
