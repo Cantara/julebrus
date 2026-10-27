@@ -30,12 +30,19 @@ class AdminChoresTest {
         String pia = "chores-pia@cantara.no";
         ConsentSupport.accept(mvc, ADMIN);
         ConsentSupport.accept(mvc, pia);
-        // Two logins with consent, neither tied to a historic name yet; nothing else in the queues.
+        // Both answer the team question, so the only chores left are the two logins without a historic name.
+        for (String who : new String[]{ADMIN, pia}) {
+            mvc.perform(post("/api/me/teams").header("X-Dev-User", who)).andExpect(status().is4xxClientError());
+            mvc.perform(org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put("/api/me/teams").header("X-Dev-User", who)
+                    .contentType(APPLICATION_JSON).content("{\"teamIds\":[]}")).andExpect(status().isOk());
+        }
         mvc.perform(get("/api/me").header("X-Dev-User", ADMIN))
                 .andExpect(jsonPath("$.chores.unmatched").value(2))
                 .andExpect(jsonPath("$.chores.claims").value(0))
                 .andExpect(jsonPath("$.chores.beers").value(0))
                 .andExpect(jsonPath("$.chores.photos").value(0))
+                .andExpect(jsonPath("$.chores.noConsent").value(0))
+                .andExpect(jsonPath("$.chores.noTeam").value(0))
                 .andExpect(jsonPath("$.chores.total").value(2));
         mvc.perform(get("/api/me").header("X-Dev-User", pia)).andExpect(jsonPath("$.chores").doesNotExist());
 

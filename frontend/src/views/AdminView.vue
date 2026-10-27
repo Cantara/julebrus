@@ -19,7 +19,7 @@ type Section = (typeof SECTIONS)[number][0]
 const route = useRoute()
 const router = useRouter()
 const section = ref<Section>((SECTIONS.find(([k]) => k === route.query.s)?.[0] ?? 'beers') as Section)
-watch(section, (s) => router.replace({ query: { s } }))
+watch(section, (s) => router.replace({ query: { s } }))  // drops a deep-link filter (?f=) on purpose when the section changes
 </script>
 
 <template>

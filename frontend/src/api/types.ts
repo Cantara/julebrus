@@ -44,6 +44,10 @@ export interface AdminChores {
   unmatched: number
   beers: number
   photos: number
+  /** signed in without active consent */
+  noConsent: number
+  /** consented, team question unanswered */
+  noTeam: number
   total: number
 }
 
@@ -372,6 +376,10 @@ export interface AdminPerson {
   flagged: boolean
   linkedNames: string[]
   historyYears: number[]
+  /** the team question has been answered ("later" counts); false without consent */
+  teamsChosen: boolean
+  /** names of the enabled teams the person plays for */
+  teams: string[]
 }
 
 export interface RaterRow {
@@ -681,3 +689,4 @@ export interface BeerPage {
   minShared: number
   history: { year: number; ratings: number; mean: number }[]
 }
+

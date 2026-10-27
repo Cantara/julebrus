@@ -40,6 +40,7 @@ public class AdminController {
 
     public record RaterOverview(String email, String displayName, int scores, double weight, String reason,
                                 boolean flagged, String flagNote,
+                                /** an admin set the weight by hand; the policy leaves it alone */ boolean overridden,
                                 /** share of scores that are 1 or 6 */ double extremeShare,
                                 /** largest |brewery mean - own mean| over breweries with 3+ scores */ double breweryBias,
                                 String mostFavouredBrewery) {
@@ -50,6 +51,9 @@ public class AdminController {
 
     public record OverrideRequest(@NotBlank String email, Integer seasonYear,
                                   @DecimalMin("0.0") @DecimalMax("1.0") double weight, @NotBlank String reason) {
+    }
+
+    public record ResetRequest(@NotBlank String email, Integer seasonYear) {
     }
 
     private final CurrentUser currentUser;
@@ -100,7 +104,7 @@ public class AdminController {
                                     l -> l.size() >= 3 ? l.stream().mapToInt(Tasting::getScore).average().orElse(own) - own : 0.0)));
             var top = byBrewery.entrySet().stream().max(Comparator.comparingDouble(e -> Math.abs(e.getValue())));
             return new RaterOverview(u.getEmail(), u.getDisplayName(), mine.size(), w.weight(), w.getReason(),
-                    w.isFlagged(), w.getFlagNote(), extreme,
+                    w.isFlagged(), w.getFlagNote(), w.isOverridden(), extreme,
                     top.map(e -> Math.abs(e.getValue())).orElse(0.0), top.map(Map.Entry::getKey).orElse(null));
         }).sorted(Comparator.comparingDouble(RaterOverview::breweryBias).reversed()).toList();
     }
@@ -121,5 +125,12 @@ public class AdminController {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "That person has no active consent");
         }
         return weights.override(in.email(), in.seasonYear() == null ? season.year() : in.seasonYear(), in.weight(), in.reason());
+    }
+
+    /** Hands a weight back to the policy after an override. */
+    @PostMapping("/raters/reset")
+    public RaterWeight reset(@Valid @RequestBody ResetRequest in) {
+        requireAdmin();
+        return weights.reset(in.email(), in.seasonYear() == null ? season.year() : in.seasonYear());
     }
 }
