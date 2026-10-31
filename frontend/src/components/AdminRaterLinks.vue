@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, onMounted, ref } from 'vue'
 import { ApiFailure, get, post } from '../api/client'
-import type { Login, RaterRow } from '../api/types'
+import type { LoginOption, RaterRow } from '../api/types'
 
 /**
  * The mapping table: historic names on the left, logins on the right. An admin
@@ -9,7 +9,7 @@ import type { Login, RaterRow } from '../api/types'
  * but locked; that file is the stronger source.
  */
 const rows = ref<RaterRow[]>([])
-const logins = ref<Login[]>([])
+const logins = ref<LoginOption[]>([])
 const q = ref('')
 const onlyUnlinked = ref(false)
 const choice = ref<Record<string, string>>({})
@@ -19,7 +19,7 @@ const busy = ref<string | null>(null)
 async function load() {
   ;[rows.value, logins.value] = await Promise.all([
     get<RaterRow[]>('/api/admin/history/raters'),
-    get<Login[]>('/api/admin/history/raters/logins'),
+    get<LoginOption[]>('/api/admin/history/raters/logins'),
   ])
   // An empty string selects the placeholder option; undefined would leave the select blank.
   for (const r of rows.value) choice.value[r.raterKey] ??= ''
@@ -32,6 +32,13 @@ const filtered = computed(() => {
     .filter((r) => !onlyUnlinked.value || (!r.linkedTo && !r.linkedByEmail))
     .filter((r) => !needle || r.raterKey.toLowerCase().includes(needle) || (r.linkedTo?.displayName ?? '').toLowerCase().includes(needle))
 })
+/** The dropdown in two groups: people with no historic name yet first, those who already own one after. */
+const freeLogins = computed(() => logins.value.filter((l) => !l.linkedNames.length))
+const takenLogins = computed(() => logins.value.filter((l) => l.linkedNames.length))
+const label = (l: LoginOption) =>
+  `${l.displayName} · ${l.email}` +
+  (l.linkedNames.length ? ` · har ${l.linkedNames.join(', ')}` : '') +
+  (l.currentConsent ? '' : ' · eldre samtykke')
 const linkedCount = computed(() => rows.value.filter((r) => r.linkedTo || r.linkedByEmail).length)
 
 async function link(r: RaterRow) {
@@ -58,7 +65,11 @@ async function act(r: RaterRow, fn: () => Promise<unknown>) {
 
 <template>
   <h2>Admin: koble historiske navn til innlogginger</h2>
-  <p class="muted">{{ linkedCount }} av {{ rows.length }} navn er koblet. Folk som har logget inn minst én gang dukker opp i lista.</p>
+  <p class="muted">
+    {{ linkedCount }} av {{ rows.length }} navn er koblet. Nedtrekkslista har alle som har samtykket, også til en eldre tekst
+    (alle versjonene dekker koblinger til tidligere år); den som aldri har samtykket eller har trukket samtykket, kan ikke kobles.
+    En person kan eie flere navn, for eksempel «Eirik» og «Eirik L».
+  </p>
   <p v-if="error" class="error" role="alert">{{ error }}</p>
   <div class="row" style="margin-bottom: 8px">
     <input v-model="q" placeholder="Søk på navn" />
@@ -81,7 +92,12 @@ async function act(r: RaterRow, fn: () => Promise<unknown>) {
     <div v-else class="row" style="margin-top: 8px">
       <select v-model="choice[r.raterKey]">
         <option value="" disabled>Velg innlogging</option>
-        <option v-for="l in logins" :key="l.id" :value="l.id">{{ l.displayName }} · {{ l.email }}</option>
+        <optgroup v-if="freeLogins.length" label="Ikke koblet ennå">
+          <option v-for="l in freeLogins" :key="l.id" :value="l.id">{{ label(l) }}</option>
+        </optgroup>
+        <optgroup v-if="takenLogins.length" label="Har allerede et navn">
+          <option v-for="l in takenLogins" :key="l.id" :value="l.id">{{ label(l) }}</option>
+        </optgroup>
       </select>
       <button :disabled="!choice[r.raterKey] || busy === r.raterKey" @click="link(r)">Koble</button>
     </div>

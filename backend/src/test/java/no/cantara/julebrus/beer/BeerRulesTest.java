@@ -30,6 +30,10 @@ class BeerRulesTest {
 
     @Autowired
     MockMvc mvc;
+    @Autowired
+    no.cantara.julebrus.consent.UserConsentRepository consentRows;
+    @Autowired
+    no.cantara.julebrus.user.UserRepository userRows;
 
     private String person() throws Exception {
         String email = "br" + System.nanoTime() + N.incrementAndGet() + "@cantara.no";
@@ -46,7 +50,29 @@ class BeerRulesTest {
         return r.andReturn().getResponse().getContentAsString().replaceAll(".*\"id\":\"([^\"]+)\".*", "$1");
     }
 
-    // ---- A1: raters/logins and link only for people with active consent
+    // ---- A1: raters/logins and link only for people with active consent (any version)
+
+    @Test
+    void someoneOnAnOlderConsentTextCanBeLinked() throws Exception {
+        ConsentSupport.accept(mvc, ADMIN);
+        String older = "older" + System.nanoTime() + "@cantara.no";
+        mvc.perform(get("/api/me").header("X-Dev-User", older)).andExpect(status().isOk());
+        java.util.UUID id = userRows.findByEmailIgnoreCase(older).orElseThrow().getId();
+        consentRows.save(new no.cantara.julebrus.consent.UserConsent(id, "2026-3"));
+
+        mvc.perform(get("/api/admin/history/raters/logins").header("X-Dev-User", ADMIN))
+                .andExpect(jsonPath("$[?(@.email=='%s')].consentVersion".formatted(older)).value(hasItem("2026-3")))
+                .andExpect(jsonPath("$[?(@.email=='%s')].currentConsent".formatted(older)).value(hasItem(false)))
+                .andExpect(jsonPath("$[?(@.email=='%s')].linkedNames.length()".formatted(older)).value(hasItem(0)));
+        mvc.perform(post("/api/admin/history/raters/link").header("X-Dev-User", ADMIN).contentType(APPLICATION_JSON)
+                        .content("{\"raterKey\":\"Trygve\",\"userId\":\"%s\"}".formatted(id)))
+                .andExpect(status().isOk()).andExpect(jsonPath("$.linkedTo.email").value(older));
+        // The dropdown now says which name the login already owns.
+        mvc.perform(get("/api/admin/history/raters/logins").header("X-Dev-User", ADMIN))
+                .andExpect(jsonPath("$[?(@.email=='%s')].linkedNames[0]".formatted(older)).value(hasItem("Trygve")));
+        mvc.perform(post("/api/admin/history/raters/unlink").header("X-Dev-User", ADMIN).contentType(APPLICATION_JSON)
+                .content("{\"raterKey\":\"Trygve\"}")).andExpect(status().isOk());
+    }
 
     @Test
     void loginListAndLinkCoverOnlyPeopleWithActiveConsent() throws Exception {
