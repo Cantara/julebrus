@@ -130,13 +130,35 @@ awards (at least one point).
 ## Push notifications (decided 24 Oct)
 
 Opt-in per browser. A daily nudge at 17:00 Oslo time to anyone who has not opened that day's
-door, once per day per browser, during the season only; "Smaking om en time" to everyone signed up for a
+advent door (since 31 Oct the door, not a roll; the message carries the day's question), once per day per browser, during the season only; "Smaking om en time" to everyone signed up for a
 planned tasting, once per event (27 Oct: never for one planned on shorter notice than the hour, since its
 attendees just signed up); and one "Stjernen er tent" at the reveal to browsers subscribed before it
 (`PushPlanner`, pure). Web Push with VAPID keys from the
 environment; the message encryption is RFC 8291 on the JDK, verified against the RFC's own test
 vector. Subscriptions hold only what the browser hands over (endpoint, its public key, its auth
 secret) and are deleted on unsubscribe, on 404/410 from the push service, or after five failures.
+
+## The advent calendar game (decided 31 Oct)
+
+The daily ritual is opening a door, not drinking a beer: the streak and the Advent badge count doors, so the game
+rewards showing up and never rewards a drink a day. Each door holds a question generated from the archive by a pure,
+date-seeded class (`DoorQuiz`: higher or lower on the all-time list with at least five places between the two, who won
+a year with two others from that year's top five, which year a beer won with two years it did not), so the same day
+always asks the same thing and nobody writes 53 questions. One tap answers and opens; behind it are a tasting tip
+(`advent/tips.txt`), a shelf beer among the five least tasted, and in the blackout a clue. Answers are private; others
+see only how many opened today's door, in total and per team.
+
+Missed doors: free to open late until `free-revival-until` (4 Nov, so the first days and the days before the calendar
+shipped are not lost), after that a nisse key, one per Oslo day with a roll at a table someone else also sat at. That
+makes catching up social, which is what the season is for. The Home picture clears one frosted pane per opened door.
+
+The shared star: when the house has opened `house-goal` (500) doors together, everyone sees the current top ten in
+alphabetical order. The blackout ("mørkelegging", `blackout-from` 17 Dec until the reveal) hides the ranking
+everywhere it shows: `/api/stats/beers` and `/duels` answer 423 `BLACKOUT` (an admin may pass `preview=true`), the
+beer page drops rank, means and dice, the wall drops its day averages, and the MCP ranking tools say so. Doors
+17-22 December give one clue a day about the current leader, vaguest first (`DoorClues`: strength, number of rolls,
+style, words in the name, the brewery's first letter, the name's first and last letter). Home counts down to
+Vinmonopolet's release day (`release-day`, 4 Nov 10:00). Consent 2026-8 names the doors and answers.
 
 ## Planned tastings (decided 27 Oct)
 
@@ -212,7 +234,7 @@ Computed from the tasting log, so they can be added or re-tuned mid-season.
 | Lone Wolf | All 5 solo days used |
 | Social Butterfly | 10 distinct co-tasters |
 | Contrarian | Largest mean deviation from the crowd (min. 10 ratings) |
-| Advent | Rated every day 1 – 23 Dec |
+| Advent | Opened every advent door 1 – 23 Dec |
 | Sommelier | Best prediction accuracy (min. 10 predictions) |
 | Closing Time | A rating on 23 Dec |
 | Blind Taster | Named the beer in a blind pour 3 times |
@@ -240,7 +262,7 @@ backend/    Spring Boot 3.5, Java 21, PostgreSQL, Flyway, Google OIDC
   what the web app already shows to everyone logged in, and never e-mails or
   per-person scores from the running season.
 
-### Data model (V1–V17)
+### Data model (V1–V18)
 
 ```
 users             id, email, display_name, created_at, teams_chosen_at
@@ -268,6 +290,7 @@ feed_reactions    id, target_kind, target_id, user_id, emoji, created_at   uniqu
 events            id, host_id, title, starts_at, online, place?, note?, capacity?, session_id?, created_at,
                   cancelled_at?, reminder_sent_at?
 event_attendees   event_id, user_id, joined_at   (the host is always one)
+advent_doors      id, user_id, door_day, opened_at, answer?, correct?, late, key_used   unique (user_id, door_day)
 rater_weights     id, season_year, email, weight 0..1, reason, flagged, flag_note?, overridden
 user_consents     id, user_id, consent_version, accepted_at, withdrawn_at?   unique (user_id, version)
 consent_events    id, user_id, consent_version, event ACCEPT|WITHDRAW, at     (append-only)
@@ -323,6 +346,7 @@ GET  /api/stats/beers?team=  GET /api/stats/duels  GET /api/stats/palate/me  GET
 GET  /api/badges/me
 GET  /api/finale                     the result after the reveal, the countdown before
 GET  /api/push/config /me  POST|DELETE /api/push/subscriptions  POST /api/push/test
+GET  /api/advent  GET /api/advent/doors/{day}  POST .../open    the calendar game: overview, one door, answer and open
 
 # history
 GET  /api/history/seasons /seasons/{year} /beers?name= /raters /overview /alltime?min= /me /me/summary

@@ -67,7 +67,7 @@ public final class LandingPage {
             Badge.LONE_WOLF, "Brukt alle solodagene",
             Badge.SOCIAL_BUTTERFLY, "Smakt med ti forskjellige",
             Badge.CONTRARIAN, "Lengst unna flokken, på minst ti øl",
-            Badge.ADVENT, "Scoret hver dag fra 1. til 23. desember",
+            Badge.ADVENT, "Åpnet hver luke fra 1. til 23. desember",
             Badge.SOMMELIER, "Gjettet gruppens snitt innenfor et halvt poeng, ti ganger",
             Badge.CLOSING_TIME, "En score 23. desember",
             Badge.BLIND_TASTER, "Truffet på blindskjenkingen tre ganger"));

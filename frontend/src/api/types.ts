@@ -682,6 +682,8 @@ export interface BeerPage {
     mean?: number | null
     /** counts of 1..6, absent until minShared rolls */
     histogram?: number[] | null
+    /** the ranking is hidden until the finale: rank, scores and dice are null */
+    blackout?: boolean
   }
   duels: { wins: number; losses: number; rank?: number | null; strength?: number | null }
   mine?: {
@@ -723,4 +725,52 @@ export interface PlannedEvent {
   sessionId?: string | null
   joinCode?: string | null
   tableOpen: boolean
+}
+
+/** The advent calendar game, as Home and the door page see it. */
+export interface AdventBeer {
+  id: string
+  name: string
+  brewery: string | null
+  tastings: number
+}
+
+export interface AdventOverview {
+  today: string
+  start: string
+  end: string
+  inSeason: boolean
+  opened: { day: string; correct: boolean | null; late: boolean; keyUsed: boolean }[]
+  streak: number
+  correct: number
+  keys: { earned: number; spent: number; available: number }
+  freeRevivalUntil: string | null
+  releaseAt: string | null
+  blackoutFrom: string | null
+  blackout: boolean
+  revealAt: string
+  house: { opened: number; goal: number; today: number; unlocked: boolean }
+  /** the current top ten, alphabetical, once the house has lit the star */
+  topTen: AdventBeer[]
+  teams: { slug: string; name: string; members: number; openedToday: number }[]
+  todayQuestion: string | null
+  todayOpened: boolean
+}
+
+export type DoorState = 'OPENED' | 'TODAY' | 'FREE_LATE' | 'NEEDS_KEY'
+
+export interface AdventDoor {
+  day: string
+  number: number
+  state: DoorState
+  question: { kind: 'HIGHER_LOWER' | 'YEAR_WINNER' | 'WINNER_YEAR'; text: string; options: string[] } | null
+  answer: { chosen: number | null; correct: boolean | null; answer: number; explanation: string } | null
+  tip: string | null
+  spotlight: AdventBeer | null
+  clue: string | null
+  releaseDay: boolean
+  finaleDay: boolean
+  late: boolean
+  keyUsed: boolean
+  keysAvailable: number
 }

@@ -10,6 +10,7 @@ export const router = createRouter({
     { path: '/beers/:id/rate', component: () => import('./views/RateView.vue'), props: true },
     { path: '/session', component: () => import('./views/SessionStartView.vue') },
     { path: '/smakinger', component: () => import('./views/EventsView.vue') },
+    { path: '/luke/:day', component: () => import('./views/DoorView.vue') },
     { path: '/session/:id', component: () => import('./views/SessionView.vue'), props: true },
     { path: '/join/:code?', component: () => import('./views/JoinView.vue'), props: true },
     { path: '/stats', component: () => import('./views/StatsView.vue') },

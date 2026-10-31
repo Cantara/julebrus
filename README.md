@@ -11,9 +11,16 @@ solo days, the rest in groups formed by QR code. Design and rules: [DESIGN.md](D
   build a Bradley–Terry side ranking; the host can pour a **blind round** where the guests guess which beer is in
   the glass. An open table is one tap away from Home and from "Dine bord".
 - **The season.** Max 5 tastings a day (12 at a table of 8 or more, because a party is a different evening), max 5 solo days, only Vinmonopolet-strength juleøl counts, homebrew under
-  its own rules. Home is an advent calendar (this week by default) with a streak counter; the results page is a
+  its own rules. Home is an advent calendar (this week by default); the results page is a
   weighted Bayesian ranking, filterable per team. Rater weights: 0.5 the first season, 1.0 after a normal one,
   0 when flagged for rigging; veterans from the old spreadsheets are recognised through the admin name mapping.
+- **The advent calendar game.** A door a day, beer or no beer: a question from the archive (higher or lower on the
+  all-time list, who won in a year, which year a beer won), a tasting tip, a shelf beer few have tried. The streak and
+  the Advent badge count doors, not beers. A missed door opens late for free in the first days, after that with a
+  nisse key, one per day you tasted at a table with someone. Each door clears a pane of a winter picture; the whole
+  house lights the star together (500 doors shows everyone the top ten, without order), and teams race for today's
+  door. Home counts down to Vinmonopolet's release day. From 17 December until the reveal the ranking is hidden
+  everywhere ("mørkelagt") and each door gives a clue about the leader instead. Answers are private.
 - **"I kveld".** The day's wall for the whole house: who rolled which beer, the tables going right now, approved labels and
   blind-round results, live, with a 🍻 and four more emojis to give each line. Never a person's dice, and a day average per
   beer only from three rolls. People without active consent are left out.
@@ -187,7 +194,9 @@ references `users`: solo and table tastings with notes and tags, duels, a hosted
 hosted and guessed, two teams, a podium tip, an approved label photo, an approved history claim, a push subscription,
 cheers given and received. It ran to `commit`, the two other seeded people kept every row of theirs, the claimed
 historic name disappeared from the history, and a second run stopped at the first step. An earlier run (2026-10-24,
-V1 to V9) covered an admin who had decided beers, photos and claims. It has never been run on a real database, and
+V1 to V9) covered an admin who had decided beers, photos and claims. On 2026-10-31 (V1 to V18) it also ran on a person with advent
+doors (on time and late), a planned tasting they hosted with a friend signed up, and a sign-up for the friend's tasting:
+those went, and the friend's door, tasting and sign-up stayed. It has never been run on a real database, and
 Recipe 2 was not part of either test.
 Run each recipe with `psql -v ON_ERROR_STOP=1 -f recipe.sql`: it stops at the first error and the open transaction is rolled
 back when the session ends. A second run of Recipe 1 stops at the first step ("no rows returned": the person is gone)
@@ -242,12 +251,17 @@ update beer_photos set decided_by = null where decided_by = :'uid';
 update beers set created_by = null where created_by = :'uid';
 update beers set decided_by = null where decided_by = :'uid';
 
--- 3c. Teams, the podium tip, push subscriptions and the cheers they gave on "I kveld".
+-- 3c. Teams, the podium tip, push subscriptions, the cheers they gave on "I kveld", their advent doors,
+--     and planned tastings: their sign-ups, and the tastings they hosted with everyone who signed up for them.
 --     (Cheers others gave to this person's rolls go with the rolls: feed_reactions.target_id has no foreign key.)
 delete from team_members where user_id = :'uid';
 delete from tips where user_id = :'uid';
 delete from push_subscriptions where user_id = :'uid';
 delete from feed_reactions where user_id = :'uid';
+delete from advent_doors where user_id = :'uid';
+delete from event_attendees where user_id = :'uid';
+delete from event_attendees where event_id in (select id from events where host_id = :'uid');
+delete from events where host_id = :'uid';
 
 -- 4. Sessions they hosted (sessions.host_id is NOT NULL). A session nobody else belongs to can go.
 --    One with other members must be handed to a member first (update sessions set host_id = ...),
@@ -341,8 +355,8 @@ Candidates: `python3 -I tools/suggest_beer_name_fixes.py` writes a review sheet,
 ## Push notifications
 
 Three messages, all opt-in per browser from the "Varsler" card on the profile page: a daily
-"Dagens luke står uåpnet" nudge at 17:00 Oslo time (`julebrus.push.nudge-time`) to people who
-have not tasted that day, "Smaking om en time" to everyone signed up for a planned tasting, and
+"Luke N står uåpnet" nudge at 17:00 Oslo time (`julebrus.push.nudge-time`), with the day's question, to people who
+have not opened that day's door, "Smaking om en time" to everyone signed up for a planned tasting, and
 "Stjernen er tent" at the reveal. Web Push with VAPID, encrypted
 on the JDK alone (RFC 8291, checked against the RFC's test vector), no third-party library.
 

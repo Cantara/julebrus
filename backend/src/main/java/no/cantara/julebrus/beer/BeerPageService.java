@@ -62,7 +62,8 @@ public class BeerPageService {
     }
 
     public record Season(int tastings, int people, Integer rank, Integer rankedOf, Double bayesian, Double mean,
-                         /** counts of 1..6, null until MIN_SHARED rolls */ int[] histogram) {
+                         /** counts of 1..6, null until MIN_SHARED rolls */ int[] histogram,
+                         /** the ranking is hidden until the finale: rank, scores and dice are null */ boolean blackout) {
     }
 
     public record Duels(int wins, int losses, Integer rank, Double strength) {
@@ -88,10 +89,13 @@ public class BeerPageService {
     private final ConsentService consents;
     private final HistoricRatingRepository historic;
     private final HistoricSeasonRepository seasons;
+    private final no.cantara.julebrus.advent.Blackout blackout;
 
     public BeerPageService(BeerRepository beers, TastingRepository tastings, SessionRepository sessions, DuelRepository duels,
                            RankingService ranking, PhotoService photos, ConsentService consents,
-                           HistoricRatingRepository historic, HistoricSeasonRepository seasons) {
+                           HistoricRatingRepository historic, HistoricSeasonRepository seasons,
+                           no.cantara.julebrus.advent.Blackout blackout) {
+        this.blackout = blackout;
         this.beers = beers;
         this.tastings = tastings;
         this.sessions = sessions;
@@ -114,17 +118,18 @@ public class BeerPageService {
         boolean enough = rolls.size() >= MIN_SHARED;
 
         // Season numbers from the same ranking the results page shows.
+        boolean dark = blackout.active();
         RankingService.BeerRank rank = null;
-        List<RankingService.BeerRank> ranked = ranking.beerRanking();
+        List<RankingService.BeerRank> ranked = dark ? List.of() : ranking.beerRanking();
         for (RankingService.BeerRank r : ranked) if (r.beerId().equals(beerId)) rank = r;
         int[] histogram = null;
-        if (enough) {
+        if (enough && !dark) {
             histogram = new int[6];
             for (Tasting t : rolls) histogram[Math.min(6, Math.max(1, t.getScore())) - 1]++;
         }
         Season season = new Season(rolls.size(), (int) rolls.stream().map(Tasting::getUserId).distinct().count(),
                 rank == null ? null : rank.rank(), rank == null ? null : ranked.size(),
-                rank == null ? null : rank.bayesian(), rank == null ? null : rank.mean(), histogram);
+                rank == null ? null : rank.bayesian(), rank == null ? null : rank.mean(), histogram, dark);
 
         // Duels: how often it won and lost, and its place in the sidebar.
         int wins = 0, losses = 0;
@@ -132,7 +137,7 @@ public class BeerPageService {
             if (beerId.equals(d.getWinnerBeerId())) wins++;
             else if (beerId.equals(d.getLoserBeerId())) losses++;
         }
-        RankingService.DuelRank duelRank = ranking.duelRanking().stream().filter(r -> r.beerId().equals(beerId)).findFirst().orElse(null);
+        RankingService.DuelRank duelRank = dark ? null : ranking.duelRanking().stream().filter(r -> r.beerId().equals(beerId)).findFirst().orElse(null);
         Duels duelView = new Duels(wins, losses, duelRank == null ? null : duelRank.rank(), duelRank == null ? null : duelRank.strength());
 
         // The room's words. Tags at MIN_SHARED; notes also only once the reader has rolled, and never

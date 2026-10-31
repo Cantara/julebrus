@@ -29,8 +29,15 @@ public final class BadgeEvaluator {
             /** beerId -> group average revealed in the session the person predicted in */
             Map<UUID, Double> groupAverage,
             /** correct guesses in revealed blind pours */
-            int blindCorrect
+            int blindCorrect,
+            /** the advent doors the person opened */
+            Set<LocalDate> doorDays
     ) {
+        /** Without doors, for tests that only look at the tasting log. */
+        public Context(List<Tasting> mine, int soloDaysUsed, Set<UUID> coTasters, Map<UUID, Long> othersBefore,
+                       Map<UUID, Double> crowdMean, Map<UUID, Double> groupAverage, int blindCorrect) {
+            this(mine, soloDaysUsed, coTasters, othersBefore, crowdMean, groupAverage, blindCorrect, Set.of());
+        }
     }
 
     public static final int BLIND_TASTER_HITS = 3;
@@ -45,6 +52,16 @@ public final class BadgeEvaluator {
         Set<Badge> out = EnumSet.noneOf(Badge.class);
         List<Tasting> mine = ctx.mine();
         if (ctx.blindCorrect() >= BLIND_TASTER_HITS) out.add(Badge.BLIND_TASTER);
+
+        // Advent: every door from 1 to 23 December opened, sober or not. Doors, not beers.
+        LocalDate dec1 = LocalDate.of(season.year(), 12, 1);
+        LocalDate dec23 = LocalDate.of(season.year(), 12, 23);
+        boolean advent = true;
+        for (LocalDate d = dec1; !d.isAfter(dec23); d = d.plusDays(1)) {
+            if (!ctx.doorDays().contains(d)) { advent = false; break; }
+        }
+        if (advent) out.add(Badge.ADVENT);
+
         if (mine.isEmpty()) return out;
 
         out.add(Badge.FIRST_BLOOD);
@@ -66,14 +83,6 @@ public final class BadgeEvaluator {
         if (deviations.size() >= 10 && deviations.stream().mapToDouble(d -> d).average().orElse(0) >= 1.5) {
             out.add(Badge.CONTRARIAN);
         }
-
-        LocalDate dec1 = LocalDate.of(season.year(), 12, 1);
-        LocalDate dec23 = LocalDate.of(season.year(), 12, 23);
-        boolean advent = true;
-        for (LocalDate d = dec1; !d.isAfter(dec23); d = d.plusDays(1)) {
-            if (!days.contains(d)) { advent = false; break; }
-        }
-        if (advent) out.add(Badge.ADVENT);
 
         long goodPredictions = mine.stream()
                 .filter(t -> t.getPrediction() != null && ctx.groupAverage().containsKey(t.getBeerId()))

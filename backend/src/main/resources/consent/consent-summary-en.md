@@ -1,6 +1,6 @@
 ## In short
 
-- We store your name and email address from your Google account, your dice rolls and notes, and the teams you choose
+- We store your name and email address from your Google account, your dice rolls and notes, the teams you choose and the advent calendar doors you open. Only you see your answers behind the doors
 - Label photos are optional. Never photograph people
 - Everyone taking part sees your name, your teams, the tastings you signed up for and which beers you tasted today, and your tasting notes without your name on the beer's page once three people have tasted it. The people you taste with see your rolls once everyone has rolled
 - Administrators see more, to approve photos and catch cheating

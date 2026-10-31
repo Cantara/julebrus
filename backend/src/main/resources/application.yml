@@ -36,6 +36,17 @@ julebrus:
     max-solo-days: 5
     # Local time on the last day when the finale page reveals the result.
     finale-time: "18:00"
+  advent:
+    # Doors up to this day open late without a nisse-key (the first days of the season, and before the calendar shipped).
+    free-revival-until: 2026-11-04
+    # Vinmonopolet's Christmas beer release ("slippdagen"), counted down to on Home.
+    release-day: 2026-11-04
+    release-time: "10:00"
+    # The ranking is hidden from the start of this day until the reveal; doors drip clues about the leader instead.
+    # Remove the line to keep the results page open all season.
+    blackout-from: 2026-12-17
+    # Doors the whole house opens together to light the star (the top ten, without order, for everyone).
+    house-goal: 500
   mcp:
     # Bearer token agents present on /mcp. Empty disables the endpoint.
     token: ${JULEBRUS_MCP_TOKEN:}

@@ -16,6 +16,7 @@ Julebrus er Cantaras juleølsmaking. Den drives av Cantara-miljøet.
 - Lagene du velger å spille for
 - Skål og emoji du gir i «I kveld», med tidspunkt
 - Smakinger du planlegger eller melder deg på, med tidspunkt
+- Lukene du åpner i adventskalenderen og svarene dine på spørsmålene bak dem, med tidspunkt
 - Innstillinger (språk og snø), som ligger i lokal lagring i nettleseren din
 
 ## Før du har svart
@@ -32,6 +33,7 @@ For å kjøre smakingen og vise resultater og historikk.
 - Alle deltakerne ser navnet ditt og lagene dine, og i «I kveld» hvilke øl du har smakt i dag, hvilket bord du sitter ved og hva du har skålt for. Terningkastet ditt vises ikke der, bare dagens snitt per øl når minst tre har kastet
 - Smaksnotatene dine (utseende, lukt, smak, ettersmak og stikkord) vises på ølets side for de andre deltakerne, uten navn og tidspunkt og i tilfeldig rekkefølge, først når minst tre har smakt ølet og bare for dem som selv har smakt det. Kommentaren din og terningkastet ditt vises bare rundt bordet
 - Planlagte smakinger vises for alle deltakerne med vertens navn og hvem som har meldt seg på
+- Svarene dine i adventskalenderen ser bare du. De andre ser bare hvor mange som har åpnet dagens luke, i alt og per lag
 - Sesongstatistikken vises per øl
 - Historikken viser navnene til dem som smakte i tidligere år, slik de står i de gamle regnearkene
 - Administratorer ser navn og e-postadresse til dem som ber om å koble seg til tidligere år, i godkjenningskøen

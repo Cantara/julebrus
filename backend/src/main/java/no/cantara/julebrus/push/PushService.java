@@ -4,7 +4,7 @@ import no.cantara.julebrus.config.ContactProperties;
 import no.cantara.julebrus.config.SeasonProperties;
 import no.cantara.julebrus.event.Event;
 import no.cantara.julebrus.event.EventRepository;
-import no.cantara.julebrus.tasting.TastingRepository;
+import no.cantara.julebrus.advent.AdventService;
 import no.cantara.julebrus.web.ApiException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,7 +25,7 @@ import java.util.UUID;
 
 /**
  * Subscriptions and the three messages the app sends: the daily "dagens luke" nudge to
- * people who have not tasted yet, the reminder an hour before a planned tasting to those
+ * people who have not opened today's advent door, with the door's question, the reminder an hour before a planned tasting to those
  * signed up, and the finale announcement at the reveal.
  */
 @Service
@@ -36,7 +36,7 @@ public class PushService {
     static final int MAX_FAILURES = 5;
 
     private final PushSubscriptionRepository subscriptions;
-    private final TastingRepository tastings;
+    private final AdventService advent;
     private final EventRepository events;
     private final WebPushClient client;
     private final PushProperties props;
@@ -44,10 +44,10 @@ public class PushService {
     private final ContactProperties contact;
     private final Clock clock;
 
-    public PushService(PushSubscriptionRepository subscriptions, TastingRepository tastings, EventRepository events,
+    public PushService(PushSubscriptionRepository subscriptions, AdventService advent, EventRepository events,
                        WebPushClient client, PushProperties props, SeasonProperties season, ContactProperties contact, Clock clock) {
         this.subscriptions = subscriptions;
-        this.tastings = tastings;
+        this.advent = advent;
         this.events = events;
         this.client = client;
         this.props = props;
@@ -121,16 +121,19 @@ public class PushService {
             ZonedDateTime local = now.atZone(season.zone());
             LocalDate today = local.toLocalDate();
             LocalTime time = local.toLocalTime();
+            String question = advent.todayQuestion();
+            String nudgeTitle = "Luke %d står uåpnet".formatted(today.toEpochDay() - season.start().toEpochDay() + 1);
+            String nudgeBody = question == null ? "Ett trykk, ett spørsmål. Hva står bak dagens luke?" : question;
             for (PushSubscription s : subscriptions.findAll()) {
                 if (PushPlanner.finaleDue(now, season.revealAt(), s.getCreatedAt(), s.getFinaleSentAt())) {
                     s.setFinaleSentAt(now);
                     deliver(s, payload("Stjernen er tent", "Cantaras juleøl " + season.year() + " er kåret. Se pallen og årets priser.", "/finale", "finale"));
                     continue;
                 }
-                boolean tasted = tastings.countByUserIdAndTastedDay(s.getUserId(), today) > 0;
-                if (PushPlanner.nudgeDue(today, time, props.nudgeTime(), season.start(), season.end(), s.getLastNudgeDay(), tasted)) {
+                boolean opened = advent.openedToday(s.getUserId());
+                if (PushPlanner.nudgeDue(today, time, props.nudgeTime(), season.start(), season.end(), s.getLastNudgeDay(), opened)) {
                     s.setLastNudgeDay(today);
-                    deliver(s, payload("Dagens luke står uåpnet", "Ett terningkast holder. Hva står på bordet i kveld?", "/", "nudge-" + today));
+                    deliver(s, payload(nudgeTitle, nudgeBody, "/luke/" + today, "nudge-" + today));
                 }
             }
         } catch (RuntimeException e) {

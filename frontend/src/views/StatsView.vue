@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import { onMounted, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
-import { get } from '../api/client'
-import type { BeerRank, DuelRank, HistoricSeason, Team } from '../api/types'
+import { ApiFailure, get } from '../api/client'
+import type { AdventOverview, BeerRank, DuelRank, HistoricSeason, Team } from '../api/types'
+import { useMe } from '../stores/me'
 
 const beers = ref<BeerRank[]>([])
 const duels = ref<DuelRank[]>([])
@@ -12,15 +13,43 @@ const teams = ref<Team[]>([])
 const route = useRoute()
 const team = ref(typeof route.query.team === 'string' ? route.query.team : '')
 
+const store = useMe()
+/** The last week before the finale the ranking is hidden ("mørkelagt"); an admin may still look. */
+const dark = ref(false)
+const preview = ref(false)
+const advent = ref<AdventOverview | null>(null)
+
+function query(extra: Record<string, string>) {
+  const q = new URLSearchParams(extra)
+  if (preview.value) q.set('preview', 'true')
+  const s = q.toString()
+  return s ? `?${s}` : ''
+}
 async function loadBeers() {
-  beers.value = await get<BeerRank[]>('/api/stats/beers' + (team.value ? `?team=${encodeURIComponent(team.value)}` : ''))
+  try {
+    beers.value = await get<BeerRank[]>('/api/stats/beers' + query(team.value ? { team: team.value } : {}))
+    dark.value = false
+  } catch (e) {
+    if (e instanceof ApiFailure && e.code === 'BLACKOUT') {
+      dark.value = true
+      beers.value = []
+      advent.value ??= await get<AdventOverview>('/api/advent').catch(() => null)
+    } else throw e
+  }
+}
+async function loadDuels() {
+  duels.value = await get<DuelRank[]>('/api/stats/duels' + query({})).catch(() => [])
 }
 watch(team, () => loadBeers().catch(() => {}))
+async function peek() {
+  preview.value = true
+  await Promise.all([loadBeers(), loadDuels()])
+}
 
 onMounted(async () => {
-  ;[, duels.value, seasons.value, teams.value] = await Promise.all([
+  ;[, , seasons.value, teams.value] = await Promise.all([
     loadBeers(),
-    get<DuelRank[]>('/api/stats/duels').catch(() => []),
+    loadDuels(),
     get<HistoricSeason[]>('/api/history/seasons').catch(() => []),
     get<Team[]>('/api/teams').catch(() => []),
   ])
@@ -32,7 +61,20 @@ onMounted(async () => {
   <p><router-link to="/finale">★ Til finalen</router-link></p>
   <p class="muted">Offisiell liste: terningkast 1–6 vektet etter hver smakers vekt, og trukket mot sesongsnittet til et øl har fått nok stemmer.</p>
 
-  <div v-if="teams.length" class="filter" role="group" aria-label="Lag">
+  <div v-if="dark" class="card dark">
+    <strong class="display">🌒 Mørkelagt til finalen</strong>
+    <p style="margin: 6px 0 0">Den siste uka er resultatlista skjult for alle. Stjernen tennes {{ advent ? new Date(advent.revealAt).toLocaleString('nb-NO', { day: 'numeric', month: 'long', hour: '2-digit', minute: '2-digit' }) : 'i finalen' }}.</p>
+    <p class="muted" style="margin: 6px 0 0">Hver luke gir et spor om hvem som leder. <router-link class="lnk" to="/luke/idag">Dagens luke</router-link></p>
+    <template v-if="advent?.house.unlocked && advent.topTen.length">
+      <p class="muted" style="margin: 10px 0 4px">Huset har tent stjernen. Topp ti akkurat nå, i alfabetisk rekkefølge:</p>
+      <ul style="columns: 2; margin: 0; padding-left: 18px">
+        <li v-for="b in advent.topTen" :key="b.id"><router-link class="lnk" :to="`/beers/${b.id}`">{{ b.name }}</router-link></li>
+      </ul>
+    </template>
+    <button v-if="store.me?.admin" class="secondary" style="margin-top: 10px" @click="peek">Vis lista likevel (admin)</button>
+  </div>
+
+  <div v-if="teams.length && !dark" class="filter" role="group" aria-label="Lag">
     <button class="pill" :class="{ on: team === '' }" @click="team = ''">Alle</button>
     <button v-for="t in teams" :key="t.id" class="pill" :class="{ on: team === t.slug }" @click="team = t.slug">{{ t.name }}</button>
   </div>
@@ -50,8 +92,9 @@ onMounted(async () => {
       </div>
     </li>
   </ol>
-  <p v-if="!beers.length" class="muted card">{{ team ? 'Laget har ikke smakt ennå.' : 'Ingen smakinger ennå.' }}</p>
+  <p v-if="!beers.length && !dark" class="muted card">{{ team ? 'Laget har ikke smakt ennå.' : 'Ingen smakinger ennå.' }}</p>
 
+  <template v-if="!dark">
   <h2>Duellene (sideranking)</h2>
   <p class="muted">Parvise valg i gruppesmakinger. Bryr seg ikke om hvem som er snill eller streng med terningen.</p>
   <div class="card">
@@ -65,6 +108,7 @@ onMounted(async () => {
     </table>
     <p v-if="!duels.length" class="muted">Ingen dueller ennå.</p>
   </div>
+  </template>
 
   <h2>Tidligere år</h2>
   <router-link class="card row" to="/historikk" style="text-decoration: none">
@@ -91,5 +135,6 @@ onMounted(async () => {
 .ranked .r1 .bar span { background: var(--candle); }
 .ranked .small { font-size: 0.85rem; }
 .filter { margin: 0 0 10px; }
+.dark { border: 1px dashed var(--brass); }
 .filter .pill { border: 1px solid var(--line); cursor: pointer; font: inherit; font-size: 0.85rem; }
 </style>
