@@ -95,11 +95,13 @@ public class FeedService {
     private final SeasonProperties season;
     private final SessionEvents events;
     private final Clock clock;
+    private final no.cantara.julebrus.advent.Blackout blackout;
 
     public FeedService(TastingRepository tastings, SessionRepository sessions, BeerRepository beers,
                        BeerPhotoRepository photos, BlindRoundRepository rounds, UserRepository users,
                        ReactionRepository reactions, ConsentService consents, SeasonProperties season,
-                       SessionEvents events, Clock clock) {
+                       SessionEvents events, Clock clock, no.cantara.julebrus.advent.Blackout blackout) {
+        this.blackout = blackout;
         this.tastings = tastings;
         this.sessions = sessions;
         this.beers = beers;
@@ -209,10 +211,11 @@ public class FeedService {
                 .toList();
 
         Map<UUID, List<Tasting>> perBeer = rolls.stream().collect(Collectors.groupingBy(Tasting::getBeerId));
+        boolean dark = blackout.active(); // no day averages while the ranking is hidden
         List<DayBeer> dayBeers = perBeer.entrySet().stream().map(e -> {
             Beer b = beerById.get(e.getKey());
             int n = e.getValue().size();
-            Double avg = n >= MIN_FOR_AVERAGE
+            Double avg = n >= MIN_FOR_AVERAGE && !dark
                     ? Math.round(e.getValue().stream().mapToInt(Tasting::getScore).average().orElse(0) * 10) / 10.0 : null;
             return new DayBeer(e.getKey(), b == null ? "?" : b.getName(), b == null ? null : b.getBrewery(), n, avg);
         }).sorted(Comparator.comparingInt(DayBeer::count).reversed().thenComparing(DayBeer::name)).toList();

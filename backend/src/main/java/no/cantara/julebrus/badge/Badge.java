@@ -7,7 +7,7 @@ public enum Badge {
     LONE_WOLF("Lone Wolf", "Used all your solo days"),
     SOCIAL_BUTTERFLY("Social Butterfly", "Tasted with ten different people"),
     CONTRARIAN("Contrarian", "Furthest from the crowd, on at least ten beers"),
-    ADVENT("Advent", "Rated every day from 1 to 23 December"),
+    ADVENT("Advent", "Opened every advent door from 1 to 23 December"),
     SOMMELIER("Sommelier", "Predicted the group average within half a point, ten times"),
     CLOSING_TIME("Closing Time", "A rating on 23 December"),
     BLIND_TASTER("Blindsmaker", "Named the beer in a blind pour three times");

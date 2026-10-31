@@ -42,7 +42,7 @@ class ConsentTextsTest {
 
     @Test
     void versionIsBumpedAndBothTextsDescribeThePhotos() {
-        assertThat(ConsentService.CONSENT_VERSION).isEqualTo("2026-7");
+        assertThat(ConsentService.CONSENT_VERSION).isEqualTo("2026-8");
         var texts = new ConsentService(null, null, new SponsorProperties("x", ""), new ContactProperties("a@b.no")).texts();
         assertThat(texts.nb()).contains("Bilder av etiketten").contains("opphavsretten").contains("aldri som offentlige lenker")
                 .contains("Metadata").contains("slette bildet ditt selv").contains("tilhører produsenten")
@@ -82,5 +82,14 @@ class ConsentTextsTest {
         assertThat(new SponsorProperties("x", "javascript:alert(1)").safeUrl()).isNull();
         assertThat(new SponsorProperties("x", "https://example.com").safeUrl()).isEqualTo("https://example.com");
         assertThat(new SponsorProperties(" ", "https://example.com").visible()).isFalse();
+    }
+
+    @Test
+    void textsNameTheAdventDoorsAndThatAnswersStayPrivate() {
+        var service = new ConsentService(null, null, new SponsorProperties("x", ""), new ContactProperties("a@b.no"));
+        assertThat(service.texts().nb()).contains("Lukene du åpner i adventskalenderen").contains("Svarene dine i adventskalenderen ser bare du");
+        assertThat(service.texts().en()).contains("advent calendar doors you open").contains("Only you see your answers in the advent calendar");
+        assertThat(service.summary().nb()).contains("lukene du åpner");
+        assertThat(service.summary().en()).contains("advent calendar doors");
     }
 }

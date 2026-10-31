@@ -5,7 +5,8 @@ import DiceFace from './DiceFace.vue'
 /**
  * The season as an advent calendar: one door per day from start to end.
  * Doors you tasted behind are filled, one hue light to dark by how many beers
- * (a sequential encoding, 1..5). Today glows, future doors are shut.
+ * (a sequential encoding, 1..5). A door you opened (answered its question) gets
+ * a small star; today's shut door glows until you open it. Future doors are shut.
  */
 export interface DayEntry {
   beers: { id?: string; name: string; score: number }[]
@@ -19,12 +20,15 @@ const props = defineProps<{
   days: Record<string, DayEntry>
   /** only the week that holds today (Monday to Sunday), still on the 7-column grid */
   compact?: boolean
+  /** advent doors opened, by day: true answered right, false wrong, null without a question */
+  opened?: Record<string, boolean | null>
 }>()
 
 const WEEKDAYS = ['ma', 'ti', 'on', 'to', 'fr', 'lø', 'sø']
 const MONTHS = ['jan', 'feb', 'mar', 'apr', 'mai', 'jun', 'jul', 'aug', 'sep', 'okt', 'nov', 'des']
 
-const emit = defineEmits<{ finale: [] }>()
+const emit = defineEmits<{ finale: []; door: [day: string] }>()
+const isOpened = (date: string) => !!props.opened && date in props.opened
 const selected = ref<string | null>(null)
 
 function iso(d: Date) {
@@ -68,6 +72,8 @@ function classes(date: string) {
     shut: date > props.today,
     today: date === props.today,
     tasted: n > 0,
+    opened: isOpened(date),
+    waiting: date === props.today && !!props.opened && !isOpened(date),
     [`c${n}`]: n > 0,
     selected: selected.value === date,
     finale: date === props.end,
@@ -77,22 +83,28 @@ function classes(date: string) {
 
 function title(date: string) {
   const entry = props.days[date]
-  if (date === props.end && !entry) return 'Finalen'
-  if (date > props.today) return 'Ikke ennå'
-  if (!entry) return 'Ingen smaking'
-  return entry.beers.map((b) => `${b.name} (${b.score})`).join(', ')
+  if (date > props.today) return date === props.end ? 'Finalen' : 'Ikke ennå'
+  const door = isOpened(date) ? 'Luka er åpnet' : 'Luka er ikke åpnet'
+  if (!entry) return door
+  return `${door}. ${entry.beers.map((b) => `${b.name} (${b.score})`).join(', ')}`
 }
 
 function toggle(date: string) {
-  if (date === props.end && !props.days[date]) {
-    emit('finale')
+  if (date > props.today) {
+    if (date === props.end) emit('finale')
     return
   }
-  if (!props.days[date]) return
+  // A shut door with nothing behind it goes straight to its question; anything else unfolds first.
+  if (!props.days[date] && !isOpened(date)) {
+    emit('door', date)
+    return
+  }
   selected.value = selected.value === date ? null : date
 }
 
-const detail = computed(() => (selected.value ? props.days[selected.value] : null))
+const detail = computed(() => (selected.value ? props.days[selected.value] ?? { beers: [], solo: false } : null))
+const detailOpened = computed(() => (selected.value ? isOpened(selected.value) : false))
+const detailCorrect = computed(() => (selected.value && props.opened ? props.opened[selected.value] : null))
 const detailDate = computed(() => {
   if (!selected.value) return ''
   const d = new Date(selected.value + 'T00:00:00Z')
@@ -114,10 +126,11 @@ const detailDate = computed(() => {
         :data-month="c.month ?? ''"
         :title="title(c.date)"
         :aria-label="`${c.dom}. ${c.month ?? ''}: ${title(c.date)}`"
-        :tabindex="days[c.date] || c.date === end ? 0 : -1"
+        :tabindex="c.date <= today || c.date === end ? 0 : -1"
         @click="toggle(c.date)"
       >
         {{ c.dom }}
+        <span v-if="isOpened(c.date)" class="o" aria-hidden="true">✦</span>
         <span v-if="days[c.date]" class="n">{{ days[c.date].beers.length }}</span>
       </button>
     </template>
@@ -128,7 +141,12 @@ const detailDate = computed(() => {
       <strong class="display">{{ detailDate }}</strong>
       <span v-if="detail.solo" class="pill">solo-dag</span>
     </div>
-    <table>
+    <p class="muted" style="margin: 4px 0 6px">
+      <template v-if="detailOpened">Luka er åpnet<template v-if="detailCorrect === true">, riktig svar</template><template v-else-if="detailCorrect === false">, feil svar</template>.</template>
+      <template v-else>Luka er ikke åpnet ennå.</template>
+      <router-link class="lnk" :to="`/luke/${selected}`">{{ detailOpened ? 'Se luka' : 'Åpne luka' }}</router-link>
+    </p>
+    <table v-if="detail.beers.length">
       <tbody>
         <tr v-for="b in detail.beers" :key="b.name">
           <td><router-link v-if="b.id" class="lnk" :to="`/beers/${b.id}`">{{ b.name }}</router-link><template v-else>{{ b.name }}</template></td>

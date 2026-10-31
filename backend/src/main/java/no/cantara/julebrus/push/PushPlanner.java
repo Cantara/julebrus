@@ -13,14 +13,15 @@ public final class PushPlanner {
 
     /**
      * The nudge goes once a day, from the nudge time on, during the season, to people
-     * who have not opened today's door yet. The window closes at midnight: no nudges for yesterday.
+     * who have not opened today's advent door yet (a roll alone does not open it). The window
+     * closes at midnight: no nudges for yesterday.
      */
     public static boolean nudgeDue(LocalDate today, LocalTime now, LocalTime nudgeTime, LocalDate seasonStart,
-                                   LocalDate seasonEnd, LocalDate lastNudgeDay, boolean tastedToday) {
+                                   LocalDate seasonEnd, LocalDate lastNudgeDay, boolean doorOpenedToday) {
         if (today.isBefore(seasonStart) || today.isAfter(seasonEnd)) return false;
         if (now.isBefore(nudgeTime)) return false;
         if (today.equals(lastNudgeDay)) return false;
-        return !tastedToday;
+        return !doorOpenedToday;
     }
 
     /** How long before a planned tasting its attendees are reminded. */

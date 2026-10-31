@@ -1,10 +1,11 @@
 <script setup lang="ts">
-import { computed, onMounted, ref } from 'vue'
+import { computed, onMounted, onUnmounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { get } from '../api/client'
-import type { BadgeView, Beer, Feed, MyTip, PlannedEvent, Session, Tasting } from '../api/types'
+import type { AdventOverview, BadgeView, Beer, Feed, MyTip, PlannedEvent, Session, Tasting } from '../api/types'
 import { useRoute } from 'vue-router'
 import AdventCalendar, { type DayEntry } from '../components/AdventCalendar.vue'
+import AdventPicture from '../components/AdventPicture.vue'
 import LightsMeter from '../components/LightsMeter.vue'
 import Snow from '../components/Snow.vue'
 import { useMe } from '../stores/me'
@@ -39,6 +40,11 @@ const mine = ref<Tasting[]>([])
 const tip = ref<MyTip | null>(null)
 const tonight = ref<Feed | null>(null)
 const nextEvent = ref<PlannedEvent | null | undefined>(undefined)
+const advent = ref<AdventOverview | null>(null)
+/** A clock for the countdowns, ticking once a minute. */
+const now = ref(Date.now())
+const ticker = window.setInterval(() => (now.value = Date.now()), 60_000)
+onUnmounted(() => window.clearInterval(ticker))
 const beerName = ref<Record<string, string>>({})
 const soloSessions = ref<Set<string>>(new Set())
 
@@ -75,6 +81,7 @@ function toggleSnow() {
 onMounted(async () => {
   get<MyTip>('/api/tips/me').then((t) => (tip.value = t)).catch(() => {})
   get<Feed>('/api/feed').then((f) => (tonight.value = f)).catch(() => {})
+  const adventLoaded = get<AdventOverview>('/api/advent').then((a) => (advent.value = a)).catch(() => null)
   get<PlannedEvent[]>('/api/events').then((l) => (nextEvent.value = l.find((e) => e.joined) ?? l[0] ?? null)).catch(() => (nextEvent.value = null))
   const [least, tastings, beers] = await Promise.all([
     get<Beer[]>('/api/beers/least-tasted?limit=5').catch(() => []),
@@ -84,10 +91,11 @@ onMounted(async () => {
   leastTasted.value = least
   mine.value = tastings
   beerName.value = Object.fromEntries(beers.map((b) => [b.id, b.name]))
-  // Back from a roll: the door opens with a little toast.
+  // Back from a roll: a toast, and a pointer to today's door while it is still shut.
   if (typeof route.query.opened === 'string') {
-    const d = new Date(route.query.opened + 'T00:00:00Z')
-    showToast(`Luke ${d.getUTCDate()}. ${['jan', 'feb', 'mar', 'apr', 'mai', 'jun', 'jul', 'aug', 'sep', 'okt', 'nov', 'des'][d.getUTCMonth()]} åpnet!`)
+    await adventLoaded
+    if (advent.value && advent.value.inSeason && !advent.value.todayOpened) showToast('Terningen er kastet. Dagens luke venter på svaret ditt.', '/luke/idag')
+    else showToast('Terningen er kastet. Skål!')
     router.replace({ query: {} })
   }
   // A bauble that lit since last time gets a toast; the first visit only remembers.
@@ -126,22 +134,26 @@ const days = computed<Record<string, DayEntry>>(() => {
   return out
 })
 
-/** Days in a row with a roll, counting back from today or yesterday. */
-const streak = computed(() => {
-  const days = new Set(mine.value.map((t) => t.tastedDay))
-  if (!days.size) return 0
-  const t = new Date((store.me?.status.today ?? new Date().toISOString().slice(0, 10)) + 'T00:00:00Z')
-  const iso = (d: Date) => d.toISOString().slice(0, 10)
-  if (!days.has(iso(t))) t.setUTCDate(t.getUTCDate() - 1)
-  let n = 0
-  while (days.has(iso(t))) {
-    n += 1
-    t.setUTCDate(t.getUTCDate() - 1)
-  }
-  return n
-})
 
 const season = computed(() => store.me?.season)
+
+/** Opened advent doors by day, for the calendar; the value says whether the answer was right. */
+const openedDoors = computed<Record<string, boolean | null>>(() =>
+  Object.fromEntries((advent.value?.opened ?? []).map((o) => [o.day, o.correct])),
+)
+const doorNumber = computed(() => dayOfSeason.value.n)
+/** "3 d 4 t" until a moment, or null once it has passed. */
+function until(at: string | null) {
+  if (!at) return null
+  const ms = new Date(at).getTime() - now.value
+  if (ms <= 0) return null
+  const d = Math.floor(ms / 86_400_000), h = Math.floor((ms % 86_400_000) / 3_600_000), m = Math.floor((ms % 3_600_000) / 60_000)
+  return d > 0 ? `${d} d ${h} t` : h > 0 ? `${h} t ${m} min` : `${m} min`
+}
+const releaseIn = computed(() => until(advent.value?.releaseAt ?? null))
+const releaseToday = computed(() => !!advent.value?.releaseAt && !releaseIn.value && advent.value.releaseAt.slice(0, 10) <= today.value
+  && new Date(advent.value.releaseAt).toLocaleDateString('sv-SE', { timeZone: 'Europe/Oslo' }) === today.value)
+const housePct = computed(() => (advent.value ? Math.min(100, Math.round((advent.value.house.opened / advent.value.house.goal) * 100)) : 0))
 
 /** What waits for an organiser, worded, and the admin section with the most of it. */
 const choresText = computed(() => {
@@ -192,13 +204,30 @@ const dayOfSeason = computed(() => {
   <p class="muted" style="margin-top: 0">
     <template v-if="daysUntilStart > 0">{{ daysUntilStart }} {{ daysUntilStart === 1 ? 'dag' : 'dager' }} til første luke.</template>
     <template v-else-if="store.me && !store.me.status.inSeason">Sesongen er over. Takk for i år.</template>
-    <template v-else>Luke {{ dayOfSeason.n }} av {{ dayOfSeason.total }}<template v-if="streak >= 2"> · 🕯️ {{ streak }} dager på rad</template>.</template>
+    <template v-else>Luke {{ dayOfSeason.n }} av {{ dayOfSeason.total }}<template v-if="advent && advent.streak >= 2"> · 🕯️ {{ advent.streak }} luker på rad</template><template v-if="advent && advent.keys.available"> · 🗝️ {{ advent.keys.available }}</template>.</template>
   </p>
 
   <div v-if="toast" class="toast card" role="status">
     <span>{{ toast.text }}</span>
     <router-link v-if="toast.to" :to="toast.to">Se</router-link>
   </div>
+
+  <router-link v-if="advent?.inSeason" class="card row door-today" :class="{ done: advent.todayOpened }" to="/luke/idag" style="text-decoration: none">
+    <div>
+      <strong class="display">{{ advent.todayOpened ? `✦ Luke ${doorNumber} er åpnet` : `🚪 Luke ${doorNumber} venter` }}</strong>
+      <div v-if="!advent.todayOpened" class="muted">{{ advent.todayQuestion ?? 'Ett trykk, og du ser hva som står bak.' }}</div>
+      <div v-else class="muted">Neste luke i morgen. {{ advent.house.today }} har åpnet dagens luke.</div>
+    </div>
+    <span class="muted">›</span>
+  </router-link>
+
+  <router-link v-if="releaseIn || releaseToday" class="card row release" to="/beers" style="text-decoration: none">
+    <div>
+      <strong class="display">🍾 {{ releaseIn ? `Slippdagen om ${releaseIn}` : 'Slippdagen er i dag!' }}</strong>
+      <div class="muted">{{ releaseIn ? 'Vinmonopolet slipper årets juleøl. Da fylles hylla her også.' : 'Vinmonopolet har fylt hyllene. Hva smaker du først?' }}</div>
+    </div>
+    <span class="muted">›</span>
+  </router-link>
 
   <router-link v-if="store.me && store.me.status.tastingsToday === 0 && !mine.length" class="card row" to="/historien" style="text-decoration: none">
     <div>
@@ -275,8 +304,33 @@ const dayOfSeason = computed(() => {
     <button class="secondary" style="padding: 6px 10px; font-size: 0.8rem" @click="toggleCalendar">{{ wholeCalendar ? 'Bare denne uka' : 'Hele kalenderen' }}</button>
   </div>
   <div v-if="season" class="card">
-    <AdventCalendar :start="season.start" :end="season.end" :today="today" :days="days" :compact="!wholeCalendar" @finale="router.push('/finale')" />
-    <p class="muted" style="margin: 10px 0 0">{{ wholeCalendar ? 'Én luke per dag. Trykk på en åpnet luke for å se hva som sto på bordet. Stjernen er finalen.' : 'Denne uka. Trykk på en åpnet luke for å se hva som sto på bordet.' }}</p>
+    <AdventCalendar :start="season.start" :end="season.end" :today="today" :days="days" :compact="!wholeCalendar" :opened="advent ? openedDoors : undefined"
+      @finale="router.push('/finale')" @door="(d) => router.push(`/luke/${d}`)" />
+    <p class="muted" style="margin: 10px 0 0">{{ wholeCalendar ? 'Én luke per dag, med et spørsmål bak. ✦ er en åpnet luke, fargen viser hvor mye du smakte. Stjernen er finalen.' : 'Denne uka. ✦ er en åpnet luke, fargen viser hvor mye du smakte.' }}</p>
+  </div>
+
+  <div v-if="season && advent" class="card">
+    <AdventPicture :start="season.start" :end="season.end" :opened="advent.opened.map((o) => o.day)" />
+    <p class="muted" style="margin: 8px 0 0">
+      <template v-if="advent.opened.length >= dayOfSeason.total">Kalenderen er full. Hele bildet er ditt.</template>
+      <template v-else>Hver luke du åpner, tørker en rute fri for rim. {{ advent.opened.length }} av {{ dayOfSeason.total }}.
+        <template v-if="advent.keys.available"> Du har {{ advent.keys.available }} {{ advent.keys.available === 1 ? 'nisse-nøkkel' : 'nisse-nøkler' }} til luker du gikk glipp av.</template>
+        <template v-else> Gikk du glipp av en luke? Smak ved et bord sammen med noen, så får du en nisse-nøkkel.</template>
+      </template>
+    </p>
+  </div>
+
+  <div v-if="advent" class="card">
+    <strong class="display">⭐ Stjernen</strong>
+    <p class="muted" style="margin: 6px 0 6px">
+      <template v-if="!advent.house.unlocked">Når huset har åpnet {{ advent.house.goal }} luker sammen, tennes stjernen og alle får se topp ti, uten rekkefølge. {{ advent.house.opened }} så langt.</template>
+      <template v-else>Huset har åpnet {{ advent.house.opened }} luker. Stjernen er tent: dette er topp ti akkurat nå, i alfabetisk rekkefølge.</template>
+    </p>
+    <span class="bar"><span :style="{ width: `${housePct}%` }" /></span>
+    <ul v-if="advent.house.unlocked && advent.topTen.length" class="topten">
+      <li v-for="b in advent.topTen" :key="b.id"><router-link class="lnk" :to="`/beers/${b.id}`">{{ b.name }}</router-link></li>
+    </ul>
+    <p v-if="advent.blackout" class="muted" style="margin: 8px 0 0">Resultatlista er mørkelagt til stjernen tennes i finalen. Lukene gir et spor om lederen hver dag.</p>
   </div>
 
   <router-link v-if="tip && !tip.closed" class="card row" to="/tipp" style="text-decoration: none">
@@ -311,5 +365,12 @@ const dayOfSeason = computed(() => {
 .toast { position: fixed; left: 16px; right: 16px; bottom: calc(72px + env(safe-area-inset-bottom)); z-index: 3; display: flex; justify-content: space-between; gap: 12px; align-items: center; background: var(--pine); color: #fff; border: none; box-shadow: 0 8px 24px rgba(0,0,0,0.25); animation: land 500ms cubic-bezier(0.2, 1.2, 0.3, 1) both; }
 .toast a { color: var(--candle); font-weight: 600; }
 .chores { border: 1px dashed var(--brass); }
+.door-today { border: 2px solid var(--brand); }
+.door-today.done { border: 1px solid var(--line); }
+.release { border: 1px dashed var(--brass); }
+.bar { display: block; height: 8px; border-radius: 4px; background: var(--door-shut); overflow: hidden; }
+.bar > span { display: block; height: 100%; background: var(--candle); border-radius: 4px; }
+.topten { columns: 2; margin: 10px 0 0; padding-left: 18px; }
+.topten li { margin: 2px 0; }
 .table-card { border: 1px solid var(--candle); box-shadow: 0 0 0 1px var(--candle) inset, 0 2px 10px rgba(0,0,0,0.05); }
 </style>

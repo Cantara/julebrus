@@ -12,7 +12,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 @SpringBootApplication
 @org.springframework.scheduling.annotation.EnableScheduling
 @EnableConfigurationProperties({no.cantara.julebrus.push.PushProperties.class, SeasonProperties.class, AuthProperties.class, DevUserProperties.class,
-        SponsorProperties.class, ContactProperties.class})
+        SponsorProperties.class, ContactProperties.class, no.cantara.julebrus.config.AdventProperties.class})
 public class JulebrusApplication {
 
     public static void main(String[] args) {

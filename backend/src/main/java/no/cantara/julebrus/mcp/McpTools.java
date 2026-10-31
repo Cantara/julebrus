@@ -45,10 +45,13 @@ public class McpTools {
     private final TeamService teams;
     private final TipService tips;
     private final Clock clock;
+    private final no.cantara.julebrus.advent.Blackout blackout;
 
     public McpTools(ObjectMapper json, HistoryController history, HistoricSeasonRepository seasons,
                     HistoricRatingRepository ratings, RankingService ranking, FinaleService finale,
-                    TastingRepository tastings, SeasonProperties season, TeamService teams, TipService tips, Clock clock) {
+                    TastingRepository tastings, SeasonProperties season, TeamService teams, TipService tips, Clock clock,
+                    no.cantara.julebrus.advent.Blackout blackout) {
+        this.blackout = blackout;
         this.teams = teams;
         this.tips = tips;
         this.json = json;
@@ -60,6 +63,12 @@ public class McpTools {
         this.tastings = tastings;
         this.season = season;
         this.clock = clock;
+    }
+
+    /** What the ranking tools answer in the last week before the finale, when the ranking is hidden for everyone. */
+    private Map<String, Object> dark() {
+        return Map.of("blackout", true, "revealAt", season.revealAt().toString(),
+                "message", "The ranking is hidden until the finale reveal; see the finale tool afterwards.");
     }
 
     public List<McpServerFeatures.SyncToolSpecification> specifications() {
@@ -88,17 +97,18 @@ public class McpTools {
                         args -> raterHistory(stringArg(args, "name"))),
                 tool("current_ranking",
                         "The running ranking of this season: approved Vinmonopolet-strength beers with people count, effective (weighted) votes, weighted mean, Bayesian score and controversy. No per-person scores.",
-                        noArgs(), args -> ranking.beerRanking()),
+                        noArgs(), args -> blackout.active() ? dark() : ranking.beerRanking()),
                 tool("team_ranking",
                         "This season's ranking as seen by one team's raters only (same Bayesian method, the team's own mean as prior). Teams are listed by season_status.",
                         schema(Map.of("team", Map.of("type", "string", "description", "Team slug, e.g. 'cantara' or 'rebel'")), List.of("team")),
                         args -> {
+                            if (blackout.active()) return dark();
                             Team t = teams.bySlug(stringArg(args, "team"));
                             return ranking.beerRanking(t.getMembers().stream().map(Team.Member::userId).collect(Collectors.toSet()));
                         }),
                 tool("duel_ranking",
                         "This season's sidebar ranking from pairwise duels (Bradley-Terry strengths), independent of how generous each rater is.",
-                        noArgs(), args -> ranking.duelRanking()),
+                        noArgs(), args -> blackout.active() ? dark() : ranking.duelRanking()),
                 tool("season_status",
                         "Where this season stands: dates, days left, when the result is revealed, and totals so far.",
                         noArgs(), args -> status()),

@@ -76,6 +76,7 @@ const NOTE_FIELDS: [keyof BeerPage['notes'][number], string][] = [
       <div class="row" style="align-items: baseline">
         <div>
           <strong v-if="page.season.rank" class="display">Nr. {{ page.season.rank }} av {{ page.season.rankedOf }}</strong>
+          <strong v-else-if="page.season.blackout" class="display">🌒 Mørkelagt til finalen</strong>
           <strong v-else class="display">{{ page.season.tastings ? 'Ikke på listen' : 'Ingen har smakt ennå' }}</strong>
           <div class="muted">
             {{ page.season.tastings }} terningkast fra {{ page.season.people }} {{ page.season.people === 1 ? 'smaker' : 'smakere' }}
@@ -91,6 +92,7 @@ const NOTE_FIELDS: [keyof BeerPage['notes'][number], string][] = [
           <DiceFace :value="i + 1" :size="20" />
         </div>
       </div>
+      <p v-else-if="page.season.blackout" class="muted" style="margin: 8px 0 0">Plassering, snitt og terninger er skjult den siste uka før finalen. Lukene i kalenderen gir et spor om lederen hver dag.</p>
       <p v-else-if="page.season.tastings" class="muted" style="margin: 8px 0 0">Fordelingen vises når {{ page.minShared }} har kastet. {{ page.minShared - page.season.tastings }} til.</p>
       <p v-if="page.duels.wins + page.duels.losses" class="muted" style="margin: 8px 0 0">
         Dueller: {{ page.duels.wins }} {{ page.duels.wins === 1 ? 'seier' : 'seire' }}, {{ page.duels.losses }} tap<template v-if="page.duels.rank"> · nr. {{ page.duels.rank }} i duellrangeringen</template>

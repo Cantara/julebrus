@@ -1,6 +1,6 @@
 ## Kort fortalt
 
-- Vi lagrer navn og e-postadresse fra Google-kontoen din, terningkastene og notatene dine, og lagene du velger
+- Vi lagrer navn og e-postadresse fra Google-kontoen din, terningkastene og notatene dine, lagene du velger og lukene du åpner i adventskalenderen. Svarene dine bak lukene ser bare du
 - Bilder av øletiketter er valgfrie. Ta aldri bilde av personer
 - Alle deltakerne ser navnet ditt, lagene dine, smakingene du har meldt deg på og hvilke øl du har smakt i dag, og smaksnotatene dine uten navn på ølets side når tre har smakt det. De du smaker sammen med, ser kastene dine når alle har kastet
 - Administratorene ser mer, for å godkjenne bilder og oppdage juks

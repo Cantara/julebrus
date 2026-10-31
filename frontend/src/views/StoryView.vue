@@ -56,6 +56,7 @@ const copy = computed<{ title: string; lead: string; sections: Section[]; closin
               'Then the blind pour. The host pours one of the beers on the table without saying which, and everyone else guesses on their own phone. The answer comes out when the last guess is in. Three hits over the season earn you the Blind Taster bauble, and whoever hits most often gets a prize on 23 December.',
               'And you play for a team: Cantara, Rebel, or both. Each team gets its own winner on the night, and the team of the year is the one with most dice rolls per head, so a small team can beat a big one.',
               'Before the last day begins, tip the podium: gold, silver, bronze. Three points for the right beer in the right spot, one for a beer on the podium in the wrong spot. The tips come out with the result, and the best tipster gets a prize too.',
+              'And there is a door to open every day, beer or no beer. Behind it is a question from the archive (which beer won in 2011?), a tasting tip, and a beer on the shelf few have tried. Miss a door and it opens late with a nisse key, which you earn by tasting at a table with someone. When the house has opened enough doors together the star lights up and everyone sees the top ten, without order. The last week the results list goes dark, and each door gives a clue about the leader instead.',
             ],
           },
           {
@@ -109,6 +110,7 @@ const copy = computed<{ title: string; lead: string; sections: Section[]; closin
               'Og så blindsmakingen. Verten heller opp ett av ølene på bordet uten å si hvilket, og resten gjetter på egen telefon. Svaret kommer når den siste har gjettet. Tre riktige i løpet av sesongen gir deg Blindsmaker-kula, og den som treffer oftest får en pris 23. desember.',
               'Og du spiller for et lag: Cantara, Rebel, eller begge. Hvert lag får sin egen vinner på finalekvelden, og årets lag er det med flest terningkast per hode, så et lite lag kan slå et stort.',
               'Før siste dag begynner, tipper du pallen: gull, sølv, bronse. Tre poeng for rett øl på rett plass, ett for et øl på pallen på feil plass. Tipsene kommer fram sammen med resultatet, og årets tipper får en pris.',
+              'Og hver dag er det en luke å åpne, med eller uten øl. Bak den står et spørsmål fra arkivet (hva vant i 2011?), et smakstips og et øl på hylla som få har prøvd. Går du glipp av en luke, åpner du den i ettertid med en nisse-nøkkel, som du får ved å smake ved et bord sammen med noen. Når huset har åpnet nok luker sammen, tennes stjernen og alle ser topp ti, uten rekkefølge. Den siste uka er resultatlista mørkelagt, og hver luke gir i stedet et spor om hvem som leder.',
             ],
           },
           {

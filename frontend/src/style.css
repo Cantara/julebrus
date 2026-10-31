@@ -292,3 +292,10 @@ th { font-size: 0.8rem; color: var(--muted); font-weight: 600; }
 select { font: inherit; width: 100%; padding: 10px 12px; border: 1px solid var(--line); border-radius: 12px; background: var(--card); color: var(--ink); }
 .chart .bar.up { fill: var(--brass); }
 .chart .bar.down { fill: var(--brand); }
+
+/* Advent doors: a small star on an opened door, and today's shut door breathing until it is opened. */
+.door .o { position: absolute; bottom: 3px; left: 5px; font-size: 0.6rem; color: var(--brand); }
+.door:not(.shut), .door.finale { cursor: pointer; }
+.door.waiting { cursor: pointer; animation: waiting 2.4s ease-in-out infinite; }
+@keyframes waiting { 50% { box-shadow: 0 0 0 2px var(--brand), 0 0 22px 6px var(--glow); } }
+@media (prefers-reduced-motion: reduce) { .door.waiting { animation: none; } }
