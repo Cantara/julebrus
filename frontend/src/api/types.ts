@@ -364,6 +364,15 @@ export interface Login {
   email: string
 }
 
+/** A person the Koblinger dropdown offers: any active consent, also to an older text. */
+export interface LoginOption extends Login {
+  consentVersion: string
+  /** the consent is to the current text */
+  currentConsent: boolean
+  /** historic names already tied to this login */
+  linkedNames: string[]
+}
+
 /** One login, as the organiser sees it. Without consent only name and e-mail are known. */
 export interface AdminPerson {
   id: string

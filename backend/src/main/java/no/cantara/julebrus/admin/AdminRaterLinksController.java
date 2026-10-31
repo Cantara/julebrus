@@ -37,6 +37,17 @@ public class AdminRaterLinksController {
     public record Login(UUID id, String displayName, String email) {
     }
 
+    /**
+     * One person the dropdown offers. Linking needs an active consent to any version: every text since the first
+     * (2026-3) covers "koblinger til tidligere år", the later bumps added teams, the wall, shared notes and planned
+     * tastings. So someone who accepted an older text can be linked before they log in again.
+     */
+    public record LoginOption(UUID id, String displayName, String email,
+                              /** newest version with an active consent */ String consentVersion,
+                              /** that version is the current one */ boolean currentConsent,
+                              /** historic names already tied to this login (a person may own several spellings) */ List<String> linkedNames) {
+    }
+
     public record RaterRow(String raterKey, List<Integer> years, long ratingCount,
                            /** linked through raters.csv; cannot be changed from here */ boolean linkedByEmail,
                            String loginEmail,
@@ -85,14 +96,21 @@ public class AdminRaterLinksController {
                 .toList();
     }
 
-    /** Everyone with active consent, for the dropdown: nobody who never consented, declined or withdrew is listed. */
+    /**
+     * Everyone with an active consent to any version, for the dropdown, with the names they already own: nobody
+     * who never consented, declined or withdrew is listed.
+     */
     @GetMapping("/logins")
-    public List<Login> logins() {
+    public List<LoginOption> logins() {
         admin();
-        var active = consents.activeUserIds();
+        Map<UUID, String> versions = consents.newestActiveVersions();
+        Map<UUID, List<String>> owned = claims.approvedOwners().entrySet().stream()
+                .collect(Collectors.groupingBy(Map.Entry::getValue, Collectors.mapping(Map.Entry::getKey, Collectors.toList())));
         return users.findAll().stream()
-                .filter(u -> active.contains(u.getId()))
-                .map(u -> new Login(u.getId(), u.getDisplayName(), u.getEmail()))
+                .filter(u -> versions.containsKey(u.getId()))
+                .map(u -> new LoginOption(u.getId(), u.getDisplayName(), u.getEmail(), versions.get(u.getId()),
+                        ConsentService.CONSENT_VERSION.equals(versions.get(u.getId())),
+                        owned.getOrDefault(u.getId(), List.of()).stream().sorted(String.CASE_INSENSITIVE_ORDER).toList()))
                 .sorted(Comparator.comparing(l -> l.displayName().toLowerCase()))
                 .toList();
     }
@@ -100,7 +118,7 @@ public class AdminRaterLinksController {
     @PostMapping("/link")
     public RaterRow link(@Valid @RequestBody LinkRequest in) {
         User me = admin();
-        if (!consents.activeUserIds().contains(in.userId())) {
+        if (!consents.newestActiveVersions().containsKey(in.userId())) {
             throw new ApiException(HttpStatus.CONFLICT, "NO_ACTIVE_CONSENT", "That person has no active consent");
         }
         claims.adminLink(me.getId(), in.userId(), in.raterKey());
