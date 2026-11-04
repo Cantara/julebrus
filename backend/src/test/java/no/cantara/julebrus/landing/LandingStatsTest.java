@@ -162,10 +162,23 @@ class LandingStatsTest {
         assertThat(STATS.nonIntegerScores()).isEqualTo(RepoData.votes().size() - dice.values().stream().mapToLong(Long::longValue).sum());
 
         try (Stream<Path> files = Files.list(RepoData.DATA.resolve("vinmonopolet"))) {
-            Map<Integer, Integer> lists = files.filter(p -> p.getFileName().toString().matches("\\d{4}\\.csv"))
-                    .collect(Collectors.toMap(p -> Integer.parseInt(p.getFileName().toString().substring(0, 4)), p -> RepoData.csv(p).size()));
+            Map<Integer, List<Map<String, String>>> lists = files.filter(p -> p.getFileName().toString().matches("\\d{4}\\.csv"))
+                    .collect(Collectors.toMap(p -> Integer.parseInt(p.getFileName().toString().substring(0, 4)),
+                            p -> RepoData.csv(p).stream().filter(r -> !List.of("Mjød", "Alkoholfritt øl").contains(r.get("category"))).toList()));
             assertThat(STATS.vinmonopolet()).hasSize(lists.size());
-            STATS.vinmonopolet().forEach(l -> assertThat(l.listings()).as("list " + l.year()).isEqualTo(lists.get(l.year())));
+            STATS.vinmonopolet().forEach(l -> {
+                List<Map<String, String>> beers = lists.get(l.year());
+                assertThat(l.listings()).as("list " + l.year()).isEqualTo(beers.size());
+                if (beers.stream().allMatch(r -> !r.get("country").isBlank())) {
+                    assertThat(l.norwegian()).as("Norwegian " + l.year()).isEqualTo((int) beers.stream().filter(r -> r.get("country").equals("Norge")).count());
+                } else {
+                    assertThat(l.norwegian()).as("no country in " + l.year()).isNull();
+                }
+            });
+            // The 2026 list has 300 rows: 288 beers, of which 198 Norwegian; 9 mead and 3 alcohol-free beers are not counted.
+            HistoryStats.Listing y2026 = STATS.vinmonopolet().stream().filter(l -> l.year() == 2026).findFirst().orElseThrow();
+            assertThat(y2026.listings()).isEqualTo(288);
+            assertThat(y2026.norwegian()).isEqualTo(198);
         }
     }
 

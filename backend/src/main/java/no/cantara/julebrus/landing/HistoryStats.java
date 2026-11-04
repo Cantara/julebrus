@@ -45,7 +45,8 @@ public record HistoryStats(int minVotesForTop, List<Season> seasons, Totals tota
     }
 
     @JsonIgnoreProperties(ignoreUnknown = true)
-    public record Listing(int year, int listings) {
+    /** {@code listings} counts beer only; {@code norwegian} is null for the years whose list does not state a country. */
+    public record Listing(int year, int listings, Integer norwegian) {
     }
 
     public static HistoryStats load() {

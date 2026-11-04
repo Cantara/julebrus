@@ -416,7 +416,8 @@
  "vinmonopolet": [
   {
    "year": 2013,
-   "listings": 83
+   "listings": 83,
+   "norwegian": 30
   },
   {
    "year": 2014,
@@ -460,11 +461,13 @@
   },
   {
    "year": 2025,
-   "listings": 270
+   "listings": 270,
+   "norwegian": 190
   },
   {
    "year": 2026,
-   "listings": 300
+   "listings": 288,
+   "norwegian": 198
   }
  ]
 }

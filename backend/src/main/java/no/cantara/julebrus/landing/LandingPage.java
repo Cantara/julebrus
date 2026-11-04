@@ -193,6 +193,9 @@ public final class LandingPage {
             h.append(fact(n(first.listings()) + "<span class=\"arrow\" aria-hidden=\"true\">→</span>" + n(last.listings()),
                     l("juleøl på Vinmonopolets liste, " + first.year() + " og " + last.year(),
                             "Christmas beers on Vinmonopolet's list, " + first.year() + " and " + last.year())));
+            if (last.norwegian() != null) {
+                h.append(fact(n(last.norwegian()), l("av dem norske juleøl, " + last.year(), "of them Norwegian Christmas beers, " + last.year())));
+            }
         }
         h.append(fact(n(season.maxTastingsPerDay()), l("smakinger per person per dag, ikke flere", "tastings per person per day, no more")))
                 .append("</ul>\n</div>\n</header>\n");
@@ -270,10 +273,10 @@ public final class LandingPage {
                     .append("<span class=\"x\">").append(yy).append("</span></div>\n");
         }
         h.append("</div>\n<p class=\"note\">").append(l(
-                        "Antall oppføringer i listene i <code>data/vinmonopolet</code>. " + from
-                                + " er Vinmonopolets egen liste; årene etter er avskrifter av lanseringslistene fra ølblogger, så en skrivefeil der er en skrivefeil her. 2021 mangler.",
-                        "Number of listings in <code>data/vinmonopolet</code>. " + from
-                                + " is Vinmonopolet's own list; the later years are beer blogs' transcriptions of the launch lists, so a typo there is a typo here. 2021 is missing."))
+                        "Antall øl i listene i <code>data/vinmonopolet</code>; mjød og alkoholfritt øl er ikke tatt med. " + from + " og " + to
+                                + " er Vinmonopolets egne lister; årene imellom er avskrifter av lanseringslistene fra ølblogger, så en skrivefeil der er en skrivefeil her. 2021 mangler.",
+                        "Number of beers in the lists in <code>data/vinmonopolet</code>; mead and alcohol-free beer are not counted. " + from + " and " + to
+                                + " are Vinmonopolet's own lists; the years in between are beer blogs' transcriptions of the launch lists, so a typo there is a typo here. 2021 is missing."))
                 .append("</p>\n");
         table(h, l("Vis som tabell", "Show as a table"), new String[]{l("År", "Year"), l("Oppføringer", "Listings")},
                 vm.stream().map(x -> new String[]{String.valueOf(x.year()), n(x.listings())}).toList());

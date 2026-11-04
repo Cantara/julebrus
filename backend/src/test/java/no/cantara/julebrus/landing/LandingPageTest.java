@@ -52,6 +52,17 @@ class LandingPageTest {
     }
 
     @Test
+    void theVinmonopoletFactCountsBeersOnlyAndShowsTheNorwegianShare() throws Exception {
+        String nb = fetch(get("/")).getContentAsString();
+        // 2026 list: 300 rows, 288 beers (mead and alcohol-free beer not counted), 198 of them Norwegian.
+        assertThat(nb).contains(">83<").contains(">288<").contains("juleøl på Vinmonopolets liste, 2013 og 2026")
+                .contains(">198<").contains("av dem norske juleøl, 2026").contains("mjød og alkoholfritt øl er ikke tatt med")
+                .doesNotContain(">300<");
+        String en = fetch(get("/").param("lang", "en")).getContentAsString();
+        assertThat(en).contains("of them Norwegian Christmas beers, 2026").contains("mead and alcohol-free beer are not counted");
+    }
+
+    @Test
     void anonymousRootIsTheLandingPageWithAStrictPolicy() throws Exception {
         for (MockHttpServletRequestBuilder req : new MockHttpServletRequestBuilder[]{get("/"), get("/").param("lang", "en"),
                 get("/velkommen"), get("/velkommen/").param("lang", "en"), get("/welcome"), get("/welcome/").param("lang", "en"),
