@@ -1,4 +1,4 @@
-# Vinmonopolet juleøl lists, 2013-2025 (2021 missing)
+# Vinmonopolet juleøl lists, 2013-2026 (2021 missing)
 
 Product facts only: name, article number (where the source has it), price, ABV, brewery, style, range. The sources' own text, tables and pictures are not
 copied, and the fetched pages are not kept in the repository.
@@ -7,11 +7,11 @@ copied, and the fetched pages are not kept in the repository.
 
 - `<year>.csv`: the listing of one year, exactly as the source gives it. Columns `year, article_no, name, brewery, style, category, selection, country, region,
   organic, abv_percent, volume_l, price_nok`; unknown = empty. `article_no` is empty for 2014-2020 (those posts have no article numbers).
-- `listings.csv`: all years in one file (2,518 listings) with `product_article_no` and `match`: `given` (the source states the number), `name` (an UNAMBIGUOUS exact
+- `listings.csv`: all years in one file (2,818 listings) with `product_article_no` and `match`: `given` (the source states the number), `name` (an UNAMBIGUOUS exact
   name match to a numbered product; case, accents, punctuation and a trailing year ignored), `ambiguous` (the name sits under several article numbers, so no link) or
   `none`. Inferred links are guesses from names: treat `match = name` as likely, not certain.
-- `products.csv`: one row per article number (662). Attributes come from the NEWEST numbered year that states them (brewery and style exist only in 2025, ABV in 2013,
-  2023 and 2025). `years_given` and `years_inferred` are kept apart; `price_by_year` uses both; `abv_conflict = 1` marks numbers where two years state different ABV;
+- `products.csv`: one row per article number (765). Attributes come from the NEWEST numbered year that states them (brewery and style exist only in 2025 and 2026, ABV in 2013,
+  2023, 2025 and 2026). `years_given` and `years_inferred` are kept apart; `price_by_year` uses both; `abv_conflict = 1` marks numbers where two years state different ABV;
   `names_seen` lists renames. A few beers sit under several article numbers (other pack sizes or batches): not merged.
 
 ## Sources
@@ -31,6 +31,7 @@ copied, and the fetched pages are not kept in the repository.
 | 2023 | 285 | number, name, ABV, price | https://thegundersen.wordpress.com/2023/10/29/juleol-2023-vinmonopolet/ |
 | 2024 | 262 | number, name, price | https://thegundersen.wordpress.com/2024/10/31/juleol-2024-vinmonopolet/ |
 | 2025 | 270 | number, name, brewery, style, country and region, ABV, volume, price incl. deposit | https://www.olbloggen.no/vinmonopolet-nyheter/disse-juleolene-kommer-pa-vinmonopolet-5-november-2025/ (a table) |
+| 2026 | 300 | number, name, brewery, range, group, country and region, ABV, volume, price incl. deposit | Vinmonopolet's own list "Juleøl 2026" (xlsx, introduced 04.11.2026), provided by the owner; all 300 rows are kept, incl. 9 meads and 3 alcohol-free beers (`category` says which) |
 
 2014-2025 are SECONDARY sources (two beer blogs transcribing Vinmonopolet's launch lists), not Vinmonopolet's own files: a typo in a blog is a typo here. "BU/TU" is read as
 the ordering range and the additional range (an inference, not stated). Prices are NOK as the source states them (2025 "inkl pant"; for the other years the source does not say).
@@ -43,6 +44,7 @@ site was fetched for these files (their robots.txt asks automated visits to stay
 ```
 python3 tools/extract_vinmonopolet_xlsx.py 2013 <path>/36897787-Juleøl-2013.xlsx Ark1
 python3 tools/extract_vinmonopolet_blog.py <2014..2020|2022..2025> <saved page.html>
+python3 tools/extract_vinmonopolet_xlsx.py 2026 "<path>/Juleøl 2026.xlsx"   # Vinmonopolet's own 2026 layout (Artikkelnr, Artikkelnavn, ...)
 python3 tools/build_vinmonopolet_products.py        # listings.csv and products.csv
 ```
 
@@ -76,3 +78,7 @@ facts in four tiers (confirmed by a person, matched, probable, guess) and a pers
 
 ## Images (decision 2026-10-24)
 Product photos are not stored here and not hotlinked: the app's images come from its users' own label photos (see DESIGN.md). The lists have no image column.
+
+## 2026 list (2026-11-04)
+
+`2026.csv` is Vinmonopolet's own file, not a blog transcription. `style` is the Varegruppe after the first comma and uses Vinmonopolet's Norwegian group names ("Mørk lager", "Porter & stout"), where 2025's blog table used English style names; `category` is the part before the comma (`Øl`, `Mjød`, `Alkoholfritt øl`), `selection` the ordering range (Bestillingsutvalget, Tilleggsutvalget, Partiutvalget). 197 of the 300 article numbers were already in `products.csv` from earlier years, 103 are new (765 products). The app's startup import only INSERTS products it has not seen, so an existing product keeps the attributes (and style wording) it was imported with; new ones get the Norwegian style names. Seven names are listed in several pack sizes (separate article numbers, not merged). Vinmonopolet's terms for its data have not been read.

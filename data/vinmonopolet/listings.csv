@@ -141,7 +141,7 @@ year,article_no,name,selection,price_nok,abv_percent,product_article_no,match
 2014,,Sagene Sterk Jul,Bestillingsutvalget,,,1823202,name
 2014,,Arendals Bryggeri Julen 1839,Bestillingsutvalget,,,,none
 2014,,Aass Juleøl Premium,Bestillingsutvalget,,,,ambiguous
-2014,,Aass Juleøl Vellagret,Bestillingsutvalget,,,1824102,name
+2014,,Aass Juleøl Vellagret,Bestillingsutvalget,,,,ambiguous
 2014,,7 Fjell 7 Sorter Christmas Ale,Bestillingsutvalget,,,1829302,name
 2014,,7 Fjell Vinter American Strong Ale,Bestillingsutvalget,,,,none
 2014,,Austmann Stille Natt,Bestillingsutvalget,,,1899902,name
@@ -190,7 +190,7 @@ year,article_no,name,selection,price_nok,abv_percent,product_article_no,match
 2014,,Schouskjelleren Mikrobryggeri Juleøl,Tilleggsutvalget,,,,none
 2015,,7 Fjell 7 Sorter Christmas Ale,,,,1829302,name
 2015,,Aass Juleøl Premium,,,,,ambiguous
-2015,,Aass Juleøl Vellagret,,,,1824102,name
+2015,,Aass Juleøl Vellagret,,,,,ambiguous
 2015,,Amundsen Bryggeri Jól,,,,,none
 2015,,Arendal 1839 Juleøl Ekstra Stærk,,,,3530002,name
 2015,,Atna Julenisjeøl,,,,9016702,name
@@ -351,7 +351,7 @@ year,article_no,name,selection,price_nok,abv_percent,product_article_no,match
 2016,,7 Fjell 7 Sorter Christmas Ale,,,,1829302,name
 2016,,7 Fjell Sinterklaas Belgian Christmas Ale,,,,,none
 2016,,Aass Juleøl Premium,,,,,ambiguous
-2016,,Aass Juleøl Vellagret,,,,1824102,name
+2016,,Aass Juleøl Vellagret,,,,,ambiguous
 2016,,Aja Saison de Noël,,,,,none
 2016,,Aja Sterk belgisk jul 2015,,,,,none
 2016,,Amundsen Bryggeri Jól,,,,,none
@@ -503,7 +503,7 @@ year,article_no,name,selection,price_nok,abv_percent,product_article_no,match
 2016,,Noël de Silenrieux,,,,5932402,name
 2016,,Nørrebro Økologisk Julebryg,,,,178402,name
 2016,,Nørrebro Økologisk Stjernestund Klosterøl,,,,892102,name
-2016,,Pater Lieven Kerst Pater Special Christmas Beer,,,,,none
+2016,,Pater Lieven Kerst Pater Special Christmas Beer,,,,21022401,name
 2016,,Pigeo Nöel,,,,,none
 2016,,Poppels Julporter Tvåtusensexton,,,,,none
 2016,,Renaissance Baltic Cherry Christmas Porter,,,,,none
@@ -527,7 +527,7 @@ year,article_no,name,selection,price_nok,abv_percent,product_article_no,match
 2017,,7 Fjell 7 Sorter Christmas Ale,,,,1829302,name
 2017,,7 Fjell Sinterklaas Belgian Christmas Ale,,,,,none
 2017,,Aass Juleøl Premium,,,,,ambiguous
-2017,,Aass Juleøl Vellagret,,,,1824102,name
+2017,,Aass Juleøl Vellagret,,,,,ambiguous
 2017,,Aja Julekvad,,,,,none
 2017,,Aja Juovla,,,,,none
 2017,,Aja Saison de Noël,,,,,none
@@ -580,7 +580,7 @@ year,article_no,name,selection,price_nok,abv_percent,product_article_no,match
 2017,,Harstad Jul,,,,,none
 2017,,Hegg Yule Hegg,,,,,none
 2017,,Hogna Blitzen JuleIPA,,,,10491202,name
-2017,,Hogna Vixen,,,,10491002,name
+2017,,Hogna Vixen,,,,,ambiguous
 2017,,Holtens Julebrygg,,,,1832701,name
 2017,,Inderøy Gårdsbryggeri Dommpapp Quadrupel,,,,7903902,name
 2017,,Inderøy Gårdsbryggeri Musemor Old Ale,,,,6450502,name
@@ -699,7 +699,7 @@ year,article_no,name,selection,price_nok,abv_percent,product_article_no,match
 2017,,Noël de Silenrieux,,,,5932402,name
 2017,,Nørrebro Julebryg,,,,,none
 2017,,Nørrebro Stjernestund Klosterøl,,,,,none
-2017,,Pater Lieven Kerst Pater Special Christmas,,,,,none
+2017,,Pater Lieven Kerst Pater Special Christmas,,,,6396102,name
 2017,,Põhjala Jõuluöö,,,,7917902,name
 2017,,Poppels Julale,,,,,none
 2017,,Poppels Julporter,,,,,none
@@ -731,7 +731,7 @@ year,article_no,name,selection,price_nok,abv_percent,product_article_no,match
 2018,,7 Fjell Enda mer Jul enn Jesus Milk & Cookie Imperial Brown Ale,Bestillingsutvalget,59.9,,,none
 2018,,7 Fjell Sinterklaas Belgian Christmas Ale,Bestillingsutvalget,56.9,,,none
 2018,,Aass Juleøl Premium,Bestillingsutvalget,39.9,,,ambiguous
-2018,,Aass Juleøl Vellagret,Bestillingsutvalget,49.9,,1824102,name
+2018,,Aass Juleøl Vellagret,Bestillingsutvalget,49.9,,,ambiguous
 2018,,Aja Julekvad,Bestillingsutvalget,69.9,,,none
 2018,,Aja Julekvad Farmhouse Edition,Bestillingsutvalget,144.9,,,none
 2018,,Amundsen Zygoat Christmas,Bestillingsutvalget,99,,,none
@@ -784,7 +784,7 @@ year,article_no,name,selection,price_nok,abv_percent,product_article_no,match
 2018,,Harstad Bryggeri Jul 2018,Bestillingsutvalget,59.9,,10484802,name
 2018,,Harstad Bryggeri Trippel Jul,Bestillingsutvalget,69.9,,10484902,name
 2018,,Hogna Blitzen JuleIPA,Tilleggsutvalget,77.6,,10491202,name
-2018,,Hogna Vixen,Tilleggsutvalget,77.8,,10491002,name
+2018,,Hogna Vixen,Tilleggsutvalget,77.8,,,ambiguous
 2018,,Holtens Julebrygg,Tilleggsutvalget,139.3,,1832701,name
 2018,,Hunsfos Bryggeri Direktørens Jul,Tilleggsutvalget,57,,10487202,name
 2018,,Hunsfos Bryggeri Julewit,Tilleggsutvalget,52,,,none
@@ -857,7 +857,7 @@ year,article_no,name,selection,price_nok,abv_percent,product_article_no,match
 2018,,Delirium Christmas,Bestillingsutvalget,149.9,,4371601,name
 2018,,Diôle Biere de Noël,Bestillingsutvalget,69.9,,,none
 2018,,Gauloise Christmas Bocq,Tilleggsutvalget,54.9,,4156401,name
-2018,,Gordon Xmas,Bestillingsutvalget,74.9,,10436402,name
+2018,,Gordon Xmas,Bestillingsutvalget,74.9,,,ambiguous
 2018,,Gouden Carolus Christmas,Bestillingsutvalget,149.9,,,ambiguous
 2018,,Gouden Carolus Christmas,Bestillingsutvalget,84,,,ambiguous
 2018,,Julemandens Trøst,Bestillingsutvalget,59.9,,4847002,name
@@ -866,7 +866,7 @@ year,article_no,name,selection,price_nok,abv_percent,product_article_no,match
 2018,,N’Ice Chouffe,Bestillingsutvalget,129.9,,5667101,name
 2018,,N’Ice Chouffe Donker Winter Bier,Bestillingsutvalget,64.9,,,none
 2018,,Noël de Silenrieux,Bestillingsutvalget,68.9,,5932402,name
-2018,,Pater Lieven Kerst Pater Special Christmas,Bestillingsutvalget,78.6,,,none
+2018,,Pater Lieven Kerst Pater Special Christmas,Bestillingsutvalget,78.6,,6396102,name
 2018,,St Feuillien Nöel,Bestillingsutvalget,59.9,,,ambiguous
 2018,,St Feuillien Nöel,Bestillingsutvalget,279.9,,,ambiguous
 2018,,St. Bernardus Christmas Ale,Bestillingsutvalget,132,,,ambiguous
@@ -949,7 +949,7 @@ year,article_no,name,selection,price_nok,abv_percent,product_article_no,match
 2019,,7 Fjell No Cake for You! Christmas Imp Stout,,89.9,,,none
 2019,,7 Fjell The Grinch Stolen IPA,,57,,,none
 2019,,Aass Juleøl Premium,,39.9,,,ambiguous
-2019,,Aass Juleøl Vellagret,,49.9,,1824102,name
+2019,,Aass Juleøl Vellagret,,49.9,,,ambiguous
 2019,,Aass UTEN Juleøl,,23.1,,14610302,name
 2019,,Aja Julekvad,,69.9,,,none
 2019,,Amundsen Ashes to Ashes Imperial Stout,,89.9,,,ambiguous
@@ -1020,7 +1020,7 @@ year,article_no,name,selection,price_nok,abv_percent,product_article_no,match
 2019,,Harstad Bryggeri Julenøtter,,59.8,,,none
 2019,,Harstad Bryggeri Trippel Jul,,62.6,,10484902,name
 2019,,Hogna Blitzen JuleIPA,,78.1,,10491202,name
-2019,,Hogna Vixen,,77.7,,10491002,name
+2019,,Hogna Vixen,,77.7,,,ambiguous
 2019,,Holtens Julebrygg,,139.3,,1832701,name
 2019,,Hubertus Noelle,,64.9,,,none
 2019,,Hunsfos Bryggeri Direktørens Jul,,70,,10487202,name
@@ -1139,7 +1139,7 @@ year,article_no,name,selection,price_nok,abv_percent,product_article_no,match
 2019,,Fanø Bryghus Julebryg,,75,,195202,name
 2019,,Gauloise Christmas Bocq,,54.8,,4156401,name
 2019,,Glazen Toren Canaster Winterscotch,,134.9,,6992901,name
-2019,,Gordon Xmas,,59.9,,10436402,name
+2019,,Gordon Xmas,,59.9,,,ambiguous
 2019,,Gouden Carolus Christmas,,149.9,,,ambiguous
 2019,,Gouden Carolus Christmas,,69.9,,,ambiguous
 2019,,Hornbeer Helge Barley Wine,,99.9,,,none
@@ -1169,7 +1169,7 @@ year,article_no,name,selection,price_nok,abv_percent,product_article_no,match
 2019,,N’Ice Chouffe,,129.9,,5667101,name
 2019,,N’Ice Chouffe,,64.9,,5667101,name
 2019,,Noël de Silenrieux,,70,,5932402,name
-2019,,Pater Lieven Kerst Pater Special Christmas,,64.9,,,none
+2019,,Pater Lieven Kerst Pater Special Christmas,,64.9,,6396102,name
 2019,,Põhjala Jõuluöö,,64.8,,7917902,name
 2019,,Põhjala Leevike,,59.9,,,none
 2019,,Samuel Smith’s Winter Welcome Ale,,64.9,,5667301,name
@@ -1197,7 +1197,7 @@ year,article_no,name,selection,price_nok,abv_percent,product_article_no,match
 2020,,7 Fjell Scrooge Christmas Bonus IPA,BU,56.9,,,none
 2020,,7 Fjell Silent Night Calm Christmas Ale,BU,57.9,,,none
 2020,,Aass Juleøl Premium,BU,40,,,ambiguous
-2020,,Aass Juleøl Vellagret,BU,50,,1824102,name
+2020,,Aass Juleøl Vellagret,BU,50,,,ambiguous
 2020,,Amundsen Ashes to Ashes Imperial Stout 2019,BU,96.9,,,ambiguous
 2020,,Amundsen Ashes to Ashes Imperial Stout 2020,BU,96.9,,,ambiguous
 2020,,Amundsen Barrel Aged Upside Down Christmas Cake Pastry Stout,BU,131.9,,,none
@@ -1275,7 +1275,7 @@ year,article_no,name,selection,price_nok,abv_percent,product_article_no,match
 2020,,Harstad Bryggeri Trippel Jul,TU,62.6,,10484902,name
 2020,,Hogna Blitzen JuleIPA,TU,79.9,,10491202,name
 2020,,Hogna Cupid,TU,119.9,,12309102,name
-2020,,Hogna Vixen,TU,79.9,,10491002,name
+2020,,Hogna Vixen,TU,79.9,,,ambiguous
 2020,,Hogna Vixen 2020 BA,TU,119.5,,,none
 2020,,Holtens Julebrygg,TU,150,,1832701,name
 2020,,Hubertus Noelle,TU,64.9,,,none
@@ -1336,7 +1336,7 @@ year,article_no,name,selection,price_nok,abv_percent,product_article_no,match
 2020,,Ringnes Juleøl,BU,41,,,ambiguous
 2020,,Sagene Sterk Jul,BU,51.9,,1823202,name
 2020,,Sagene Tannjul,BU,72,,,ambiguous
-2020,,Salikatt New England Christmas,TU,69.9,,18694902,name
+2020,,Salikatt New England Christmas,TU,69.9,,,ambiguous
 2020,,Salikatt Theokars Jul,TU,99.9,,,none
 2020,,Schouskjelleren Mikrobryggeri The Beginning Julekveik,BU,63,,,none
 2020,,Schouskjelleren Mikrobryggeri The Middle Brown Ale – jul,BU,63,,,none
@@ -2517,3 +2517,303 @@ year,article_no,name,selection,price_nok,abv_percent,product_article_no,match
 2025,1824002,Aass Juleøl Premium,,40.9,6.5,1824002,given
 2025,20008602,Aass Juleøl Premium,,40.9,6.5,20008602,given
 2025,1824102,Aass Juleøl Vellagret,,49.9,9,1824102,given
+2026,194202,St Feuillien Nöel,Bestillingsutvalget,79.9,9,194202,given
+2026,194301,Kinn Tomasmesse,Bestillingsutvalget,139.9,10.5,194301,given
+2026,194405,St Feuillien Nöel,Bestillingsutvalget,399.9,9,194405,given
+2026,896702,Fredrikstad Juleøl,Bestillingsutvalget,49.9,6.5,896702,given
+2026,1824102,Aass Juleøl Vellagret,Bestillingsutvalget,50,9,1824102,given
+2026,1830302,Berentsens Stelliger Divum Vintage 2021,Bestillingsutvalget,224.8,19,1830302,given
+2026,1832202,Lofotpils Julebrygg,Bestillingsutvalget,58.6,7,1832202,given
+2026,1836401,St. Bernardus Christmas Ale,Bestillingsutvalget,159,10,1836401,given
+2026,1857501,Kinn Solsnu,Bestillingsutvalget,129.9,7.5,1857501,given
+2026,3535402,Hansa Juleøl,Bestillingsutvalget,46.9,6.5,3535402,given
+2026,3577802,Nøgne Ø Rød Jul,Bestillingsutvalget,74.9,8,3577802,given
+2026,4371601,Delirium Christmas,Bestillingsutvalget,169.9,10,4371601,given
+2026,4679102,Nøgne Ø God Jul,Bestillingsutvalget,74.9,8.5,4679102,given
+2026,4847101,Gouden Carolus Christmas,Bestillingsutvalget,179.9,10,4847101,given
+2026,4847102,Gouden Carolus Christmas,Bestillingsutvalget,84.9,10,4847102,given
+2026,4847202,Abbaye du Val-Dieu Bière de Noël,Bestillingsutvalget,63.6,7,4847202,given
+2026,5343801,Jacobsen Golden Naked Christmas Ale,Bestillingsutvalget,125.9,7.5,5343801,given
+2026,5667101,N'Ice Chouffe Juleøl,Bestillingsutvalget,149.9,10,5667101,given
+2026,5667301,Samuel Smith's Winter Welcome Ale,Bestillingsutvalget,84.9,6,5667301,given
+2026,5992701,Corsendonk Christmas Ale,Bestillingsutvalget,164.9,8.1,5992701,given
+2026,6394202,Midtfyns Belgian Christmas Blonde,Bestillingsutvalget,99.9,7.2,6394202,given
+2026,6396102,Pater Lieven Kerst Pater Special Christmas,Bestillingsutvalget,86.1,9,6396102,given
+2026,6763202,Små Vesen Jolereia Joleøl frå Valdres 2016,Bestillingsutvalget,72.9,7.5,6763202,given
+2026,6817202,Dahls Juleøl,Bestillingsutvalget,45.9,6,6817202,given
+2026,7904202,N'Ice Chouffe Juleøl,Bestillingsutvalget,76.9,10,7904202,given
+2026,7910502,Ringnes Juleøl,Bestillingsutvalget,42.9,6.3,7910502,given
+2026,7927101,Liefmans Glühkriek Juleøl,Bestillingsutvalget,159.9,6,7927101,given
+2026,7970702,Brasserie de la Senne Schieve X-mas,Bestillingsutvalget,65,8,7970702,given
+2026,7977002,Berentsens The Holy Bock Vanilla,Bestillingsutvalget,79.9,7.5,7977002,given
+2026,9021302,Midtfyns Jule Stout,Bestillingsutvalget,99.9,7.6,9021302,given
+2026,9520801,Kinn Julefred,Bestillingsutvalget,122.9,6.5,9520801,given
+2026,10392202,Lade Gaards Juleøl Sterk,Bestillingsutvalget,54.9,6.5,10392202,given
+2026,10436402,Gordon Xmas,Bestillingsutvalget,74.9,8.8,10436402,given
+2026,10484401,Abbaye du Val-Dieu Bière de Noël,Bestillingsutvalget,141.4,7,10484401,given
+2026,10485602,Svalbard Bryggeri Spitsbergen Juleøl,Bestillingsutvalget,65,7,10485602,given
+2026,10487202,Hunsfos Bryggeri Direktørens Jul,Bestillingsutvalget,109,9.3,10487202,given
+2026,11297002,Brulandselva Gneten Julenisse,Bestillingsutvalget,89.8,9,11297002,given
+2026,11297102,Ringnes Julebokk,Bestillingsutvalget,51.9,9,11297102,given
+2026,11297902,Midtfyns Funky Santa,Bestillingsutvalget,99.9,8.5,11297902,given
+2026,11298002,Midtfyns Santas IPA,Bestillingsutvalget,99.9,6.5,11298002,given
+2026,11445602,Mc Chouffe Christmas Edition,Bestillingsutvalget,64.9,8,11445602,given
+2026,12269502,Nøgne Ø Ekstra God Jul,Bestillingsutvalget,109.9,15.5,12269502,given
+2026,12272402,Amundsen Ashes to Ashes Imperial Stout 2025,Bestillingsutvalget,99.9,10.5,12272402,given
+2026,12272602,St. Bernardus Christmas Ale,Bestillingsutvalget,77.9,10,12272602,given
+2026,12308102,Rothaus Eis Zäpfle,Bestillingsutvalget,59.9,5.6,12308102,given
+2026,13470901,Liefmans Kriek Brut,Bestillingsutvalget,154.9,6,13470901,given
+2026,13620802,Nøgne Ø Julequad,Bestillingsutvalget,92.9,12,13620802,given
+2026,13623202,Grünerløkka Brygghus Løkka Jul,Bestillingsutvalget,98.9,7.5,13623202,given
+2026,13638302,Amundsen Bourbon Barrel Aged Sticky Little Fingers Ultra Pastry Stout,Bestillingsutvalget,149.6,12,13638302,given
+2026,13646602,Shepherd Neame Christmas Ale,Bestillingsutvalget,74,7,13646602,given
+2026,13646902,Christiania Bryggeri Fatlagret Julesnadder,Bestillingsutvalget,89,11,13646902,given
+2026,14812802,Nøgne Ø Nordic Noir 2,Bestillingsutvalget,229.9,15.5,14812802,given
+2026,14813102,Nøgne Ø Grønn Jul,Bestillingsutvalget,49.9,7,14813102,given
+2026,14814702,"Berentsens Baby Stelliger, Second release, 2026",Bestillingsutvalget,239,14.5,14814702,given
+2026,14829701,Kinn Julebukk,Bestillingsutvalget,134.9,9.5,14829701,given
+2026,14852002,Haandbryggeriet Nissefar,Bestillingsutvalget,86.9,7,14852002,given
+2026,14852102,Haandbryggeriet Nissemor,Bestillingsutvalget,83.9,6,14852102,given
+2026,14852202,Haandbryggeriet Julepils,Bestillingsutvalget,81.9,5.5,14852202,given
+2026,14883102,Amundsen Bourbon BA Ashes to Ashes Christmas,Bestillingsutvalget,119.9,11.5,14883102,given
+2026,14883202,Flåklypa Spesial Juleøl 2024,Bestillingsutvalget,69.9,6,14883202,given
+2026,16356902,Ægir Nissebokk Julebrygg,Bestillingsutvalget,86.9,7,16356902,given
+2026,16377802,Graff Tre Konger Trippelbokk,Bestillingsutvalget,94.5,10,16377802,given
+2026,16434701,Damm Cerveza de Navidad 2024,Bestillingsutvalget,97.9,6.5,16434701,given
+2026,16437902,Amager Secret Santa Quadrupel,Bestillingsutvalget,90.1,10.5,16437902,given
+2026,16438002,Amager Yule Juice,Bestillingsutvalget,75.9,6.5,16438002,given
+2026,16438102,Amager Reindeer Fuel 2025,Bestillingsutvalget,91.1,10,16438102,given
+2026,16438202,Amager Winter Wizard,Bestillingsutvalget,91.7,12,16438202,given
+2026,16447102,Cervisiam Missile Toe Cranberry & Cherry Berliner Weisse 2023,Bestillingsutvalget,97.7,6,16447102,given
+2026,16460002,Haandbryggeriet Bestefar,Bestillingsutvalget,97.9,9,16460002,given
+2026,16460105,Gouden Carolus Christmas,Bestillingsutvalget,439.9,10,16460105,given
+2026,16465202,Amundsen Uncle Pop Christmas Soda Float,Bestillingsutvalget,93.5,6,16465202,given
+2026,16472702,Graff Jul Black IPA,Bestillingsutvalget,63.6,6.5,16472702,given
+2026,16472802,Graff Julejuice Dobbel IPA,Bestillingsutvalget,68.1,7.5,16472802,given
+2026,16472902,Graff Julebokk,Bestillingsutvalget,74.5,8.8,16472902,given
+2026,16473202,Graff St. Arnold Quadrupel,Bestillingsutvalget,108.6,12,16473202,given
+2026,18557002,Nøgne Ø Nordic Noir 3 Lupiac Ed.,Bestillingsutvalget,259.9,15,18557002,given
+2026,18557102,Nøgne Ø Hvit Jul,Bestillingsutvalget,59.9,5.5,18557102,given
+2026,18557402,Nøgne Ø Nordic Noir 3 Brandy Ed.,Bestillingsutvalget,259.9,15,18557402,given
+2026,18592602,Oslo Brewing Voksenjulebrus,Bestillingsutvalget,69.9,6,18592602,given
+2026,18617601,Kinn Polarnatt,Bestillingsutvalget,122.9,6,18617601,given
+2026,18617701,Kinn Julelys,Bestillingsutvalget,112.9,5.5,18617701,given
+2026,18651302,Amager California Christmas,Bestillingsutvalget,91.1,11,18651302,given
+2026,18654905,Duvel Christmas Edition,Bestillingsutvalget,364.9,8.5,18654905,given
+2026,18659901,Gordon Xmas,Bestillingsutvalget,179.9,8.8,18659901,given
+2026,18661205,Big Chouffe Christmas Edition 2024,Bestillingsutvalget,349.9,8,18661205,given
+2026,18661402,Graff Julebokk Fatlagret,Bestillingsutvalget,98.5,8.8,18661402,given
+2026,18661602,Oslo Brewing Christmas Kveik NEIPA,Bestillingsutvalget,75,7.4,18661602,given
+2026,18663002,To Øl X-Mas Quad BA 2025,Bestillingsutvalget,139.9,12.1,18663002,given
+2026,18663302,Grünerløkka Brygghus Løkka Julebokk,Bestillingsutvalget,89.9,6.5,18663302,given
+2026,18688602,Lindheim Bestemors Jul,Bestillingsutvalget,115,6,18688602,given
+2026,18688702,Lindheim Bestefars Jul,Bestillingsutvalget,115,6,18688702,given
+2026,18688802,Emelisse Irish Red Ale Cognac BA Christmas Edition,Bestillingsutvalget,103.5,10.3,18688802,given
+2026,18689802,Einbecker Winterbock,Bestillingsutvalget,49.9,7.5,18689802,given
+2026,18690702,Disko Brewing Blot IPA,Bestillingsutvalget,114.9,8,18690702,given
+2026,18693601,Straffe Hendrik Xmas Blend 2026,Bestillingsutvalget,219.9,11,18693601,given
+2026,18693902,Amundsen Night Sleigher Double IPA,Bestillingsutvalget,110.3,7.5,18693902,given
+2026,18697002,Små Vesen Rakfiskøl,Bestillingsutvalget,78.7,6,18697002,given
+2026,18697402,Tøsse Brygghus Møllarens Jul,Bestillingsutvalget,72,6.5,18697402,given
+2026,18697902,Haandbryggeriet Halvors Jul,Bestillingsutvalget,106.9,10,18697902,given
+2026,18700702,Cervisiam Missile Toe Barrel Aged Berliner Weisse,Bestillingsutvalget,120.6,6,18700702,given
+2026,18700902,Cervisiam Christmas Evil Berry Sour,Bestillingsutvalget,61.5,5.7,18700902,given
+2026,18984002,De Dolle Brouwers Stille Nacht 2026,Bestillingsutvalget,154.5,12,18984002,given
+2026,19720602,St. Peter's Winter Ale,Bestillingsutvalget,93.9,6.5,19720602,given
+2026,19756402,Bernard Bohemian Winter Ale,Bestillingsutvalget,80,8.2,19756402,given
+2026,19822702,La Chouffe Christmas Edition,Bestillingsutvalget,88.9,8,19822702,given
+2026,19840002,Amager Cardamom for Christmas,Bestillingsutvalget,80.8,8.5,19840002,given
+2026,19841902,E.C. Dahls Julemysteriet Fatlagret,Bestillingsutvalget,95.9,11,19841902,given
+2026,19855202,Mack Vellagret Juleøl 2025,Bestillingsutvalget,52.9,6.5,19855202,given
+2026,19862102,Cervisiam Barrel Aged X-mas Smorbidly Obese,Bestillingsutvalget,143.3,11.8,19862102,given
+2026,19884602,Oslo Brewing Oak & Ember Barrel Aged Belgian Ale,Bestillingsutvalget,108.6,8.5,19884602,given
+2026,19888302,Slogen Julebukk 2025,Bestillingsutvalget,83.6,7.1,19888302,given
+2026,19889602,Berentsens Julegull,Bestillingsutvalget,59.9,6.5,19889602,given
+2026,19895002,Eucharist Singularity Incarnate,Bestillingsutvalget,96.8,8,19895002,given
+2026,19895102,Eucharist The Waiting Dark,Bestillingsutvalget,94.3,7.5,19895102,given
+2026,19897202,To Øl Jule Sovs Hazy IPA,Bestillingsutvalget,91.9,6.1,19897202,given
+2026,19902202,Haandbryggeriet Julebukk,Bestillingsutvalget,97.9,8,19902202,given
+2026,19902902,Oslo Brewing Casked in Gold Barrel Aged Belgian Ale,Bestillingsutvalget,119.5,8.5,19902902,given
+2026,19903002,Oslo Brewing Peachy Xmas Barrel Aged Belgian Ale,Bestillingsutvalget,119.5,8.5,19903002,given
+2026,19906102,Cervisiam X-Mas Barrel Aged Pecanisher,Bestillingsutvalget,143.6,11.3,19906102,given
+2026,19908302,Haandbryggeriet Akevittfatlagret Nissemor,Bestillingsutvalget,97.9,7,19908302,given
+2026,19936102,Amundsen Santas Hop Sack Hazy Orange IPA,Bestillingsutvalget,90.6,5.3,19936102,given
+2026,19939602,Kretcher Gingerdead Imperial Stout Barrel Aged,Bestillingsutvalget,143.5,11.5,19939602,given
+2026,19939702,Krecher Rudolphs Return Tropical Fruited Sour,Bestillingsutvalget,91.6,6,19939702,given
+2026,19946702,Põhjala Julenetter 2025,Bestillingsutvalget,64.9,8,19946702,given
+2026,19946802,Põhjala JulePorter 2026,Bestillingsutvalget,89.9,10,19946802,given
+2026,19946902,Põhjala Første Snø Cellar Series BA Imperial Stout 2025,Bestillingsutvalget,124.9,14.5,19946902,given
+2026,19966002,Lindheim Vinterfrukt 2025,Bestillingsutvalget,185,7.5,19966002,given
+2026,19981502,Rock City Smul Bock Rocky-Road-Style Pastry Dubbelbock,Bestillingsutvalget,80.9,9,19981502,given
+2026,19993102,Arendals Juleøl 2026,Bestillingsutvalget,40,6,19993102,given
+2026,20007502,Arendals Julebokk 2026,Bestillingsutvalget,45,8.5,20007502,given
+2026,20008702,Disko Brewing Jolly Baltic Porter 2025,Bestillingsutvalget,99.5,8.5,20008702,given
+2026,20011802,Cervisiam Jingle Juice DDH Double Mandarin IPA,Bestillingsutvalget,90.4,8.5,20011802,given
+2026,20020902,Små Vesen Grændis Italliensk Julepils,Bestillingsutvalget,73.9,6,20020902,given
+2026,20851502,Nøgne Ø Nordic Noir 4 Bourbon Edt,Bestillingsutvalget,259.9,15.5,20851502,given
+2026,20851602,Nøgne Ø Nordic Noir 4 Fortified Edt,Bestillingsutvalget,259.9,15.5,20851602,given
+2026,20852602,Nøgne Ø Nidelv,Bestillingsutvalget,84.9,10,20852602,given
+2026,20852701,Nøgne Ø Joy to the World,Bestillingsutvalget,209.9,7,20852701,given
+2026,20852802,Nøgne Ø Deck the Halls,Bestillingsutvalget,209.9,13,20852802,given
+2026,20967602,Train Station Brewery Jul IPA,Bestillingsutvalget,70,6,20967602,given
+2026,20967702,Sigtuna Winter IPA Organic,Bestillingsutvalget,59.9,6,20967702,given
+2026,21016902,Warsteiner Winter,Bestillingsutvalget,51.6,5.6,21016902,given
+2026,21022401,Pater Lieven Kerst Pater Special Christmas Beer,Bestillingsutvalget,190.1,9,21022401,given
+2026,21042302,Ølsmia Juletre,Bestillingsutvalget,90,6.5,21042302,given
+2026,21042501,Kasteel Vanhonsebrouck Cuvée 11 Belgian Quadrupel,Bestillingsutvalget,189.8,11,21042501,given
+2026,21046202,Aass Juleøl Premium,Bestillingsutvalget,38.9,6.5,21046202,given
+2026,21046302,Aass Juleøl Vellagret,Bestillingsutvalget,47.8,9,21046302,given
+2026,21062202,Graff Christmas in da Crib,Bestillingsutvalget,88.6,9.5,21062202,given
+2026,21065902,Woodforde's Winter Reserve Winter Warmer,Bestillingsutvalget,74.9,5,21065902,given
+2026,21066301,De Struise Tsjeeses Reserva 2020,Bestillingsutvalget,329.5,10,21066301,given
+2026,21068902,E.C. Dahls Store Bjørn,Bestillingsutvalget,78.9,9,21068902,given
+2026,21069002,E.C. Dahls Chr. Olsens Vinterøl,Bestillingsutvalget,74.9,10.2,21069002,given
+2026,21071602,Whiplash Irél Vanilla Tonka Bean Cacao Imperial Stout,Bestillingsutvalget,129.9,10.5,21071602,given
+2026,21071702,Whiplash Noël Bourbon Barrel Aged Belgian Quadrupel,Bestillingsutvalget,129.9,11,21071702,given
+2026,21071802,Whiplash Lew Christmas DIPA,Bestillingsutvalget,119.9,8.2,21071802,given
+2026,21072901,La Trappe Quadrupel Trappist 2026 Special Edition,Bestillingsutvalget,189.9,10.5,21072901,given
+2026,21073001,Rodenbach Vintage 2024,Bestillingsutvalget,199.9,7,21073001,given
+2026,21076602,3 Fonteinen Oude Wintergeuze no16 25/26,Bestillingsutvalget,149.9,8.2,21076602,given
+2026,21078802,Mack Juleøl 2026,Bestillingsutvalget,49,6.5,21078802,given
+2026,21079302,Mikkeller A Triple Carol,Bestillingsutvalget,89.9,9,21079302,given
+2026,21084602,Små Vesen Jol i Valdres Ribbeøl,Bestillingsutvalget,65.8,5.2,21084602,given
+2026,21085202,Haandbryggeriet Premium Julebayer,Bestillingsutvalget,74.9,5.5,21085202,given
+2026,21085302,Haandbryggeriet Fatlagret Julebukk,Bestillingsutvalget,106.9,10,21085302,given
+2026,21098702,Grünerløkka Brygghus Løkka Juleporter,Bestillingsutvalget,89.9,6,21098702,given
+2026,21098802,To Øl Yule Malt Barrel Aged 2026,Bestillingsutvalget,140.9,12.4,21098802,given
+2026,21098902,To Øl Lost All Xmas Reason DIPA,Bestillingsutvalget,104.9,8,21098902,given
+2026,21103302,Verdant It's Clichéd To Be Cynical At Christmas IPA,Bestillingsutvalget,109.9,6.5,21103302,given
+2026,21103402,Verdant Joy In The Simple Things Pale Ale,Bestillingsutvalget,89.9,5.2,21103402,given
+2026,21108802,Pomona Island Box of delights IPA,Bestillingsutvalget,99.9,6.3,21108802,given
+2026,21108902,Pomona Island x Dankhouse Well so could anyone DIPA,Bestillingsutvalget,119.9,8.1,21108902,given
+2026,21109002,Pomona Island Watch the snowfall for ever and ever S'mores stout,Bestillingsutvalget,99.9,6.5,21109002,given
+2026,21109301,Golden Ratio 2025,Bestillingsutvalget,115.7,8.5,21109301,given
+2026,21110402,Vault City Salted Caramel Pepernoten Chocolate Imperial Stout With Festives,Bestillingsutvalget,149.9,13,21110402,given
+2026,21110502,Vault City White & Dark Chocolate Pepernoten Imperial Stout With Festive Spices,Bestillingsutvalget,149.9,13,21110502,given
+2026,21110802,Vault City Winter Bramble Blackberry & Lemon Cocktail Sour,Bestillingsutvalget,129.9,7.8,21110802,given
+2026,21123802,7 Fjell Damnator Xmas Doppelbock,Bestillingsutvalget,84.9,9,21123802,given
+2026,21141902,Sierra Nervada Celebration IPA,Bestillingsutvalget,59.9,6.8,21141902,given
+2026,21147202,Disko Brewing Radical Cut,Bestillingsutvalget,140,12,21147202,given
+2026,21147302,Disko Brewing Sacrilegious Offering,Bestillingsutvalget,150,10,21147302,given
+2026,21150002,Berentsens Julefnugg 2026,Bestillingsutvalget,63.9,6.5,21150002,given
+2026,21150202,Berentsens Jule Avec 2026,Bestillingsutvalget,69.6,9,21150202,given
+2026,21150302,Berentsens Stelliger Divum Vintage 2026,Bestillingsutvalget,198,19,21150302,given
+2026,21151702,Lindheim Vinterfrukt 2026,Bestillingsutvalget,195,10,21151702,given
+2026,21179902,Vault City Last Christmas Fizzy Raspberry Chew Bar Sour,Bestillingsutvalget,89.9,4.8,21179902,given
+2026,21180002,Ægir Julenir Imperial Stout,Bestillingsutvalget,129.9,11.5,21180002,given
+2026,21180102,Marlobobo Rum BA Stevnsberry Jingle Jazz 2023,Bestillingsutvalget,444.9,13,21180102,given
+2026,21180202,Marlobobo Snow Globophobia 2024,Bestillingsutvalget,369.9,12,21180202,given
+2026,21180302,Amundsen Krampus Imperial Stout,Bestillingsutvalget,129.9,11.5,21180302,given
+2026,21180402,Marlobobo The Forgotten Art of Ski Ballet 2024,Bestillingsutvalget,449.9,12,21180402,given
+2026,21180502,Vault City Yellow Snow Lemon Drizzle Coconut Meringue Sour,Bestillingsutvalget,89.9,4.8,21180502,given
+2026,21203201,Baladin Nöel Cacao and Mandarin,Bestillingsutvalget,180.5,8.5,21203201,given
+2026,21203305,Baladin Noel Cacao and Mandarin 2026,Bestillingsutvalget,379.9,8.5,21203305,given
+2026,21204402,Raa Brewing Company Habanero Julestout 2026,Bestillingsutvalget,113.9,10,21204402,given
+2026,21205902,Põhjala Fløyelsvinter Porter 2026,Bestillingsutvalget,74.9,8,21205902,given
+2026,21206002,Põhjala Vinterkirsebær Ale 2026,Bestillingsutvalget,64.9,5.5,21206002,given
+2026,21206102,Põhjala x Finback Første Snø Cellar Series BA Imperial Stout 2026,Bestillingsutvalget,139.9,12.5,21206102,given
+2026,11185602,Nøgne Ø Julefri,Partiutvalget,30.3,0,11185602,given
+2026,13643502,Lervig No Worries Driving Home for Christmas,Partiutvalget,25.3,0,13643502,given
+2026,19928802,Amundsen Santa's Cinnamon Smores Alcohol Free Stout,Partiutvalget,35.9,0.5,19928802,given
+2026,282701,La Rulles Cuvée Meilleurs Voeux,Tilleggsutvalget,149.9,7.3,282701,given
+2026,892002,Balder Julebukk,Tilleggsutvalget,91.5,7,892002,given
+2026,907002,Brouwerij Verhaeghe Barbe Noël Blond Juleøl,Tilleggsutvalget,73.3,7.2,907002,given
+2026,1829302,7 Fjell 7 Sorter Christmas Ale 2021,Tilleggsutvalget,59.9,7,1829302,given
+2026,1832701,Holtens Julebrygg,Tilleggsutvalget,188.9,6.8,1832701,given
+2026,1899902,Austmann Stille Natt,Tilleggsutvalget,66.4,9,1899902,given
+2026,1938302,Silly Scotch,Tilleggsutvalget,74.1,8,1938302,given
+2026,3555602,Nua Svart Jul,Tilleggsutvalget,99.8,6.5,3555602,given
+2026,6450502,Inderøy Gårdsbryggeri Musemor Old Ale,Tilleggsutvalget,98.4,6.7,6450502,given
+2026,6992901,Glazen Toren Canaster Winterscotch,Tilleggsutvalget,159.9,8.7,6992901,given
+2026,7903902,Inderøy Gårdsbryggeri Dommpapp Quadrupel,Tilleggsutvalget,138.3,10.2,7903902,given
+2026,7976201,De Ranke Père Noël,Tilleggsutvalget,155,7,7976201,given
+2026,7982104,Mjøderiet Julemjød,Tilleggsutvalget,150,12,7982104,given
+2026,10423502,Inderøy Gårdsbryggeri Fattigmainn Barley Wine,Tilleggsutvalget,138.3,10.2,10423502,given
+2026,10437402,Geiranger Bryggeri Stabbefonna Juleøl,Tilleggsutvalget,67.9,7.5,10437402,given
+2026,11353702,Monkey Brew Joule Winter Warmer,Tilleggsutvalget,101.9,7,11353702,given
+2026,12232502,Inderøy Gårdsbryggeri Klokkeklang,Tilleggsutvalget,138.3,10.2,12232502,given
+2026,12250702,Senja Handbryggeri Julebokk 2026,Tilleggsutvalget,74.7,6,12250702,given
+2026,12275002,Monkey Brew Jesus 2026,Tilleggsutvalget,121.9,8.6,12275002,given
+2026,12278802,E.C. Dahls Kong Vinter,Tilleggsutvalget,69.9,7,12278802,given
+2026,12308401,Mjøderiet Høytid,Tilleggsutvalget,285,12.3,12308401,given
+2026,12583402,ELØ Roasted Delights Imperial Porter 2025,Tilleggsutvalget,70.2,10,12583402,given
+2026,13537102,Inderøy Gårdsbryggeri Julemjød,Tilleggsutvalget,137.5,12,13537102,given
+2026,13647102,Salikatt Julebukk 2026,Tilleggsutvalget,82.9,8,13647102,given
+2026,13649002,Monkey Brew Supernova 6.0 Christmas DIPA,Tilleggsutvalget,111.9,8,13649002,given
+2026,13666802,7 Fjell Hans Gruber Yippiee Ki Yay Xmas IPA,Tilleggsutvalget,61.9,6,13666802,given
+2026,13685702,Nua Julebukk Fatlagret 2026,Tilleggsutvalget,121.7,8,13685702,given
+2026,13759702,Hammerhead Santa's Milk & Cookies Milkstout,Tilleggsutvalget,100,7,13759702,given
+2026,13851602,Qvænbrygg Juleøl,Tilleggsutvalget,78.8,7,13851602,given
+2026,14830202,Nøisom Julebock,Tilleggsutvalget,59.4,7.8,14830202,given
+2026,14830302,Nøisom Julestout,Tilleggsutvalget,59.2,8.2,14830302,given
+2026,14837002,Bådin Jul i Sjøgato Old Ale,Tilleggsutvalget,81.9,8,14837002,given
+2026,14849602,Salikatt Juleglød 2026,Tilleggsutvalget,129.9,10,14849602,given
+2026,14871602,Små Vesen Sprek Fjøsnisse Joleøl,Tilleggsutvalget,72.9,6.5,14871602,given
+2026,14910602,Hammerhead Doppelbock 2022,Tilleggsutvalget,100.6,8,14910602,given
+2026,16357802,K.Aa.B. Juklepej Saison de Noelle 2026,Tilleggsutvalget,82.5,8.2,16357802,given
+2026,16373302,Hogna Brygg Hognator 2026,Tilleggsutvalget,89.9,9,16373302,given
+2026,16398102,Hogna Brygg Blitzen 2026,Tilleggsutvalget,89.9,7.4,16398102,given
+2026,16425602,Monkey Brew Lucifer Barley Wine 2026,Tilleggsutvalget,199,13,16425602,given
+2026,16441702,7 Fjell John McClane Xmas Mandarin Cold IPA,Tilleggsutvalget,61.9,6.5,16441702,given
+2026,16469402,Røros Bryggeri Santas Malty Helper,Tilleggsutvalget,83.9,6,16469402,given
+2026,16469901,Mjøderiet Glød,Tilleggsutvalget,328.3,12,16469901,given
+2026,16516102,Qvænbrygg Juleqvad,Tilleggsutvalget,98.9,9.4,16516102,given
+2026,16559602,Bådin Tussvatnet Winter Warmer,Tilleggsutvalget,81.9,9,16559602,given
+2026,18592502,Oslo Brewing Sugarplum Quad Whisky BA,Tilleggsutvalget,83.1,11.5,18592502,given
+2026,18655502,7 Fjell Hissig på Grøten Riskrem Xmas Pastry Stout,Tilleggsutvalget,99.9,10,18655502,given
+2026,18661702,Oslo Brewing Merry Cherry Quad BA,Tilleggsutvalget,83.1,11.5,18661702,given
+2026,18661902,Oslo Brewing Julequad X Barrel Aged,Tilleggsutvalget,75.1,11.5,18661902,given
+2026,18666902,7 Fjell Lys i Luken Julesaison,Tilleggsutvalget,61.9,6.5,18666902,given
+2026,18673802,Monkey Brew Wild Hunt Christmas Red Lager,Tilleggsutvalget,81.9,5.1,18673802,given
+2026,18690802,Disko Jolne Dobbelbock 2023,Tilleggsutvalget,97.4,8,18690802,given
+2026,18692702,Raa Brewing Crystal X 2025,Tilleggsutvalget,91.9,7,18692702,given
+2026,18692904,Mjøderiet Cherry Xmas,Tilleggsutvalget,185.9,13,18692904,given
+2026,18693402,Bådin Belgian Beast Belgian Quad,Tilleggsutvalget,76.9,11.8,18693402,given
+2026,18694301,Mjøderiet Høytid BA,Tilleggsutvalget,340.5,12,18694301,given
+2026,18701402,Senja Handbryggeri JuleWiess Juleøl 2025,Tilleggsutvalget,75.4,5,18701402,given
+2026,18818302,Stigbergets Always Christmas Porter,Tilleggsutvalget,69.5,5,18818302,given
+2026,19899802,Røros Bryggeri Wheat Christmas,Tilleggsutvalget,83.8,6.2,19899802,given
+2026,19927702,Nua Christmas Cheesecake,Tilleggsutvalget,121.6,6.5,19927702,given
+2026,19968202,Nedstrand Bryggeri Julastjernå,Tilleggsutvalget,67.5,5.5,19968202,given
+2026,19982802,Hogna Brygg Stjernetåke 2026,Tilleggsutvalget,84.9,6,19982802,given
+2026,20009502,Bådin Gildeskål Saison,Tilleggsutvalget,71.9,6,20009502,given
+2026,20011102,Bådin Askepott Czech Dark Lager,Tilleggsutvalget,67.6,5.3,20011102,given
+2026,20011502,Rygr Sure Marte Mandarin & Julekrydder Surøl 2026,Tilleggsutvalget,88.8,6.5,20011502,given
+2026,20012902,Hammerhead Cherry Christmas,Tilleggsutvalget,81.6,5.4,20012902,given
+2026,20016202,Ølbæks Barley Wine,Tilleggsutvalget,118.4,13.5,20016202,given
+2026,20016302,Ølbæks Porter,Tilleggsutvalget,99.8,10.5,20016302,given
+2026,20016402,Jåttå Jul på Jåttå,Tilleggsutvalget,71.9,6.7,20016402,given
+2026,20016502,Jåttå Riskrem,Tilleggsutvalget,81.9,6,20016502,given
+2026,20016602,Jåttå Humla god jul,Tilleggsutvalget,79.1,6,20016602,given
+2026,20026002,Bygland Jolebrygg For the Love of Kveik,Tilleggsutvalget,81.2,7,20026002,given
+2026,20026102,Bygland Jolebokk,Tilleggsutvalget,87,8.5,20026102,given
+2026,20070102,Inderøy Brygghus Juleøl,Tilleggsutvalget,56.5,6.9,20070102,given
+2026,20923502,Hogna Vixen 2026,Tilleggsutvalget,78.9,7,20923502,given
+2026,20931402,Hogna Nocturnes 2026,Tilleggsutvalget,79.9,7.5,20931402,given
+2026,20960102,Rock City Snow Claws DDH Double Cold IPA,Tilleggsutvalget,106.4,8,20960102,given
+2026,20960302,Hogna Gingerbread Stout 2026,Tilleggsutvalget,99.9,10,20960302,given
+2026,21059102,Inderøy Hyrde,Tilleggsutvalget,98.4,6.7,21059102,given
+2026,21106202,Qvart Vintervarmer 2026,Tilleggsutvalget,68.4,6.5,21106202,given
+2026,21149202,Bygland Vasstrond'e Jolaøl,Tilleggsutvalget,112.7,11,21149202,given
+2026,21151002,Salikatt Embla 2026,Tilleggsutvalget,159.9,10.2,21151002,given
+2026,21151102,Salikatt Timeless 2026,Tilleggsutvalget,134.9,8,21151102,given
+2026,21151202,Salikatt New England Christmas 2026,Tilleggsutvalget,119.9,7.5,21151202,given
+2026,21151302,Salikatt Barrel-Aged Christmas 2026,Tilleggsutvalget,299,13.5,21151302,given
+2026,21151402,Salikatt Christmas on Fire 2026,Tilleggsutvalget,99.9,6.5,21151402,given
+2026,21179402,Nua Julemurer,Tilleggsutvalget,121.6,6.5,21179402,given
+2026,21203502,Bådin Helgelandsbukken Trippelbock,Tilleggsutvalget,79.9,10,21203502,given
+2026,21203602,Bådin Xmas Blast Triple Hazy IPA,Tilleggsutvalget,96.9,9,21203602,given
+2026,21204502,Rygr Yuleblòt Quadruple Christmas BA,Tilleggsutvalget,156.9,10.8,21204502,given
+2026,21204602,Rygr Nissepilt Gulrotkake & Jordbær Fatlagret,Tilleggsutvalget,121.8,6.5,21204602,given
+2026,21204702,Rygr Hati PX BA Sour,Tilleggsutvalget,212.3,12,21204702,given
+2026,21204802,Grans Julebokk Dobbelbokk BA,Tilleggsutvalget,145.1,9,21204802,given
+2026,21205502,Bådin Dark Port,Tilleggsutvalget,141.9,10.8,21205502,given
+2026,21206202,Bådin Belgian Beast Tønnelagra Belgian Quad,Tilleggsutvalget,141.9,11.3,21206202,given
+2026,21206302,Bådin Santas Nightcap Barley Wine,Tilleggsutvalget,141.9,12.9,21206302,given
+2026,21210402,Marlobobo's Megabear Where's My Hat? Pulpy Smoothie Sour,Tilleggsutvalget,129.9,5,21210402,given
+2026,21210502,Marlobobo's Megabear x Pomona Island x Disko: The Viscosity Project - Imp. Stout,Tilleggsutvalget,114.9,12,21210502,given
+2026,21211202,Cervisiam I'm Dreaming of A Dank Christmas,Tilleggsutvalget,99.5,8.5,21211202,given
+2026,21211302,Bygland Jolegama Joleøl,Tilleggsutvalget,86.1,10,21211302,given
+2026,21212702,Bygland Syrleg Jol Fatlagra,Tilleggsutvalget,102.6,9.3,21212702,given
+2026,21215602,Julegenser 2026,Tilleggsutvalget,67.4,6,21215602,given
+2026,21223902,Kaab Bryggeri Julefergå 2026,Tilleggsutvalget,98.1,7.2,21223902,given

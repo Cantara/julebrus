@@ -1,0 +1,301 @@
+year,article_no,name,brewery,style,category,selection,country,region,organic,abv_percent,volume_l,price_nok
+2026,194202,St Feuillien Nöel,Brasserie St. Feuillien,Klosterstil,Øl,Bestillingsutvalget,Belgia,Øvrige,,9,0.33,79.9
+2026,194301,Kinn Tomasmesse,Kinn Bryggeri AS,Klosterstil,Øl,Bestillingsutvalget,Norge,Vestland,,10.5,0.75,139.9
+2026,194405,St Feuillien Nöel,Brasserie St. Feuillien,Klosterstil,Øl,Bestillingsutvalget,Belgia,Øvrige,,9,1.5,399.9
+2026,896702,Fredrikstad Juleøl,Borg Bryggerier,Mørk lager,Øl,Bestillingsutvalget,Norge,Øvrige,,6.5,0.33,49.9
+2026,1824102,Aass Juleøl Vellagret,Aass Bryggeri,Barley wine,Øl,Bestillingsutvalget,Norge,Buskerud,,9,0.33,50
+2026,1830302,Berentsens Stelliger Divum Vintage 2021,Berentsens Brygghus,Spesial,Øl,Bestillingsutvalget,Norge,Rogaland,,19,0.33,224.8
+2026,1832202,Lofotpils Julebrygg,Lofotpils AS,Mørk lager,Øl,Bestillingsutvalget,Norge,Nordland,,7,0.33,58.6
+2026,1836401,St. Bernardus Christmas Ale,St. Bernardus Brouwerij,Klosterstil,Øl,Bestillingsutvalget,Belgia,Øvrige,,10,0.75,159
+2026,1857501,Kinn Solsnu,Kinn Bryggeri AS,Saison farmhouse ale,Øl,Bestillingsutvalget,Norge,Vestland,,7.5,0.75,129.9
+2026,3535402,Hansa Juleøl,Hansa Borg Bryggerier,Mørk lager,Øl,Bestillingsutvalget,Norge,Vestland,,6.5,0.33,46.9
+2026,3577802,Nøgne Ø Rød Jul,Nøgne Ø Det kompromissløse Bryggeri,India pale ale,Øl,Bestillingsutvalget,Norge,Agder,,8,0.5,74.9
+2026,4371601,Delirium Christmas,Huyghe,Klosterstil,Øl,Bestillingsutvalget,Belgia,Øvrige,,10,0.75,169.9
+2026,4679102,Nøgne Ø God Jul,Nøgne Ø Det kompromissløse Bryggeri,Spesial,Øl,Bestillingsutvalget,Norge,Agder,,8.5,0.5,74.9
+2026,4847101,Gouden Carolus Christmas,Het Anker,Klosterstil,Øl,Bestillingsutvalget,Belgia,Øvrige,,10,0.75,179.9
+2026,4847102,Gouden Carolus Christmas,Het Anker,Klosterstil,Øl,Bestillingsutvalget,Belgia,Øvrige,,10,0.33,84.9
+2026,4847202,Abbaye du Val-Dieu Bière de Noël,Brasserie Abbaye du Val-Dieu,Klosterstil,Øl,Bestillingsutvalget,Belgia,Øvrige,,7,0.33,63.6
+2026,5343801,Jacobsen Golden Naked Christmas Ale,Jacobsen,Pale ale,Øl,Bestillingsutvalget,Danmark,Øvrige,,7.5,0.75,125.9
+2026,5667101,N'Ice Chouffe Juleøl,Brasserie d'Achouffe,Klosterstil,Øl,Bestillingsutvalget,Belgia,Øvrige,,10,0.75,149.9
+2026,5667301,Samuel Smith's Winter Welcome Ale,Samuel Smiths Brewery,Barley wine,Øl,Bestillingsutvalget,England,Øvrige,,6,0.55,84.9
+2026,5992701,Corsendonk Christmas Ale,Brouwerij Corsendonk,Red/amber,Øl,Bestillingsutvalget,Belgia,Øvrige,,8.1,0.75,164.9
+2026,6394202,Midtfyns Belgian Christmas Blonde,Midtfyns Bryghus,Lys ale,Øl,Bestillingsutvalget,Danmark,Øvrige,,7.2,0.5,99.9
+2026,6396102,Pater Lieven Kerst Pater Special Christmas,Brouwerij Van Den Bossche,Klosterstil,Øl,Bestillingsutvalget,Belgia,Øvrige,,9,0.33,86.1
+2026,6763202,Små Vesen Jolereia Joleøl frå Valdres 2016,Små Vesen Bryggeri,Porter & stout,Øl,Bestillingsutvalget,Norge,Innlandet,,7.5,0.33,72.9
+2026,6817202,Dahls Juleøl,Ringnes,Mørk lager,Øl,Bestillingsutvalget,Norge,Trøndelag,,6,0.33,45.9
+2026,7904202,N'Ice Chouffe Juleøl,Brasserie d'Achouffe,Klosterstil,Øl,Bestillingsutvalget,Belgia,Øvrige,,10,0.33,76.9
+2026,7910502,Ringnes Juleøl,Ringnes,Mørk lager,Øl,Bestillingsutvalget,Norge,Akershus,,6.3,0.33,42.9
+2026,7927101,Liefmans Glühkriek Juleøl,Liefmans (Duvel-Moortgat),Spesial,Øl,Bestillingsutvalget,Belgia,Øvrige,,6,0.75,159.9
+2026,7970702,Brasserie de la Senne Schieve X-mas,Brasserie de la Senne,Spesial,Øl,Bestillingsutvalget,Belgia,Øvrige,,8,0.33,65
+2026,7977002,Berentsens The Holy Bock Vanilla,Berentsens Brygghus,Spesial,Øl,Bestillingsutvalget,Norge,Rogaland,,7.5,0.33,79.9
+2026,9021302,Midtfyns Jule Stout,Midtfyns Bryghus,Porter & stout,Øl,Bestillingsutvalget,Danmark,Øvrige,,7.6,0.5,99.9
+2026,9520801,Kinn Julefred,Kinn Bryggeri AS,Scotch ale,Øl,Bestillingsutvalget,Norge,Vestland,,6.5,0.75,122.9
+2026,10392202,Lade Gaards Juleøl Sterk,Grans Bryggeri,Spesial,Øl,Bestillingsutvalget,Norge,Vestfold,,6.5,0.33,54.9
+2026,10436402,Gordon Xmas,Anthony Martin,Scotch ale,Øl,Bestillingsutvalget,Belgia,Øvrige,,8.8,0.33,74.9
+2026,10484401,Abbaye du Val-Dieu Bière de Noël,Brasserie Abbaye du Val-Dieu,Klosterstil,Øl,Bestillingsutvalget,Belgia,Øvrige,,7,0.75,141.4
+2026,10485602,Svalbard Bryggeri Spitsbergen Juleøl,Svalbard Bryggeri,Spesial,Øl,Bestillingsutvalget,Norge,Svalbard,,7,0.33,65
+2026,10487202,Hunsfos Bryggeri Direktørens Jul,Hunsfos Bryggeri,Porter & stout,Øl,Bestillingsutvalget,Norge,Agder,,9.3,0.33,109
+2026,11297002,Brulandselva Gneten Julenisse,Brulandselva AS,Saison farmhouse ale,Øl,Bestillingsutvalget,Norge,Vestland,,9,0.33,89.8
+2026,11297102,Ringnes Julebokk,Ringnes,Mørk lager,Øl,Bestillingsutvalget,Norge,Akershus,,9,0.33,51.9
+2026,11297902,Midtfyns Funky Santa,Midtfyns Bryghus,Spesial,Øl,Bestillingsutvalget,Danmark,Øvrige,,8.5,0.5,99.9
+2026,11298002,Midtfyns Santas IPA,Midtfyns Bryghus,India pale ale,Øl,Bestillingsutvalget,Danmark,Øvrige,,6.5,0.5,99.9
+2026,11445602,Mc Chouffe Christmas Edition,Brasserie d'Achouffe,Klosterstil,Øl,Bestillingsutvalget,Belgia,Øvrige,,8,0.33,64.9
+2026,12269502,Nøgne Ø Ekstra God Jul,Nøgne Ø Det kompromissløse Bryggeri,Spesial,Øl,Bestillingsutvalget,Norge,Agder,,15.5,0.5,109.9
+2026,12272402,Amundsen Ashes to Ashes Imperial Stout 2025,Amundsen Bryggeri,Porter & stout,Øl,Bestillingsutvalget,Norge,Oslo,,10.5,0.33,99.9
+2026,12272602,St. Bernardus Christmas Ale,St. Bernardus Brouwerij,Klosterstil,Øl,Bestillingsutvalget,Belgia,Øvrige,,10,0.33,77.9
+2026,12308102,Rothaus Eis Zäpfle,Staatsbrauerei Rothaus,Lys lager,Øl,Bestillingsutvalget,Tyskland,Øvrige,,5.6,0.33,59.9
+2026,13470901,Liefmans Kriek Brut,Liefmans (Duvel-Moortgat),Surøl,Øl,Bestillingsutvalget,Belgia,Øvrige,,6,0.75,154.9
+2026,13620802,Nøgne Ø Julequad,Nøgne Ø Det kompromissløse Bryggeri,Spesial,Øl,Bestillingsutvalget,Norge,Agder,,12,0.5,92.9
+2026,13623202,Grünerløkka Brygghus Løkka Jul,Grünerløkka Brygghus,Porter & stout,Øl,Bestillingsutvalget,Norge,Oslo,,7.5,0.5,98.9
+2026,13638302,Amundsen Bourbon Barrel Aged Sticky Little Fingers Ultra Pastry Stout,Amundsen Bryggeri,Porter & stout,Øl,Bestillingsutvalget,Norge,Oslo,,12,0.44,149.6
+2026,13646602,Shepherd Neame Christmas Ale,Shepherd Neame,Brown ale,Øl,Bestillingsutvalget,England,Øvrige,,7,0.5,74
+2026,13646902,Christiania Bryggeri Fatlagret Julesnadder,Norumbryggeriet,Porter & stout,Øl,Bestillingsutvalget,Norge,Akershus,,11,0.33,89
+2026,14812802,Nøgne Ø Nordic Noir 2,Nøgne Ø Det kompromissløse Bryggeri,Spesial,Øl,Bestillingsutvalget,Norge,Agder,,15.5,0.33,229.9
+2026,14813102,Nøgne Ø Grønn Jul,Nøgne Ø Det kompromissløse Bryggeri,India pale ale,Øl,Bestillingsutvalget,Norge,Agder,,7,0.33,49.9
+2026,14814702,"Berentsens Baby Stelliger, Second release, 2026",Berentsens Brygghus,Spesial,Øl,Bestillingsutvalget,Norge,Rogaland,,14.5,0.33,239
+2026,14829701,Kinn Julebukk,Kinn Bryggeri AS,Mørk lager,Øl,Bestillingsutvalget,Norge,Vestland,,9.5,0.75,134.9
+2026,14852002,Haandbryggeriet Nissefar,Haandbryggeriet,Spesial,Øl,Bestillingsutvalget,Norge,Buskerud,,7,0.5,86.9
+2026,14852102,Haandbryggeriet Nissemor,Haandbryggeriet,Spesial,Øl,Bestillingsutvalget,Norge,Buskerud,,6,0.5,83.9
+2026,14852202,Haandbryggeriet Julepils,Haandbryggeriet,Mørk lager,Øl,Bestillingsutvalget,Norge,Buskerud,,5.5,0.5,81.9
+2026,14883102,Amundsen Bourbon BA Ashes to Ashes Christmas,Amundsen Bryggeri,Porter & stout,Øl,Bestillingsutvalget,Norge,Oslo,,11.5,0.33,119.9
+2026,14883202,Flåklypa Spesial Juleøl 2024,Nøisom,Mørk lager,Øl,Bestillingsutvalget,Norge,Østfold,,6,0.33,69.9
+2026,16356902,Ægir Nissebokk Julebrygg,Ægir Bryggeri,Mørk lager,Øl,Bestillingsutvalget,Norge,Vestland,,7,0.44,86.9
+2026,16377802,Graff Tre Konger Trippelbokk,Graff Brygghus,Mørk lager,Øl,Bestillingsutvalget,Norge,Troms,,10,0.33,94.5
+2026,16434701,Damm Cerveza de Navidad 2024,Damm,Lys lager,Øl,Bestillingsutvalget,Spania,Øvrige,,6.5,0.66,97.9
+2026,16437902,Amager Secret Santa Quadrupel,Amager Bryghus,Klosterstil,Øl,Bestillingsutvalget,Danmark,Øvrige,,10.5,0.33,90.1
+2026,16438002,Amager Yule Juice,Amager Bryghus,India pale ale,Øl,Bestillingsutvalget,Danmark,Øvrige,,6.5,0.33,75.9
+2026,16438102,Amager Reindeer Fuel 2025,Amager Bryghus,Klosterstil,Øl,Bestillingsutvalget,Danmark,Øvrige,,10,0.33,91.1
+2026,16438202,Amager Winter Wizard,Amager Bryghus,Porter & stout,Øl,Bestillingsutvalget,Danmark,Øvrige,,12,0.33,91.7
+2026,16447102,Cervisiam Missile Toe Cranberry & Cherry Berliner Weisse 2023,Cervisiam Bryggeri,Surøl,Øl,Bestillingsutvalget,Norge,Oslo,,6,0.33,97.7
+2026,16460002,Haandbryggeriet Bestefar,Haandbryggeriet,Spesial,Øl,Bestillingsutvalget,Norge,Buskerud,,9,0.44,97.9
+2026,16460105,Gouden Carolus Christmas,Het Anker,Klosterstil,Øl,Bestillingsutvalget,Belgia,Øvrige,,10,1.5,439.9
+2026,16465202,Amundsen Uncle Pop Christmas Soda Float,Amundsen Bryggeri,Surøl,Øl,Bestillingsutvalget,Norge,Oslo,,6,0.44,93.5
+2026,16472702,Graff Jul Black IPA,Graff Brygghus,India pale ale,Øl,Bestillingsutvalget,Norge,Troms,,6.5,0.33,63.6
+2026,16472802,Graff Julejuice Dobbel IPA,Graff Brygghus,India pale ale,Øl,Bestillingsutvalget,Norge,Troms,,7.5,0.33,68.1
+2026,16472902,Graff Julebokk,Graff Brygghus,Mørk lager,Øl,Bestillingsutvalget,Norge,Troms,,8.8,0.33,74.5
+2026,16473202,Graff St. Arnold Quadrupel,Graff Brygghus,Mørk lager,Øl,Bestillingsutvalget,Norge,Troms,,12,0.33,108.6
+2026,18557002,Nøgne Ø Nordic Noir 3 Lupiac Ed.,Nøgne Ø Det kompromissløse Bryggeri,Spesial,Øl,Bestillingsutvalget,Norge,Agder,,15,0.33,259.9
+2026,18557102,Nøgne Ø Hvit Jul,Nøgne Ø Det kompromissløse Bryggeri,Hveteøl,Øl,Bestillingsutvalget,Norge,Agder,,5.5,0.5,59.9
+2026,18557402,Nøgne Ø Nordic Noir 3 Brandy Ed.,Nøgne Ø Det kompromissløse Bryggeri,Spesial,Øl,Bestillingsutvalget,Norge,Agder,,15,0.33,259.9
+2026,18592602,Oslo Brewing Voksenjulebrus,Oslo Brewing Co.,Surøl,Øl,Bestillingsutvalget,Norge,Oslo,,6,0.33,69.9
+2026,18617601,Kinn Polarnatt,Kinn Bryggeri AS,Porter & stout,Øl,Bestillingsutvalget,Norge,Vestland,,6,0.75,122.9
+2026,18617701,Kinn Julelys,Kinn Bryggeri AS,Hveteøl,Øl,Bestillingsutvalget,Norge,Vestland,,5.5,0.75,112.9
+2026,18651302,Amager California Christmas,Amager Bryghus,Spesial,Øl,Bestillingsutvalget,Danmark,Øvrige,,11,0.33,91.1
+2026,18654905,Duvel Christmas Edition,Duvel Moortgat,Lys ale,Øl,Bestillingsutvalget,Belgia,Øvrige,,8.5,1.5,364.9
+2026,18659901,Gordon Xmas,John Martin,Scotch ale,Øl,Bestillingsutvalget,Belgia,Øvrige,,8.8,0.75,179.9
+2026,18661205,Big Chouffe Christmas Edition 2024,Brasserie d'Achouffe,Lys ale,Øl,Bestillingsutvalget,Belgia,Øvrige,,8,1.5,349.9
+2026,18661402,Graff Julebokk Fatlagret,Graff Brygghus,Mørk lager,Øl,Bestillingsutvalget,Norge,Troms,,8.8,0.33,98.5
+2026,18661602,Oslo Brewing Christmas Kveik NEIPA,Oslo Brewing Co.,India pale ale,Øl,Bestillingsutvalget,Norge,Oslo,,7.4,0.33,75
+2026,18663002,To Øl X-Mas Quad BA 2025,To Øl,Klosterstil,Øl,Bestillingsutvalget,Danmark,Øvrige,,12.1,0.33,139.9
+2026,18663302,Grünerløkka Brygghus Løkka Julebokk,Grünerløkka Brygghus,Mørk lager,Øl,Bestillingsutvalget,Norge,Oslo,,6.5,0.5,89.9
+2026,18688602,Lindheim Bestemors Jul,Lindheim ølkompani,Hveteøl,Øl,Bestillingsutvalget,Norge,Telemark,,6,0.5,115
+2026,18688702,Lindheim Bestefars Jul,Lindheim ølkompani,Red/amber,Øl,Bestillingsutvalget,Norge,Telemark,,6,0.5,115
+2026,18688802,Emelisse Irish Red Ale Cognac BA Christmas Edition,Emelisse,Spesial,Øl,Bestillingsutvalget,Nederland,Øvrige,,10.3,0.33,103.5
+2026,18689802,Einbecker Winterbock,Einbecker Brauhaus,Mørk lager,Øl,Bestillingsutvalget,Tyskland,Øvrige,,7.5,0.33,49.9
+2026,18690702,Disko Brewing Blot IPA,Disko Brewing,India pale ale,Øl,Bestillingsutvalget,Norge,Buskerud,,8,0.44,114.9
+2026,18693601,Straffe Hendrik Xmas Blend 2026,Brouwerij de Halve Maan,Spesial,Øl,Bestillingsutvalget,Belgia,Øvrige,,11,0.75,219.9
+2026,18693902,Amundsen Night Sleigher Double IPA,Amundsen Bryggeri,India pale ale,Øl,Bestillingsutvalget,Norge,Oslo,,7.5,0.44,110.3
+2026,18697002,Små Vesen Rakfiskøl,Små Vesen Bryggeri,Saison farmhouse ale,Øl,Bestillingsutvalget,Norge,Innlandet,,6,0.33,78.7
+2026,18697402,Tøsse Brygghus Møllarens Jul,Tøsse Brygghus as,Red/amber,Øl,Bestillingsutvalget,Norge,Vestland,,6.5,0.33,72
+2026,18697902,Haandbryggeriet Halvors Jul,Haandbryggeriet,Spesial,Øl,Bestillingsutvalget,Norge,Buskerud,,10,0.44,106.9
+2026,18700702,Cervisiam Missile Toe Barrel Aged Berliner Weisse,Cervisiam Bryggeri,Surøl,Øl,Bestillingsutvalget,Norge,Oslo,,6,0.33,120.6
+2026,18700902,Cervisiam Christmas Evil Berry Sour,Cervisiam Bryggeri,Surøl,Øl,Bestillingsutvalget,Norge,Oslo,,5.7,0.33,61.5
+2026,18984002,De Dolle Brouwers Stille Nacht 2026,De Dolle Brouwers,Spesial,Øl,Bestillingsutvalget,Belgia,Øvrige,,12,0.33,154.5
+2026,19720602,St. Peter's Winter Ale,St. Peter's Wines,Saison farmhouse ale,Øl,Bestillingsutvalget,England,Suffolk,,6.5,0.5,93.9
+2026,19756402,Bernard Bohemian Winter Ale,Bernard a.s,Saison farmhouse ale,Øl,Bestillingsutvalget,Tsjekkia,Øvrige,,8.2,0.33,80
+2026,19822702,La Chouffe Christmas Edition,Brasserie d'Achouffe,Lys ale,Øl,Bestillingsutvalget,Belgia,Øvrige,,8,0.5,88.9
+2026,19840002,Amager Cardamom for Christmas,Amager Bryghus,Porter & stout,Øl,Bestillingsutvalget,Danmark,Øvrige,,8.5,0.33,80.8
+2026,19841902,E.C. Dahls Julemysteriet Fatlagret,E. C. Dahls Bryggeri,Barley wine,Øl,Bestillingsutvalget,Norge,Trøndelag,,11,0.33,95.9
+2026,19855202,Mack Vellagret Juleøl 2025,Macks Ølbryggeri,Mørk lager,Øl,Bestillingsutvalget,Norge,Troms,,6.5,0.33,52.9
+2026,19862102,Cervisiam Barrel Aged X-mas Smorbidly Obese,Cervisiam Bryggeri,Porter & stout,Øl,Bestillingsutvalget,Norge,Oslo,,11.8,0.33,143.3
+2026,19884602,Oslo Brewing Oak & Ember Barrel Aged Belgian Ale,Oslo Brewing Co.,Klosterstil,Øl,Bestillingsutvalget,Norge,Oslo,,8.5,0.33,108.6
+2026,19888302,Slogen Julebukk 2025,Trollbryggeriet,Mørk lager,Øl,Bestillingsutvalget,Norge,Møre og Romsdal,,7.1,0.5,83.6
+2026,19889602,Berentsens Julegull,Berentsens Brygghus,Spesial,Øl,Bestillingsutvalget,Norge,Rogaland,,6.5,0.33,59.9
+2026,19895002,Eucharist Singularity Incarnate,Eucharist Brewing,Spesial,Øl,Bestillingsutvalget,Norge,Buskerud,,8,0.44,96.8
+2026,19895102,Eucharist The Waiting Dark,Eucharist Brewing,Spesial,Øl,Bestillingsutvalget,Norge,Buskerud,,7.5,0.44,94.3
+2026,19897202,To Øl Jule Sovs Hazy IPA,To Øl,India pale ale,Øl,Bestillingsutvalget,Danmark,Øvrige,,6.1,0.44,91.9
+2026,19902202,Haandbryggeriet Julebukk,Haandbryggeriet,Mørk lager,Øl,Bestillingsutvalget,Norge,Buskerud,,8,0.44,97.9
+2026,19902902,Oslo Brewing Casked in Gold Barrel Aged Belgian Ale,Oslo Brewing Co.,Klosterstil,Øl,Bestillingsutvalget,Norge,Oslo,,8.5,0.33,119.5
+2026,19903002,Oslo Brewing Peachy Xmas Barrel Aged Belgian Ale,Oslo Brewing Co.,Klosterstil,Øl,Bestillingsutvalget,Norge,Oslo,,8.5,0.33,119.5
+2026,19906102,Cervisiam X-Mas Barrel Aged Pecanisher,Cervisiam Bryggeri,Porter & stout,Øl,Bestillingsutvalget,Norge,Oslo,,11.3,0.33,143.6
+2026,19908302,Haandbryggeriet Akevittfatlagret Nissemor,Haandbryggeriet,Spesial,Øl,Bestillingsutvalget,Norge,Buskerud,,7,0.5,97.9
+2026,19936102,Amundsen Santas Hop Sack Hazy Orange IPA,Amundsen Bryggeri,India pale ale,Øl,Bestillingsutvalget,Norge,Oslo,,5.3,0.44,90.6
+2026,19939602,Kretcher Gingerdead Imperial Stout Barrel Aged,Krecher AS,Porter & stout,Øl,Bestillingsutvalget,Norge,Oslo,,11.5,0.33,143.5
+2026,19939702,Krecher Rudolphs Return Tropical Fruited Sour,Krecher AS,Surøl,Øl,Bestillingsutvalget,Norge,Oslo,,6,0.33,91.6
+2026,19946702,Põhjala Julenetter 2025,Põhjala Brewing,Porter & stout,Øl,Bestillingsutvalget,Estland,Øvrige,,8,0.33,64.9
+2026,19946802,Põhjala JulePorter 2026,Põhjala Brewing,Porter & stout,Øl,Bestillingsutvalget,Estland,Øvrige,,10,0.33,89.9
+2026,19946902,Põhjala Første Snø Cellar Series BA Imperial Stout 2025,Põhjala Brewing,Porter & stout,Øl,Bestillingsutvalget,Estland,Øvrige,,14.5,0.33,124.9
+2026,19966002,Lindheim Vinterfrukt 2025,Lindheim ølkompani,Spesial,Øl,Bestillingsutvalget,Norge,Telemark,,7.5,0.375,185
+2026,19981502,Rock City Smul Bock Rocky-Road-Style Pastry Dubbelbock,Rock City,Mørk lager,Øl,Bestillingsutvalget,Nederland,Øvrige,,9,0.33,80.9
+2026,19993102,Arendals Juleøl 2026,Arendals Bryggeri,Mørk lager,Øl,Bestillingsutvalget,Norge,Agder,,6,0.33,40
+2026,20007502,Arendals Julebokk 2026,Arendals Bryggeri,Mørk lager,Øl,Bestillingsutvalget,Norge,Agder,,8.5,0.33,45
+2026,20008702,Disko Brewing Jolly Baltic Porter 2025,Disko Brewing,Porter & stout,Øl,Bestillingsutvalget,Norge,Buskerud,,8.5,0.44,99.5
+2026,20011802,Cervisiam Jingle Juice DDH Double Mandarin IPA,Cervisiam Bryggeri,India pale ale,Øl,Bestillingsutvalget,Norge,Oslo,,8.5,0.33,90.4
+2026,20020902,Små Vesen Grændis Italliensk Julepils,Små Vesen Bryggeri,Lys lager,Øl,Bestillingsutvalget,Norge,Innlandet,,6,0.33,73.9
+2026,20851502,Nøgne Ø Nordic Noir 4 Bourbon Edt,Nøgne Ø Det kompromissløse Bryggeri,Spesial,Øl,Bestillingsutvalget,Norge,Agder,,15.5,0.33,259.9
+2026,20851602,Nøgne Ø Nordic Noir 4 Fortified Edt,Nøgne Ø Det kompromissløse Bryggeri,Spesial,Øl,Bestillingsutvalget,Norge,Agder,,15.5,0.33,259.9
+2026,20852602,Nøgne Ø Nidelv,Nøgne Ø Det kompromissløse Bryggeri,Klosterstil,Øl,Bestillingsutvalget,Norge,Agder,,10,0.5,84.9
+2026,20852701,Nøgne Ø Joy to the World,Nøgne Ø Det kompromissløse Bryggeri,Surøl,Øl,Bestillingsutvalget,Norge,Agder,,7,0.75,209.9
+2026,20852802,Nøgne Ø Deck the Halls,Nøgne Ø Det kompromissløse Bryggeri,Klosterstil,Øl,Bestillingsutvalget,Norge,Agder,,13,0.33,209.9
+2026,20967602,Train Station Brewery Jul IPA,Train Station Brewery,India pale ale,Øl,Bestillingsutvalget,Sverige,Øvrige,,6,0.33,70
+2026,20967702,Sigtuna Winter IPA Organic,Sigtuna Brygghus,India pale ale,Øl,Bestillingsutvalget,Sverige,Øvrige,,6,0.33,59.9
+2026,21016902,Warsteiner Winter,Warsteiner,Mørk lager,Øl,Bestillingsutvalget,Tyskland,Øvrige,,5.6,0.33,51.6
+2026,21022401,Pater Lieven Kerst Pater Special Christmas Beer,Brouwerij Van Den Bossche,Klosterstil,Øl,Bestillingsutvalget,Belgia,Øvrige,,9,0.75,190.1
+2026,21042302,Ølsmia Juletre,Ølsmia,Saison farmhouse ale,Øl,Bestillingsutvalget,Norge,Oslo,,6.5,0.33,90
+2026,21042501,Kasteel Vanhonsebrouck Cuvée 11 Belgian Quadrupel,Brouwerij Van Honsebrouck,Klosterstil,Øl,Bestillingsutvalget,Belgia,Øvrige,,11,0.75,189.8
+2026,21046202,Aass Juleøl Premium,Aass Bryggeri,Mørk lager,Øl,Bestillingsutvalget,Norge,Buskerud,,6.5,0.33,38.9
+2026,21046302,Aass Juleøl Vellagret,Aass Bryggeri,Barley wine,Øl,Bestillingsutvalget,Norge,Buskerud,,9,0.33,47.8
+2026,21062202,Graff Christmas in da Crib,Graff Brygghus,Porter & stout,Øl,Bestillingsutvalget,Norge,Troms,,9.5,0.33,88.6
+2026,21065902,Woodforde's Winter Reserve Winter Warmer,Woodforde's Brewery,Red/amber,Øl,Bestillingsutvalget,England,Norfolk,,5,0.5,74.9
+2026,21066301,De Struise Tsjeeses Reserva 2020,Struise Brouwers,Spesial,Øl,Bestillingsutvalget,Belgia,Øvrige,,10,0.75,329.5
+2026,21068902,E.C. Dahls Store Bjørn,E. C. Dahls Bryggeri,Klosterstil,Øl,Bestillingsutvalget,Norge,Trøndelag,,9,0.33,78.9
+2026,21069002,E.C. Dahls Chr. Olsens Vinterøl,E. C. Dahls Bryggeri,Klosterstil,Øl,Bestillingsutvalget,Norge,Trøndelag,,10.2,0.33,74.9
+2026,21071602,Whiplash Irél Vanilla Tonka Bean Cacao Imperial Stout,Whiplash Beer,Porter & stout,Øl,Bestillingsutvalget,Irland,Øvrige,,10.5,0.44,129.9
+2026,21071702,Whiplash Noël Bourbon Barrel Aged Belgian Quadrupel,Whiplash Beer,Brown ale,Øl,Bestillingsutvalget,Irland,Øvrige,,11,0.44,129.9
+2026,21071802,Whiplash Lew Christmas DIPA,Whiplash Beer,India pale ale,Øl,Bestillingsutvalget,Irland,Øvrige,,8.2,0.44,119.9
+2026,21072901,La Trappe Quadrupel Trappist 2026 Special Edition,Bierbrouwerij de Koningshoeven,Klosterstil,Øl,Bestillingsutvalget,Nederland,Øvrige,,10.5,0.75,189.9
+2026,21073001,Rodenbach Vintage 2024,Brouwerij Rodenbach,Surøl,Øl,Bestillingsutvalget,Belgia,Øvrige,,7,0.75,199.9
+2026,21076602,3 Fonteinen Oude Wintergeuze no16 25/26,Brouwerij 3 Fonteinen,Surøl,Øl,Bestillingsutvalget,Belgia,Øvrige,,8.2,0.375,149.9
+2026,21078802,Mack Juleøl 2026,Mack Mikrobryggeri,Mørk lager,Øl,Bestillingsutvalget,Norge,Troms,,6.5,0.33,49
+2026,21079302,Mikkeller A Triple Carol,Mikkeller,Klosterstil,Øl,Bestillingsutvalget,Belgia,Øvrige,,9,0.33,89.9
+2026,21084602,Små Vesen Jol i Valdres Ribbeøl,Små Vesen Bryggeri,Saison farmhouse ale,Øl,Bestillingsutvalget,Norge,Innlandet,,5.2,0.33,65.8
+2026,21085202,Haandbryggeriet Premium Julebayer,Haandbryggeriet,Spesial,Øl,Bestillingsutvalget,Norge,Buskerud,,5.5,0.44,74.9
+2026,21085302,Haandbryggeriet Fatlagret Julebukk,Haandbryggeriet,Spesial,Øl,Bestillingsutvalget,Norge,Buskerud,,10,0.44,106.9
+2026,21098702,Grünerløkka Brygghus Løkka Juleporter,Grünerløkka Brygghus,Porter & stout,Øl,Bestillingsutvalget,Norge,Oslo,,6,0.5,89.9
+2026,21098802,To Øl Yule Malt Barrel Aged 2026,To Øl,Porter & stout,Øl,Bestillingsutvalget,Danmark,Øvrige,,12.4,0.33,140.9
+2026,21098902,To Øl Lost All Xmas Reason DIPA,To Øl,India pale ale,Øl,Bestillingsutvalget,Danmark,Øvrige,,8,0.44,104.9
+2026,21103302,Verdant It's Clichéd To Be Cynical At Christmas IPA,Verdant Brewing Co.,India pale ale,Øl,Bestillingsutvalget,England,Cornwall,,6.5,0.44,109.9
+2026,21103402,Verdant Joy In The Simple Things Pale Ale,Verdant Brewing Co.,India pale ale,Øl,Bestillingsutvalget,England,Cornwall,,5.2,0.44,89.9
+2026,21108802,Pomona Island Box of delights IPA,Pomona Island Brew,India pale ale,Øl,Bestillingsutvalget,Storbritannia,Øvrige,,6.3,0.44,99.9
+2026,21108902,Pomona Island x Dankhouse Well so could anyone DIPA,Pomona Island Brew,India pale ale,Øl,Bestillingsutvalget,Storbritannia,Øvrige,,8.1,0.44,119.9
+2026,21109002,Pomona Island Watch the snowfall for ever and ever S'mores stout,Pomona Island Brew,Porter & stout,Øl,Bestillingsutvalget,Storbritannia,Øvrige,,6.5,0.44,99.9
+2026,21109301,Golden Ratio 2025,Lofotpils AS,Spesial,Øl,Bestillingsutvalget,Norge,Nordland,,8.5,0.75,115.7
+2026,21110402,Vault City Salted Caramel Pepernoten Chocolate Imperial Stout With Festives,Vault City Brewing,Porter & stout,Øl,Bestillingsutvalget,Skottland,Øvrige,,13,0.33,149.9
+2026,21110502,Vault City White & Dark Chocolate Pepernoten Imperial Stout With Festive Spices,Vault City Brewing,Porter & stout,Øl,Bestillingsutvalget,Skottland,Øvrige,,13,0.33,149.9
+2026,21110802,Vault City Winter Bramble Blackberry & Lemon Cocktail Sour,Vault City Brewing,Surøl,Øl,Bestillingsutvalget,Skottland,Øvrige,,7.8,0.44,129.9
+2026,21123802,7 Fjell Damnator Xmas Doppelbock,7 Fjell Bryggeri,Mørk lager,Øl,Bestillingsutvalget,Norge,Vestland,,9,0.33,84.9
+2026,21141902,Sierra Nervada Celebration IPA,Sierra Nevada Brewing Co.,India pale ale,Øl,Bestillingsutvalget,USA,California,,6.8,0.355,59.9
+2026,21147202,Disko Brewing Radical Cut,Disko Brewing,Porter & stout,Øl,Bestillingsutvalget,Norge,Buskerud,,12,0.33,140
+2026,21147302,Disko Brewing Sacrilegious Offering,Disko Brewing,Porter & stout,Øl,Bestillingsutvalget,Norge,Buskerud,,10,0.33,150
+2026,21150002,Berentsens Julefnugg 2026,Berentsens Brygghus,Spesial,Øl,Bestillingsutvalget,Norge,Rogaland,,6.5,0.33,63.9
+2026,21150202,Berentsens Jule Avec 2026,Berentsens Brygghus,Spesial,Øl,Bestillingsutvalget,Norge,Rogaland,,9,0.33,69.6
+2026,21150302,Berentsens Stelliger Divum Vintage 2026,Berentsens Brygghus,Spesial,Øl,Bestillingsutvalget,Norge,Rogaland,,19,0.33,198
+2026,21151702,Lindheim Vinterfrukt 2026,Lindheim ølkompani,Spesial,Øl,Bestillingsutvalget,Norge,Telemark,,10,0.375,195
+2026,21179902,Vault City Last Christmas Fizzy Raspberry Chew Bar Sour,Vault City Brewing,Surøl,Øl,Bestillingsutvalget,Skottland,Øvrige,,4.8,0.44,89.9
+2026,21180002,Ægir Julenir Imperial Stout,Ægir Bryggeri,Porter & stout,Øl,Bestillingsutvalget,Norge,Vestland,,11.5,0.44,129.9
+2026,21180102,Marlobobo Rum BA Stevnsberry Jingle Jazz 2023,Marlobobo,Mjød,Mjød,Bestillingsutvalget,Norge,Vestfold,,13,0.375,444.9
+2026,21180202,Marlobobo Snow Globophobia 2024,Marlobobo,Mjød,Mjød,Bestillingsutvalget,Norge,Vestfold,,12,0.375,369.9
+2026,21180302,Amundsen Krampus Imperial Stout,Amundsen Bryggeri,Porter & stout,Øl,Bestillingsutvalget,Norge,Oslo,,11.5,0.44,129.9
+2026,21180402,Marlobobo The Forgotten Art of Ski Ballet 2024,Marlobobo,Mjød,Mjød,Bestillingsutvalget,Norge,Vestfold,,12,0.375,449.9
+2026,21180502,Vault City Yellow Snow Lemon Drizzle Coconut Meringue Sour,Vault City Brewing,Surøl,Øl,Bestillingsutvalget,Skottland,Øvrige,,4.8,0.44,89.9
+2026,21203201,Baladin Nöel Cacao and Mandarin,Birra Baladin,Spesial,Øl,Bestillingsutvalget,Italia,Piemonte,,8.5,0.75,180.5
+2026,21203305,Baladin Noel Cacao and Mandarin 2026,Birra Baladin,Spesial,Øl,Bestillingsutvalget,Italia,Piemonte,,8.5,1.5,379.9
+2026,21204402,Raa Brewing Company Habanero Julestout 2026,Raa Brewing Company,Porter & stout,Øl,Bestillingsutvalget,Norge,Østfold,,10,0.44,113.9
+2026,21205902,Põhjala Fløyelsvinter Porter 2026,Põhjala Brewing,Porter & stout,Øl,Bestillingsutvalget,Estland,Øvrige,,8,0.33,74.9
+2026,21206002,Põhjala Vinterkirsebær Ale 2026,Põhjala Brewing,Spesial,Øl,Bestillingsutvalget,Estland,Øvrige,,5.5,0.33,64.9
+2026,21206102,Põhjala x Finback Første Snø Cellar Series BA Imperial Stout 2026,Põhjala Brewing,Porter & stout,Øl,Bestillingsutvalget,Estland,Øvrige,,12.5,0.33,139.9
+2026,11185602,Nøgne Ø Julefri,Nøgne Ø Det kompromissløse Bryggeri,Alkfr øl u/t.s suk,Alkoholfritt øl,Partiutvalget,Norge,Agder,,0,0.33,30.3
+2026,13643502,Lervig No Worries Driving Home for Christmas,Lervig AS,Alkfr øl m/t.s suk,Alkoholfritt øl,Partiutvalget,Norge,Rogaland,,0,0.33,25.3
+2026,19928802,Amundsen Santa's Cinnamon Smores Alcohol Free Stout,Amundsen Bryggeri,Alkfr øl u/t.s suk,Alkoholfritt øl,Partiutvalget,Norge,Oslo,,0.5,0.33,35.9
+2026,282701,La Rulles Cuvée Meilleurs Voeux,La Rulles,Klosterstil,Øl,Tilleggsutvalget,Belgia,Øvrige,,7.3,0.75,149.9
+2026,892002,Balder Julebukk,Balder Brygg,Spesial,Øl,Tilleggsutvalget,Norge,Vestland,,7,0.33,91.5
+2026,907002,Brouwerij Verhaeghe Barbe Noël Blond Juleøl,Brouwerij Verhaeghe,Klosterstil,Øl,Tilleggsutvalget,Belgia,Øvrige,,7.2,0.33,73.3
+2026,1829302,7 Fjell 7 Sorter Christmas Ale 2021,7 Fjell Bryggeri,Brown ale,Øl,Tilleggsutvalget,Norge,Vestland,,7,0.33,59.9
+2026,1832701,Holtens Julebrygg,Holtens AS,Saison farmhouse ale,Øl,Tilleggsutvalget,Norge,Vestfold,,6.8,0.75,188.9
+2026,1899902,Austmann Stille Natt,Austmann Bryggeri,Porter & stout,Øl,Tilleggsutvalget,Norge,Trøndelag,,9,0.33,66.4
+2026,1938302,Silly Scotch,Brasserie De Silly,Scotch ale,Øl,Tilleggsutvalget,Belgia,,,8,0.33,74.1
+2026,3555602,Nua Svart Jul,Nua Brygghus AS,Mørk lager,Øl,Tilleggsutvalget,Norge,Agder,,6.5,0.5,99.8
+2026,6450502,Inderøy Gårdsbryggeri Musemor Old Ale,Inderøy Gårdsbryggeri,Spesial,Øl,Tilleggsutvalget,Norge,Trøndelag,,6.7,0.5,98.4
+2026,6992901,Glazen Toren Canaster Winterscotch,Brouwerij de Glazen Toren,Scotch ale,Øl,Tilleggsutvalget,Belgia,Øvrige,,8.7,0.75,159.9
+2026,7903902,Inderøy Gårdsbryggeri Dommpapp Quadrupel,Inderøy Gårdsbryggeri,Klosterstil,Øl,Tilleggsutvalget,Norge,Trøndelag,,10.2,0.5,138.3
+2026,7976201,De Ranke Père Noël,Brouwerij de Ranke,Spesial,Øl,Tilleggsutvalget,Belgia,Øvrige,,7,0.75,155
+2026,7982104,Mjøderiet Julemjød,Mjøderiet,Mjød,Mjød,Tilleggsutvalget,Norge,Vestland,,12,0.25,150
+2026,10423502,Inderøy Gårdsbryggeri Fattigmainn Barley Wine,Inderøy Gårdsbryggeri,Barley wine,Øl,Tilleggsutvalget,Norge,Trøndelag,,10.2,0.5,138.3
+2026,10437402,Geiranger Bryggeri Stabbefonna Juleøl,Geiranger Bryggeri,Spesial,Øl,Tilleggsutvalget,Norge,Møre og Romsdal,,7.5,0.33,67.9
+2026,11353702,Monkey Brew Joule Winter Warmer,Monkey Brew AS,Spesial,Øl,Tilleggsutvalget,Norge,Trøndelag,,7,0.44,101.9
+2026,12232502,Inderøy Gårdsbryggeri Klokkeklang,Inderøy Gårdsbryggeri,Porter & stout,Øl,Tilleggsutvalget,Norge,Trøndelag,,10.2,0.5,138.3
+2026,12250702,Senja Handbryggeri Julebokk 2026,Senja Handbryggeri,Mørk lager,Øl,Tilleggsutvalget,Norge,Troms,,6,0.5,74.7
+2026,12275002,Monkey Brew Jesus 2026,Monkey Brew AS,Mørk lager,Øl,Tilleggsutvalget,Norge,Trøndelag,,8.6,0.44,121.9
+2026,12278802,E.C. Dahls Kong Vinter,E. C. Dahls Bryggeri,Mørk lager,Øl,Tilleggsutvalget,Norge,Trøndelag,,7,0.33,69.9
+2026,12308401,Mjøderiet Høytid,Mjøderiet,Mjød,Mjød,Tilleggsutvalget,Norge,Vestland,,12.3,0.75,285
+2026,12583402,ELØ Roasted Delights Imperial Porter 2025,ELØ - En Liten Øl,Porter & stout,Øl,Tilleggsutvalget,Norge,Vestland,,10,0.33,70.2
+2026,13537102,Inderøy Gårdsbryggeri Julemjød,Inderøy Gårdsbryggeri,Mjød,Mjød,Tilleggsutvalget,Norge,Trøndelag,,12,0.375,137.5
+2026,13647102,Salikatt Julebukk 2026,Salikatt Bryggeri,Mørk lager,Øl,Tilleggsutvalget,Norge,Rogaland,,8,0.33,82.9
+2026,13649002,Monkey Brew Supernova 6.0 Christmas DIPA,Monkey Brew AS,India pale ale,Øl,Tilleggsutvalget,Norge,Trøndelag,,8,0.44,111.9
+2026,13666802,7 Fjell Hans Gruber Yippiee Ki Yay Xmas IPA,7 Fjell Bryggeri,India pale ale,Øl,Tilleggsutvalget,Norge,Vestland,,6,0.33,61.9
+2026,13685702,Nua Julebukk Fatlagret 2026,Nua Brygghus AS,Spesial,Øl,Tilleggsutvalget,Norge,Agder,,8,0.5,121.7
+2026,13759702,Hammerhead Santa's Milk & Cookies Milkstout,Hammerhead Brewing Company,Porter & stout,Øl,Tilleggsutvalget,Norge,Trøndelag,,7,0.44,100
+2026,13851602,Qvænbrygg Juleøl,Qvænbrygg,Spesial,Øl,Tilleggsutvalget,Norge,Finnmark,,7,0.33,78.8
+2026,14830202,Nøisom Julebock,Nøisom,Mørk lager,Øl,Tilleggsutvalget,Norge,Østfold,,7.8,0.33,59.4
+2026,14830302,Nøisom Julestout,Nøisom,Porter & stout,Øl,Tilleggsutvalget,Norge,Østfold,,8.2,0.33,59.2
+2026,14837002,Bådin Jul i Sjøgato Old Ale,Bådin,Spesial,Øl,Tilleggsutvalget,Norge,Nordland,,8,0.33,81.9
+2026,14849602,Salikatt Juleglød 2026,Salikatt Bryggeri,Klosterstil,Øl,Tilleggsutvalget,Norge,Rogaland,,10,0.44,129.9
+2026,14871602,Små Vesen Sprek Fjøsnisse Joleøl,Små Vesen Bryggeri,Mørk lager,Øl,Tilleggsutvalget,Norge,Innlandet,,6.5,0.33,72.9
+2026,14910602,Hammerhead Doppelbock 2022,Hammerhead Brewing Company,Mørk lager,Øl,Tilleggsutvalget,Norge,Trøndelag,,8,0.44,100.6
+2026,16357802,K.Aa.B. Juklepej Saison de Noelle 2026,Kaab Bryggeri,Saison farmhouse ale,Øl,Tilleggsutvalget,Norge,Møre og Romsdal,,8.2,0.33,82.5
+2026,16373302,Hogna Brygg Hognator 2026,Hogna Brygg,Mørk lager,Øl,Tilleggsutvalget,Norge,Trøndelag,,9,0.44,89.9
+2026,16398102,Hogna Brygg Blitzen 2026,Hogna Brygg,India pale ale,Øl,Tilleggsutvalget,Norge,Trøndelag,,7.4,0.44,89.9
+2026,16425602,Monkey Brew Lucifer Barley Wine 2026,Monkey Brew AS,Barley wine,Øl,Tilleggsutvalget,Norge,Trøndelag,,13,0.375,199
+2026,16441702,7 Fjell John McClane Xmas Mandarin Cold IPA,7 Fjell Bryggeri,India pale ale,Øl,Tilleggsutvalget,Norge,Vestland,,6.5,0.33,61.9
+2026,16469402,Røros Bryggeri Santas Malty Helper,Røros Bryggeri,Spesial,Øl,Tilleggsutvalget,Norge,Trøndelag,,6,0.33,83.9
+2026,16469901,Mjøderiet Glød,Mjøderiet,Mjød,Mjød,Tilleggsutvalget,Norge,Vestland,,12,0.75,328.3
+2026,16516102,Qvænbrygg Juleqvad,Qvænbrygg,Klosterstil,Øl,Tilleggsutvalget,Norge,Finnmark,,9.4,0.33,98.9
+2026,16559602,Bådin Tussvatnet Winter Warmer,Bådin,Spesial,Øl,Tilleggsutvalget,Norge,Nordland,,9,0.33,81.9
+2026,18592502,Oslo Brewing Sugarplum Quad Whisky BA,Oslo Brewing Co.,Klosterstil,Øl,Tilleggsutvalget,Norge,Oslo,,11.5,0.33,83.1
+2026,18655502,7 Fjell Hissig på Grøten Riskrem Xmas Pastry Stout,7 Fjell Bryggeri,Porter & stout,Øl,Tilleggsutvalget,Norge,Vestland,,10,0.33,99.9
+2026,18661702,Oslo Brewing Merry Cherry Quad BA,Oslo Brewing Co.,Klosterstil,Øl,Tilleggsutvalget,Norge,Oslo,,11.5,0.33,83.1
+2026,18661902,Oslo Brewing Julequad X Barrel Aged,Oslo Brewing Co.,Klosterstil,Øl,Tilleggsutvalget,Norge,Oslo,,11.5,0.33,75.1
+2026,18666902,7 Fjell Lys i Luken Julesaison,7 Fjell Bryggeri,Saison farmhouse ale,Øl,Tilleggsutvalget,Norge,Vestland,,6.5,0.33,61.9
+2026,18673802,Monkey Brew Wild Hunt Christmas Red Lager,Monkey Brew AS,Red/amber,Øl,Tilleggsutvalget,Norge,Trøndelag,,5.1,0.44,81.9
+2026,18690802,Disko Jolne Dobbelbock 2023,Disko Brewing,Mørk lager,Øl,Tilleggsutvalget,Norge,Buskerud,,8,0.44,97.4
+2026,18692702,Raa Brewing Crystal X 2025,Raa Brewing Company,India pale ale,Øl,Tilleggsutvalget,Norge,Østfold,,7,0.44,91.9
+2026,18692904,Mjøderiet Cherry Xmas,Mjøderiet,Mjød,Mjød,Tilleggsutvalget,Norge,Vestland,,13,0.25,185.9
+2026,18693402,Bådin Belgian Beast Belgian Quad,Bådin,Klosterstil,Øl,Tilleggsutvalget,Norge,Nordland,,11.8,0.33,76.9
+2026,18694301,Mjøderiet Høytid BA,Mjøderiet,Mjød,Mjød,Tilleggsutvalget,Norge,Vestland,,12,0.75,340.5
+2026,18701402,Senja Handbryggeri JuleWiess Juleøl 2025,Senja Handbryggeri,Lys ale,Øl,Tilleggsutvalget,Norge,Troms,,5,0.5,75.4
+2026,18818302,Stigbergets Always Christmas Porter,Stigbergets Bryggeri,Porter & stout,Øl,Tilleggsutvalget,Sverige,Øvrige,,5,0.33,69.5
+2026,19899802,Røros Bryggeri Wheat Christmas,Røros Bryggeri,Hveteøl,Øl,Tilleggsutvalget,Norge,Trøndelag,,6.2,0.33,83.8
+2026,19927702,Nua Christmas Cheesecake,Nua Brygghus AS,Mørk lager,Øl,Tilleggsutvalget,Norge,Agder,,6.5,0.5,121.6
+2026,19968202,Nedstrand Bryggeri Julastjernå,Nedstrand Bryggeri AS,Mørk lager,Øl,Tilleggsutvalget,Norge,Rogaland,,5.5,0.33,67.5
+2026,19982802,Hogna Brygg Stjernetåke 2026,Hogna Brygg,India pale ale,Øl,Tilleggsutvalget,Norge,Trøndelag,,6,0.44,84.9
+2026,20009502,Bådin Gildeskål Saison,Bådin,Saison farmhouse ale,Øl,Tilleggsutvalget,Norge,Nordland,,6,0.44,71.9
+2026,20011102,Bådin Askepott Czech Dark Lager,Bådin,Mørk lager,Øl,Tilleggsutvalget,Norge,Nordland,,5.3,0.44,67.6
+2026,20011502,Rygr Sure Marte Mandarin & Julekrydder Surøl 2026,RYGR Brygghus,Surøl,Øl,Tilleggsutvalget,Norge,Rogaland,,6.5,0.33,88.8
+2026,20012902,Hammerhead Cherry Christmas,Hammerhead Brewing Company,Surøl,Øl,Tilleggsutvalget,Norge,Trøndelag,,5.4,0.44,81.6
+2026,20016202,Ølbæks Barley Wine,Ølbæks Bryggeri,Barley wine,Øl,Tilleggsutvalget,Norge,Rogaland,,13.5,0.33,118.4
+2026,20016302,Ølbæks Porter,Ølbæks Bryggeri,Porter & stout,Øl,Tilleggsutvalget,Norge,Rogaland,,10.5,0.33,99.8
+2026,20016402,Jåttå Jul på Jåttå,Jåttå Gårdsbryggeri,Mørk lager,Øl,Tilleggsutvalget,Norge,Rogaland,,6.7,0.33,71.9
+2026,20016502,Jåttå Riskrem,Jåttå Gårdsbryggeri,Surøl,Øl,Tilleggsutvalget,Norge,Rogaland,,6,0.33,81.9
+2026,20016602,Jåttå Humla god jul,Jåttå Gårdsbryggeri,India pale ale,Øl,Tilleggsutvalget,Norge,Rogaland,,6,0.33,79.1
+2026,20026002,Bygland Jolebrygg For the Love of Kveik,Bygland Bryggeri,Saison farmhouse ale,Øl,Tilleggsutvalget,Norge,Agder,,7,0.44,81.2
+2026,20026102,Bygland Jolebokk,Bygland Bryggeri,Mørk lager,Øl,Tilleggsutvalget,Norge,Agder,,8.5,0.44,87
+2026,20070102,Inderøy Brygghus Juleøl,Inderøy Brenneri,Mørk lager,Øl,Tilleggsutvalget,Norge,Trøndelag,,6.9,0.33,56.5
+2026,20923502,Hogna Vixen 2026,Hogna Brygg,Spesial,Øl,Tilleggsutvalget,Norge,Trøndelag,,7,0.44,78.9
+2026,20931402,Hogna Nocturnes 2026,Hogna Brygg,Porter & stout,Øl,Tilleggsutvalget,Norge,Trøndelag,,7.5,0.44,79.9
+2026,20960102,Rock City Snow Claws DDH Double Cold IPA,Rock City,India pale ale,Øl,Tilleggsutvalget,Nederland,Øvrige,,8,0.44,106.4
+2026,20960302,Hogna Gingerbread Stout 2026,Hogna Brygg,Porter & stout,Øl,Tilleggsutvalget,Norge,Trøndelag,,10,0.44,99.9
+2026,21059102,Inderøy Hyrde,Inderøy Gårdsbryggeri,Klosterstil,Øl,Tilleggsutvalget,Norge,Trøndelag,,6.7,0.5,98.4
+2026,21106202,Qvart Vintervarmer 2026,Qvart Ølkompani,Spesial,Øl,Tilleggsutvalget,Norge,Agder,,6.5,0.33,68.4
+2026,21149202,Bygland Vasstrond'e Jolaøl,Bygland Bryggeri,Saison farmhouse ale,Øl,Tilleggsutvalget,Norge,Agder,,11,0.33,112.7
+2026,21151002,Salikatt Embla 2026,Salikatt Bryggeri,Mørk lager,Øl,Tilleggsutvalget,Norge,Rogaland,,10.2,0.375,159.9
+2026,21151102,Salikatt Timeless 2026,Salikatt Bryggeri,Mørk lager,Øl,Tilleggsutvalget,Norge,Rogaland,,8,0.44,134.9
+2026,21151202,Salikatt New England Christmas 2026,Salikatt Bryggeri,India pale ale,Øl,Tilleggsutvalget,Norge,Rogaland,,7.5,0.44,119.9
+2026,21151302,Salikatt Barrel-Aged Christmas 2026,Salikatt Bryggeri,Porter & stout,Øl,Tilleggsutvalget,Norge,Rogaland,,13.5,0.375,299
+2026,21151402,Salikatt Christmas on Fire 2026,Salikatt Bryggeri,India pale ale,Øl,Tilleggsutvalget,Norge,Rogaland,,6.5,0.44,99.9
+2026,21179402,Nua Julemurer,Nua Brygghus AS,Mørk lager,Øl,Tilleggsutvalget,Norge,Agder,,6.5,0.5,121.6
+2026,21203502,Bådin Helgelandsbukken Trippelbock,Bådin,Mørk lager,Øl,Tilleggsutvalget,Norge,Nordland,,10,0.33,79.9
+2026,21203602,Bådin Xmas Blast Triple Hazy IPA,Bådin,India pale ale,Øl,Tilleggsutvalget,Norge,Nordland,,9,0.44,96.9
+2026,21204502,Rygr Yuleblòt Quadruple Christmas BA,RYGR Brygghus,Klosterstil,Øl,Tilleggsutvalget,Norge,Rogaland,,10.8,0.33,156.9
+2026,21204602,Rygr Nissepilt Gulrotkake & Jordbær Fatlagret,RYGR Brygghus,Surøl,Øl,Tilleggsutvalget,Norge,Rogaland,,6.5,0.33,121.8
+2026,21204702,Rygr Hati PX BA Sour,RYGR Brygghus,Surøl,Øl,Tilleggsutvalget,Norge,Rogaland,,12,0.33,212.3
+2026,21204802,Grans Julebokk Dobbelbokk BA,Grans Bryggeri,Klosterstil,Øl,Tilleggsutvalget,Norge,Rogaland,,9,0.33,145.1
+2026,21205502,Bådin Dark Port,Bådin,Porter & stout,Øl,Tilleggsutvalget,Norge,Nordland,,10.8,0.33,141.9
+2026,21206202,Bådin Belgian Beast Tønnelagra Belgian Quad,Bådin,Klosterstil,Øl,Tilleggsutvalget,Norge,Nordland,,11.3,0.33,141.9
+2026,21206302,Bådin Santas Nightcap Barley Wine,Bådin,Barley wine,Øl,Tilleggsutvalget,Norge,Nordland,,12.9,0.33,141.9
+2026,21210402,Marlobobo's Megabear Where's My Hat? Pulpy Smoothie Sour,Marlobobo,Surøl,Øl,Tilleggsutvalget,Sverige,Skåne,,5,0.44,129.9
+2026,21210502,Marlobobo's Megabear x Pomona Island x Disko: The Viscosity Project - Imp. Stout,Marlobobo,Porter & stout,Øl,Tilleggsutvalget,Norge,Vestfold,,12,0.33,114.9
+2026,21211202,Cervisiam I'm Dreaming of A Dank Christmas,Cervisiam Bryggeri,India pale ale,Øl,Tilleggsutvalget,Norge,Oslo,,8.5,0.44,99.5
+2026,21211302,Bygland Jolegama Joleøl,Bygland Bryggeri,Klosterstil,Øl,Tilleggsutvalget,Norge,Agder,,10,0.33,86.1
+2026,21212702,Bygland Syrleg Jol Fatlagra,Bygland Bryggeri,Surøl,Øl,Tilleggsutvalget,Norge,Agder,,9.3,0.33,102.6
+2026,21215602,Julegenser 2026,Harstad Bryggeri,Porter & stout,Øl,Tilleggsutvalget,Norge,Troms,,6,0.33,67.4
+2026,21223902,Kaab Bryggeri Julefergå 2026,Kaab Bryggeri,Saison farmhouse ale,Øl,Tilleggsutvalget,Norge,Møre og Romsdal,,7.2,0.5,98.1
