@@ -55,8 +55,8 @@ class VmpImportServiceTest {
 
     @Test
     void startupLoadedTheTables() {
-        assertThat(count("vmp_products")).isEqualTo(662);
-        assertThat(count("vmp_listings")).isEqualTo(2518);
+        assertThat(count("vmp_products")).isEqualTo(765);
+        assertThat(count("vmp_listings")).isEqualTo(2818);
         // 401 entries in the file, one of them (2018 CB Juleøl) listed twice
         assertThat(count("vote_matches")).isEqualTo(400);
     }
@@ -157,7 +157,7 @@ class VmpImportServiceTest {
                 new FileSystemResource(empty), new FileSystemResource(empty)));
         assertThat(r.voteMatches().read()).isZero();
         assertThat(count("vote_matches")).isEqualTo(400);
-        assertThat(count("vmp_products")).isEqualTo(662);
+        assertThat(count("vmp_products")).isEqualTo(765);
     }
 
     @Test
