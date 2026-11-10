@@ -5,6 +5,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.Optional;
 import java.util.UUID;
 
+/** Tasting tables. Named apart from Spring Session's own "sessionRepository" bean (the logins). */
+@org.springframework.stereotype.Repository("tastingSessionRepository")
 public interface SessionRepository extends JpaRepository<TastingSession, UUID> {
     Optional<TastingSession> findByJoinCode(String joinCode);
 
