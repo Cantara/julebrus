@@ -99,6 +99,12 @@ again at their next visit, and count as unconsented until then), and who has not
 no mail itself. The Google OAuth redirect URI is
 `https://<host>/login/oauth2/code/google`.
 
+A login lasts while it is used at least once in 30 days (`server.servlet.session.timeout`). Logins are stored in
+PostgreSQL by Spring Session (V19, `spring_session`), so a restart or a release no longer logs anyone out, and the
+cookie is persistent (a year, `Secure`, `HttpOnly`, `SameSite=Lax`), so closing the browser or the home-screen app
+does not either. The release that brings this logs everyone out one last time, because the old logins lived in memory.
+Sessions are named by e-mail (`user-name-attribute: email`); expired ones are swept every ten minutes.
+
 Also optional: `JULEBRUS_CONTACT_EMAIL` (named in the consent text as where to ask for
 deletion; blank means "contact the organisers"), `JULEBRUS_SPONSOR_NAME` (default
 `eXOReaction`; blank hides the "Sponsored by" line) and `JULEBRUS_SPONSOR_URL`
@@ -259,6 +265,7 @@ delete from tips where user_id = :'uid';
 delete from push_subscriptions where user_id = :'uid';
 delete from feed_reactions where user_id = :'uid';
 delete from advent_doors where user_id = :'uid';
+delete from spring_session where lower(principal_name) = lower(:'email');   -- their logins; attributes cascade
 delete from event_attendees where user_id = :'uid';
 delete from event_attendees where event_id in (select id from events where host_id = :'uid');
 delete from events where host_id = :'uid';

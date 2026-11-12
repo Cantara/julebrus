@@ -262,7 +262,7 @@ backend/    Spring Boot 3.5, Java 21, PostgreSQL, Flyway, Google OIDC
   what the web app already shows to everyone logged in, and never e-mails or
   per-person scores from the running season.
 
-### Data model (V1–V18)
+### Data model (V1–V19)
 
 ```
 users             id, email, display_name, created_at, teams_chosen_at
@@ -291,6 +291,8 @@ events            id, host_id, title, starts_at, online, place?, note?, capacity
                   cancelled_at?, reminder_sent_at?
 event_attendees   event_id, user_id, joined_at   (the host is always one)
 advent_doors      id, user_id, door_day, opened_at, answer?, correct?, late, key_used   unique (user_id, door_day)
+spring_session    primary_id, session_id, creation/last_access/expiry times, max_inactive_interval, principal_name (e-mail)
+spring_session_attributes  session_primary_id, attribute_name, attribute_bytes   (Spring Session JDBC: the logins, 10 Nov)
 rater_weights     id, season_year, email, weight 0..1, reason, flagged, flag_note?, overridden
 user_consents     id, user_id, consent_version, accepted_at, withdrawn_at?   unique (user_id, version)
 consent_events    id, user_id, consent_version, event ACCEPT|WITHDRAW, at     (append-only)
