@@ -3,8 +3,10 @@ import { onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { get, post } from '../api/client'
 import type { MySession, Session } from '../api/types'
+import { useMe } from '../stores/me'
 
 const router = useRouter()
+const store = useMe()
 const error = ref('')
 const tables = ref<MySession[]>([])
 onMounted(() => get<MySession[]>('/api/sessions/mine').then((t) => (tables.value = t)).catch(() => {}))
@@ -54,5 +56,5 @@ async function start() {
     </div>
     <span class="muted">›</span>
   </router-link>
-  <p class="muted">Smaker du alene, går du rett på et øl i katalogen. Det bruker en av fem solo-dager.</p>
+  <p class="muted">Smaker du alene, går du rett på et øl i katalogen. Det bruker en av {{ store.me?.season.maxSoloDays ?? 24 }} solo-dager.</p>
 </template>

@@ -44,7 +44,7 @@ const copy = computed<{ title: string; lead: string; sections: Section[]; closin
           {
             title: 'The season',
             paragraphs: [
-              `Now the tasting lasts the whole season: 1 November to 23 December. Three rules keep it honest. At most five beers a day, so every pour is a real pour. At most five solo days, so most of it happens in company. And one score per beer per person, ever.`,
+              `Now the tasting lasts the whole season: 1 November to 23 December. Three rules keep it honest. At most five beers a day, so every pour is a real pour. At most 24 solo days, so company still counts. And one score per beer per person, ever.`,
               'The home screen is an advent calendar. Every day you taste opens a door. Tap it later and see what was on the table.',
             ],
           },
@@ -98,7 +98,7 @@ const copy = computed<{ title: string; lead: string; sections: Section[]; closin
           {
             title: 'Sesongen',
             paragraphs: [
-              'Nå varer smakingen hele sesongen: 1. november til 23. desember. Tre regler holder det ærlig. Maks fem øl om dagen, så hver skjenk er en skikkelig skjenk. Maks fem solo-dager, så det meste skjer i selskap. Og ett terningkast per øl per person, for alltid.',
+              'Nå varer smakingen hele sesongen: 1. november til 23. desember. Tre regler holder det ærlig. Maks fem øl om dagen, så hver skjenk er en skikkelig skjenk. Maks 24 solo-dager, så selskap teller fortsatt. Og ett terningkast per øl per person, for alltid.',
               'Hjemskjermen er en adventskalender. Hver dag du smaker, åpnes en luke. Trykk på den senere og se hva som sto på bordet.',
             ],
           },
