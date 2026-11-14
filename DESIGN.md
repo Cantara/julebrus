@@ -19,7 +19,7 @@ small. Three rules do that:
 | Season window | 1 Nov – 23 Dec | Follows the Vinmonopolet juleøl release; final reveal 23 Dec |
 | Max tastings per person per day | 5 | Real pours, fresh palate |
 | ... at a table of 8 or more | 12 | A party is a different evening (decided 25 Oct). The 5 still holds for anything else that day |
-| Max solo tasting days per person | 5 | Pushes tasting into groups, which is the point |
+| Max solo tasting days per person | 24 | Pushes tasting into groups, which is the point. Raised from 5 on 14 Nov: five was too tight for a season where most people taste at home |
 | What counts as a juleøl | From Vinmonopolet, above grocery strength (4.7 %) | Butikkøl is refused on add and import, and never ranked |
 | Homebrew | Allowed above 4.7 %, rated only at a table of 6+, ranked only with 4+ scores | Nobody rigs their own |
 
@@ -38,7 +38,7 @@ small. Three rules do that:
 - **Day:** a calendar day in Europe/Oslo.
 - **Solo:** a tasting is solo when its session has exactly one member (or no
   session). A *solo day* is a calendar day on which the person has at least one solo
-  tasting. The 5-solo-day cap counts distinct such days.
+  tasting. The solo-day cap (24) counts distinct such days.
 - **Per-day cap:** counts the person's tastings on that Oslo day across all
   sessions. The sixth rating is refused, whatever session it belongs to.
 - **Window:** enforced server side. Nothing can be rated before 1 Nov or after 23 Dec.
@@ -231,7 +231,7 @@ Computed from the tasting log, so they can be added or re-tuned mid-season.
 | First Blood | First tasting of the season |
 | Full Week | Tasted on 7 consecutive days |
 | Explorer | Rated a beer fewer than 3 others had rated at the time |
-| Lone Wolf | All 5 solo days used |
+| Lone Wolf | All 24 solo days used |
 | Social Butterfly | 10 distinct co-tasters |
 | Contrarian | Largest mean deviation from the crowd (min. 10 ratings) |
 | Advent | Opened every advent door 1 – 23 Dec |

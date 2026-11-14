@@ -145,6 +145,11 @@ th { font-size: 0.8rem; color: var(--muted); font-weight: 600; }
 .bulb.lit::after { background: var(--bulb, var(--candle)); border-color: var(--bulb, var(--candle)); box-shadow: 0 0 10px 2px var(--glow); }
 .bulb.lit.warm { --bulb: var(--candle); }
 .bulb.lit.solo { --bulb: var(--brand); }
+.lights.dense { flex-wrap: wrap; gap: 6px 5px; }
+.lights.dense .bulb { width: 11px; height: 15px; }
+.lights.dense .bulb::before { left: 3px; width: 5px; height: 3px; }
+.lights.dense .bulb::after { top: 3px; width: 11px; height: 12px; }
+.lights.dense .bulb.lit::after { box-shadow: 0 0 6px 1px var(--glow); }
 
 /* Advent calendar */
 .advent { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; }

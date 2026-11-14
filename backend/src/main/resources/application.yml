@@ -42,7 +42,8 @@ julebrus:
     # A table of this many or more is a big table, where the daily limit is the second number.
     big-table-size: 8
     max-tastings-per-day-big-table: 12
-    max-solo-days: 5
+    # Days with a solo tasting a person may have in the season (raised from 5 on 14 Nov).
+    max-solo-days: 24
     # Local time on the last day when the finale page reveals the result.
     finale-time: "18:00"
   advent:

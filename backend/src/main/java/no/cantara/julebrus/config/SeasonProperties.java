@@ -30,7 +30,7 @@ public record SeasonProperties(
     public SeasonProperties {
         if (zone == null) zone = ZoneId.of("Europe/Oslo");
         if (maxTastingsPerDay <= 0) maxTastingsPerDay = 5;
-        if (maxSoloDays < 0) maxSoloDays = 5;
+        if (maxSoloDays < 0) maxSoloDays = 24;
         if (finaleTime == null) finaleTime = LocalTime.of(18, 0);
         if (bigTableSize <= 0) bigTableSize = 8;
         if (maxTastingsPerDayBigTable <= 0) maxTastingsPerDayBigTable = 12;
