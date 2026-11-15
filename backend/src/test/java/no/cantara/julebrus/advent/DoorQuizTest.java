@@ -113,4 +113,36 @@ class DoorQuizTest {
         assertThat(AdventService.streak(Set.of(today.minusDays(1), today.minusDays(2)), today)).isEqualTo(2);
         assertThat(AdventService.streak(Set.of(today.minusDays(2)), today)).isZero();
     }
+
+    @Test
+    void theSpotlightIsTheSameForEveryoneOnADayAndMovesAroundTheQuietThirdOfTheShelf() {
+        // 30 beers: the first 12 untasted, the rest tasted 1..18 times.
+        List<java.util.UUID> shelf = new ArrayList<>();
+        java.util.Map<java.util.UUID, Long> counts = new java.util.HashMap<>();
+        for (int i = 0; i < 30; i++) {
+            java.util.UUID id = new java.util.UUID(0, i);
+            shelf.add(id);
+            if (i >= 12) counts.put(id, (long) (i - 11));
+        }
+        java.util.Set<java.util.UUID> seen = new java.util.HashSet<>();
+        for (LocalDate d = LocalDate.of(2026, 11, 15); d.isBefore(LocalDate.of(2026, 11, 29)); d = d.plusDays(1)) {
+            java.util.UUID pick = AdventService.pickSpotlight(shelf, counts, Set.of(), d);
+            assertThat(AdventService.pickSpotlight(shelf, counts, Set.of(), d)).isEqualTo(pick);
+            assertThat(counts.getOrDefault(pick, 0L)).isZero(); // the quiet third is the twelve untasted ones
+            seen.add(pick);
+        }
+        assertThat(seen).hasSizeGreaterThan(6); // not the same five in turn any more
+    }
+
+    @Test
+    void theSpotlightSkipsWhatTheReaderHasTasted() {
+        List<java.util.UUID> shelf = new ArrayList<>();
+        for (int i = 0; i < 12; i++) shelf.add(new java.util.UUID(0, i));
+        LocalDate day = LocalDate.of(2026, 11, 20);
+        java.util.UUID first = AdventService.pickSpotlight(shelf, java.util.Map.of(), Set.of(), day);
+        java.util.UUID second = AdventService.pickSpotlight(shelf, java.util.Map.of(), Set.of(first), day);
+        assertThat(second).isNotNull().isNotEqualTo(first);
+        assertThat(AdventService.pickSpotlight(shelf, java.util.Map.of(), new java.util.HashSet<>(shelf), day)).isNull();
+        assertThat(AdventService.pickSpotlight(List.of(), java.util.Map.of(), Set.of(), day)).isNull();
+    }
 }
