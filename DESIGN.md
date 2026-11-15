@@ -145,7 +145,7 @@ rewards showing up and never rewards a drink a day. Each door holds a question g
 date-seeded class (`DoorQuiz`: higher or lower on the all-time list with at least five places between the two, who won
 a year with two others from that year's top five, which year a beer won with two years it did not), so the same day
 always asks the same thing and nobody writes 53 questions. One tap answers and opens; behind it are a tasting tip
-(`advent/tips.txt`), a shelf beer among the five least tasted, and in the blackout a clue. Answers are private; others
+(`advent/tips.txt`), a shelf beer from the least-tasted third of the shelf (at least ten), shuffled by the day so the house shares it, and never one the reader has already tasted (15 Nov: the first cut took the five least tasted in name order, which early in the season meant the same five from the top of the alphabet), and in the blackout a clue. Answers are private; others
 see only how many opened today's door, in total and per team.
 
 Missed doors: free to open late until `free-revival-until` (4 Nov, so the first days and the days before the calendar

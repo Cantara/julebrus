@@ -27,12 +27,16 @@ import java.nio.charset.StandardCharsets;
 import java.time.Clock;
 import java.time.Instant;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Random;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
@@ -48,8 +52,8 @@ import java.util.stream.Collectors;
 @Service
 public class AdventService {
 
-    /** How many of the least-tasted shelf beers take turns as "dagens ukjente". */
-    static final int SPOTLIGHT_POOL = 5;
+    /** "Dagens ukjente" is drawn from the least-tasted third of the shelf, but never from fewer than this many beers. */
+    static final int SPOTLIGHT_MIN_POOL = 10;
 
     public enum DoorState { OPENED, TODAY, FREE_LATE, NEEDS_KEY }
 
@@ -229,7 +233,7 @@ public class AdventService {
         if (opened != null) {
             if (q != null) answer = new Answer(opened.getAnswer(), opened.getCorrect(), q.answer(), q.explanation());
             tip = tips.isEmpty() ? null : tips.get(Math.floorMod((int) (day.toEpochDay() - season.start().toEpochDay()), tips.size()));
-            spotlight = spotlight(day);
+            spotlight = spotlight(day, me.getId());
             clue = clue(day);
         }
         return new DoorView(day, (int) (day.toEpochDay() - season.start().toEpochDay()) + 1, state, question, answer, tip, spotlight, clue,
@@ -270,15 +274,34 @@ public class AdventService {
         return data;
     }
 
-    private BeerRef spotlight(LocalDate day) {
+    private BeerRef spotlight(LocalDate day, UUID me) {
         Map<UUID, Long> counts = new HashMap<>();
         tastings.countPerBeer().forEach(c -> counts.put(c.beerId(), c.count()));
-        List<Beer> pool = beers.findAll().stream().filter(Beer::counts)
-                .sorted(Comparator.comparingLong((Beer b) -> counts.getOrDefault(b.getId(), 0L)).thenComparing(b -> b.getName().toLowerCase()))
-                .limit(SPOTLIGHT_POOL).toList();
-        if (pool.isEmpty()) return null;
-        Beer b = pool.get(Math.floorMod((int) day.toEpochDay(), pool.size()));
+        Map<UUID, Beer> shelf = new HashMap<>();
+        beers.findAll().stream().filter(Beer::counts).forEach(b -> shelf.put(b.getId(), b));
+        Set<UUID> mine = tastings.findByUserIdOrderByTastedAtDesc(me).stream().map(Tasting::getBeerId).collect(Collectors.toSet());
+        UUID pick = pickSpotlight(shelf.keySet(), counts, mine, day);
+        if (pick == null) return null;
+        Beer b = shelf.get(pick);
         return new BeerRef(b.getId(), b.getName(), b.getBrewery(), counts.getOrDefault(b.getId(), 0L));
+    }
+
+    /**
+     * Pure: the day's spotlight. The candidates are the least-tasted third of the shelf (never fewer than
+     * {@link #SPOTLIGHT_MIN_POOL}, and every beer tied with the last one in), shuffled by the day, so the whole house
+     * sees the same beer on a given day but a different one the next. A beer the reader has tasted is skipped; when
+     * they have tasted every candidate, the least-tasted one they have not had wins; when they have had them all, null.
+     */
+    static UUID pickSpotlight(Collection<UUID> shelf, Map<UUID, Long> counts, Set<UUID> tastedByReader, LocalDate day) {
+        if (shelf.isEmpty()) return null;
+        List<UUID> byFewest = shelf.stream()
+                .sorted(Comparator.comparingLong((UUID id) -> counts.getOrDefault(id, 0L)).thenComparing(UUID::toString)).toList();
+        int size = Math.min(byFewest.size(), Math.max(SPOTLIGHT_MIN_POOL, byFewest.size() / 3));
+        long cutoff = counts.getOrDefault(byFewest.get(size - 1), 0L);
+        List<UUID> pool = new ArrayList<>(byFewest.stream().filter(id -> counts.getOrDefault(id, 0L) <= cutoff).toList());
+        Collections.shuffle(pool, new Random(day.toEpochDay() * 7919L + 17));
+        return pool.stream().filter(id -> !tastedByReader.contains(id)).findFirst()
+                .orElseGet(() -> byFewest.stream().filter(id -> !tastedByReader.contains(id)).findFirst().orElse(null));
     }
 
     /** The leader's clue, for doors in the blackout before the finale day. */
