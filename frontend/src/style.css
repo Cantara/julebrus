@@ -180,15 +180,8 @@ th { font-size: 0.8rem; color: var(--muted); font-weight: 600; }
 .door .n { position: absolute; bottom: 3px; right: 5px; font-size: 0.6rem; font-weight: 600; opacity: 0.8; }
 .door:focus-visible { outline: 2px solid var(--pine); outline-offset: 1px; }
 
-/* Snow: fixed layer behind content, CSS only, off under reduced motion */
-.snow { position: fixed; inset: 0; pointer-events: none; overflow: hidden; z-index: 0; }
-.snow i {
-  position: absolute; top: -12px; display: block; border-radius: 50%; background: var(--snow);
-  box-shadow: var(--snow-edge); animation: fall linear infinite;
-}
-@keyframes fall {
-  to { transform: translate3d(var(--drift, 0px), 110vh, 0); }
-}
+/* Snow: one fixed canvas (components/Snow.vue), off under reduced motion */
+.snow { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0; }
 @media (prefers-reduced-motion: reduce) {
   .snow { display: none; }
   .die.roll { animation: none; }
@@ -254,6 +247,13 @@ th { font-size: 0.8rem; color: var(--muted); font-weight: 600; }
 .finale-hero .star.lit { color: var(--candle); text-shadow: 0 0 18px var(--glow), 0 0 40px var(--glow); }
 .finale-hero h1 { margin: 6px 0 4px; }
 .finale-hero .winner { font-size: 1.6rem; font-weight: 700; margin: 10px 0 2px; }
+/* The hero under the night sky (components/NightSky.vue): light text on the aurora, whatever the colour scheme. */
+.finale-hero.night { position: relative; padding: 30px 14px 22px; margin: 4px 0 14px; min-height: 260px; color: #fff6e8; text-shadow: 0 1px 6px rgba(3, 6, 20, 0.85); }
+.finale-hero.night > :not(.nightsky) { position: relative; }
+.finale-hero.night h1 { color: #fff6e8; }
+.finale-hero.night .muted, .finale-hero.night .countdown span { color: #d9d3e6; }
+.finale-hero.night .lnk { color: #ffe1a3; }
+.finale-hero.night .star { color: #f5c87a; }
 .countdown { display: flex; justify-content: center; gap: 18px; margin: 14px 0 6px; }
 .countdown div { display: grid; justify-items: center; min-width: 64px; }
 .countdown strong { font-family: Fraunces, Georgia, serif; font-size: 2.4rem; line-height: 1; font-variant-numeric: tabular-nums; }
