@@ -6,6 +6,7 @@ import type { AdventOverview, BadgeView, Beer, Feed, MyTip, PlannedEvent, Sessio
 import { useRoute } from 'vue-router'
 import AdventCalendar, { type DayEntry } from '../components/AdventCalendar.vue'
 import AdventPicture from '../components/AdventPicture.vue'
+import DiceFace from '../components/DiceFace.vue'
 import LightsMeter from '../components/LightsMeter.vue'
 import Snow from '../components/Snow.vue'
 import { useMe } from '../stores/me'
@@ -136,6 +137,8 @@ const days = computed<Record<string, DayEntry>>(() => {
 
 
 const season = computed(() => store.me?.season)
+/** My roll per beer, so a beer I have rolled shows my dice rather than a "Smak" button. */
+const mineByBeer = computed<Record<string, number>>(() => Object.fromEntries(mine.value.map((t) => [t.beerId, t.score])))
 
 /** Opened advent doors by day, for the calendar; the value says whether the answer was right. */
 const openedDoors = computed<Record<string, boolean | null>>(() =>
@@ -357,7 +360,8 @@ const dayOfSeason = computed(() => {
       <strong>{{ b.name }}</strong>
       <div class="muted">{{ b.brewery }} · {{ b.ratingCount }} {{ b.ratingCount === 1 ? 'smaking' : 'smakinger' }}</div>
     </div>
-    <router-link class="btn secondary" :to="`/beers/${b.id}/rate`">Smak</router-link>
+    <router-link v-if="mineByBeer[b.id]" :to="`/beers/${b.id}`" style="text-decoration: none" :aria-label="`Ditt terningkast: ${mineByBeer[b.id]}`"><DiceFace :value="mineByBeer[b.id]" :size="36" /></router-link>
+    <router-link v-else class="btn secondary" :to="`/beers/${b.id}/rate`">Smak</router-link>
   </div>
 </template>
 

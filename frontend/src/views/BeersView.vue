@@ -1,11 +1,15 @@
 <script setup lang="ts">
 import { onMounted, ref, watch } from 'vue'
 import { get, post } from '../api/client'
-import type { Beer } from '../api/types'
+import type { Beer, Tasting } from '../api/types'
+import DiceFace from '../components/DiceFace.vue'
 import BeerPhotoBox from '../components/BeerPhotoBox.vue'
 
 const q = ref('')
 const beers = ref<Beer[]>([])
+/** My roll per beer: a beer I have rolled shows the dice, not a "Smak" button that would only be refused. */
+const myScore = ref<Record<string, number>>({})
+get<Tasting[]>('/api/tastings/mine').then((ts) => (myScore.value = Object.fromEntries(ts.map((t) => [t.beerId, t.score])))).catch(() => {})
 const adding = ref(false)
 const draft = ref({ name: '', brewery: '', style: '', abv: undefined as number | undefined, homebrew: false })
 const error = ref('')
@@ -48,7 +52,8 @@ onMounted(load)
       <div class="muted">{{ b.ratingCount }} {{ b.ratingCount === 1 ? 'smaking' : 'smakinger' }}</div>
       <BeerPhotoBox :beer="b" @changed="load" />
     </div>
-    <router-link class="btn secondary" :to="`/beers/${b.id}/rate`">Smak</router-link>
+    <router-link v-if="myScore[b.id]" class="rolled" :to="`/beers/${b.id}`" :aria-label="`Ditt terningkast: ${myScore[b.id]}`"><DiceFace :value="myScore[b.id]" :size="36" /></router-link>
+    <router-link v-else class="btn secondary" :to="`/beers/${b.id}/rate`">Smak</router-link>
   </div>
   <p v-if="!beers.length" class="muted">Ingen treff.</p>
   <p v-else class="muted" style="margin: -4px 0 12px">Trykk på et øl for siden med fordeling, stikkord og notater.</p>
@@ -72,3 +77,7 @@ onMounted(load)
     <button style="margin-top: 12px">Lagre</button>
   </form>
 </template>
+
+<style scoped>
+.rolled { display: block; text-decoration: none; }
+</style>

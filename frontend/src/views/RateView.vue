@@ -1,9 +1,10 @@
 <script setup lang="ts">
-import { onMounted, ref } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { ApiFailure, get, post } from '../api/client'
 import type { Beer, HistoricRating, NewTasting, StructuredNotes, Tasting } from '../api/types'
 import BeerPhotoBox from '../components/BeerPhotoBox.vue'
+import DiceFace from '../components/DiceFace.vue'
 import ScoreDice from '../components/ScoreDice.vue'
 import TastingNotes from '../components/TastingNotes.vue'
 import { useMe } from '../stores/me'
@@ -22,6 +23,16 @@ const structured = ref<StructuredNotes>({})
 const tags = ref<string[]>([])
 const error = ref('')
 const saving = ref(false)
+/** One roll per beer per person, ever: once there is one, the page shows it instead of a form that can only fail. */
+const mine = ref<Tasting | null>(null)
+const loaded = ref(false)
+
+async function loadMine() {
+  const tastings = await get<Tasting[]>('/api/tastings/mine').catch(() => [] as Tasting[])
+  mine.value = tastings.find((t) => t.beerId === props.id) ?? null
+}
+const NOTE_LABELS: [keyof StructuredNotes, string][] = [['appearance', 'Utseende'], ['aroma', 'Lukt'], ['taste', 'Smak'], ['finish', 'Ettersmak']]
+const myNotes = computed(() => NOTE_LABELS.filter(([k]) => mine.value?.structuredNotes?.[k]).map(([k, label]) => ({ label, text: mine.value!.structuredNotes![k]! })))
 
 const sessionId = typeof route.query.session === 'string' ? route.query.session : undefined
 
@@ -31,7 +42,8 @@ async function loadBeer() {
 }
 
 onMounted(async () => {
-  await loadBeer()
+  await Promise.all([loadBeer(), loadMine()])
+  loaded.value = true
   if (beer.value) {
     history.value = await get<HistoricRating[]>(`/api/history/beers?name=${encodeURIComponent(beer.value.name)}`).catch(() => [])
   }
@@ -63,6 +75,11 @@ async function save() {
     await store.refresh()
     router.replace(sessionId ? `/session/${sessionId}?just=${props.id}` : `/?opened=${store.me?.status.today ?? ''}`)
   } catch (e) {
+    // Rolled already (another tab, another phone): show that roll instead of an error.
+    if (e instanceof ApiFailure && e.code === 'ALREADY_RATED') {
+      await loadMine()
+      if (mine.value) return
+    }
     error.value = e instanceof ApiFailure ? (RULE_TEXT[e.code] ?? e.message) : (e as Error).message
   } finally {
     saving.value = false
@@ -75,7 +92,27 @@ async function save() {
   <p class="muted">{{ beer?.brewery }}</p>
   <BeerPhotoBox v-if="beer" :beer="beer" @changed="loadBeer" />
 
-  <form class="card" @submit.prevent="save">
+  <div v-if="mine" class="card mine">
+    <div class="row">
+      <div>
+        <strong class="display">Ditt terningkast</strong>
+        <div class="muted">
+          {{ new Date(mine.tastedDay + 'T00:00:00').toLocaleDateString('nb-NO', { weekday: 'long', day: 'numeric', month: 'long' }) }}<template v-if="mine.sessionId"> · ved et bord</template>
+        </div>
+      </div>
+      <DiceFace :value="mine.score" :size="48" />
+    </div>
+    <p v-if="mine.notes" style="margin: 10px 0 0">«{{ mine.notes }}»</p>
+    <p v-for="n in myNotes" :key="n.label" class="muted" style="margin: 4px 0 0"><strong>{{ n.label }}:</strong> {{ n.text }}</p>
+    <div v-if="mine.tags.length" style="margin-top: 6px"><span v-for="t in mine.tags" :key="t" class="pill on">{{ t }}</span></div>
+    <p class="muted" style="margin: 10px 0 0">Ett terningkast per øl, for alltid. Se hva de andre syntes på ølets side.</p>
+    <div class="row" style="margin-top: 10px; justify-content: flex-start; gap: 8px">
+      <router-link class="btn" :to="`/beers/${props.id}`">Til ølets side</router-link>
+      <router-link v-if="sessionId" class="btn secondary" :to="`/session/${sessionId}`">Tilbake til bordet</router-link>
+    </div>
+  </div>
+
+  <form v-else-if="loaded" class="card" @submit.prevent="save">
     <label>Terningkast</label>
     <ScoreDice v-model="score" />
 
@@ -107,3 +144,7 @@ async function save() {
     </table>
   </details>
 </template>
+
+<style scoped>
+.mine { border-color: var(--candle); }
+</style>
