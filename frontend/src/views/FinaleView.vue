@@ -216,9 +216,12 @@ function fit(ctx: CanvasRenderingContext2D, text: string, max: number) {
 
     <div v-if="finale.teamWinners?.length" class="card">
       <strong>Lagenes egne vinnere</strong>
-      <div v-for="w in finale.teamWinners" :key="w.slug" class="row" style="margin-top: 6px">
-        <span><span class="pill on">{{ w.team }}</span> {{ w.beerName }}<span v-if="w.brewery" class="muted"> · {{ w.brewery }}</span></span>
-        <span class="muted">{{ w.bayesian.toFixed(2) }} · {{ w.ratings }} smakere</span>
+      <div v-for="w in finale.teamWinners" :key="w.slug" class="teamwin">
+        <span class="pill on">{{ w.team }}</span>
+        <div>
+          <strong>{{ w.beerName }}</strong>
+          <div class="muted">{{ [w.brewery, `${w.bayesian.toFixed(2)} av 6`, `${w.ratings} ${w.ratings === 1 ? 'smaker' : 'smakere'}`].filter(Boolean).join(' · ') }}</div>
+        </div>
       </div>
     </div>
 
@@ -252,17 +255,16 @@ function fit(ctx: CanvasRenderingContext2D, text: string, max: number) {
     <template v-if="finale.tips?.length">
       <h2>Tippeligaen</h2>
       <div class="card">
-        <table>
-          <thead><tr><th>#</th><th>Tipper</th><th>Tipset</th><th style="text-align: right">Poeng</th></tr></thead>
-          <tbody>
-            <tr v-for="(t, i) in finale.tips" :key="t.userId">
-              <td>{{ i + 1 }}</td>
-              <td>{{ t.name }}</td>
-              <td class="muted">{{ t.tip.join(' · ') }}</td>
-              <td style="text-align: right"><strong>{{ t.points }}</strong></td>
-            </tr>
-          </tbody>
-        </table>
+        <ol class="league">
+          <li v-for="(t, i) in finale.tips" :key="t.userId">
+            <span class="place">{{ i + 1 }}</span>
+            <div>
+              <strong>{{ t.name }}</strong>
+              <div class="muted">{{ t.tip.join(' · ') }}</div>
+            </div>
+            <strong class="points">{{ t.points }} p</strong>
+          </li>
+        </ol>
         <p class="muted" style="margin: 8px 0 0">Tre poeng for rett øl på rett plass, ett for et øl på pallen på feil plass.</p>
       </div>
     </template>

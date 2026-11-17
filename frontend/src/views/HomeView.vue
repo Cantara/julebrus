@@ -344,7 +344,7 @@ const dayOfSeason = computed(() => {
   <p class="muted">Disse trenger kjærlighet. Explorer-merket venter.</p>
   <div v-for="b in leastTasted" :key="b.id" class="card row">
     <div>
-      <strong>{{ b.name }}</strong>
+      <router-link class="lnk" :to="`/beers/${b.id}`"><strong>{{ b.name }}</strong></router-link>
       <div class="muted">{{ b.brewery }} · {{ b.ratingCount }} {{ b.ratingCount === 1 ? 'smaking' : 'smakinger' }}</div>
     </div>
     <router-link v-if="mineByBeer[b.id]" :to="`/beers/${b.id}`" style="text-decoration: none" :aria-label="`Ditt terningkast: ${mineByBeer[b.id]}`"><DiceFace :value="mineByBeer[b.id]" :size="36" /></router-link>

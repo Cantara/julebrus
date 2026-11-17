@@ -3,7 +3,6 @@ import { onMounted, ref, watch } from 'vue'
 import { get, post } from '../api/client'
 import type { Beer, Tasting } from '../api/types'
 import DiceFace from '../components/DiceFace.vue'
-import BeerPhotoBox from '../components/BeerPhotoBox.vue'
 
 const q = ref('')
 const beers = ref<Beer[]>([])
@@ -42,21 +41,21 @@ onMounted(load)
   <h1>Ølkatalogen</h1>
   <input v-model="q" placeholder="Søk på navn eller bryggeri" />
 
-  <div v-for="b in beers" :key="b.id" class="card row">
-    <div>
+  <div v-for="b in beers" :key="b.id" class="card row beer">
+    <router-link v-if="b.hasPhoto" class="thumb" :to="`/beers/${b.id}`" aria-hidden="true" tabindex="-1"><img :src="`/api/beers/${b.id}/photo`" loading="lazy" alt="" /></router-link>
+    <div class="what">
       <router-link class="lnk" :to="`/beers/${b.id}`"><strong>{{ b.name }}</strong></router-link>
       <span v-if="b.homebrew" class="pill">hjemmebrygg</span>
       <span v-if="b.status === 'PENDING'" class="pill">venter på godkjenning</span>
       <span v-else-if="b.status === 'REJECTED'" class="pill">avvist</span>
       <div class="muted">{{ [b.brewery, b.style, b.abv ? b.abv + ' %' : null].filter(Boolean).join(' · ') }}</div>
       <div class="muted">{{ b.ratingCount }} {{ b.ratingCount === 1 ? 'smaking' : 'smakinger' }}</div>
-      <BeerPhotoBox :beer="b" @changed="load" />
     </div>
     <router-link v-if="myScore[b.id]" class="rolled" :to="`/beers/${b.id}`" :aria-label="`Ditt terningkast: ${myScore[b.id]}`"><DiceFace :value="myScore[b.id]" :size="36" /></router-link>
     <router-link v-else class="btn secondary" :to="`/beers/${b.id}/rate`">Smak</router-link>
   </div>
   <p v-if="!beers.length" class="muted">Ingen treff.</p>
-  <p v-else class="muted" style="margin: -4px 0 12px">Trykk på et øl for siden med fordeling, stikkord og notater.</p>
+  <p v-else class="muted" style="margin: -4px 0 12px">Trykk på et øl for siden med fordeling, stikkord og notater. Der legger du også til et bilde av etiketten.</p>
 
   <button class="secondary" style="width: 100%" @click="adding = !adding">Legg til et øl som mangler</button>
   <form v-if="adding" class="card" @submit.prevent="add">
@@ -80,4 +79,8 @@ onMounted(load)
 
 <style scoped>
 .rolled { display: block; text-decoration: none; }
+.beer { justify-content: flex-start; }
+.beer .what { flex: 1; min-width: 0; }
+.thumb { flex: none; }
+.thumb img { display: block; width: 52px; height: 68px; object-fit: cover; border-radius: 8px; border: 1px solid var(--line); }
 </style>

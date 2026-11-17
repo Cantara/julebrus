@@ -91,10 +91,11 @@ const cleared = computed(() => panes.value.filter((p) => p.open).length)
 
 <style scoped>
 .picture { width: 100%; height: auto; display: block; border-radius: 12px; }
-.frost { fill: var(--door-shut); stroke: var(--line); stroke-width: 0.6; }
+/* Frosted glass, not a wall: the evening shows faintly through a shut pane and clearly through an open one. */
+.frost { fill: rgba(233, 241, 247, 0.74); stroke: rgba(255, 255, 255, 0.55); stroke-width: 0.6; }
 .rime rect { fill: #fff; }
-.rime { opacity: 0.75; }
-.dom { font-size: 11px; fill: var(--muted); font-variant-numeric: tabular-nums; }
+.rime { opacity: 0.6; }
+.dom { font-size: 11px; font-weight: 600; fill: #33506b; font-variant-numeric: tabular-nums; }
 
 /* Behind the glass, when effects are on. */
 .alive .stars circle { animation: twinkle 3.2s ease-in-out infinite; }
