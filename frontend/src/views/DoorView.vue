@@ -3,6 +3,9 @@ import { computed, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { ApiFailure, get, post } from '../api/client'
 import type { AdventDoor, AdventOverview } from '../api/types'
+import FrostPane from '../components/FrostPane.vue'
+import { buzz } from '../effects'
+import { chime, prime } from '../sound'
 
 /**
  * One advent door. Shut: the day's question, answered with one tap (a late door costs a nisse-key
@@ -42,11 +45,14 @@ watch(() => route.params.day, load, { immediate: true })
 
 async function open(answer: number | null) {
   if (!door.value || busy.value) return
+  prime()
   busy.value = true
   error.value = ''
   try {
     door.value = await post<AdventDoor>(`/api/advent/doors/${door.value.day}/open`, { answer })
     justOpened.value = true
+    chime()
+    buzz([12, 50, 20])
     overview.value = await get<AdventOverview>('/api/advent')
   } catch (e) {
     error.value = e instanceof ApiFailure ? ERRORS[e.code] ?? e.message : 'Noe gikk galt.'
@@ -97,13 +103,13 @@ const housePct = computed(() => (overview.value ? Math.min(100, Math.round((over
           Denne luka gikk du glipp av. En nisse-nøkkel åpner den, og du har {{ door.keysAvailable }}.
           <template v-if="blocked">Du får en nøkkel for hver dag du smaker ved et bord sammen med noen.</template>
         </p>
-        <template v-if="door.question">
+        <FrostPane v-if="door.question" :key="door.day" :active="!blocked" :seed="door.day">
           <h2 class="display" style="margin: 4px 0 12px">{{ door.question.text }}</h2>
           <div class="options">
             <button v-for="(o, i) in door.question.options" :key="o" class="secondary" :disabled="busy || blocked" @click="open(i)">{{ o }}</button>
           </div>
           <p class="muted" style="margin: 10px 0 0">Ett trykk åpner luka. Svaret ditt ser bare du.</p>
-        </template>
+        </FrostPane>
         <button v-else :disabled="busy || blocked" @click="open(null)">Åpne luka</button>
       </template>
       <template v-else>

@@ -3,10 +3,14 @@ import { computed, onMounted, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { ApiFailure, get, post } from '../api/client'
 import type { Beer, HistoricRating, NewTasting, StructuredNotes, Tasting } from '../api/types'
+import BeerGlass from '../components/BeerGlass.vue'
 import BeerPhotoBox from '../components/BeerPhotoBox.vue'
 import DiceFace from '../components/DiceFace.vue'
 import ScoreDice from '../components/ScoreDice.vue'
 import TastingNotes from '../components/TastingNotes.vue'
+import { beerColour } from '../beerColour'
+import { fx } from '../effects'
+import { pour } from '../sound'
 import { useMe } from '../stores/me'
 
 const props = defineProps<{ id: string }>()
@@ -35,6 +39,19 @@ const NOTE_LABELS: [keyof StructuredNotes, string][] = [['appearance', 'Utseende
 const myNotes = computed(() => NOTE_LABELS.filter(([k]) => mine.value?.structuredNotes?.[k]).map(([k, label]) => ({ label, text: mine.value!.structuredNotes![k]! })))
 
 const sessionId = typeof route.query.session === 'string' ? route.query.session : undefined
+
+/** After a roll the glass fills to the score before the page moves on; a tap skips it. */
+const poured = ref<{ score: number; next: string } | null>(null)
+let leaving: number | undefined
+function leaveSoon() {
+  leaving = window.setTimeout(leave, 900)
+}
+function leave() {
+  clearTimeout(leaving)
+  const next = poured.value?.next
+  poured.value = null
+  if (next) router.replace(next)
+}
 
 async function loadBeer() {
   const all = await get<Beer[]>('/api/beers')
@@ -73,7 +90,11 @@ async function save() {
   try {
     await post<Tasting>('/api/tastings', body)
     await store.refresh()
-    router.replace(sessionId ? `/session/${sessionId}?just=${props.id}` : `/?opened=${store.me?.status.today ?? ''}`)
+    const next = sessionId ? `/session/${sessionId}?just=${props.id}` : `/?opened=${store.me?.status.today ?? ''}`
+    if (fx.value) {
+      poured.value = { score: body.score, next }
+      pour()
+    } else router.replace(next)
   } catch (e) {
     // Rolled already (another tab, another phone): show that roll instead of an error.
     if (e instanceof ApiFailure && e.code === 'ALREADY_RATED') {
@@ -88,6 +109,12 @@ async function save() {
 </script>
 
 <template>
+  <div v-if="poured" class="pour" role="status" @click="leave">
+    <BeerGlass :score="poured.score" :colour="beerColour(beer)" @done="leaveSoon" />
+    <p class="display">Terningkast {{ poured.score }}</p>
+    <p class="muted">Skål! Trykk for å gå videre.</p>
+  </div>
+
   <h1>{{ beer?.name ?? '…' }}</h1>
   <p class="muted">{{ beer?.brewery }}</p>
   <BeerPhotoBox v-if="beer" :beer="beer" @changed="loadBeer" />
@@ -147,4 +174,7 @@ async function save() {
 
 <style scoped>
 .mine { border-color: var(--candle); }
+.pour { position: fixed; inset: 0; z-index: 5; background: var(--bg); display: grid; align-content: center; justify-items: center; gap: 4px; cursor: pointer; }
+.pour .display { font-size: 1.5rem; margin: 14px 0 0; }
+.pour .muted { margin: 0; }
 </style>

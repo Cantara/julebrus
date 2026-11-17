@@ -9,6 +9,7 @@ import AdventPicture from '../components/AdventPicture.vue'
 import DiceFace from '../components/DiceFace.vue'
 import LightsMeter from '../components/LightsMeter.vue'
 import Snow from '../components/Snow.vue'
+import { effectsOn } from '../effects'
 import { useMe } from '../stores/me'
 
 const store = useMe()
@@ -64,20 +65,6 @@ function toggleCalendar() {
   }
 }
 
-const snow = ref(true)
-try {
-  snow.value = localStorage.getItem('snow') !== 'off'
-} catch {
-  /* private mode */
-}
-function toggleSnow() {
-  snow.value = !snow.value
-  try {
-    localStorage.setItem('snow', snow.value ? 'on' : 'off')
-  } catch {
-    /* ignore */
-  }
-}
 
 onMounted(async () => {
   get<MyTip>('/api/tips/me').then((t) => (tip.value = t)).catch(() => {})
@@ -198,17 +185,17 @@ const dayOfSeason = computed(() => {
 </script>
 
 <template>
-  <Snow :enabled="snow" />
+  <Snow :enabled="effectsOn" :intensity="advent ? advent.house.opened / advent.house.goal : 0" />
 
-  <div class="row" style="align-items: baseline">
-    <h1 style="margin-bottom: 4px">Juleølsmakingen {{ season?.year ?? '' }}</h1>
-    <button class="secondary" style="padding: 6px 10px; font-size: 0.8rem" @click="toggleSnow">{{ snow ? 'Snø av' : 'Snø på' }}</button>
+  <h1 style="margin-bottom: 4px">Juleølsmakingen {{ season?.year ?? '' }}</h1>
+  <div class="row" style="align-items: baseline; margin-bottom: 12px">
+    <p class="muted" style="margin: 0">
+      <template v-if="daysUntilStart > 0">{{ daysUntilStart }} {{ daysUntilStart === 1 ? 'dag' : 'dager' }} til første luke.</template>
+      <template v-else-if="store.me && !store.me.status.inSeason">Sesongen er over. Takk for i år.</template>
+      <template v-else>Luke {{ dayOfSeason.n }} av {{ dayOfSeason.total }}<template v-if="advent && advent.streak >= 2"> · 🕯️ {{ advent.streak }} luker på rad</template><template v-if="advent && advent.keys.available"> · 🗝️ {{ advent.keys.available }}</template>.</template>
+    </p>
+    <button class="secondary" style="padding: 6px 10px; font-size: 0.8rem; white-space: nowrap" :aria-pressed="effectsOn" title="Snø, terninger, glass, rim og bobler" @click="effectsOn = !effectsOn">{{ effectsOn ? 'Effekter av' : 'Effekter på' }}</button>
   </div>
-  <p class="muted" style="margin-top: 0">
-    <template v-if="daysUntilStart > 0">{{ daysUntilStart }} {{ daysUntilStart === 1 ? 'dag' : 'dager' }} til første luke.</template>
-    <template v-else-if="store.me && !store.me.status.inSeason">Sesongen er over. Takk for i år.</template>
-    <template v-else>Luke {{ dayOfSeason.n }} av {{ dayOfSeason.total }}<template v-if="advent && advent.streak >= 2"> · 🕯️ {{ advent.streak }} luker på rad</template><template v-if="advent && advent.keys.available"> · 🗝️ {{ advent.keys.available }}</template>.</template>
-  </p>
 
   <div v-if="toast" class="toast card" role="status">
     <span>{{ toast.text }}</span>

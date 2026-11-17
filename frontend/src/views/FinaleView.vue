@@ -3,7 +3,9 @@ import { computed, onMounted, onUnmounted, ref } from 'vue'
 import { useRoute } from 'vue-router'
 import { get } from '../api/client'
 import type { Finale, PalatePairs } from '../api/types'
+import NightSky from '../components/NightSky.vue'
 import Snow from '../components/Snow.vue'
+import { fanfare } from '../sound'
 import { useMe } from '../stores/me'
 
 const store = useMe()
@@ -19,7 +21,9 @@ const wantPreview = computed(() => route.query.preview === 'true')
 async function load() {
   try {
     const q = wantPreview.value ? '?preview=true' : ''
+    const before = !!finale.value?.podium
     finale.value = await get<Finale>(`/api/finale${q}`)
+    if (finale.value.podium && !before) fanfare() // only heard by someone who switched sound on
     if (finale.value.podium) pairs.value = await get<PalatePairs>('/api/stats/palate/pairs').catch(() => null)
   } catch (e) {
     error.value = (e as Error).message
@@ -154,7 +158,8 @@ function fit(ctx: CanvasRenderingContext2D, text: string, max: number) {
   <p v-if="error" class="error">{{ error }}</p>
 
   <template v-if="finale && !finale.podium">
-    <div class="finale-hero">
+    <div class="finale-hero night">
+      <NightSky :lit="false" />
       <div class="star">★</div>
       <h1>Finalen {{ finale.year }}</h1>
       <p class="muted">Cantaras juleøl kåres {{ revealDate }}.</p>
@@ -190,7 +195,8 @@ function fit(ctx: CanvasRenderingContext2D, text: string, max: number) {
 
   <template v-else-if="finale && finale.podium">
     <p v-if="finale.preview" class="pill on" style="display: block; text-align: center">Forhåndsvisning. Bare admin ser dette før {{ revealDate }}.</p>
-    <div class="finale-hero">
+    <div class="finale-hero night">
+      <NightSky :lit="true" />
       <div class="star lit">★</div>
       <h1>Cantaras juleøl {{ finale.year }}</h1>
       <p v-if="finale.podium[0]" class="winner display"><router-link class="lnk" :to="`/beers/${finale.podium[0].beerId}`">{{ finale.podium[0].name }}</router-link></p>

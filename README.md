@@ -21,6 +21,11 @@ solo days, the rest in groups formed by QR code. Design and rules: [DESIGN.md](D
   house lights the star together (500 doors shows everyone the top ten, without order), and teams race for today's
   door. Home counts down to Vinmonopolet's release day. From 17 December until the reveal the ranking is hidden
   everywhere ("mørkelagt") and each door gives a clue about the leader instead. Answers are private.
+- **Effects.** Snow with depth and wind that settles on the cards, a 3D die that tumbles to your score, a glass that
+  fills to it in the beer's colour, rime you wipe off the day's door, bubbles on the wall when someone rolls and foam
+  on a skål, northern lights and star rays behind the finale, and the blackout's clues read by candlelight. All of it
+  is drawn or synthesized by code (canvas, CSS 3D, one small WebGL shader, Web Audio): no image or sound files. One
+  switch ("Effekter" on Home and under Meg) turns everything off, reduced motion always wins, and sound is opt-in.
 - **"I kveld".** The day's wall for the whole house: who rolled which beer, the tables going right now, approved labels and
   blind-round results, live, with a 🍻 and four more emojis to give each line. Never a person's dice, and a day average per
   beer only from three rolls. People without active consent are left out.

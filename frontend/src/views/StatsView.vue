@@ -2,7 +2,9 @@
 import { onMounted, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import { ApiFailure, get } from '../api/client'
-import type { AdventOverview, BeerRank, DuelRank, HistoricSeason, Team } from '../api/types'
+import type { AdventDoor, AdventOverview, BeerRank, DuelRank, HistoricSeason, Team } from '../api/types'
+import CandleRoom from '../components/CandleRoom.vue'
+import { fx } from '../effects'
 import { useMe } from '../stores/me'
 
 const beers = ref<BeerRank[]>([])
@@ -18,6 +20,21 @@ const store = useMe()
 const dark = ref(false)
 const preview = ref(false)
 const advent = ref<AdventOverview | null>(null)
+/** The clues the doors have given since the ranking went dark, one per day; null for a door not opened yet. */
+const clues = ref<{ day: string; number: number; clue: string | null }[]>([])
+
+async function loadClues() {
+  const a = advent.value
+  if (!a?.blackoutFrom) return
+  const days: string[] = []
+  for (let d = new Date(a.blackoutFrom + 'T00:00:00Z'); ; d.setUTCDate(d.getUTCDate() + 1)) {
+    const day = d.toISOString().slice(0, 10)
+    if (day > a.today || day >= a.end) break
+    days.push(day)
+  }
+  const doors = await Promise.all(days.map((d) => get<AdventDoor>(`/api/advent/doors/${d}`).catch(() => null)))
+  clues.value = doors.filter((d): d is AdventDoor => !!d).map((d) => ({ day: d.day, number: d.number, clue: d.clue }))
+}
 
 function query(extra: Record<string, string>) {
   const q = new URLSearchParams(extra)
@@ -33,7 +50,10 @@ async function loadBeers() {
     if (e instanceof ApiFailure && e.code === 'BLACKOUT') {
       dark.value = true
       beers.value = []
-      advent.value ??= await get<AdventOverview>('/api/advent').catch(() => null)
+      if (!advent.value) {
+        advent.value = await get<AdventOverview>('/api/advent').catch(() => null)
+        loadClues().catch(() => {})
+      }
     } else throw e
   }
 }
@@ -63,8 +83,19 @@ onMounted(async () => {
 
   <div v-if="dark" class="card dark">
     <strong class="display">🌒 Mørkelagt til finalen</strong>
-    <p style="margin: 6px 0 0">Den siste uka er resultatlista skjult for alle. Stjernen tennes {{ advent ? new Date(advent.revealAt).toLocaleString('nb-NO', { day: 'numeric', month: 'long', hour: '2-digit', minute: '2-digit' }) : 'i finalen' }}.</p>
-    <p class="muted" style="margin: 6px 0 0">Hver luke gir et spor om hvem som leder. <router-link class="lnk" to="/luke/idag">Dagens luke</router-link></p>
+    <p style="margin: 6px 0 0">Den siste uka er resultatlista skjult for alle. Stjernen tennes {{ advent ? new Date(advent.revealAt).toLocaleString('nb-NO', { timeZone: 'Europe/Oslo', day: 'numeric', month: 'long', hour: '2-digit', minute: '2-digit' }) : 'i finalen' }}.</p>
+    <CandleRoom style="margin-top: 10px">
+      <p class="muted" style="margin: 0 0 8px">{{ fx ? 'Dra flammen over arket og les sporene om hvem som leder.' : 'Sporene om hvem som leder, ett per luke.' }}</p>
+      <ol class="clues">
+        <li v-for="c in clues" :key="c.day">
+          <strong>Luke {{ c.number }}</strong>
+          <template v-if="c.clue"> · {{ c.clue }}</template>
+          <template v-else> · <router-link :to="`/luke/${c.day}`">åpne luka for sporet</router-link></template>
+        </li>
+      </ol>
+      <p v-if="!clues.length" class="muted" style="margin: 0">Første spor ligger bak dagens luke.</p>
+      <p style="margin: 10px 0 0"><router-link to="/luke/idag">Til dagens luke</router-link></p>
+    </CandleRoom>
     <template v-if="advent?.house.unlocked && advent.topTen.length">
       <p class="muted" style="margin: 10px 0 4px">Huset har tent stjernen. Topp ti akkurat nå, i alfabetisk rekkefølge:</p>
       <ul style="columns: 2; margin: 0; padding-left: 18px">
@@ -136,5 +167,6 @@ onMounted(async () => {
 .ranked .small { font-size: 0.85rem; }
 .filter { margin: 0 0 10px; }
 .dark { border: 1px dashed var(--brass); }
+.clues { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
 .filter .pill { border: 1px solid var(--line); cursor: pointer; font: inherit; font-size: 0.85rem; }
 </style>

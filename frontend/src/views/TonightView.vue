@@ -9,6 +9,9 @@ import { computed, onMounted, onUnmounted, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { get, put } from '../api/client'
 import { subscribeFeed, type LiveStatus } from '../api/live'
+import Fizz from '../components/Fizz.vue'
+import { buzz } from '../effects'
+import { clink, prime } from '../sound'
 import type { Feed, FeedEntry, FeedReaction } from '../api/types'
 
 const route = useRoute()
@@ -56,7 +59,11 @@ onMounted(async () => {
   } catch (e) {
     error.value = (e as Error).message
   }
-  unsubscribe = subscribeFeed(refreshSoon, (s) => (live.value = s))
+  unsubscribe = subscribeFeed((kind) => {
+    // A roll somewhere in the house: the wall fizzes.
+    if (kind === 'tasting' && isToday.value) fizz.value?.rise()
+    refreshSoon()
+  }, (s) => (live.value = s))
   let tick = 0
   timer = window.setInterval(() => {
     tick += 1
@@ -82,13 +89,23 @@ function shift(days: number) {
   router.replace({ query: iso === feed.value?.today ? {} : { day: iso } })
 }
 
-async function react(entry: FeedEntry, emoji: string) {
+const fizz = ref<InstanceType<typeof Fizz> | null>(null)
+
+async function react(entry: FeedEntry, emoji: string, event?: MouseEvent) {
   const key = entry.id + emoji
   if (busy.value.has(key)) return
   busy.value.add(key)
   // Optimistic: flip it locally, then take the server's tally.
   const before = entry.reactions
   const mine = before.find((r) => r.emoji === emoji)
+  // Giving a skål (not taking one back) foams over from the button.
+  if (emoji === '🍻' && !mine?.mine && event) {
+    const box = (event.currentTarget as HTMLElement).getBoundingClientRect()
+    prime()
+    fizz.value?.foam(box.left + box.width / 2, box.top + box.height / 2)
+    clink()
+    buzz(14)
+  }
   entry.reactions = mine
     ? before.map((r) => (r.emoji === emoji ? { ...r, mine: !r.mine, count: r.count + (r.mine ? -1 : 1) } : r)).filter((r) => r.count > 0)
     : [...before, { emoji, count: 1, mine: true }]
@@ -126,6 +143,7 @@ function line(e: FeedEntry): string {
 </script>
 
 <template>
+  <Fizz ref="fizz" />
   <div class="row" style="align-items: baseline">
     <h1 style="margin-bottom: 4px">{{ isToday ? 'I kveld' : 'Den kvelden' }}</h1>
     <span class="live" :class="live" :title="live === 'live' ? 'Direkte: veggen oppdateres når noen kaster' : live === 'connecting' ? 'Kobler til' : 'Frakoblet, oppdaterer hvert 5. sekund'">
@@ -180,7 +198,7 @@ function line(e: FeedEntry): string {
             :class="{ on: e.reactions.find((r) => r.emoji === emoji)?.mine, zero: !e.reactions.find((r) => r.emoji === emoji) }"
             :title="emojiTitle[emoji] ?? emoji"
             :aria-pressed="!!e.reactions.find((r) => r.emoji === emoji)?.mine"
-            @click="react(e, emoji)"
+            @click="react(e, emoji, $event)"
           >
             {{ emoji }}<span v-if="e.reactions.find((r) => r.emoji === emoji)" class="n">{{ e.reactions.find((r) => r.emoji === emoji)?.count }}</span>
           </button>

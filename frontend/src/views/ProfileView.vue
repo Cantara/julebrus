@@ -8,6 +8,7 @@ import DumbbellChart from '../components/DumbbellChart.vue'
 import LiftChart from '../components/LiftChart.vue'
 import ClaimHistory from '../components/ClaimHistory.vue'
 import LangToggle from '../components/LangToggle.vue'
+import { effectsOn, soundOn } from '../effects'
 import { t } from '../i18n'
 import type { BadgeView, Beer, HistoricRating, MySeason, Palate, Tasting } from '../api/types'
 import BadgeTree from '../components/BadgeTree.vue'
@@ -199,6 +200,10 @@ function yearSummary(rows: HistoricRating[]) {
     <p class="muted" style="margin-top: 0">{{ t('withdrawInfo') }}</p>
     <div class="row" style="justify-content: flex-start">
       <LangToggle />
+    </div>
+    <div class="row" style="justify-content: flex-start; margin-top: 10px; gap: 16px">
+      <label style="margin: 0"><input v-model="effectsOn" type="checkbox" style="width: auto" /> Effekter (snø, terninger, glass, rim og bobler)</label>
+      <label style="margin: 0"><input v-model="soundOn" type="checkbox" style="width: auto" /> Lyd</label>
     </div>
     <button v-if="!confirmingWithdraw" class="secondary" style="margin-top: 12px" @click="confirmingWithdraw = true">{{ t('withdrawButton') }}</button>
     <div v-else style="margin-top: 12px">
