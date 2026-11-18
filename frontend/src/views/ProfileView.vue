@@ -195,16 +195,25 @@ function yearSummary(rows: HistoricRating[]) {
     <span class="muted">›</span>
   </router-link>
 
+  <h2>{{ t('settingsTitle') }}</h2>
+  <div class="card settings">
+    <div class="row">
+      <div><strong>{{ t('settingsLang') }}</strong><div class="muted">{{ t('settingsLangHint') }}</div></div>
+      <LangToggle />
+    </div>
+    <label class="row">
+      <span><strong>{{ t('settingsFx') }}</strong><span class="muted">{{ t('settingsFxHint') }}</span></span>
+      <input v-model="effectsOn" type="checkbox" class="switch" role="switch" />
+    </label>
+    <label class="row">
+      <span><strong>{{ t('settingsSound') }}</strong><span class="muted">{{ t('settingsSoundHint') }}</span></span>
+      <input v-model="soundOn" type="checkbox" class="switch" role="switch" />
+    </label>
+  </div>
+
   <h2>{{ t('withdrawTitle') }}</h2>
   <div class="card">
     <p class="muted" style="margin-top: 0">{{ t('withdrawInfo') }}</p>
-    <div class="row" style="justify-content: flex-start">
-      <LangToggle />
-    </div>
-    <div class="row" style="justify-content: flex-start; margin-top: 10px; gap: 16px">
-      <label style="margin: 0"><input v-model="effectsOn" type="checkbox" style="width: auto" /> Effekter (snø, terninger, glass, rim og bobler)</label>
-      <label style="margin: 0"><input v-model="soundOn" type="checkbox" style="width: auto" /> Lyd</label>
-    </div>
     <button v-if="!confirmingWithdraw" class="secondary" style="margin-top: 12px" @click="confirmingWithdraw = true">{{ t('withdrawButton') }}</button>
     <div v-else style="margin-top: 12px">
       <p class="error" role="alert">{{ t('withdrawConfirm') }}</p>
@@ -218,6 +227,12 @@ function yearSummary(rows: HistoricRating[]) {
 </template>
 
 <style scoped>
+/* Settings: one row per setting, the label and its hint on the left, the control on the right. */
+.settings .row { padding: 10px 0; border-bottom: 1px solid var(--line); margin: 0; cursor: default; }
+.settings .row:first-child { padding-top: 0; }
+.settings .row:last-child { padding-bottom: 0; border-bottom: 0; }
+.settings label.row { cursor: pointer; }
+.settings .row > span { display: grid; }
 .year-summary { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; cursor: pointer; }
 details[open] > .year-summary { margin-bottom: 6px; }
 </style>

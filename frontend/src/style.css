@@ -94,6 +94,25 @@ input, textarea, select {
 label { display: block; margin: 10px 0 4px; font-size: 0.9rem; color: var(--muted); }
 .pill { display: inline-block; padding: 3px 10px; border-radius: 999px; background: var(--line); font-size: 0.8rem; margin: 2px 4px 2px 0; }
 .pill.on { background: var(--candle); color: #2b1a14; }
+/* Muted text inside a highlighted pill (the team after your own name) stays readable in both colour schemes. */
+.pill.on .muted { color: rgba(43, 26, 20, 0.66); }
+/* A pill you can press (section tabs, team and year filters): the button rule's white text would vanish on it. */
+button.pill { color: var(--ink); font-size: 0.8rem; padding: 5px 12px; }
+button.pill.on { color: #2b1a14; }
+/* A button beside text keeps its label on one line and its size; the text is what wraps. */
+.row > button, .row > .btn { white-space: nowrap; flex: 0 0 auto; }
+/* An on/off switch for settings. */
+input.switch {
+  appearance: none; -webkit-appearance: none; width: 46px; height: 28px; padding: 0; border: 0; border-radius: 999px;
+  background: var(--line); position: relative; flex: none; cursor: pointer; transition: background 0.2s;
+}
+input.switch::after {
+  content: ""; position: absolute; top: 3px; left: 3px; width: 22px; height: 22px; border-radius: 50%;
+  background: #fff; box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3); transition: transform 0.2s;
+}
+input.switch:checked { background: var(--pine); }
+input.switch:checked::after { transform: translateX(18px); }
+input.switch:focus-visible { outline: 2px solid var(--pine); outline-offset: 2px; }
 .error { color: var(--danger); }
 .ok { color: var(--ok); }
 nav.tabs {
@@ -258,6 +277,13 @@ th { font-size: 0.8rem; color: var(--muted); font-weight: 600; }
 .countdown div { display: grid; justify-items: center; min-width: 64px; }
 .countdown strong { font-family: Fraunces, Georgia, serif; font-size: 2.4rem; line-height: 1; font-variant-numeric: tabular-nums; }
 .countdown span { font-size: 0.75rem; color: var(--muted); }
+.teamwin { display: flex; gap: 10px; align-items: flex-start; margin-top: 10px; }
+.teamwin .pill { margin: 1px 0 0; flex: none; }
+.league { list-style: none; margin: 0; padding: 0; }
+.league li { display: flex; gap: 12px; align-items: flex-start; padding: 10px 0; border-bottom: 1px solid var(--line); }
+.league li > div { flex: 1; min-width: 0; }
+.league .place { flex: none; width: 1.6em; text-align: center; font-family: Fraunces, Georgia, serif; font-size: 1.1rem; }
+.league .points { flex: none; font-variant-numeric: tabular-nums; }
 .podium { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; align-items: end; margin: 10px 0 12px; }
 .podium .step { display: grid; justify-items: center; gap: 6px; }
 .podium .label { text-align: center; font-size: 0.85rem; min-height: 2.6em; }
